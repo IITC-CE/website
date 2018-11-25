@@ -1,0 +1,73 @@
+{% extends "__base__.html" %}
+{% block title %}Desktop — Ingress Intel Total Conversion{% endblock %}
+{% block content %}
+
+    <div class="container">
+    <div class="row">
+    <div class="col s12">
+        <div class="section">
+            <h2 class="hover">IITC Browser Addon</h2>
+            <h5>Requirements</h5>
+            <p>IITC will work in the Chrome or Firefox browsers. It should also work with Opera and other browsers supporting userscripts, but these are far less tested. For Android phones, please see the <a href="download_mobile.html">mobile</a> page.</p>
+            <h6>Firefox</h6>
+            <p>Install the <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> Firefox add-on. Once installed, click the "Download" then "Install" on the dialog.</p>
+            <h6>Chrome</h6>
+            <p>Although it is possible to install userscripts directly as extensions, the recommended method is to use Tampermonkey. Once <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo">Tampermonkey</a> is installed, click on the "Download" button below and follow the instructions.</p>
+            <h6>Other browsers</h6>
+            <p>Check your browser documentation for details on installing userscripts.</p>
+        </div>
+        <div class="section">
+            <h5>Updating</h5>
+            <p>If IITC is already installed, it's easy to update in most cases:</p>
+            <h6>Firefox and Greasemonkey</h6>
+            <p>Open the Greasemonkey menu and choose "Manage user scripts". Now click the cog icon and choose "Check for updates". However, sometimes Greasemonkey fails to update all scripts. Check the date+time listed at the start of the description (e.g. "[jonatkins-2013-08-23-042102]") and if any have failed to update then manually download from the list below. Once updated, reload the Intel map and the new version will be active.</p>
+            <h6>Chrome and Tampermonkey</h6>
+            <p>Open the Tampermonkey menu and choose "Check for userscript updates". If you have a lot of plugins, or other scripts installed, this can be a little slow. Wait 30 seconds, then try clicking the Tampermonkey icon again; if the menu opens, it's finished updating. Once complete, reload the Ingress intel map to use the new version.</p>
+        </div>
+        <div class="section">
+            <h5>Download</h5>
+            <p>IITC version {{ release_iitc_version }}</p>
+            <a class="btn" href="/build/release/total-conversion-build.user.js">Download</a>
+        </div>
+        <div class="section">
+            <h6>Plugins</h6>
+            <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>ID</th>
+                        <th>Version</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for name, category in release_plugins.items() %}
+                    <tr class="category_header">
+                        <td class="category_name">{{ name }}</td>
+                        <td colspan="3">{{ category.desc }}</td>
+                    </tr>
+                    {% for item in category.plugins %}
+                        <tr style="border-bottom: none;" class="plugins_info">
+                            <td><strong>{{ item.name }}</strong></td>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.version }}</td>
+                            <td rowspan="2"><a class="btn btn-floating btn-large" href="/build/release/plugins/{{ item.filename }}"><i class="material-icons">file_download</i></a></td>
+                        </tr>
+                        <tr class="plugins_info">
+                            <td colspan="3" class="plugin_desc">{{ item.desc }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+    </div>
+    </div>
+
+{% endblock %}

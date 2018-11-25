@@ -1,0 +1,168 @@
+{% extends "__base__.html" %}
+{% block title %}FAQ — Ingress Intel Total Conversion{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <h2 class="hover">Frequently Asked Questions</h2>
+                </div>
+                <ul class="collapsible popout">
+                    <li>
+                        <div class="collapsible-header">Will I be banned for using IITC?</div>
+                        <div class="collapsible-body">
+<p>Niantic consider IITC (and any other unofficial software) against the Ingress ToS. However, just because something is against the ToS it doesn't mean Niantic will enforce it.</p>
+<p>However, in early December 2013, many people started to believe Niantic were banning people for using IITC. This is not the case. However, the following events have lead to this belief:</p>
+<ul class="browser-default">
+<li>On 27th November 2013, Niantic released a major update of the standard intel site. A couple of days later there were reports of user bans for 'excessive intel use'. A couple of people confirmed it was attempts to use the broken IITC Mobile 0.9 that lead to instant bans.</li>
+<li>About a week later, Niantic made a large batch of user bans 'for ToS violations'. Many users reported their only ToS violation was using IITC - and some said that even IITC hadn't been used. On appeal, many of these bans were reversed - including some confirmed IITC users</li>
+<li>A week after that and and there were more reports of the same.</li>
+</ul>
+<p>Given that a large number of serious Ingress players use, or have used, IITC, it isn't surprising to find that if Niantic ban someone by mistake, they have used IITC.</p>
+<p>I believe none of these 'ToS violation' bans are related to IITC. Rather, Niantic have been working on more aggressive catching of cheaters and other ToS violations - spoofing, bots, multiple accounts, account sharing, etc. These things are inherently hard to detect though, and Niantic are likely to make mistakes sometimes, banning legitimate players.</p>
+<p>Note that Niantic have remained completely silent on the reason for any of these bans. This is partly because if they did say what someone had been banned for doing, it might lead to cheaters knowing what they can and can't get away with.</p>
+<p><strong>However</strong>: IITC is against the Ingress ToS - so it's sensible to be cautious. Don't publicly share screenshots from IITC in the official Ingress community, or with the official Ingress/NIA G+ accounts.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Why is IITC still available? Wasn't it sent a takedown notice?</div>
+                        <div class="collapsible-body">
+<p>I've seen several comments of the form "IITC was sent a takedown notice, and at this point it moved to Github and kept going". This is not true.</p>
+<ol class="browser-default">
+<li>IITC was started on Github, by <a href="https://github.com/breunigs" target="_blank">Stefan breunigs</a>.</li>
+<li>Stefan decided to email Niantic, asking if IITC was OK to develop.</li>
+<li>Niantic replied to this request, stating that any 3rd party software is against the ToS and asked that he delete it from Github.</li>
+<li>Stefan deleted IITC from Github. However, the nature of Git meant that many other copies of the project already existed.</li>
+<li>My understanding of the situation, at the time, was that Niantic tolerated IITC. Other software had been sent takedown requests, IITC had not. However, on an explicit request, Niantic felt forced to reply in strict accordance with their terms.</li>
+<li><a href="https://github.com/jonatkins">Jon Atkins</a>, decided to fix up my copy of IITC, and created own <a href="https://iitc.me" target="_blank">website</a>.</li>
+<li>Development continued, the website was polished, a G+ page/community were created. Niantic have not contacted with Jon a takedown request though.</li>
+<li>Over time, John <a href="https://github.com/iitc-project/ingress-intel-total-conversion/issues/1234" target="_blank">moved away from the development</a> and despite the fact that third-party developers continued to send changes, they did not merge with the main branch and did not appear on the site.</li>
+<li>Niantic has released a global update to Ingress Prime and the changes have touched including the address to the Intel map, making the IITC unusable.</li>
+<li>Realizing that big map updates will follow soon, I, <a href="https://github.com/modos189">modos189</a>, created a fork and launched this website to be able to provide updates to users.</li>
+</ol>
+<p>So, was 'IITC' sent a takedown request? No - this website, and the IITC G+ page, have not been sent such a request. </p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">IITC does not show as much data, many plugins are not available</div>
+                        <div class="collapsible-body">
+<p>Niantic have removed further details from the sent data. The data available to IITC now is no more than available on the standard intel site. No more details on resonator deployment distances, portal descriptions, and, as of 16th June 2014, no more portal capture data (it's been removed from the standard site too).</p>
+<p>On 27th November 2013 Niantic made a major change to the protocol used by the intel map to display portals. Before this date, the full data for every portal on the map was sent to the browser, so IITC could take advantage of it and provide various features - resonator search, mitigation highlighters, portal age lists, many highlighters, etc.</p>
+<p>After this date they only send the bare minimum of data for all the portals on the screen. The data available is:</p>
+<ul class="browser-default">
+<li>Location</li>
+<li>Name</li>
+<li>Photo URL</li>
+<li>Controlling team</li>
+<li>Level (whole number only)</li>
+<li>Resonator count</li>
+<li>Health (in percent)</li>
+</ul>
+<p>IITC can also count links/fields visible on the map, but this is not accurate when zoomed out to larger areas as the server does not send the smaller links/fields.</p>
+<p>It is still possible to get the full details for individual portals, but only one at a time. Some people have suggested making IITC do this automatically with a plugin - but it's very likely that Niantic will monitor the portal detail requests for this kind of abuse and suspend/ban anyone caught doing it.</p>
+<p>Some people think that Niantic made this change just to break IITC. This is not true. It was a sensible change to make to optimise the intel map, and I'm surprised they waited so long.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">I get a message saying my account isn't activated</div>
+                        <div class="collapsible-body">
+<p>Occasionally the Niantic servers give this misleading message - what it should usually say is "Failed to check account status - please reload to try again".</p>
+<p>Sometimes this is caused by server issues, and no amount of reloading will fix it. Come back later and try again.</p>
+<p>However, another reason for this message is your account being blocked/suspended by Niantic. There are no (known) cases of this happening due to IITC use, but any use of bots, unofficial clients (e.g. broot), or other ingress mods (auto-drop/pickup apps) could lead to this. In this case, the scanner app will also fail to work correctly ("Scan failed" error message).</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">No portals are displayed on the map/some portals are missing</div>
+                        <div class="collapsible-body">
+<ol class="browser-default">
+<li>You have some portal layers turned off in the layer chooser</li>
+<li>Niantic have released a site update that broke IITC. Reloading the page might fix it. Otherwise check the IITC Telegram channel as others are likely to post when this is the case.</li>
+<li>Some requests failed - check the status at the bottom-right of the screen</li>
+</ol>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Long lines are drawn curved on the map</div>
+                        <div class="collapsible-body">
+<p>This is a good thing. IITC has been updated to draw long links/fields correctly. If you want to understand why they are drawn curved, see <a href="http://gis.stackexchange.com/questions/6822/why-is-the-straight-line-path-across-continent-so-curved" target="_blank">here</a>.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">IITC Desktop: How do I uninstall/disable IITC or plugins?</div>
+                        <div class="collapsible-body">
+<p>This depends on your browser.</p>
+<ul class="browser-default">
+<li><strong>Firefox + Greasemonkey</strong>: Click on the arrow next to the monkey icon, and choose 'Manage user scripts'.</li>
+<li><strong>Chrome + Tampermonkey</strong>: Click on the Tampermonkey icon (a dark square with two circles at the bottom) and choose 'Dashboard'.</li>
+<li>For <strong>Opera</strong>, remove the scripts from the userscript folder. For Chrome without Tampermonkey, go to the Tools->Extensions menu.</li>
+</ul>
+<p>From here you can remove/disable individual plugins or IITC itself.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">IITC Mobile: Is it possible to add external plugins to IITC Mobile?</div>
+                        <div class="collapsible-body">
+<p>Yes it is!</p>
+<ul class="browser-default">
+<li>Navigate to the IITC Plugins preference screen and click the (+) icon at the top right. You can select the script using a file explorer of your choice.</li>
+<li>IITCm creates a new folder in your home directory, named "IITC_Mobile". Inside this folder you'll find a "plugins" folder where all external plugins are copied to.</li>
+</ul>
+<p>Note:</p>
+<ul class="browser-default">
+<li>The filename has to end with *.user.js.</li>
+<li>You can also trigger installation by clicking on http(s) links pointing to a plugin, selecting plugins with a file explorer, opening javascript e-mail attachments etc…</li>
+</ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">What do the colours mean in 'DEBUG Data Tiles'</div>
+                        <div class="collapsible-body">
+<p>The data from the Niantic server is download in square tiles. Sometimes requests fail. The colours show this status visually. The outline colour shows the state of the request:</p>
+<ul class="browser-default">
+<li>Blue: data requested, waiting for response</li>
+<li>Grey: queued, waiting for other requests to finish</li>
+<li>Green: successful request/cached data fresh</li>
+<li>Red: Dark red for a complete request failure, lighter red for an individual tile timeout</li>
+</ul>
+<p>The colour within the square shows the state of the data:</p>
+<ul class="browser-default">
+<li>Blue: data requested, waiting for response</li>
+<li>Grey: queued, waiting for other requests to complete</li>
+<li>Green: successful request</li>
+<li>Yellow: data from cache</li>
+<li>Red: request failed - no data from cache</li>
+</ul>
+<p>The status message at the bottom-right of the screen gives a summary.</p>
+<ul class="browser-default">
+<li>If all requests were successful/fresh from cache (i.e. all green borders) the status is 'Done'.</li>
+<li>If some requests failed, but cached data was available (i.e. some red border/yellow fill) the status is 'Out of date'.</li>
+<li>If some requests failed, but no cached data was available (i.e. some red border/red fill) the status is 'Error'.</li>
+</ul>
+<p>The tooltip for this message gives more details.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Isn't using IITC cheating/an unfair advantage?</div>
+                        <div class="collapsible-body">
+<p>IITC only uses data that is sent from the Ingress servers to the browser - it just displays it in an easy to use format. With the right skills it is already possible to see this data using the browser debugging console, and there were, and continue to be, other browser add-ons that display this data - just not widely available. Having a good quality, feature rich add-on, available to all - Enlightened and Resistance - ensures one side does not have an unfair advantage.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Can you add an export feature?</div>
+                        <div class="collapsible-body">
+<p>No. As it stands IITC is tolerated, but not officially accepted, by Niantic Labs. Adding in features that allow exporting of data outside the browser environment, or break additional Ingress terms of service is likely to trigger a takedown request from Niantic.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">I used another {ingress mod/IITC plugin} and it's broken - can you fix it?</div>
+                        <div class="collapsible-body">
+<p>Probably not, no. If the plugin is not listed on this site, it's not part of my IITC distribution. I do accept new plugins (see the Developer page for links to Github), but I do not accept any that allow export of Ingress data outside of the browser or make use of data not retrieved by the standard intel website.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

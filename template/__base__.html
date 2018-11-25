@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/user.css?2"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/telegram-widget-frame.css"  media="screen,projection"/>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>{% block title %}Ingress Intel Total Conversion{% endblock %}</title>
+
+    <!-- android uses the apple icons when adding shortcuts - looks better than favicons -->
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+    <meta property="og:title" content="{{ self.title() }}">
+    <meta property="og:site_name" content="{{ self.title() }}">
+    <meta property="twitter:title" content="{{ self.title() }}">
+
+    <meta property="og:description" content="IITC is a browser add-on that modifies the Ingress intel map">
+    <meta name="description" content="IITC is a browser add-on that modifies the Ingress intel map">
+
+    <meta property="og:image" content="apple-touch-icon-precomposed.png">
+    <meta property="twitter:image" content="apple-touch-icon-precomposed.png">
+</head>
+<body>
+    <header>
+        <ul id="slide-out" class="sidenav sidenav-fixed blue-grey lighten-5">
+            <li class="logo">
+                <a id="logo-container" href="/" class="brand-logo">
+                    <object id="front-page-logo" type="image/svg+xml" data="img/iitc-logo.svg">Your browser does not support SVG</object>
+                </a>
+            </li>
+            <li><a {% if active_page == "index.html" %}class="active" {% endif %}href="/"><i class="material-icons">home</i> Home</a></li>
+            <li><a {% if active_page == "faq.html" %}class="active" {% endif %}href="faq.html"><i class="material-icons">help_outline</i> FAQ</a></li>
+            <li><a href="#" onclick="return false" class="sidenav-download-button"><i class="material-icons">cloud_download</i> Downloads</a>
+                <div class="sidenav-download-submenu">
+                    <ul>
+                        <li><a {% if active_page == "download_desktop.html" %}class="active" {% endif %}href="download_desktop.html"><i class="material-icons">desktop_mac</i> Desktop</a></li>
+                        <li><a {% if active_page == "download_mobile.html" %}class="active" {% endif %}href="download_mobile.html"><i class="material-icons">smartphone</i> Mobile</a></li>
+                        <li><a {% if active_page == "download_test.html" %}class="active" {% endif %}href="#" class="disable"><i class="material-icons">build</i> Test Builds</a></li>
+                    </ul>
+                  </div>
+            </li>
+            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank"><i class="material-icons">developer_board</i> GitHub Repository</a></li>
+            <li><a {% if active_page == "about.html" %}class="active" {% endif %}href="about.html"><i class="material-icons">info_outline</i> About</a></li>
+            <!-- <li><a href="donate.html"><i class="material-icons">attach_money</i> Donate</a></li> -->
+        </ul>
+        <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><i class="material-icons">menu</i></a>
+    </header>
+    <main>
+        {% block head %}
+            <div class="section" id="index-banner">
+                <div class="container">
+                    <div class="row" style="margin-bottom: 0;">
+                        <div class="col s12 center-on-small-only">
+                            <h1 class="header">Ingress Intel Total Conversion <sup>Community&nbsp;Edition</sup></h1>
+                            <h4 class="light">A rewrite of the intel.ingress.com map</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="page-footer teal">
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <i class="medium material-icons left">warning</i>
+                    <p class="grey-text text-lighten-4">
+                        This site and the scripts are not officially affiliated with Ingress or Niantic Labs.
+                        Using these scripts is likely to be considered against the Ingress Terms of Service.
+                        Any use is at your own risk.</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.
+                <a class="grey-text text-lighten-4 right" href="https://github.com/IITC-CE/ingress-intel-total-conversion/blob/master/LICENSE">ISC License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/user.js?2"></script>
+</body>
+</html>

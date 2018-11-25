@@ -1,0 +1,24 @@
+{% extends "__base__.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12 center-on-small-only">
+                <div class="section">
+                    <p><abbr title="Ingress Intel Total Conversion">IITC</abbr> is a browser add-on that modifies
+                    the Ingress intel map.
+                    It is faster than the standard site, and offers many more features.
+                    It is available for <a href="desktop.html">desktop browsers</a>, such as Firefox and Chrome,
+                    and as a <a href="mobile.html">mobile application</a>.</p>
+                    <p>Follow the <a href="https://teleg.run/iitc_news" target="_blank"><img class="telegram-icon" src="img/icon-telegram.svg" alt="logo telegram"> IITC channel</a> for release announcements.</p>
+                </div>
+                {{ telegram_widget }}
+            </div>
+        </div>
+    </div>
+
+    <div class="carousel carousel-slider">
+        {% for item in index_carousel %}
+        <img class="carousel-item" draggable="false" src="{{ item }}">
+        {% endfor %}
+    </div>
+{% endblock %}

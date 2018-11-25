@@ -1,0 +1,201 @@
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+    src: local('Material Icons'),
+        local('MaterialIcons-Regular'),
+        url(iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+        url(iconfont/MaterialIcons-Regular.woff) format('woff'),
+        url(iconfont/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+
+
+header, main, footer {
+    padding-left: 300px;
+}
+
+@media only screen and (max-width : 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+a.sidenav-trigger.top-nav {
+    position: absolute;
+    text-align: center;
+    height: 48px;
+    width: 48px;
+    top: 18px;
+    float: none;
+    margin-left: 1.5rem;
+    color: #fff;
+    font-size: 36px;
+    z-index: 2;
+}
+
+a.sidenav-trigger.top-nav i {
+    font-size: 32px;
+}
+
+#index-banner {
+    border-bottom: 1px solid rgba(0,0,0,0.14);
+    background: #0e3d4e url("../img/background.jpg");
+    background-size: cover;
+    color: white;
+}
+
+#index-banner .light {
+    font-size: 2rem;
+    line-height: 100%;
+    margin-bottom: 2.8rem;
+}
+
+.header {
+    font-weight: 300;
+    font-size: 3.0rem;
+    line-height: 110%;
+    text-shadow: 0 0 20px #000;
+}
+
+.container {
+    margin:0 auto;
+    max-width:1280px;
+    width:90%
+}
+
+.row .col {
+    float: left;
+    box-sizing: border-box;
+    padding: 0 .75rem;
+    min-height: 1px;
+}
+
+.header sup {
+    font-size: 35%;
+    top: -1.75em;
+}
+
+.carousel {
+    margin-top: 3em;
+    margin-bottom: 4em;
+}
+
+.carousel.carousel-slider .carousel-item {
+    width: auto;
+}
+
+.carousel .carousel-item {
+    height: 100%;
+    width: auto;
+}
+
+.carousel img {
+     -webkit-user-select:none;
+     -khtml-user-select:none;
+     -moz-user-select:none;
+     -o-user-select:none;
+      user-select:none;
+      pointer-events:none
+}
+
+.carousel img::selection {
+    background: transparent;
+}
+
+footer i.medium {
+    line-height: 1.3em;
+}
+
+.telegram-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: text-bottom;
+}
+
+.sidenav-download-button {
+    cursor: default;
+}
+
+.sidenav-download-submenu li {
+    background: rgba(0,0,0,0.05);
+}
+
+.sidenav-download-submenu li a {
+    padding-left: 50px;
+}
+
+.sidenav .active {
+    background-color: rgba(0,0,0,0.05);
+}
+
+#logo-container {
+    height: 100px;
+    background: black;
+    text-align: center;
+    padding: 20px;
+}
+
+#front-page-logo {
+    height: 100%;
+    pointer-events: none;
+}
+
+
+
+.collapsible-body {
+    font-weight: 300;
+}
+
+.tgme_widget_message {
+    max-width: 700px;
+    margin: auto;
+}
+
+.plugins_info {
+    font-weight: 300;
+    font-size: 90%;
+}
+
+.category_header {
+    background-color: rgba(0,0,0,0.05);
+}
+.plugin_desc {
+    font-style: italic;
+}

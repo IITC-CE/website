@@ -1,0 +1,3 @@
+static/*.html
+static/build/release/*
+static/build/test/*
