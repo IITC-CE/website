@@ -71,7 +71,7 @@ def parse_build(release_type):
 
     folder = arguments['--static'] + "/build/" + release_type + "/"
     info = parse_user_script(folder + "total-conversion-build.user.js")
-    data['release_iitc_version'] = info['@version']
+    data[release_type+'_iitc_version'] = info['@version']
 
     plugins = os.listdir(folder + "plugins")
     plugins = filter(lambda x: x.endswith('.user.js'), plugins)
@@ -122,6 +122,10 @@ def generate_page(page):
 
     if page == 'download_desktop.html':
         data = parse_build('release')
+        markers.update(data)
+
+    if page == 'test_builds.html':
+        data = parse_build('test')
         markers.update(data)
 
     html = template.render(markers)
