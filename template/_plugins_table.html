@@ -15,7 +15,7 @@
                 <td class="category_name">{{ name }}</td>
                 <td colspan="3">{{ category.desc }}</td>
             </tr>
-            {% for item in category.plugins|sort(attribute='name') %}
+            {% for item in category.plugins %}
                 <tr style="border-bottom: none;" class="plugins_info">
                     <td><strong>{{ item.name }}</strong></td>
                     <td>{{ item.id }}</td>

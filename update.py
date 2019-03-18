@@ -78,9 +78,11 @@ def parse_build(release_type):
     for filename in plugins:
         info = parse_user_script(folder + "plugins/" + filename)
         category = info.get('@category')
-        category = re.sub('[^A-z0-9 -]', '', category).strip()
-        if not category:
+        if category:
+            category = re.sub('[^A-z0-9 -]', '', category).strip()
+        else:
             category = "Misc"
+
         if category not in data:
             data[category] = {
                 'name': category,
@@ -96,6 +98,7 @@ def parse_build(release_type):
         })
 
     data = sort_categories(data)
+    data = sort_plugins(data)
     return {
         release_type+'_plugins': data,
         release_type+'_iitc_version': iitc_version
@@ -103,20 +106,28 @@ def parse_build(release_type):
 
 
 # Sort categories alphabetically
-def sort_categories(unsorted_categories):
+def sort_categories(unsorted_data):
     # Categories that should always be last
     last = ["Misc", "Obsolete", "Deleted"]
     data = {}
 
-    raw_data = sorted(unsorted_categories.items())
+    raw_data = sorted(unsorted_data.items())
     for category_name, category_data in raw_data:
         if category_name not in last:
             data[category_name] = category_data
 
     for category_name in last:
-        if category_name in unsorted_categories:
-            data[category_name] = unsorted_categories[category_name]
+        if category_name in unsorted_data:
+            data[category_name] = unsorted_data[category_name]
 
+    return data
+
+
+# Sort categories alphabetically
+def sort_plugins(data):
+    for category_name, category_data in data.items():
+        plugins = sorted(category_data['plugins'], key=lambda x: x['name'].lower())
+        data[category_name]['plugins'] = plugins
     return data
 
 
