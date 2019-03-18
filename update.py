@@ -1,6 +1,6 @@
 """
 Usage:
-  main.py --template=<path> --static=<path> --config=FILE --page=<pg>
+  main.py --template=<path> --static=<path> --config=FILE --page=<pg> [--meta]
 
 Options:
   -h --help
@@ -143,6 +143,26 @@ def get_telegram_widget(channel, _id):
         return html
 
 
+def save_meta(data, release_type):
+    # File to store full information about categories and plugins
+    path_build_meta = arguments['--static'] + "/" + release_type + ".json"
+    with open(path_build_meta, "w") as fp:
+        json.dump(data, fp, indent=1)
+
+    # File to store the release number of different builds
+    path_updates_meta = arguments['--static'] + "/updates.json"
+    if os.path.isfile(path_updates_meta):
+        with open(path_updates_meta, 'r') as fp:
+            updates_data = json.load(fp)
+    else:
+        updates_data = {}
+
+    updates_data[release_type] = data[release_type+'_iitc_version']
+
+    with open(path_updates_meta, "w") as fp:
+        json.dump(updates_data, fp)
+
+
 def generate_page(page):
     template = env.get_template(page)
 
@@ -161,13 +181,17 @@ def generate_page(page):
             return
         markers['telegram_widget'] = widget
 
-    if page == 'download_desktop.html':
+    if page == "download_desktop.html":
         data = parse_build('release')
         markers.update(data)
+        if arguments['--meta']:
+            save_meta(data, "release")
 
     if page == 'test_builds.html':
         data = parse_build('test')
         markers.update(data)
+        if arguments['--meta']:
+            save_meta(data, "test")
 
     html = template.render(markers)
     path = arguments['--static'] + "/" + page
@@ -188,11 +212,11 @@ if __name__ == '__main__':
 
     if arguments['--page'] == "all":
         files = os.listdir(arguments['--template'])
-        files = filter(lambda x: x.endswith('.html'), files)
+        files = filter(lambda x: x.endswith(".html"), files)
     else:
-        files = [arguments['--page'] + '.html']
+        files = [arguments['--page'] + ".html"]
 
     for _page in files:
-        if _page == "__base__.html":
+        if _page.startswith("_"):
             continue
         generate_page(_page)
