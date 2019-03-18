@@ -20,7 +20,7 @@
                     <td><strong>{{ item.name }}</strong></td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.version }}</td>
-                    <td rowspan="2"><a class="btn btn-floating btn-large" href="/build/test/plugins/{{ item.filename }}"><i class="material-icons">file_download</i></a></td>
+                    <td rowspan="2"><a class="btn btn-floating btn-large" href="/build/{{ build_type }}/plugins/{{ item.filename }}"><i class="material-icons">file_download</i></a></td>
                 </tr>
                 <tr class="plugins_info">
                     <td colspan="3" class="plugin_desc">{{ item.desc }}</td>

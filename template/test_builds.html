@@ -37,7 +37,7 @@
         <div class="section">
             <h6>Plugins</h6>
             <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
-            {% with plugins=test_plugins %}
+            {% with plugins=test_plugins, build_type="test" %}
             {% include '_plugins_table.html' %}
             {% endwith %}
         </div>
