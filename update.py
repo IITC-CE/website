@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 import urllib.request
 import json
 import os
+import re
 
 
 def save_config():
@@ -33,60 +34,89 @@ def parse_user_script(path):
 
 def parse_build(release_type):
     data = {
-        release_type + '_plugins': {
-            "Portal Info": {'name': "Portal Info",
-                            'desc': "Enhanced information on the selected portal",
-                            'plugins': []},
-            "Info": {'name': "Info",
-                     'desc': "Display additional information",
-                     'plugins': []},
-            "Keys": {'name': "Keys",
-                     'desc': "Manual key management",
-                     'plugins': []},
-            "Controls": {'name': "Controls",
-                         'desc': "Map controls/widgets",
-                         'plugins': []},
-            "Highlighter": {'name': "Highlighter",
-                            'desc': "Portal highlighters",
-                            'plugins': []},
-            "Layer": {'name': "Layer",
-                      'desc': "Additional map layers",
-                      'plugins': []},
-            "Map Tiles": {'name': "Map Tiles",
-                          'desc': "Alternative map layers",
-                          'plugins': []},
-            "Tweaks": {'name': "Tweaks",
-                       'desc': "Adjust IITC settings",
-                       'plugins': []},
-            "Misc": {'name': "Misc",
-                     'desc': "Unclassified plugins",
-                     'plugins': []},
-            "Obsolete": {'name': "Obsolete",
-                         'desc': "Plugins that are no longer recommended, due to being superceded by others or similar",
-                         'plugins': []},
-            "Deleted": {'name': "Deleted",
-                        'desc': "Deleted plugins - listed here for reference only. No download available",
+        "Portal Info": {'name': "Portal Info",
+                        'desc': "Enhanced information on the selected portal",
                         'plugins': []},
-        }}
+        "Info": {'name': "Info",
+                 'desc': "Display additional information",
+                 'plugins': []},
+        "Keys": {'name': "Keys",
+                 'desc': "Manual key management",
+                 'plugins': []},
+        "Controls": {'name': "Controls",
+                     'desc': "Map controls/widgets",
+                     'plugins': []},
+        "Highlighter": {'name': "Highlighter",
+                        'desc': "Portal highlighters",
+                        'plugins': []},
+        "Layer": {'name': "Layer",
+                  'desc': "Additional map layers",
+                  'plugins': []},
+        "Map Tiles": {'name': "Map Tiles",
+                      'desc': "Alternative map layers",
+                      'plugins': []},
+        "Tweaks": {'name': "Tweaks",
+                   'desc': "Adjust IITC settings",
+                   'plugins': []},
+        "Misc": {'name': "Misc",
+                 'desc': "Unclassified plugins",
+                 'plugins': []},
+        "Obsolete": {'name': "Obsolete",
+                     'desc': "Plugins that are no longer recommended, due to being superceded by others or similar",
+                     'plugins': []},
+        "Deleted": {'name': "Deleted",
+                    'desc': "Deleted plugins - listed here for reference only. No download available",
+                    'plugins': []},
+    }
 
     folder = arguments['--static'] + "/build/" + release_type + "/"
     info = parse_user_script(folder + "total-conversion-build.user.js")
-    data[release_type+'_iitc_version'] = info['@version']
+    iitc_version = info['@version']
 
     plugins = os.listdir(folder + "plugins")
     plugins = filter(lambda x: x.endswith('.user.js'), plugins)
     for filename in plugins:
         info = parse_user_script(folder + "plugins/" + filename)
         category = info.get('@category')
-        if not category or category not in data[release_type + '_plugins']:
+        category = re.sub('[^A-z0-9 -]', '', category).strip()
+        if not category:
             category = "Misc"
-        data[release_type + '_plugins'][category]['plugins'].append({
-            'name': info['@name'],
+        if category not in data:
+            data[category] = {
+                'name': category,
+                'desc': "",
+                'plugins': []}
+
+        data[category]['plugins'].append({
+            'name': info['@name'].replace("IITC plugin: ", "").replace("IITC Plugin: ", ""),
             'id': info['@id'],
             'version': info['@version'],
             'filename': filename,
             'desc': info['@description'],
         })
+
+    data = sort_categories(data)
+    return {
+        release_type+'_plugins': data,
+        release_type+'_iitc_version': iitc_version
+    }
+
+
+# Sort categories alphabetically
+def sort_categories(unsorted_categories):
+    # Categories that should always be last
+    last = ["Misc", "Obsolete", "Deleted"]
+    data = {}
+
+    raw_data = sorted(unsorted_categories.items())
+    for category_name, category_data in raw_data:
+        if category_name not in last:
+            data[category_name] = category_data
+
+    for category_name in last:
+        if category_name in unsorted_categories:
+            data[category_name] = unsorted_categories[category_name]
+
     return data
 
 
