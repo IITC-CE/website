@@ -138,7 +138,7 @@ def get_telegram_widget(channel, _id):
     html = data.decode('utf-8')
 
     if "tgme_widget_message_author" in html:
-        html = html[html.find('<div class="tgme_widget_message"'):]
+        html = html[html.find('<div class="tgme_widget_message js-widget_message"'):]
         html = html[:html.find('<script')]
         return html
 
