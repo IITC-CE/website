@@ -176,7 +176,9 @@ footer i.medium {
     height: 100%;
     pointer-events: none;
 }
-
+.fullwidth-image {
+    width: 100%;
+}
 
 
 .collapsible-body {
