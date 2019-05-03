@@ -181,7 +181,7 @@ def generate_page(page):
             return
         markers['telegram_widget'] = widget
 
-    if page == "download_desktop.html":
+    if page in ["download_desktop.html", "download_mobile.html"]:
         data = parse_build('release')
         markers.update(data)
         if arguments['--meta']:
