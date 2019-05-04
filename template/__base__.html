@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/user.css?2"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/user.css?3"  media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="css/telegram-widget-frame.css"  media="screen,projection"/>
 
     <!--Let browser know website is optimized for mobile-->
@@ -37,6 +37,7 @@
                 </a>
             </li>
             <li><a {% if active_page == "index.html" %}class="active" {% endif %}href="/"><i class="material-icons">home</i> Home</a></li>
+            <li><a {% if active_page == "release_notes.html" %}class="active" {% endif %}href="release_notes.html"><i class="material-icons">new_releases</i> Release notes</a></li>
             <li><a {% if active_page == "faq.html" %}class="active" {% endif %}href="faq.html"><i class="material-icons">help_outline</i> FAQ</a></li>
             <li><a href="#" onclick="return false" class="sidenav-download-button"><i class="material-icons">cloud_download</i> Downloads</a>
                 <div class="sidenav-download-submenu">

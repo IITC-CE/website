@@ -179,7 +179,10 @@ footer i.medium {
 .fullwidth-image {
     width: 100%;
 }
-
+.changelog-header {
+    display: inline-block;
+    margin-right: 1em;
+}
 
 .collapsible-body {
     font-weight: 300;
