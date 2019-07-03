@@ -18,13 +18,13 @@
                 <div class="card-panel teal lighten-5">
                     <span class="">Note: Test builds have recently been changed so they can be installed alongside the standard IITC builds. Test builds will be called "IITC Mobile Test" - while the regular release builds remain named "IITC Mobile"</span>
                 </div>
-                <p>IITC Mobile version  {{ test_iitc_version }}</p>
+                <p>IITC Mobile version  {{ iitc_version }}</p>
                 <a class="btn" href="/build/test/IITC_Mobile-debug.apk">Download</a>
             </div>
 
             <div class="section">
                 <h5>Desktop test build</h5>
-                <p>IITC Desktop version  {{ test_iitc_version }}</p>
+                <p>IITC Desktop version  {{ iitc_version }}</p>
                 <a class="btn" href="/build/test/total-conversion-build.user.js">Download</a>
             </div>
 
@@ -37,7 +37,7 @@
         <div class="section">
             <h6>Plugins</h6>
             <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
-            {% with plugins=test_plugins, build_type="test" %}
+            {% with build_type="test" %}
             {% include '_plugins_table.html' %}
             {% endwith %}
         </div>

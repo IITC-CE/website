@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Usage:
   main.py --template=<path> --static=<path> --config=FILE --page=<pg> [--meta]
@@ -15,7 +17,7 @@ import re
 
 def save_config():
     with open(arguments['--config'], 'w') as _f:
-        json.dump(config, _f)
+        json.dump(config, _f, indent=1)
 
 
 def parse_user_script(path):
@@ -35,37 +37,69 @@ def parse_user_script(path):
 def parse_build(release_type):
     data = {
         "Portal Info": {'name': "Portal Info",
-                        'desc': "Enhanced information on the selected portal",
+                        'name:ru': "Информация о портале",
+                        'description': "Enhanced information on the selected portal",
+                        'description:ru': "Подробная информация на выбранном портале",
                         'plugins': []},
         "Info": {'name': "Info",
-                 'desc': "Display additional information",
+                 'name:ru': "Информация",
+                 'description': "Display additional information",
+                 'description:ru': "Отображение дополнительной информации",
                  'plugins': []},
         "Keys": {'name': "Keys",
-                 'desc': "Manual key management",
+                 'name:ru': "Ключи",
+                 'description': "Manual key management",
+                 'description:ru': "Ручное управление ключами",
                  'plugins': []},
+        "Cache": {'name': "Cache",
+                  'name:ru': "Кэш",
+                  'description': "Data caching to prevent reloading",
+                  'description:ru': "Кэширование данных для предотвращения повторной загрузки",
+                  'plugins': []},
         "Controls": {'name': "Controls",
-                     'desc': "Map controls/widgets",
+                     'name:ru': "Управление",
+                     'description': "Map controls/widgets",
+                     'description:ru': "Виджеты для управления картой",
                      'plugins': []},
+        "Draw": {'name': "Draw",
+                 'name:ru': "Рисование",
+                 'description': "Allow drawing things onto the current map so you may plan your next move",
+                 'description:ru': "Позволяет рисовать на текущей карте, чтобы вы могли спланировать свой следующий шаг",
+                 'plugins': []},
         "Highlighter": {'name': "Highlighter",
-                        'desc': "Portal highlighters",
+                        'name:ru': "Подсветка",
+                        'description': "Portal highlighters",
+                        'description:ru': "Подсветка порталов",
                         'plugins': []},
         "Layer": {'name': "Layer",
-                  'desc': "Additional map layers",
+                  'name:ru': "Слои",
+                  'description': "Additional map layers",
+                  'description:ru': "Дополнительные слои карт",
                   'plugins': []},
         "Map Tiles": {'name': "Map Tiles",
-                      'desc': "Alternative map layers",
+                      'name:ru': "Провайдеры карт",
+                      'description': "Alternative map layers",
+                      'description:ru': "Альтернативные провайдеры карт",
                       'plugins': []},
         "Tweaks": {'name': "Tweaks",
-                   'desc': "Adjust IITC settings",
+                   'name:ru': "Настройки",
+                   'description': "Adjust IITC settings",
+                   'description:ru': "Настройка параметров IITC",
                    'plugins': []},
         "Misc": {'name': "Misc",
-                 'desc': "Unclassified plugins",
+                 'name:ru': "Разное",
+                 'description': "Unclassified plugins",
+                 'description:ru': "Неклассифицированные плагины",
                  'plugins': []},
         "Obsolete": {'name': "Obsolete",
-                     'desc': "Plugins that are no longer recommended, due to being superceded by others or similar",
+                     'name:ru': "Устаревшее",
+                     'description': "Plugins that are no longer recommended, due to being superceded by others or similar",
+                     'description:ru': "Плагины, которые больше не рекомендуются в связи с заменой другими или аналогичными плагинами",
                      'plugins': []},
         "Deleted": {'name': "Deleted",
-                    'desc': "Deleted plugins - listed here for reference only. No download available",
+                    'name:ru': "Удалённое",
+                    'description': "Deleted plugins – listed here for reference only. No download available",
+                    'description:ru': "Удаленные плагины – перечислены здесь только для справки. Нет возможности скачать",
                     'plugins': []},
     }
 
@@ -86,22 +120,25 @@ def parse_build(release_type):
         if category not in data:
             data[category] = {
                 'name': category,
-                'desc': "",
+                'description': "",
                 'plugins': []}
 
-        data[category]['plugins'].append({
-            'name': info['@name'].replace("IITC plugin: ", "").replace("IITC Plugin: ", ""),
+        plugin = {
             'id': info['@id'],
             'version': info['@version'],
             'filename': filename,
-            'desc': info['@description'],
-        })
+        }
+        for key, value in info.items():
+            if key.startswith("@name") or key.startswith("@description"):
+                plugin[key[1:]] = value.replace("IITC plugin: ", "").replace("IITC Plugin: ", "")
+
+        data[category]['plugins'].append(plugin)
 
     data = sort_categories(data)
     data = sort_plugins(data)
     return {
-        release_type+'_plugins': data,
-        release_type+'_iitc_version': iitc_version
+        'categories': data,
+        'iitc_version': iitc_version
     }
 
 
@@ -145,22 +182,9 @@ def get_telegram_widget(channel, _id):
 
 def save_meta(data, release_type):
     # File to store full information about categories and plugins
-    path_build_meta = arguments['--static'] + "/" + release_type + ".json"
+    path_build_meta = arguments['--static'] + "/build/" + release_type + "/meta.json"
     with open(path_build_meta, "w") as fp:
         json.dump(data, fp, indent=1)
-
-    # File to store the release number of different builds
-    path_updates_meta = arguments['--static'] + "/updates.json"
-    if os.path.isfile(path_updates_meta):
-        with open(path_updates_meta, 'r') as fp:
-            updates_data = json.load(fp)
-    else:
-        updates_data = {}
-
-    updates_data[release_type] = data[release_type+'_iitc_version']
-
-    with open(path_updates_meta, "w") as fp:
-        json.dump(updates_data, fp)
 
 
 def minimal_markdown2html(string):
