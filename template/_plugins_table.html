@@ -1,32 +1,45 @@
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>ID</th>
-            <th>Version</th>
-            <th>Download</th>
-        </tr>
-    </thead>
+{% for name, category in categories.items() %}
+    {% if category.plugins %}
 
-    <tbody>
-    {% for name, category in categories.items() %}
-        {% if category.plugins %}
-            <tr class="category_header">
-                <td class="category_name">{{ category.name }}</td>
-                <td colspan="3">{{ category.description }}</td>
-            </tr>
-            {% for item in category.plugins %}
-                <tr style="border-bottom: none;" class="plugins_info">
-                    <td><strong>{{ item.name }}</strong></td>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.version }}</td>
-                    <td rowspan="2"><a class="btn btn-floating btn-large" href="/build/{{ build_type }}/plugins/{{ item.filename }}"><i class="material-icons">file_download</i></a></td>
-                </tr>
-                <tr class="plugins_info">
-                    <td colspan="3" class="plugin_desc">{{ item.description }}</td>
-                </tr>
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
-    </tbody>
-</table>
+        <div class="section">
+
+            <div class="col s12 plugins_category">
+                <div class="container">
+                    <div class="category_name">{{ category.name }}</div>
+                    <div class="category_description">{{ category.description }}</div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row plugins_container grid" data-masonry='{ "itemSelector": ".grid-item", "columnWidth": ".grid-item", "percentPosition": true }'>
+
+                    {% for item in category.plugins %}
+                            <div class="grid-item">
+                                <div class="col s12">
+                                    <div class="card">
+                                        <div class="card-image" style="background-image: url()">
+                                            <div class="card-shadow"></div>
+                                            <span class="card-title">
+                                                {{ item.name }}<br>
+                                                <small class="card-plugin-id">{{ item.id }}</small>
+                                            </span>
+
+                                            <!--<a class="btn-floating halfway-fab waves-effect waves-light amber accent-4 card-second-icon"><i class="material-icons">info_outline</i></a>-->
+                                            <a class="btn-floating halfway-fab waves-effect waves-light" href="/build/{{ build_type }}/plugins/{{ item.filename }}"><i class="material-icons">file_download</i></a>
+                                        </div>
+                                        <div class="card-content">
+                                            <p>{{ item.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+    {% endif %}
+{% endfor %}
+
+<script src="js/masonry.pkgd.min.js"></script>

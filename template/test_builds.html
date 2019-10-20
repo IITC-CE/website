@@ -3,46 +3,46 @@
 {% block content %}
 
     <div class="container">
-    <div class="row">
-    <div class="col s12">
-        <div class="section">
-            <h2 class="hover">Test Builds</h2>
-            <p>These test builds are made available for those who would like to try the latest development code without needing to build it yourself. Automated scripts should update these builds within an hour of a change being <a href="https://github.com/IITC-CE/ingress-intel-total-conversion/commits/master" target="_blank">committed</a> to Github. </p>
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <h2 class="hover">Test Builds</h2>
+                    <p>These test builds are made available for those who would like to try the latest development code without needing to build it yourself. Automated scripts should update these builds within an hour of a change being <a href="https://github.com/IITC-CE/ingress-intel-total-conversion/commits/master" target="_blank">committed</a> to Github. </p>
 
-            <div class="card-panel red lighten-5">
-                <span class="">Test builds are built automatically. They could be broken at any time. If you have any doubts about using unstable software, please use the standard <a href="download_desktop.html">desktop</a> or <a href="download_mobile.html">mobile</a> builds.</span>
-            </div>
+                    <div class="card-panel red lighten-5">
+                        <span class="">Test builds are built automatically. They could be broken at any time. If you have any doubts about using unstable software, please use the standard <a href="download_desktop.html">desktop</a> or <a href="download_mobile.html">mobile</a> builds.</span>
+                    </div>
 
-            <div class="section">
-                <h5>Mobile test build</h5>
-                <div class="card-panel teal lighten-5">
-                    <span class="">Note: Test builds have recently been changed so they can be installed alongside the standard IITC builds. Test builds will be called "IITC Mobile Test" - while the regular release builds remain named "IITC Mobile"</span>
+                    <div class="section">
+                        <h5>Mobile test build</h5>
+                        <div class="card-panel teal lighten-5">
+                            <span class="">Note: Test builds have recently been changed so they can be installed alongside the standard IITC builds. Test builds will be called "IITC Mobile Test" - while the regular release builds remain named "IITC Mobile"</span>
+                        </div>
+                        <p>IITC Mobile version  {{ iitc_version }}</p>
+                        <a class="btn" href="/build/test/IITC_Mobile-debug.apk">Download</a>
+                    </div>
+
+                    <div class="section">
+                        <h5>Desktop test build</h5>
+                        <p>IITC Desktop version  {{ iitc_version }}</p>
+                        <a class="btn" href="/build/test/total-conversion-build.user.js">Download</a>
+                    </div>
+
+                    <div class="section">
+                        <h5>Archive</h5>
+                        <p>You can also get previous developer builds</p>
+                        <a class="btn" href="/build/archive/">Browse</a>
+                    </div>
                 </div>
-                <p>IITC Mobile version  {{ iitc_version }}</p>
-                <a class="btn" href="/build/test/IITC_Mobile-debug.apk">Download</a>
-            </div>
-
-            <div class="section">
-                <h5>Desktop test build</h5>
-                <p>IITC Desktop version  {{ iitc_version }}</p>
-                <a class="btn" href="/build/test/total-conversion-build.user.js">Download</a>
-            </div>
-
-            <div class="section">
-                <h5>Archive</h5>
-                <p>You can also get previous developer builds</p>
-                <a class="btn" href="/build/archive/">Browse</a>
+                <div class="section">
+                    <h6>Plugins</h6>
+                    <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
+                </div>
             </div>
         </div>
-        <div class="section">
-            <h6>Plugins</h6>
-            <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
-            {% with build_type="test" %}
-            {% include '_plugins_table.html' %}
-            {% endwith %}
-        </div>
     </div>
-    </div>
-    </div>
+    {% with build_type="test" %}
+    {% include '_plugins_table.html' %}
+    {% endwith %}
 
 {% endblock %}

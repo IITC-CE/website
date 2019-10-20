@@ -3,50 +3,51 @@
 {% block content %}
 
     <div class="container">
-    <div class="row">
-    <div class="col s12">
-        <div class="section">
-            <h2 class="hover">IITC-Button browser add-on</h2>
-            <p>IITC-Button make it easier to install IITC and manage plugins. Now, to install a new plugin, simply select it from the list.</p>
-            <a href="img/iitc-button.png" target="_blank"><img class="fullwidth-image" src="img/iitc-button.png" alt="IITC-Button addon"></a>
-            <h5>Get it on <a href="https://addons.mozilla.org/firefox/addon/iitc-button" target="_blank">Firefox Add-ons</a> and <a href="https://chrome.google.com/webstore/detail/iitc-button/febaefghpimpenpigafpolgljcfkeakn" target="_blank">Chrome Web Store</a>.</h5>
-        </div>
-        <div class="section">
-            <h5>— or —</h5>
-        </div>
-        <div class="section">
-            <h2 class="hover">IITC UserScript</h2>
-            <h5>Requirements</h5>
-            <p>IITC will work in the Chrome or Firefox browsers. It should also work with Opera and other browsers supporting userscripts, but these are far less tested. For Android phones, please see the <a href="download_mobile.html">mobile</a> page.</p>
-            <h6>Firefox</h6>
-            <p>Install the <a href="https://addons.mozilla.org/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> Firefox add-on. Once installed, click the "Download" then "Install" on the dialog.</p>
-            <h6>Chrome</h6>
-            <p>Install the <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo">Tampermonkey</a> Chrome extension. Once installed, click on the "Download" button below and follow the instructions.</p>
-            <h6>Other browsers</h6>
-            <p>Check your browser documentation for details on installing userscripts.</p>
-        </div>
-        <div class="section">
-            <h5>Updating</h5>
-            <p>If IITC is already installed, it's easy to update in most cases:</p>
-            <h6>Firefox and Greasemonkey</h6>
-            <p>Open the Greasemonkey menu and choose "Manage user scripts". Now click the cog icon and choose "Check for updates". However, sometimes Greasemonkey fails to update all scripts. Check the date+time listed at the start of the description (e.g. "[jonatkins-2013-08-23-042102]") and if any have failed to update then manually download from the list below. Once updated, reload the Intel map and the new version will be active.</p>
-            <h6>Chrome and Tampermonkey</h6>
-            <p>Open the Tampermonkey menu and choose "Check for userscript updates". If you have a lot of plugins, or other scripts installed, this can be a little slow. Wait 30 seconds, then try clicking the Tampermonkey icon again; if the menu opens, it's finished updating. Once complete, reload the Ingress intel map to use the new version.</p>
-        </div>
-        <div class="section">
-            <h5>Download</h5>
-            <p>IITC version {{ iitc_version }}</p>
-            <a class="btn" href="/build/release/total-conversion-build.user.js">Download</a>
-        </div>
-        <div class="section">
-            <h6>Plugins</h6>
-            <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
-            {% with build_type="release" %}
-            {% include '_plugins_table.html' %}
-            {% endwith %}
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <h2 class="hover">IITC-Button browser add-on</h2>
+                    <p>IITC-Button make it easier to install IITC and manage plugins. Now, to install a new plugin, simply select it from the list.</p>
+                    <a href="img/iitc-button.png" target="_blank"><img class="fullwidth-image" src="img/iitc-button.png" alt="IITC-Button addon"></a>
+                    <h5>Get it on <a href="https://addons.mozilla.org/firefox/addon/iitc-button" target="_blank">Firefox Add-ons</a> and <a href="https://chrome.google.com/webstore/detail/iitc-button/febaefghpimpenpigafpolgljcfkeakn" target="_blank">Chrome Web Store</a>.</h5>
+                </div>
+                <div class="section">
+                    <h5>— or —</h5>
+                </div>
+                <div class="section">
+                    <h2 class="hover">IITC UserScript</h2>
+                    <h5>Requirements</h5>
+                    <p>IITC will work in the Chrome or Firefox browsers. It should also work with Opera and other browsers supporting userscripts, but these are far less tested. For Android phones, please see the <a href="download_mobile.html">mobile</a> page.</p>
+                    <h6>Firefox</h6>
+                    <p>Install the <a href="https://addons.mozilla.org/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> Firefox add-on. Once installed, click the "Download" then "Install" on the dialog.</p>
+                    <h6>Chrome</h6>
+                    <p>Install the <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo">Tampermonkey</a> Chrome extension. Once installed, click on the "Download" button below and follow the instructions.</p>
+                    <h6>Other browsers</h6>
+                    <p>Check your browser documentation for details on installing userscripts.</p>
+                </div>
+                <div class="section">
+                    <h5>Updating</h5>
+                    <p>If IITC is already installed, it's easy to update in most cases:</p>
+                    <h6>Firefox and Greasemonkey</h6>
+                    <p>Open the Greasemonkey menu and choose "Manage user scripts". Now click the cog icon and choose "Check for updates". However, sometimes Greasemonkey fails to update all scripts. Check the date+time listed at the start of the description (e.g. "[jonatkins-2013-08-23-042102]") and if any have failed to update then manually download from the list below. Once updated, reload the Intel map and the new version will be active.</p>
+                    <h6>Chrome and Tampermonkey</h6>
+                    <p>Open the Tampermonkey menu and choose "Check for userscript updates". If you have a lot of plugins, or other scripts installed, this can be a little slow. Wait 30 seconds, then try clicking the Tampermonkey icon again; if the menu opens, it's finished updating. Once complete, reload the Ingress intel map to use the new version.</p>
+                </div>
+                <div class="section">
+                    <h5>Download</h5>
+                    <p>IITC version {{ iitc_version }}</p>
+                    <a class="btn" href="/build/release/total-conversion-build.user.js">Download</a>
+                </div>
+                <div class="section">
+                    <h6>Plugins</h6>
+                    <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
-    </div>
+    {% with build_type="release" %}
+    {% include '_plugins_table.html' %}
+    {% endwith %}
+
 
 {% endblock %}
