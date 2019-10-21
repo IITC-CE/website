@@ -17,7 +17,7 @@
                             <div id="{{ item.id }}" class="scrollspy grid-item">
                                 <div class="col s12">
                                     <div class="card">
-                                        <div class="card-image" style="background-image: url()">
+                                        <div class="card-image" {% if item.image %}style="background-image: url({{ item.image }})"{% endif %}>
                                             <div class="card-shadow"></div>
                                             <span class="card-title">
                                                 {{ item.name }}<br>
