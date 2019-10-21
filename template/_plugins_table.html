@@ -3,9 +3,9 @@
 
         <div class="section">
 
-            <div class="col s12 plugins_category">
+            <div id="{{ category.name }}" class="scrollspy col s12 plugins_category">
                 <div class="container">
-                    <div class="category_name">{{ category.name }}</div>
+                    <a class="category_name" href="#{{ category.name }}">{{ category.name }}</a>
                     <div class="category_description">{{ category.description }}</div>
                 </div>
             </div>
@@ -14,14 +14,14 @@
                 <div class="row plugins_container grid" data-masonry='{ "itemSelector": ".grid-item", "columnWidth": ".grid-item", "percentPosition": true }'>
 
                     {% for item in category.plugins %}
-                            <div class="grid-item">
+                            <div id="{{ item.id }}" class="scrollspy grid-item">
                                 <div class="col s12">
                                     <div class="card">
                                         <div class="card-image" style="background-image: url()">
                                             <div class="card-shadow"></div>
                                             <span class="card-title">
                                                 {{ item.name }}<br>
-                                                <small class="card-plugin-id">{{ item.id }}</small>
+                                                <small class="card-plugin-id"><a href="#{{ item.id }}">{{ item.id }}</a></small>
                                             </span>
 
                                             <!--<a class="btn-floating halfway-fab waves-effect waves-light amber accent-4 card-second-icon"><i class="material-icons">info_outline</i></a>-->

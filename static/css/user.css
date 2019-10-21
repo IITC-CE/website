@@ -47,6 +47,10 @@ header, main, footer {
     }
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     display: flex;
     min-height: 100vh;
@@ -240,6 +244,10 @@ footer i.medium {
     width: 100%;
 }
 
+.card .card-title a {
+    color: #eee;
+}
+
 .card-plugin-id {
     display: block;
     line-height: 1.2em;
@@ -262,6 +270,9 @@ footer i.medium {
     .plugins_container .grid-item {
         width: 100%;
     }
+}
+.plugins_container .grid-item:target .card {
+    box-shadow: 0 5px 15px #1e8cb7;
 }
 
 
