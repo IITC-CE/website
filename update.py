@@ -111,6 +111,17 @@ def parse_build(release_type):
     plugins = filter(lambda x: x.endswith('.user.js'), plugins)
     for filename in plugins:
         info = parse_user_script(folder + "plugins/" + filename)
+
+        plugin_id = ''
+        if '@id' in info:
+            plugin_id = info['@id'].split("@")[0]
+
+        plugin_author = ''
+        if '@author' in info:
+            plugin_author = info['@author']
+        elif '@id' in info and len(info['@id'].split("@")) > 1:
+            plugin_author = info['@id'].split("@")[1]
+
         category = info.get('@category')
         if category:
             category = re.sub('[^A-z0-9 -]', '', category).strip()
@@ -124,7 +135,8 @@ def parse_build(release_type):
                 'plugins': []}
 
         plugin = {
-            'id': info['@id'],
+            'id': plugin_id,
+            'author': plugin_author,
             'version': info['@version'],
             'filename': filename,
         }
