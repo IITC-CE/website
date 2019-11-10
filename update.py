@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Usage:
-  main.py --template=<path> --static=<path> --config=FILE --page=<pg> [--meta]
+  main.py --template=<path> --static=<path> --config=FILE --page=<pg>
 
 Options:
   -h --help
@@ -13,6 +13,7 @@ import urllib.request
 import json
 import os
 import re
+import urllib.parse
 
 
 def save_config():
@@ -29,9 +30,8 @@ def parse_user_script(path):
             if "==/UserScript==" in line:
                 return data
 
-            line = line.strip()
-            sp = line.split()
-            data[sp[1]] = ' '.join(sp[2:])
+            sp = line.strip().split()
+            data[sp[1][1:]] = ' '.join(sp[2:])
 
 
 def parse_build(release_type):
@@ -104,29 +104,33 @@ def parse_build(release_type):
     }
 
     folder = arguments['--static'] + "/build/" + release_type + "/"
-    info = parse_user_script(folder + "total-conversion-build.user.js")
-    iitc_version = info['@version']
+    iitc_meta = parse_user_script(folder + "total-conversion-build.user.js")
+    iitc_version = iitc_meta['version']
 
     plugins = os.listdir(folder + "plugins")
     plugins = filter(lambda x: x.endswith('.user.js'), plugins)
     for filename in plugins:
-        info = parse_user_script(folder + "plugins/" + filename)
+        plugin = parse_user_script(folder + "plugins/" + filename)
 
         plugin_id = ''
-        if '@id' in info:
-            plugin_id = info['@id'].split("@")[0]
+        if 'id' in plugin:
+            plugin_id = plugin['id'].split("@")[0]
 
         plugin_author = ''
-        if '@author' in info:
-            plugin_author = info['@author']
-        elif '@id' in info and len(info['@id'].split("@")) > 1:
-            plugin_author = info['@id'].split("@")[1]
+        if 'author' in plugin:
+            plugin_author = plugin['author']
+        elif 'id' in plugin and len(plugin['id'].split("@")) > 1:
+            plugin_author = plugin['id'].split("@")[1]
 
-        category = info.get('@category')
+        category = plugin.get('category')
         if category:
             category = re.sub('[^A-z0-9 -]', '', category).strip()
         else:
             category = "Misc"
+
+        plugin_unique_id = plugin_id
+        if len(plugin_author):
+            plugin_unique_id = '_by_'.join([plugin_id, re.sub(r'[^A-z0-9_]', '', plugin_author)])
 
         if category not in data:
             data[category] = {
@@ -134,15 +138,15 @@ def parse_build(release_type):
                 'description': "",
                 'plugins': []}
 
-        plugin = {
+        plugin.update({
+            'unique_id': plugin_unique_id,
             'id': plugin_id,
             'author': plugin_author,
-            'version': info['@version'],
             'filename': filename,
-        }
-        for key, value in info.items():
-            if key.startswith("@name") or key.startswith("@description"):
-                plugin[key[1:]] = value.replace("IITC plugin: ", "").replace("IITC Plugin: ", "")
+        })
+        for key, value in plugin.items():
+            if key.startswith("name") or key.startswith("description"):
+                plugin[key] = value.replace("IITC plugin: ", "").replace("IITC Plugin: ", "")
 
         data[category]['plugins'].append(plugin)
 
@@ -190,13 +194,6 @@ def get_telegram_widget(channel, _id):
         html = html[html.find('<div class="tgme_widget_message js-widget_message"'):]
         html = html[:html.find('<script')]
         return html
-
-
-def save_meta(data, release_type):
-    # File to store full information about categories and plugins
-    path_build_meta = arguments['--static'] + "/build/" + release_type + "/meta.json"
-    with open(path_build_meta, "w") as fp:
-        json.dump(data, fp, indent=1)
 
 
 def minimal_markdown2html(string):
@@ -247,14 +244,10 @@ def generate_page(page):
     if page in ["download_desktop.html", "download_mobile.html"]:
         data = parse_build('release')
         markers.update(data)
-        if arguments['--meta']:
-            save_meta(data, "release")
 
     if page == 'test_builds.html':
         data = parse_build('test')
         markers.update(data)
-        if arguments['--meta']:
-            save_meta(data, "test")
 
     if page == 'release_notes.html':
         data = get_release_notes()

@@ -215,14 +215,8 @@ footer i.medium {
 }
 
 .plugins_container .card-title {
-    width: calc(100% - 10px);
     padding: 10px 10px 0 0;
-}
-
-.card-title-wrapper {
     overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 12px;
 }
 
 .card-plugin-name {
@@ -234,9 +228,13 @@ footer i.medium {
 }
 
 .card-title a {
-    white-space: nowrap;
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.card-title a span {
+    white-space: nowrap;
 }
 
 .plugins_container .card-buttons {
@@ -327,6 +325,11 @@ footer i.medium {
     font-size: 32px;
 }
 
+.card-icon img {
+    width: 32px;
+    height: 32px;
+}
+
 .card-content {
     padding: 0 10px;
     flex-grow: 1;
@@ -340,7 +343,20 @@ footer i.medium {
     margin: 8px 0;
 }
 
+.comments_counter {
+    display: none;
+}
+
 /* plugins category modal */
+.plugin_image {
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+.plugin_image img {
+    max-width: 100%;
+}
+
 .modal.bottom-sheet {
     max-height: 90%;
 }
