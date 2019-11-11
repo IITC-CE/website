@@ -15,6 +15,7 @@ import os
 import re
 import urllib.parse
 import copy
+import hashlib
 
 import box
 
@@ -22,6 +23,18 @@ import box
 def save_config():
     with open(arguments['--config'], 'w') as _f:
         json.dump(config, _f, indent=1)
+
+
+def md5sum(filename, blocksize=65536):
+    hash = hashlib.md5()
+    with open(filename, "rb") as f:
+        for block in iter(lambda: f.read(blocksize), b""):
+            hash.update(block)
+    return hash.hexdigest()
+
+
+def file_add_md5sum(filename):
+    return filename+"?"+md5sum(arguments['--static']+"/"+filename)
 
 
 def parse_user_script(path):
@@ -213,6 +226,7 @@ if __name__ == '__main__':
         loader=FileSystemLoader(arguments['--template']),
         trim_blocks=True
     )
+    env.filters['md5sum'] = file_add_md5sum
 
     if arguments['--page'] == "all":
         files = os.listdir(arguments['--template'])
