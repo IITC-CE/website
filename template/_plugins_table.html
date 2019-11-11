@@ -3,19 +3,18 @@
 
         <div class="section">
 
-            <div id="{{ category.name }}" class="scrollspy col s12 plugins_category">
+            <div id="{{ category.name+'_'+build_type }}" class="scrollspy col s12 plugins_category">
                 <div class="container">
-                    <a class="category_name" href="#{{ category.name }}">{{ category.name }}</a>
+                    <a class="category_name" href="#{{ category.name+'_'+build_type }}">{{ category.name }}</a>
                     <div class="category_description">{{ category.description }}</div>
                 </div>
             </div>
 
             <div class="container">
                 <div class="row plugins_container grid">
-
                     {% for item in category.plugins %}
 
-                        <div id='{{ item.unique_id }}' class="scrollspy grid-item">
+                        <div id="{{ item.unique_id+'_'+build_type }}" class="scrollspy grid-item">
                             <div class="card-plugin">
                                 <div class="card-header">
                                     <div class="card-icon">
@@ -28,20 +27,27 @@
 
                                     <div class="card-title">
                                         <div class="card-title-wrapper">
-                                            <div class="card-plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href='#{{ item.unique_id }}'><span>{{ item.name }}</span></a></div>
+                                            <div class="card-plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href="#{{ item.unique_id+'_'+build_type }}"><span>{{ item.name }}</span></a></div>
                                        <!-- {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;<a href="#{{ item.author }}">{{ item.author }}</a></small>{% endif %}-->
                                             {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;{{ item.author }}</small>{% endif %}
                                         </div>
                                     </div>
                                 </div>
 
-                                    <div class="card-content">
-                                        <p class="card-plugin-description overflow-plugin-description">{{ item.description }}</p>
+                                <div class="card-content">
+                                    <p class="card-plugin-description">{{ item.description }}</p>
+                                </div>
+                                <div class="card-buttons">
+                                    <div class="card-buttons-shadow">
+                                        {% if build_type == "store" %}
+                                            {% set plugin_comments_url = "https://iitc.modos189.ru/store.html?plugin="+item.unique_id %}
+                                        {% else %}
+                                            {% set plugin_comments_url = "https://iitc.modos189.ru/download_desktop.html?plugin="+item.unique_id+"_"+build_type %}
+                                        {% endif %}
+                                        <a class="card-plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ item.unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
+                                        <a class="card-plugin-install waves-effect waves-light" target="_blank" href="/build/{{ build_type }}/plugins/{{ item.filename }}" {% if item.version %}title="Install v{{ item.version }}"{% endif %}>Install</a>
                                     </div>
-                                    <div class="card-buttons">
-                                        <a class="card-plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ item.unique_id }}', 'modal_info_content')">Info&nbsp;<span class="comments_counter">(<span class="remark42__counter" data-url="https://iitc.modos189.ru/shop/{{ item.unique_id }}"></span>&nbsp;comments)</span></a>
-                                        <a class="card-plugin-install waves-effect waves-light" target="_blank" href="/build/{{ build_type }}/plugins/{{ item.filename }}">Install</a>
-                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -83,10 +89,3 @@
 
     {% endif %}
 {% endfor %}
-
-<div id="modal_info" class="modal bottom-sheet">
-    <div class="modal-content">
-        <div id="modal_info_content"></div>
-        <div id="remark42"></div>
-    </div>
-</div>

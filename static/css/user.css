@@ -204,6 +204,24 @@ footer i.medium {
     margin: 1.5rem 0;
 }
 
+.card-panel {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: 0 3px 5px #eee;
+}
+
+.top_zero {
+    margin-top: 0;
+}
+
+/* tabs */
+.tabs { height: 56px }
+.tabs .tab { line-height: 56px; height: 56px; background-color: #1e8cb733 }
+.tabs .tab a { color: #1e8cb7b3 }
+.tabs .tab a:hover, .tabs .tab a.active { color: #1e8cb7 }
+.tabs .indicator { background-color: #1e8cb7b3 }
+.tabs .tab a:focus, .tabs .tab a:focus.active { background-color: initial }
+
 /* plugins category */
 .plugins_container .card-buttons, .plugins_container .card-title {
     font-size: 14px;
@@ -220,7 +238,7 @@ footer i.medium {
 }
 
 .card-plugin-name {
-    line-height: 17px;
+    line-height: 13px;
 }
 
 .card-plugin-meta {
@@ -239,23 +257,27 @@ footer i.medium {
 
 .plugins_container .card-buttons {
     display: flex;
-    justify-content: right;
+    justify-content: flex-end;
     padding: 0;
+}
+
+.card-buttons-shadow {
+    display: flex;
+    background: #fff;
+    box-shadow: 0 -5px 0 5px #fff, -10px 0 10px 10px #fff;
 }
 
 .card-plugin-info {
     color: #333;
     text-align: center;
     background: #eaeaea;
+    border-radius: 3px 0 0 0;
 }
 
 .card-plugin-install {
-    text-align: right;
-    background: #0e3d4ee3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    background: #285261;
     color: #fff;
+    border-radius: 0 0 3px 0;
 }
 
 .plugins_container .col {
@@ -276,19 +298,22 @@ footer i.medium {
 }
 .plugins_container .card-plugin {
     display: flex;
-    height: 142px;
+    height: 135px;
     margin: 0.25rem;
-    border: 3px solid #ddd;
     transition: border-color .25s;
     flex-direction: column;
+    overflow: hidden;
+    border-radius: 3px;
+    box-shadow: 0 3px 3px #eee;
+    border: 1px solid #ddd;
 }
 .plugins_container .grid-item:target .card-plugin {
-    border: 3px solid #1e8cb7;
+    border: 1px solid #1e8cb7;
 }
 
 .card-header {
     display: flex;
-    height: 52px;
+    height: 45px;
 }
 
 
@@ -333,10 +358,13 @@ footer i.medium {
 .card-content {
     padding: 0 10px;
     flex-grow: 1;
+    height: 57px;
 }
 
 .card-content p {
-    margin: auto;
+    margin: 5px 0;
+    max-height: 65px;
+    overflow: hidden;
 }
 
 .card-plugin-description {

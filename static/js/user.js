@@ -1,19 +1,21 @@
-window.addEventListener('resize', function() { shave_reinit() });
-
 document.addEventListener('DOMContentLoaded', function() {
-    let sidenav_elems = document.querySelectorAll('.sidenav');
-    M.Sidenav.init(sidenav_elems, {});
-
+    M.Sidenav.init(document.querySelectorAll('.sidenav'), {});
     M.Carousel.init(document.querySelectorAll('.carousel'), {indicators: true});
-
-    let collapsible_elems = document.querySelectorAll('.collapsible');
-    M.Collapsible.init(collapsible_elems, {});
-
-    var modal_elems = document.querySelectorAll('.modal');
-    M.Modal.init(modal_elems, {});
-
-    shave_reinit();
+    M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
+    M.Modal.init(document.querySelectorAll('.modal'), {});
+    M.Tabs.init(document.querySelectorAll('.tabs'), {});
     img_lazy();
+
+    if (window.location.hash.endsWith("_test")) {
+        document.getElementById('tab_test').click();
+    }
+
+    let plugin = $_GET("plugin");
+    if (plugin && plugin.endsWith("_test")) {
+        document.getElementById('tab_test').click();
+        document.getElementById(plugin).querySelectorAll('.card-plugin-info')[0].click();
+        history.pushState({}, document.title, window.location.href.replace(window.location.search, ""));
+    }
 
     if (document.getElementsByClassName('remark42__counter').length) {
         comments_counter_observer();
@@ -26,32 +28,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Shave is library that helps trim more than two lines of plugin name
-function shave_reinit() {
-    shave('.overflow-plugin-description', 45);
+function $_GET(key) {
+    let p = window.location.search;
+    p = p.match(new RegExp(key + '=([^&=]+)'));
+    return p ? p[1] : false;
 }
 
 function modal_move_content(content_id, modal_id) {
     document.getElementById(modal_id).innerHTML = document.getElementById(content_id).innerHTML;
 }
 
-function init_modal_remark(plugin) {
+function init_modal_remark(plugin, el, url) {
+    let name = el.querySelector(".card-plugin-name span").textContent;
+
     window.remark_config = {
         host: "https://remark42.modos189.ru",
         site_id: 'store-iitc-modos189-ru',
         components: ['embed'],
-        url: "https://iitc.modos189.ru/shop/" + plugin,
+        url: url,
+        page_title: name+" — "+document.title,
         theme: 'light'
     };
     init_remark(window.remark_config);
 }
 
-function init_custom_modal(plugin_unique_id, modal_id) {
-    window.location.hash = plugin_unique_id;
+function init_custom_modal(plugin_unique_id, modal_id, el, url) {
+    window.location.hash = el.parentNode.id;
     modal_move_content(plugin_unique_id+"_info", modal_id);
 
     document.getElementById("remark42").innerHTML = "";
-    init_modal_remark(plugin_unique_id);
+    init_modal_remark(plugin_unique_id, el, url);
 }
 
 function init_remark(remark_config) {
