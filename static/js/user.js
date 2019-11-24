@@ -28,6 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Closing modal of plugin by pressing back button
+window.addEventListener('popstate', function(event) {
+    if (document.getElementById('modal_info')) {
+        M.Modal.getInstance(document.getElementById('modal_info')).close();
+    }
+});
+
 function $_GET(key) {
     let p = window.location.search;
     p = p.match(new RegExp(key + '=([^&=]+)'));
