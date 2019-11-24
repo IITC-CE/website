@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Usage:
-  main.py --template=<path> --static=<path> --config=FILE --page=<pg> [--meta]
+  main.py --template=<path> --static=<path> --config=FILE --page=<pg>
 
 Options:
   -h --help
@@ -13,11 +13,28 @@ import urllib.request
 import json
 import os
 import re
+import urllib.parse
+import copy
+import hashlib
+
+import box
 
 
 def save_config():
     with open(arguments['--config'], 'w') as _f:
         json.dump(config, _f, indent=1)
+
+
+def md5sum(filename, blocksize=65536):
+    hash = hashlib.md5()
+    with open(filename, "rb") as f:
+        for block in iter(lambda: f.read(blocksize), b""):
+            hash.update(block)
+    return hash.hexdigest()
+
+
+def file_add_md5sum(filename):
+    return filename+"?"+md5sum(arguments['--static']+"/"+filename)
 
 
 def parse_user_script(path):
@@ -29,117 +46,71 @@ def parse_user_script(path):
             if "==/UserScript==" in line:
                 return data
 
-            line = line.strip()
-            sp = line.split()
-            data[sp[1]] = ' '.join(sp[2:])
+            sp = line.strip().split()
+            data[sp[1][1:]] = ' '.join(sp[2:])
 
 
-def parse_build(release_type):
-    data = {
-        "Portal Info": {'name': "Portal Info",
-                        'name:ru': "Информация о портале",
-                        'description': "Enhanced information on the selected portal",
-                        'description:ru': "Подробная информация на выбранном портале",
-                        'plugins': []},
-        "Info": {'name': "Info",
-                 'name:ru': "Информация",
-                 'description': "Display additional information",
-                 'description:ru': "Отображение дополнительной информации",
-                 'plugins': []},
-        "Keys": {'name': "Keys",
-                 'name:ru': "Ключи",
-                 'description': "Manual key management",
-                 'description:ru': "Ручное управление ключами",
-                 'plugins': []},
-        "Cache": {'name': "Cache",
-                  'name:ru': "Кэш",
-                  'description': "Data caching to prevent reloading",
-                  'description:ru': "Кэширование данных для предотвращения повторной загрузки",
-                  'plugins': []},
-        "Controls": {'name': "Controls",
-                     'name:ru': "Управление",
-                     'description': "Map controls/widgets",
-                     'description:ru': "Виджеты для управления картой",
-                     'plugins': []},
-        "Draw": {'name': "Draw",
-                 'name:ru': "Рисование",
-                 'description': "Allow drawing things onto the current map so you may plan your next move",
-                 'description:ru': "Позволяет рисовать на текущей карте, чтобы вы могли спланировать свой следующий шаг",
-                 'plugins': []},
-        "Highlighter": {'name': "Highlighter",
-                        'name:ru': "Подсветка",
-                        'description': "Portal highlighters",
-                        'description:ru': "Подсветка порталов",
-                        'plugins': []},
-        "Layer": {'name': "Layer",
-                  'name:ru': "Слои",
-                  'description': "Additional map layers",
-                  'description:ru': "Дополнительные слои карт",
-                  'plugins': []},
-        "Map Tiles": {'name': "Map Tiles",
-                      'name:ru': "Провайдеры карт",
-                      'description': "Alternative map layers",
-                      'description:ru': "Альтернативные провайдеры карт",
-                      'plugins': []},
-        "Tweaks": {'name': "Tweaks",
-                   'name:ru': "Настройки",
-                   'description': "Adjust IITC settings",
-                   'description:ru': "Настройка параметров IITC",
-                   'plugins': []},
-        "Misc": {'name': "Misc",
-                 'name:ru': "Разное",
-                 'description': "Unclassified plugins",
-                 'description:ru': "Неклассифицированные плагины",
-                 'plugins': []},
-        "Obsolete": {'name': "Obsolete",
-                     'name:ru': "Устаревшее",
-                     'description': "Plugins that are no longer recommended, due to being superceded by others or similar",
-                     'description:ru': "Плагины, которые больше не рекомендуются в связи с заменой другими или аналогичными плагинами",
-                     'plugins': []},
-        "Deleted": {'name': "Deleted",
-                    'name:ru': "Удалённое",
-                    'description': "Deleted plugins – listed here for reference only. No download available",
-                    'description:ru': "Удаленные плагины – перечислены здесь только для справки. Нет возможности скачать",
-                    'plugins': []},
-    }
+def parse_build(release_type, fields=("iitc_version", "categories")):
+    ret = {}
 
-    folder = arguments['--static'] + "/build/" + release_type + "/"
-    info = parse_user_script(folder + "total-conversion-build.user.js")
-    iitc_version = info['@version']
+    if "iitc_version" in fields:
+        folder = arguments['--static'] + "/build/" + release_type + "/"
+        iitc_meta = parse_user_script(folder + "total-conversion-build.user.js")
+        iitc_version = iitc_meta['version']
 
-    plugins = os.listdir(folder + "plugins")
-    plugins = filter(lambda x: x.endswith('.user.js'), plugins)
-    for filename in plugins:
-        info = parse_user_script(folder + "plugins/" + filename)
-        category = info.get('@category')
-        if category:
-            category = re.sub('[^A-z0-9 -]', '', category).strip()
-        else:
-            category = "Misc"
+        ret[release_type + '_iitc_version'] = iitc_version
 
-        if category not in data:
-            data[category] = {
-                'name': category,
-                'description': "",
-                'plugins': []}
+    if "categories" in fields:
+        data = copy.deepcopy(box.categories)
+        plugins = os.listdir(folder + "plugins")
+        plugins = filter(lambda x: x.endswith('.user.js'), plugins)
+        for filename in plugins:
+            plugin = parse_user_script(folder + "plugins/" + filename)
 
-        plugin = {
-            'id': info['@id'],
-            'version': info['@version'],
-            'filename': filename,
-        }
-        for key, value in info.items():
-            if key.startswith("@name") or key.startswith("@description"):
-                plugin[key[1:]] = value.replace("IITC plugin: ", "").replace("IITC Plugin: ", "")
+            plugin_id = ''
+            if 'id' in plugin:
+                plugin_id = plugin['id'].split("@")[0]
 
-        data[category]['plugins'].append(plugin)
+            plugin_author = ''
+            if 'author' in plugin:
+                plugin_author = plugin['author']
+            elif 'id' in plugin and len(plugin['id'].split("@")) > 1:
+                plugin_author = plugin['id'].split("@")[1]
 
-    data = sort_categories(data)
-    data = sort_plugins(data)
-    return {
-        'categories': data,
-        'iitc_version': iitc_version
-    }
+            category = plugin.get('category')
+            if category:
+                category = re.sub('[^A-z0-9 -]', '', category).strip()
+            else:
+                category = "Misc"
+
+            plugin_unique_id = plugin_id
+            if len(plugin_author):
+                plugin_unique_id = '_by_'.join([plugin_id, re.sub(r'[^A-z0-9_]', '', plugin_author)])
+
+            if category not in data:
+                data[category] = {
+                    'name': category,
+                    'description': "",
+                    'plugins': []}
+
+            plugin.update({
+                'unique_id': plugin_unique_id,
+                'id': plugin_id,
+                'author': plugin_author,
+                'filename': filename,
+            })
+            for key, value in plugin.items():
+                if key.startswith("name") or key.startswith("description"):
+                    plugin[key] = value.replace("IITC plugin: ", "").replace("IITC Plugin: ", "")
+
+            data[category]['plugins'].append(plugin)
+
+        data = sort_categories(data)
+        data = sort_plugins(data)
+
+        ret[release_type + '_categories'] = data
+
+    return ret
 
 
 # Sort categories alphabetically
@@ -178,13 +149,6 @@ def get_telegram_widget(channel, _id):
         html = html[html.find('<div class="tgme_widget_message js-widget_message"'):]
         html = html[:html.find('<script')]
         return html
-
-
-def save_meta(data, release_type):
-    # File to store full information about categories and plugins
-    path_build_meta = arguments['--static'] + "/build/" + release_type + "/meta.json"
-    with open(path_build_meta, "w") as fp:
-        json.dump(data, fp, indent=1)
 
 
 def minimal_markdown2html(string):
@@ -232,17 +196,15 @@ def generate_page(page):
             return
         markers['telegram_widget'] = widget
 
-    if page in ["download_desktop.html", "download_mobile.html"]:
+    if page == "download_desktop.html":
         data = parse_build('release')
+        data.update(parse_build('test'))
         markers.update(data)
-        if arguments['--meta']:
-            save_meta(data, "release")
 
-    if page == 'test_builds.html':
-        data = parse_build('test')
+    if page == "download_mobile.html":
+        data = parse_build('release', fields=("iitc_version"))
+        data.update(parse_build('test', fields=("iitc_version")))
         markers.update(data)
-        if arguments['--meta']:
-            save_meta(data, "test")
 
     if page == 'release_notes.html':
         data = get_release_notes()
@@ -264,6 +226,7 @@ if __name__ == '__main__':
         loader=FileSystemLoader(arguments['--template']),
         trim_blocks=True
     )
+    env.filters['md5sum'] = file_add_md5sum
 
     if arguments['--page'] == "all":
         files = os.listdir(arguments['--template'])

@@ -3,50 +3,82 @@
 {% block content %}
 
     <div class="container">
-    <div class="row">
-    <div class="col s12">
-        <div class="section">
-            <h2 class="hover">IITC-Button browser add-on</h2>
-            <p>IITC-Button make it easier to install IITC and manage plugins. Now, to install a new plugin, simply select it from the list.</p>
-            <a href="img/iitc-button.png" target="_blank"><img class="fullwidth-image" src="img/iitc-button.png" alt="IITC-Button addon"></a>
-            <h5>Get it on <a href="https://addons.mozilla.org/firefox/addon/iitc-button" target="_blank">Firefox Add-ons</a> and <a href="https://chrome.google.com/webstore/detail/iitc-button/febaefghpimpenpigafpolgljcfkeakn" target="_blank">Chrome Web Store</a>.</h5>
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <h2 id="iitc-button">IITC-Button browser add-on</h2>
+                    <p>IITC-Button make it easier to install IITC and manage plugins. Now, to install a new plugin, simply select it from the list.</p>
+                    <a href="img/iitc-button.png" target="_blank"><img class="fullwidth-image" src="img/iitc-button.png" alt="IITC-Button addon"></a>
+                    <h5>Get it on <a href="https://addons.mozilla.org/firefox/addon/iitc-button" target="_blank">Firefox Add-ons</a> and <a href="https://chrome.google.com/webstore/detail/iitc-button/febaefghpimpenpigafpolgljcfkeakn" target="_blank">Chrome Web Store</a>.</h5>
+                </div>
+                <div class="section">
+                    <h5>— or —</h5>
+                </div>
+                <div class="section">
+                    <h2 class="top_zero">IITC UserScript</h2>
+                    <h4>Requirements</h4>
+                    <p>IITC requires a userscript manager. It can be either <a href="#iitc-button">IITC-Button</a> or one of traditional userscript managers. For example:</p>
+
+                    <p><strong>Tampermonkey</strong> <i>(proprietary)</i> is the most popular userscript manager. It's available for <a href="https://chrome.google.com/webstore/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo" target="_blank">Chrome</a>, <a href="https://www.microsoft.com/store/apps/9NBLGGH5162S" target="_blank">Microsoft Edge</a>, <a href="https://apps.apple.com/app/tampermonkey/id1482490089" target="_blank">Safari</a>, <a href="https://addons.opera.com/extensions/details/tampermonkey-beta/" target="_blank">Opera</a>, and <a href="https://addons.mozilla.org/firefox/addon/tampermonkey/" target="_blank">Firefox</a>.</p>
+                    <p><strong>Greasemonkey</strong> <i>(MIT License)</i> is a userscript manager made available as a <a href="https://addons.mozilla.org/ru/firefox/addon/greasemonkey/" target="_blank">Mozilla Firefox</a> extension.</p>
+                    <p><strong>Violentmonkey</strong> <i>(MIT License)</i> provides userscripts support for <a href="https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag" target="_blank">Chrome</a>, <a href="https://addons.mozilla.org/firefox/addon/violentmonkey/" target="_blank">Firefox</a> and <a href="https://violentmonkey.github.io/get-it/" target="_blank">Opera</a>.</p>
+
+                    <p>If you are using a different browser, see your browser documentation for details on installing userscripts.<br>For Android/iOS, please see the <a href="download_mobile.html">mobile</a> page.</p>
+                </div>
+                <div class="section">
+                    <h4>Download IITC</h4>
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <div class="card-panel green lighten-5">
+                                <p>This is most tested version, but may not contain new features or fixes. If you are not sure otherwise, this version is the most suitable for you. </p>
+
+                                <a class="btn" href="/build/release/total-conversion-build.user.js">release version</a>
+                                <p>v{{ release_iitc_version }}</p>
+                            </div>
+                        </div>
+                        <div class="col s12 m6">
+                            <div class="card-panel yellow lighten-5">
+                                <p>Test builds are built automatically. They could be broken at any time, but contain more features. You can also get an archive of previous developer builds.</p>
+
+                                <a class="btn yellow darken-4" href="/build/test/total-conversion-build.user.js">test builds</a>&nbsp;<a class="btn blue" href="/build/archive/">Archive</a></a>
+                                <p>v{{ test_iitc_version }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h4>Plugins</h4>
+                    <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
+                </div>
+            </div>
         </div>
-        <div class="section">
-            <h5>— or —</h5>
-        </div>
-        <div class="section">
-            <h2 class="hover">IITC UserScript</h2>
-            <h5>Requirements</h5>
-            <p>IITC will work in the Chrome or Firefox browsers. It should also work with Opera and other browsers supporting userscripts, but these are far less tested. For Android phones, please see the <a href="download_mobile.html">mobile</a> page.</p>
-            <h6>Firefox</h6>
-            <p>Install the <a href="https://addons.mozilla.org/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> Firefox add-on. Once installed, click the "Download" then "Install" on the dialog.</p>
-            <h6>Chrome</h6>
-            <p>Install the <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo">Tampermonkey</a> Chrome extension. Once installed, click on the "Download" button below and follow the instructions.</p>
-            <h6>Other browsers</h6>
-            <p>Check your browser documentation for details on installing userscripts.</p>
-        </div>
-        <div class="section">
-            <h5>Updating</h5>
-            <p>If IITC is already installed, it's easy to update in most cases:</p>
-            <h6>Firefox and Greasemonkey</h6>
-            <p>Open the Greasemonkey menu and choose "Manage user scripts". Now click the cog icon and choose "Check for updates". However, sometimes Greasemonkey fails to update all scripts. Check the date+time listed at the start of the description (e.g. "[jonatkins-2013-08-23-042102]") and if any have failed to update then manually download from the list below. Once updated, reload the Intel map and the new version will be active.</p>
-            <h6>Chrome and Tampermonkey</h6>
-            <p>Open the Tampermonkey menu and choose "Check for userscript updates". If you have a lot of plugins, or other scripts installed, this can be a little slow. Wait 30 seconds, then try clicking the Tampermonkey icon again; if the menu opens, it's finished updating. Once complete, reload the Ingress intel map to use the new version.</p>
-        </div>
-        <div class="section">
-            <h5>Download</h5>
-            <p>IITC version {{ iitc_version }}</p>
-            <a class="btn" href="/build/release/total-conversion-build.user.js">Download</a>
-        </div>
-        <div class="section">
-            <h6>Plugins</h6>
-            <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
-            {% with build_type="release" %}
+    </div>
+
+    <ul class="tabs tabs-fixed-width">
+        <li class="tab release col s6"><a id="tab_release" href="#tab_content_release">Release version</a></li>
+        <li class="tab test col s6"><a id="tab_test" href="#tab_content_test">Test builds</a></li>
+    </ul>
+
+    <div id="tab_content_release" class="col s12">
+        {% with %}
+            {% set build_type="release" %}
+            {% set categories=release_categories %}
             {% include '_plugins_table.html' %}
-            {% endwith %}
+        {% endwith %}
+    </div>
+    <div id="tab_content_test" class="col s12">
+        {% with %}
+            {% set build_type="test" %}
+            {% set categories=test_categories %}
+            {% include '_plugins_table.html' %}
+        {% endwith %}
+    </div>
+
+    <div id="modal_info" class="modal bottom-sheet">
+        <div class="modal-content">
+            <div id="modal_info_content"></div>
+            <div id="remark42"></div>
         </div>
-    </div>
-    </div>
     </div>
 
 {% endblock %}

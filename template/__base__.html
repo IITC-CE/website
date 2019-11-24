@@ -6,9 +6,9 @@
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
-    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/user.css?3"  media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/telegram-widget-frame.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/user.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/telegram-widget-frame.css' | md5sum }}" media="screen,projection"/>
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -44,7 +44,6 @@
                     <ul>
                         <li><a {% if active_page == "download_desktop.html" %}class="active" {% endif %}href="download_desktop.html"><i class="material-icons">desktop_mac</i> Desktop</a></li>
                         <li><a {% if active_page == "download_mobile.html" %}class="active" {% endif %}href="download_mobile.html"><i class="material-icons">smartphone</i> Mobile</a></li>
-                        <li><a {% if active_page == "download_test.html" %}class="active" {% endif %}href="test_builds.html"><i class="material-icons">build</i> Test Builds</a></li>
                     </ul>
                   </div>
             </li>
@@ -90,6 +89,6 @@
     </footer>
 
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script type="text/javascript" src="js/user.js?2"></script>
+    <script type="text/javascript" src="{{ 'js/user.js' | md5sum }}"></script>
 </body>
 </html>
