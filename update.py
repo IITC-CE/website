@@ -57,21 +57,15 @@ def get_telegram_widget(channel, _id):
         return html
 
 
-def minimal_markdown2html(string):
-    string = string.replace("\r\n", "\n").replace("<", "&lt;").replace(">", "&gt;")
-    string = re.sub('\*{3}(.+)\*{3}', '<strong>\\1</strong>', string)
-    string = re.sub('\*{2}(.+)\*{2}', '<i>\\1</i>', string)
-    string = re.sub('^#{1}(.+)$', '<strong>#\\1</strong>', string, flags=re.MULTILINE)
-    string = string.replace("\n", "<br>")
-    return string
-
-
 def get_release_notes():
     url = 'https://api.github.com/repos/%s/%s/releases/latest' % ("IITC-CE", "ingress-intel-total-conversion")
-    response = urllib.request.urlopen(url, timeout=10)
+    req = urllib.request.Request(url)
+    req.add_header('Accept', 'application/vnd.github.3.full.inertia-preview+json')
+    response = urllib.request.urlopen(req, timeout=10)
+
     data = response.read()
     data = json.loads(data)
-    latest = {'name': data['name'], 'body': minimal_markdown2html(data['body']), 'date': data['published_at'].split('T')[0]}
+    latest = {'name': data['name'], 'body': data['body_html'], 'date': data['published_at'].split('T')[0]}
 
     if ('release_notes' in config) and len(config['release_notes']):
         if config['release_notes'][-1]['name'] != latest['name']:

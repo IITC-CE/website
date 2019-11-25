@@ -1,27 +1,32 @@
 {
-  "telegram_channel_last_id": 12,
-  "telegram_channel_name": "iitc_news",
-  "index_carousel": [
-    "img/Screenshot_20181122-150002.jpg",
-    "img/Screenshot_20181122-150034.jpg",
-    "img/Screenshot_20181122-150623.jpg",
-    "img/Screenshot_20181122-150754.jpg"
-  ],
-  "release_notes": [
-    {
-      "name": "v0.27",
-      "body": "* Correction of the address to the Intel site from www.ingress.com/intel to intel.ingress.com<br>* Material design of mobile application",
-      "date": "2018-11-24"
-    },
-    {
-      "name": "v0.28",
-      "body": "* Search improvement: added search by amenity tag and highlighting of the selected item on the map<br>* Show total team scores together with checkpoints overview<br>* Move and zoom to portal by clicking on the icon near the title<br>* Increased IITC download speed, smoother application<br>* Added support for Google road map with traffic layer<br>* Library update: jquery 3.3.1 & jquery-ui.12.1, Leaflet 1.3.0 & leaflet.draw 1.0, google-layer using new Leaflet.Gridlayer.GoogleMutant",
-      "date": "2018-12-10"
-    },
-    {
-      "name": "v0.29",
-      "body": "<strong>## Sync is working again</strong><br>Fixed sync plugin after deprecating Google Realtime API. Now the plugin uses Google Drive API for sync data between clients.<br><br><strong>## Maps</strong><br>Added AutoNavi / Gaode maps layer; fixed and improved maps Kartverket.no, Stamen.com and Google Gray roads.<br>Fixed shift maps in China.<br><br><strong>## Visualization of the link direction</strong><br>Now plugin show-linked-portals displays the direction of links is more understood, using symbols.<br><br><strong>## New features for developers</strong><br>Added @@INCLUDECSS macros for easy support/update external/*.css files.<br>Add an 'pluginUserLocation' hook, so other plugins can use the user coordinates.<br><br>And many smaller improvements and bug fixes...",
-      "date": "2019-03-14"
-    }
-  ]
+ "telegram_channel_last_id": 20,
+ "telegram_channel_name": "iitc_news",
+ "index_carousel": [
+  "img/Screenshot_20181122-150002.jpg",
+  "img/Screenshot_20181122-150034.jpg",
+  "img/Screenshot_20181122-150623.jpg",
+  "img/Screenshot_20181122-150754.jpg"
+ ],
+ "release_notes": [
+  {
+   "name": "v0.27",
+   "body": "<p>* Correction of the address to the Intel site from www.ingress.com/intel to intel.ingress.com</p><p>* Material design of mobile application</p>",
+   "date": "2018-11-24"
+  },
+  {
+   "name": "v0.28",
+   "body": "<p>* Search improvement: added search by amenity tag and highlighting of the selected item on the map</p><p>* Show total team scores together with checkpoints overview</p><p>* Move and zoom to portal by clicking on the icon near the title</p><p>* Increased IITC download speed, smoother application</p><p>* Added support for Google road map with traffic layer</p><p>* Library update: jquery 3.3.1 & jquery-ui.12.1, Leaflet 1.3.0 & leaflet.draw 1.0, google-layer using new Leaflet.Gridlayer.GoogleMutant</p>",
+   "date": "2018-12-10"
+  },
+  {
+   "name": "v0.29",
+   "body": "<p><strong>## Sync is working again</strong></p><p>Fixed sync plugin after deprecating Google Realtime API. Now the plugin uses Google Drive API for sync data between clients.</p><p><strong>## Maps</strong></p><p>Added AutoNavi / Gaode maps layer; fixed and improved maps Kartverket.no, Stamen.com and Google Gray roads.</p><p>Fixed shift maps in China.</p><p><strong>## Visualization of the link direction</strong></p><p>Now plugin show-linked-portals displays the direction of links is more understood, using symbols.</p><p><strong>## New features for developers</strong></p><p>Added @@INCLUDECSS macros for easy support/update external/*.css files.</p><p>Add an 'pluginUserLocation' hook, so other plugins can use the user coordinates.</p><p>And many smaller improvements and bug fixes...</p>",
+   "date": "2019-03-14"
+  },
+  {
+   "name": "v0.29.1",
+   "body": "<p>Desktop users: additional one-time action required when updating to current release!</p>\n<p>Some plugins are renamed, and do not replace old versions automatically.</p><p>\nSo it's necessary to delete old versions manually.</p>\n<p>Sorry for the inconvenience.</p>",
+   "date": "2019-03-15"
+  }
+ ]
 }

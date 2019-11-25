@@ -57,6 +57,10 @@ body {
     flex-direction: column;
 }
 
+strong {
+    font-weight: bold;
+}
+
 main {
     flex: 1 0 auto;
 }
