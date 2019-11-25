@@ -13,8 +13,10 @@
             <div class="container">
                 <div class="row plugins_container grid">
                     {% for item in category.plugins %}
+                        {% set unique_id = [item['id'], item['author']]|join('_bqy_') %}
 
-                        <div id="{{ item.unique_id+'_'+build_type }}" class="scrollspy grid-item">
+
+                        <div id="{{ unique_id+'_'+build_type }}" class="scrollspy grid-item">
                             <div class="card-plugin">
                                 <div class="card-header">
                                     <div class="card-icon">
@@ -27,7 +29,7 @@
 
                                     <div class="card-title">
                                         <div class="card-title-wrapper">
-                                            <div class="card-plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href="#{{ item.unique_id+'_'+build_type }}"><span>{{ item.name }}</span></a></div>
+                                            <div class="card-plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href="#{{ unique_id+'_'+build_type }}"><span>{{ item.name }}</span></a></div>
                                        <!-- {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;<a href="#{{ item.author }}">{{ item.author }}</a></small>{% endif %}-->
                                             {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;{{ item.author }}</small>{% endif %}
                                         </div>
@@ -40,11 +42,11 @@
                                 <div class="card-buttons">
                                     <div class="card-buttons-shadow">
                                         {% if build_type == "store" %}
-                                            {% set plugin_comments_url = "https://iitc.modos189.ru/store.html?plugin="+item.unique_id %}
+                                            {% set plugin_comments_url = "https://iitc.modos189.ru/store.html?plugin="+unique_id %}
                                         {% else %}
-                                            {% set plugin_comments_url = "https://iitc.modos189.ru/download_desktop.html?plugin="+item.unique_id+"_"+build_type %}
+                                            {% set plugin_comments_url = "https://iitc.modos189.ru/download_desktop.html?plugin="+unique_id+"_"+build_type %}
                                         {% endif %}
-                                        <a class="card-plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ item.unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
+                                        <a class="card-plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
                                         <a class="card-plugin-install waves-effect waves-light" target="_blank" href="/build/{{ build_type }}/plugins/{{ item.filename }}" {% if item.version %}title="Install v{{ item.version }}"{% endif %}>Install</a>
                                     </div>
                                 </div>
@@ -52,7 +54,7 @@
                             </div>
                         </div>
 
-                        <div id="{{ item.unique_id }}_info" style="display: none">
+                        <div id="{{ unique_id }}_info" style="display: none">
                             <h4>{{ item.name }}</h4>
                             {% if item.author %}<h5>by&nbsp;{{ item.author }}</h5>{% endif %}
                             {% if item.image %}<div class="plugin_image"><a href="{{ item.image }}" target="_blank" title="Click the image to open in full size"><img loading="lazy" class="lazyload" data-src="1{{ item.image }}" src="data:image/gif;base64,R0lGODlhCgAIAIABAN3d3f///yH5BAEAAAEALAAAAAAKAAgAAAINjAOnyJv2oJOrVXrzKQA7"></a></div>{% endif %}
