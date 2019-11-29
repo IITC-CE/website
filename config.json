@@ -20,7 +20,7 @@
   },
   {
    "name": "v0.29",
-   "body": "<p><strong>## Sync is working again</strong></p><p>Fixed sync plugin after deprecating Google Realtime API. Now the plugin uses Google Drive API for sync data between clients.</p><p><strong>## Maps</strong></p><p>Added AutoNavi / Gaode maps layer; fixed and improved maps Kartverket.no, Stamen.com and Google Gray roads.</p><p>Fixed shift maps in China.</p><p><strong>## Visualization of the link direction</strong></p><p>Now plugin show-linked-portals displays the direction of links is more understood, using symbols.</p><p><strong>## New features for developers</strong></p><p>Added @@INCLUDECSS macros for easy support/update external/*.css files.</p><p>Add an 'pluginUserLocation' hook, so other plugins can use the user coordinates.</p><p>And many smaller improvements and bug fixes...</p>",
+   "body": "<h2>Sync is working again</h2>\n<p>Fixed sync plugin after deprecating Google Realtime API. Now the plugin uses Google Drive API for sync data between clients.</p>\n<h2>Maps</h2>\n<p>Added AutoNavi / Gaode maps layer; fixed and improved maps Kartverket.no, Stamen.com and Google Gray roads.<br>\nFixed shift maps in China.</p>\n<h2>Visualization of the link direction</h2>\n<p>Now plugin show-linked-portals displays the direction of links is more understood, using symbols.</p>\n<h2>New features for developers</h2>\n<p>Added @@INCLUDECSS macros for easy support/update external/*.css files.<br>\nAdd an 'pluginUserLocation' hook, so other plugins can use the user coordinates.</p>\n<p>And many smaller improvements and bug fixes...</p>",
    "date": "2019-03-14"
   },
   {
