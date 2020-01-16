@@ -57,6 +57,10 @@ body {
     flex-direction: column;
 }
 
+strong {
+    font-weight: bold;
+}
+
 main {
     flex: 1 0 auto;
 }
@@ -187,7 +191,13 @@ footer i.medium {
 .changelog-header {
     display: inline-block;
     margin-right: 1em;
+    border-bottom: 5px solid #26a69a;
 }
+.changelog-body h1 { font-size: 1.5em }
+.changelog-body h2 { font-size: 1.4em }
+.changelog-body h3 { font-size: 1.3em }
+.changelog-body h4 { font-size: 1.2em }
+.changelog-body h5 { font-size: 1.1em }
 
 .collapsible-body {
     font-weight: 300;

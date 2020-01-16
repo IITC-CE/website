@@ -14,10 +14,7 @@ import json
 import os
 import re
 import urllib.parse
-import copy
 import hashlib
-
-import box
 
 
 def save_config():
@@ -37,106 +34,15 @@ def file_add_md5sum(filename):
     return filename+"?"+md5sum(arguments['--static']+"/"+filename)
 
 
-def parse_user_script(path):
-    data = {}
-    with open(path) as file:
-        for line in file:
-            if "==UserScript==" in line:
-                continue
-            if "==/UserScript==" in line:
-                return data
+def parse_meta(release_type):
+    meta_path = "%s/build/%s/meta.json" % (arguments['--static'], release_type)
+    with open(meta_path, 'r') as fm:
+        meta = json.load(fm)
 
-            sp = line.strip().split()
-            data[sp[1][1:]] = ' '.join(sp[2:])
-
-
-def parse_build(release_type, fields=("iitc_version", "categories")):
-    ret = {}
-
-    if "iitc_version" in fields:
-        folder = arguments['--static'] + "/build/" + release_type + "/"
-        iitc_meta = parse_user_script(folder + "total-conversion-build.user.js")
-        iitc_version = iitc_meta['version']
-
-        ret[release_type + '_iitc_version'] = iitc_version
-
-    if "categories" in fields:
-        data = copy.deepcopy(box.categories)
-        plugins = os.listdir(folder + "plugins")
-        plugins = filter(lambda x: x.endswith('.user.js'), plugins)
-        for filename in plugins:
-            plugin = parse_user_script(folder + "plugins/" + filename)
-
-            plugin_id = ''
-            if 'id' in plugin:
-                plugin_id = plugin['id'].split("@")[0]
-
-            plugin_author = ''
-            if 'author' in plugin:
-                plugin_author = plugin['author']
-            elif 'id' in plugin and len(plugin['id'].split("@")) > 1:
-                plugin_author = plugin['id'].split("@")[1]
-
-            category = plugin.get('category')
-            if category:
-                category = re.sub('[^A-z0-9 -]', '', category).strip()
-            else:
-                category = "Misc"
-
-            plugin_unique_id = plugin_id
-            if len(plugin_author):
-                plugin_unique_id = '_by_'.join([plugin_id, re.sub(r'[^A-z0-9_]', '', plugin_author)])
-
-            if category not in data:
-                data[category] = {
-                    'name': category,
-                    'description': "",
-                    'plugins': []}
-
-            plugin.update({
-                'unique_id': plugin_unique_id,
-                'id': plugin_id,
-                'author': plugin_author,
-                'filename': filename,
-            })
-            for key, value in plugin.items():
-                if key.startswith("name") or key.startswith("description"):
-                    plugin[key] = value.replace("IITC plugin: ", "").replace("IITC Plugin: ", "")
-
-            data[category]['plugins'].append(plugin)
-
-        data = sort_categories(data)
-        data = sort_plugins(data)
-
-        ret[release_type + '_categories'] = data
-
+    ret = dict()
+    ret[release_type + '_iitc_version'] = meta["iitc_version"]
+    ret[release_type + '_categories'] = meta["categories"]
     return ret
-
-
-# Sort categories alphabetically
-def sort_categories(unsorted_data):
-    # Categories that should always be last
-    last = ["Misc", "Obsolete", "Deleted"]
-    data = {}
-
-    raw_data = sorted(unsorted_data.items())
-    for category_name, category_data in raw_data:
-        if category_name not in last:
-            data[category_name] = category_data
-
-    for category_name in last:
-        if category_name in unsorted_data:
-            data[category_name] = unsorted_data[category_name]
-
-    return data
-
-
-# Sort categories alphabetically
-def sort_plugins(data):
-    for category_name, category_data in data.items():
-        plugins = sorted(category_data['plugins'], key=lambda x: x['name'].lower())
-        data[category_name]['plugins'] = plugins
-    return data
 
 
 def get_telegram_widget(channel, _id):
@@ -151,21 +57,15 @@ def get_telegram_widget(channel, _id):
         return html
 
 
-def minimal_markdown2html(string):
-    string = string.replace("\r\n", "\n").replace("<", "&lt;").replace(">", "&gt;")
-    string = re.sub('\*{3}(.+)\*{3}', '<strong>\\1</strong>', string)
-    string = re.sub('\*{2}(.+)\*{2}', '<i>\\1</i>', string)
-    string = re.sub('^#{1}(.+)$', '<strong>#\\1</strong>', string, flags=re.MULTILINE)
-    string = string.replace("\n", "<br>")
-    return string
-
-
 def get_release_notes():
     url = 'https://api.github.com/repos/%s/%s/releases/latest' % ("IITC-CE", "ingress-intel-total-conversion")
-    response = urllib.request.urlopen(url, timeout=10)
+    req = urllib.request.Request(url)
+    req.add_header('Accept', 'application/vnd.github.3.full.inertia-preview+json')
+    response = urllib.request.urlopen(req, timeout=10)
+
     data = response.read()
     data = json.loads(data)
-    latest = {'name': data['name'], 'body': minimal_markdown2html(data['body']), 'date': data['published_at'].split('T')[0]}
+    latest = {'name': data['name'], 'body': data['body_html'], 'date': data['published_at'].split('T')[0]}
 
     if ('release_notes' in config) and len(config['release_notes']):
         if config['release_notes'][-1]['name'] != latest['name']:
@@ -197,13 +97,13 @@ def generate_page(page):
         markers['telegram_widget'] = widget
 
     if page == "download_desktop.html":
-        data = parse_build('release')
-        data.update(parse_build('test'))
+        data = parse_meta('release')
+        data.update(parse_meta('test'))
         markers.update(data)
 
     if page == "download_mobile.html":
-        data = parse_build('release', fields=("iitc_version"))
-        data.update(parse_build('test', fields=("iitc_version")))
+        data = parse_meta('release')
+        data.update(parse_meta('test'))
         markers.update(data)
 
     if page == 'release_notes.html':

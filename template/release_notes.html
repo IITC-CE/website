@@ -11,7 +11,7 @@
                 {% for item in release_notes|reverse %}
                 <div class="section">
                     <h5 class="changelog-header">{{ item.name }}</h5><small>{{ item.date }}</small>
-                    <p>{{ item.body }}</p>
+                    <div class="changelog-body">{{ item.body }}</div>
                 </div>
                 {% endfor %}
             </div>
