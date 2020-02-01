@@ -1,3 +1,11 @@
 static/*.html
 static/build/release/*
 static/build/test/*
+config.json
+
+# pyenv
+bin/
+lib/
+lib64/
+pyvenv.cfg
+share/
