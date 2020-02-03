@@ -42,9 +42,9 @@
                                 <div class="card-buttons">
                                     <div class="card-buttons-shadow">
                                         {% if build_type == "store" %}
-                                            {% set plugin_comments_url = "https://iitc.modos189.ru/store.html?plugin="+unique_id %}
+                                            {% set plugin_comments_url = "https://iitc.app/store.html?plugin="+unique_id %}
                                         {% else %}
-                                            {% set plugin_comments_url = "https://iitc.modos189.ru/download_desktop.html?plugin="+unique_id+"_"+build_type %}
+                                            {% set plugin_comments_url = "https://iitc.app/download_desktop.html?plugin="+unique_id+"_"+build_type %}
                                         {% endif %}
                                         <a class="card-plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
                                         <a class="card-plugin-install waves-effect waves-light" target="_blank" href="/build/{{ build_type }}/plugins/{{ item.filename }}" {% if item.version %}title="Install v{{ item.version }}"{% endif %}>Install</a>

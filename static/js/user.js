@@ -1,3 +1,5 @@
+//@license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3
+
 document.addEventListener('DOMContentLoaded', function() {
     M.Sidenav.init(document.querySelectorAll('.sidenav'), {});
     M.Carousel.init(document.querySelectorAll('.carousel'), {indicators: true});
@@ -20,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementsByClassName('remark42__counter').length) {
         comments_counter_observer();
         window.remark_config = {
-            host: "https://remark42.modos189.ru",
-            site_id: 'store-iitc-modos189-ru',
+            host: "https://remark42.iitc.app",
+            site_id: 'store-iitc-app',
             components: ['counter']
         };
         init_remark(window.remark_config);
@@ -49,8 +51,8 @@ function init_modal_remark(plugin, el, url) {
     let name = el.querySelector(".card-plugin-name span").textContent;
 
     window.remark_config = {
-        host: "https://remark42.modos189.ru",
-        site_id: 'store-iitc-modos189-ru',
+        host: "https://remark42.iitc.app",
+        site_id: 'store-iitc-app',
         components: ['embed'],
         url: url,
         page_title: name+" — "+document.title,
