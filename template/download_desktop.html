@@ -28,7 +28,7 @@
                 <div class="section">
                     <h4>Download IITC</h4>
                     <div class="row">
-                        <div class="col s12 m6">
+                        <div class="col s12 m4">
                             <div class="card-panel green lighten-5">
                                 <p>This is most tested version, but may not contain new features or fixes. If you are not sure otherwise, this version is the most suitable for you. </p>
 
@@ -36,7 +36,15 @@
                                 <p>v{{ release_iitc_version }}</p>
                             </div>
                         </div>
-                        <div class="col s12 m6">
+                        <div class="col s12 m4">
+                            <div class="card-panel green lighten-5">
+                                <p>Beta channel is an optimal balance between time-tested Release channel and Test builds channel, which contains a lot of fixes and new features but can break at any time.</p>
+
+                                <a class="btn" href="/build/beta/total-conversion-build.user.js">beta version</a>
+                                <p>v{{ beta_iitc_version }}</p>
+                            </div>
+                        </div>
+                        <div class="col s12 m4">
                             <div class="card-panel yellow lighten-5">
                                 <p>Test builds are built automatically. They could be broken at any time, but contain more features. You can also get an archive of previous developer builds.</p>
 
@@ -56,6 +64,7 @@
 
     <ul class="tabs tabs-fixed-width">
         <li class="tab release col s6"><a id="tab_release" href="#tab_content_release">Release version</a></li>
+        <li class="tab release col s6"><a id="tab_beta" href="#tab_content_beta">Beta version</a></li>
         <li class="tab test col s6"><a id="tab_test" href="#tab_content_test">Test builds</a></li>
     </ul>
 
@@ -64,6 +73,13 @@
             {% set build_type="release" %}
             {% set categories=release_categories %}
             {% include '_plugins_table.html' %}
+        {% endwith %}
+    </div>
+    <div id="tab_content_beta" class="col s12">
+        {% with %}
+        {% set build_type="beta" %}
+        {% set categories=beta_categories %}
+        {% include '_plugins_table.html' %}
         {% endwith %}
     </div>
     <div id="tab_content_test" class="col s12">

@@ -99,11 +99,13 @@ def generate_page(page):
 
     if page == "download_desktop.html":
         data = parse_meta('release')
+        data.update(parse_meta('beta'))
         data.update(parse_meta('test'))
         markers.update(data)
 
     if page == "download_mobile.html":
         data = parse_meta('release')
+        data.update(parse_meta('beta'))
         data.update(parse_meta('test'))
         markers.update(data)
 
