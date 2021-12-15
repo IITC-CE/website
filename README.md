@@ -18,11 +18,11 @@ Installing prerequisites on Ubuntu or Debian:
 
 A virtual environment is created in project folder using a command:
 
-`python3 -m venv .`
+`python3 -m venv venv`
 
 Activation:
 
-`source bin/activate`
+`source venv/bin/activate`
 
 If this is the first start of the virtual environment, run the command:
 
