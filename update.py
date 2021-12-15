@@ -13,7 +13,6 @@ from jinja2 import Environment, FileSystemLoader
 import urllib.request
 import json
 import os
-import re
 import urllib.parse
 import hashlib
 
@@ -44,6 +43,20 @@ def parse_meta(release_type):
     ret[release_type + '_iitc_version'] = meta["iitc_version"]
     ret[release_type + '_categories'] = meta["categories"]
     return ret
+
+
+def get_all_in_one_zip_file_names():
+    ret = dict()
+    for release_type in ["release", "beta", "test"]:
+        build_path = "%s/build/%s/" % (arguments['--static'], release_type)
+        files = os.listdir(build_path)
+        files = list(filter(lambda x: x.endswith(".zip"), files))
+
+        if len(files) > 0:
+            ret[release_type] = files[0]
+        else:
+            ret[release_type] = ""
+    return {"all_in_one_zip_file": ret}
 
 
 def get_telegram_widget(channel, _id):
@@ -101,6 +114,7 @@ def generate_page(page):
         data = parse_meta('release')
         data.update(parse_meta('beta'))
         data.update(parse_meta('test'))
+        data.update(get_all_in_one_zip_file_names())
         markers.update(data)
 
     if page == "download_mobile.html":

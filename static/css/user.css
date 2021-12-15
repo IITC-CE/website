@@ -225,6 +225,11 @@ footer i.medium {
 .changelog-body h4 { font-size: 1.2em }
 .changelog-body h5 { font-size: 1.1em }
 
+.changelog-body ul:not(.browser-default) > li {
+    list-style-type: square;
+    margin-left: 1.2em;
+}
+
 .collapsible-body {
     font-weight: 300;
 }
