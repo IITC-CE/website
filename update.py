@@ -13,7 +13,6 @@ from jinja2 import Environment, FileSystemLoader
 import urllib.request
 import json
 import os
-import re
 import urllib.parse
 import hashlib
 
