@@ -45,6 +45,20 @@ def parse_meta(release_type):
     return ret
 
 
+def get_all_in_one_zip_file_names():
+    ret = dict()
+    for release_type in ["release", "beta", "test"]:
+        build_path = "%s/build/%s/" % (arguments['--static'], release_type)
+        files = os.listdir(build_path)
+        files = list(filter(lambda x: x.endswith(".zip"), files))
+
+        if len(files) > 0:
+            ret[release_type] = files[0]
+        else:
+            ret[release_type] = ""
+    return {"all_in_one_zip_file": ret}
+
+
 def get_telegram_widget(channel, _id):
     url = 'https://t.me/%s/%i?embed=1' % (channel, _id)
     response = urllib.request.urlopen(url, timeout=10)
@@ -100,6 +114,7 @@ def generate_page(page):
         data = parse_meta('release')
         data.update(parse_meta('beta'))
         data.update(parse_meta('test'))
+        data.update(get_all_in_one_zip_file_names())
         markers.update(data)
 
     if page == "download_mobile.html":
