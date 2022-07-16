@@ -1,0 +1,35 @@
+name: Build website
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - run: pip install -r requirements.txt
+
+      - name: Build website
+        run: python3 update.py
+
+      - name: Push static files to gh-pages
+        if: ${{ github.event_name == 'push' }}
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'static'
+          destination-github-username: ${{ secrets.WEBSITE_REPO_USER }}
+          destination-repository-name: ${{ secrets.WEBSITE_REPO_NAME }}
+          user-email: carles3@pina.cat
+          target-branch: gh-pages

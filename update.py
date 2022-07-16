@@ -103,11 +103,8 @@ if __name__ == '__main__':
     )
     env.filters['md5sum'] = file_add_md5sum
 
-    if os.getenv('GANERATE_PAGE') == "all":
-        files = os.listdir("template")
-        files = filter(lambda x: x.endswith(".html"), files)
-    else:
-        files = [os.getenv('GANERATE_PAGE') + ".html"]
+    files = os.listdir("template")
+    files = filter(lambda x: x.endswith(".html"), files)
 
     for _page in files:
         if _page.startswith("_"):
