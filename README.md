@@ -1,10 +1,10 @@
 Example of generating all pages for which there is a template in the `template` folder:
 
-```python3 update.py --template=template --static=/var/www/ --page=all```
+```GANERATE_PAGE=all python3 update.py```
 
 Crontab for hourly news updates on the home page:
 
-```0 * * * * cd /path/to/repo/ && python3 update.py --template=template --static=static --page=index > update.log```
+```0 * * * * cd /path/to/repo/ && GANERATE_PAGE=index python3 update.py > update.log```
 
 # Install and start in virtual environment
 

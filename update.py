@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""
-Usage:
-  main.py --template=<path> --static=<path> --page=<pg>
 
-Options:
-  -h --help
-"""
-from docopt import docopt
 from jinja2 import Environment, FileSystemLoader
 import urllib.request
 import json
@@ -27,11 +20,11 @@ def md5sum(filename, blocksize=65536):
 
 
 def file_add_md5sum(filename):
-    return filename+"?"+md5sum(arguments['--static']+"/"+filename)
+    return filename+"?"+md5sum("static/"+filename)
 
 
 def parse_meta(release_type):
-    meta_path = "%s/build/%s/meta.json" % (arguments['--static'], release_type)
+    meta_path = f"static/build/{release_type}/meta.json"
     with open(meta_path, 'r') as fm:
         meta = json.load(fm)
 
@@ -44,7 +37,7 @@ def parse_meta(release_type):
 def get_all_in_one_zip_file_names():
     ret = dict()
     for release_type in ["release", "beta", "test"]:
-        build_path = "%s/build/%s/" % (arguments['--static'], release_type)
+        build_path = "%s/build/%s/" % ("static", release_type)
         files = os.listdir(build_path)
         files = list(filter(lambda x: x.endswith(".zip"), files))
 
@@ -98,25 +91,23 @@ def generate_page(page):
         markers.update(data)
 
     html = template.render(markers)
-    path = arguments['--static'] + "/" + page
+    path = "static/" + page
     with open(path, "w") as fh:
         fh.write(html)
 
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__)
-
     env = Environment(
-        loader=FileSystemLoader(arguments['--template']),
+        loader=FileSystemLoader("template"),
         trim_blocks=True
     )
     env.filters['md5sum'] = file_add_md5sum
 
-    if arguments['--page'] == "all":
-        files = os.listdir(arguments['--template'])
+    if os.getenv('GANERATE_PAGE') == "all":
+        files = os.listdir("template")
         files = filter(lambda x: x.endswith(".html"), files)
     else:
-        files = [arguments['--page'] + ".html"]
+        files = [os.getenv('GANERATE_PAGE') + ".html"]
 
     for _page in files:
         if _page.startswith("_"):
