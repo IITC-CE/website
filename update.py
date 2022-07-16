@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Usage:
-  main.py --template=<path> --static=<path> --config=FILE --page=<pg>
+  main.py --template=<path> --static=<path> --page=<pg>
 
 Options:
   -h --help
@@ -16,11 +16,6 @@ import os
 import urllib.parse
 import hashlib
 from bs4 import BeautifulSoup
-
-
-def save_config():
-    with open(arguments['--config'], 'w') as _f:
-        json.dump(config, _f, indent=1)
 
 
 def md5sum(filename, blocksize=65536):
@@ -70,38 +65,24 @@ def get_telegram_widget(channel):
     return last_post
 
 
-def get_release_notes():
-    url = 'https://api.github.com/repos/%s/%s/releases/latest' % ("IITC-CE", "ingress-intel-total-conversion")
-    req = urllib.request.Request(url)
-    req.add_header('Accept', 'application/vnd.github.3.full.inertia-preview+json')
-    response = urllib.request.urlopen(req, timeout=10)
-
-    data = response.read()
-    data = json.loads(data)
-    latest = {'name': data['name'], 'body': data['body_html'], 'date': data['published_at'].split('T')[0]}
-
-    if ('release_notes' in config) and len(config['release_notes']):
-        if config['release_notes'][-1]['name'] != latest['name']:
-            config['release_notes'].append(latest)
-            save_config()
-    else:
-        config['release_notes'] = latest
-        save_config()
-
-    return config
+def get_screenshots_carousel():
+    screenshots = []
+    for file in os.listdir('./static/img/screenshots/'):
+        screenshots.append("img/screenshots/"+file)
+    return screenshots
 
 
 def generate_page(page):
     template = env.get_template(page)
 
-    markers = config.copy()
-    markers['active_page'] = page
+    markers = {'active_page': page}
     if page == 'index.html':
-        widget = get_telegram_widget(config['telegram_channel_name'])
+        widget = get_telegram_widget("iitc_news")
         if widget is None:
             print("Error updating telegram")
             return
         markers['telegram_widget'] = widget
+        markers['screenshots_carousel'] = get_screenshots_carousel()
 
     if page == "download_desktop.html":
         data = parse_meta('release')
@@ -116,10 +97,6 @@ def generate_page(page):
         data.update(parse_meta('test'))
         markers.update(data)
 
-    if page == 'release_notes.html':
-        data = get_release_notes()
-        markers.update(data)
-
     html = template.render(markers)
     path = arguments['--static'] + "/" + page
     with open(path, "w") as fh:
@@ -128,9 +105,6 @@ def generate_page(page):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__)
-
-    with open(arguments['--config'], 'r') as f:
-        config = json.load(f)
 
     env = Environment(
         loader=FileSystemLoader(arguments['--template']),

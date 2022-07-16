@@ -108,6 +108,10 @@ a.sidenav-trigger.top-nav i {
     font-size: 32px;
 }
 
+.sidenav li>a>i.right {
+    margin: 0;
+}
+
 #index-banner {
     border-bottom: 1px solid rgba(0,0,0,0.14);
     background: #0e3d4e url("../img/background.jpg");
