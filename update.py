@@ -15,6 +15,7 @@ import json
 import os
 import urllib.parse
 import hashlib
+from bs4 import BeautifulSoup
 
 
 def save_config():
@@ -59,16 +60,14 @@ def get_all_in_one_zip_file_names():
     return {"all_in_one_zip_file": ret}
 
 
-def get_telegram_widget(channel, _id):
-    url = 'https://t.me/%s/%i?embed=1' % (channel, _id)
+def get_telegram_widget(channel):
+    url = f"https://t.me/s/{channel}"
     response = urllib.request.urlopen(url, timeout=10)
-    data = response.read()
-    html = data.decode('utf-8')
+    soup = BeautifulSoup(response.read(), 'html5lib')
 
-    if "tgme_widget_message_author" in html:
-        html = html[html.find('<div class="tgme_widget_message js-widget_message"'):]
-        html = html[:html.find('<script')]
-        return html
+    posts = soup.find('section', class_='tgme_channel_history').findChildren('div', recursive=False)
+    last_post = posts[-1]
+    return last_post
 
 
 def get_release_notes():
@@ -98,13 +97,7 @@ def generate_page(page):
     markers = config.copy()
     markers['active_page'] = page
     if page == 'index.html':
-        _id = config['telegram_channel_last_id']
-        widget = get_telegram_widget(config['telegram_channel_name'], _id + 1)
-        if widget is None:
-            widget = get_telegram_widget(config['telegram_channel_name'], _id)
-        else:
-            config['telegram_channel_last_id'] += 1
-            save_config()
+        widget = get_telegram_widget(config['telegram_channel_name'])
         if widget is None:
             print("Error updating telegram")
             return
