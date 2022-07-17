@@ -64,7 +64,8 @@ def get_telegram_widget(channel):
 def get_screenshots_carousel():
     screenshots = []
     for file in os.listdir('./static/img/screenshots/'):
-        screenshots.append("img/screenshots/"+file)
+        if not file.endswith('.html'):
+            screenshots.append("img/screenshots/"+file)
     return screenshots
 
 
@@ -144,7 +145,7 @@ def recursive_generate_index_pages():
         for i, split_dir in enumerate(file_dir_split):
             marker_path_menu.append(["../"*(len(file_dir_split)-i-1), split_dir])
 
-        for file in tree[file_dir]:
+        for file in sorted(tree[file_dir]):
             if file == "index.html":
                 continue
 
