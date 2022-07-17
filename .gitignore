@@ -1,8 +1,9 @@
 static/*.html
+static/**/*.html
 static/build/release/*
 static/build/beta/*
-static/build/test/*
-config.json
+
+.idea/
 
 # pyenv
 bin/

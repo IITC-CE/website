@@ -1,25 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""
-Usage:
-  main.py --template=<path> --static=<path> --config=FILE --page=<pg>
 
-Options:
-  -h --help
-"""
-from docopt import docopt
 from jinja2 import Environment, FileSystemLoader
 import urllib.request
 import json
 import os
 import urllib.parse
 import hashlib
-
-
-def save_config():
-    with open(arguments['--config'], 'w') as _f:
-        json.dump(config, _f, indent=1)
+import shutil
+import glob
+from datetime import datetime
+from bs4 import BeautifulSoup
 
 
 def md5sum(filename, blocksize=65536):
@@ -31,11 +23,11 @@ def md5sum(filename, blocksize=65536):
 
 
 def file_add_md5sum(filename):
-    return filename+"?"+md5sum(arguments['--static']+"/"+filename)
+    return filename+"?"+md5sum("static/"+filename)
 
 
 def parse_meta(release_type):
-    meta_path = "%s/build/%s/meta.json" % (arguments['--static'], release_type)
+    meta_path = f"static/build/{release_type}/meta.json"
     with open(meta_path, 'r') as fm:
         meta = json.load(fm)
 
@@ -47,8 +39,8 @@ def parse_meta(release_type):
 
 def get_all_in_one_zip_file_names():
     ret = dict()
-    for release_type in ["release", "beta", "test"]:
-        build_path = "%s/build/%s/" % (arguments['--static'], release_type)
+    for release_type in ["release", "beta"]:
+        build_path = f"static/build/{release_type}/"
         files = os.listdir(build_path)
         files = list(filter(lambda x: x.endswith(".zip"), files))
 
@@ -59,97 +51,148 @@ def get_all_in_one_zip_file_names():
     return {"all_in_one_zip_file": ret}
 
 
-def get_telegram_widget(channel, _id):
-    url = 'https://t.me/%s/%i?embed=1' % (channel, _id)
+def get_telegram_widget(channel):
+    url = f"https://t.me/s/{channel}"
     response = urllib.request.urlopen(url, timeout=10)
-    data = response.read()
-    html = data.decode('utf-8')
+    soup = BeautifulSoup(response.read(), 'html5lib')
 
-    if "tgme_widget_message_author" in html:
-        html = html[html.find('<div class="tgme_widget_message js-widget_message"'):]
-        html = html[:html.find('<script')]
-        return html
+    posts = soup.find('section', class_='tgme_channel_history').findChildren('div', recursive=False)
+    last_post = posts[-1]
+    return last_post
 
 
-def get_release_notes():
-    url = 'https://api.github.com/repos/%s/%s/releases/latest' % ("IITC-CE", "ingress-intel-total-conversion")
-    req = urllib.request.Request(url)
-    req.add_header('Accept', 'application/vnd.github.3.full.inertia-preview+json')
-    response = urllib.request.urlopen(req, timeout=10)
-
-    data = response.read()
-    data = json.loads(data)
-    latest = {'name': data['name'], 'body': data['body_html'], 'date': data['published_at'].split('T')[0]}
-
-    if ('release_notes' in config) and len(config['release_notes']):
-        if config['release_notes'][-1]['name'] != latest['name']:
-            config['release_notes'].append(latest)
-            save_config()
-    else:
-        config['release_notes'] = latest
-        save_config()
-
-    return config
+def get_screenshots_carousel():
+    screenshots = []
+    for file in os.listdir('./static/img/screenshots/'):
+        screenshots.append("img/screenshots/"+file)
+    return screenshots
 
 
 def generate_page(page):
     template = env.get_template(page)
 
-    markers = config.copy()
-    markers['active_page'] = page
+    markers = {'active_page': page}
     if page == 'index.html':
-        _id = config['telegram_channel_last_id']
-        widget = get_telegram_widget(config['telegram_channel_name'], _id + 1)
-        if widget is None:
-            widget = get_telegram_widget(config['telegram_channel_name'], _id)
-        else:
-            config['telegram_channel_last_id'] += 1
-            save_config()
+        widget = get_telegram_widget("iitc_news")
         if widget is None:
             print("Error updating telegram")
             return
         markers['telegram_widget'] = widget
+        markers['screenshots_carousel'] = get_screenshots_carousel()
 
     if page == "download_desktop.html":
         data = parse_meta('release')
         data.update(parse_meta('beta'))
-        data.update(parse_meta('test'))
         data.update(get_all_in_one_zip_file_names())
         markers.update(data)
 
     if page == "download_mobile.html":
         data = parse_meta('release')
         data.update(parse_meta('beta'))
-        data.update(parse_meta('test'))
-        markers.update(data)
-
-    if page == 'release_notes.html':
-        data = get_release_notes()
         markers.update(data)
 
     html = template.render(markers)
-    path = arguments['--static'] + "/" + page
+    path = "static/" + page
     with open(path, "w") as fh:
         fh.write(html)
 
 
+def copy_last_build_from_archive():
+    for release_type in ["release", "beta"]:
+        build_path = f"static/build/{release_type}"
+        builds_archive_path = f"static/build/{release_type}_archive"
+
+        archives = [f for f in os.listdir(builds_archive_path) if os.path.isdir(os.path.join(builds_archive_path, f))]
+        last_build = sorted(archives)[-1]
+
+        if os.path.exists(build_path):
+            shutil.rmtree(build_path)
+        shutil.copytree(f"{builds_archive_path}/{last_build}", build_path)
+
+
+def get_files_tree():
+    root = "static/"
+    tree = {}
+    for file_path in glob.iglob('static/**', recursive=True):
+        file_path = file_path.replace(root, "")
+        file_dir = "/".join(file_path.split("/")[:-1])
+        if file_dir not in tree:
+            tree[file_dir] = []
+        file_name = file_path.split("/")[-1]
+        tree[file_dir].append(file_name)
+    if "" in tree:
+        del tree[""]
+    return tree
+
+
+def sizeof_fmt(num, suffix="B"):
+    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f} {unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f} Yi{suffix}"
+
+
+def recursive_generate_index_pages():
+    tree = get_files_tree()
+
+    for file_dir in tree:
+        file_dir_split = file_dir.split("/")
+
+        marker_path_menu = []
+        marker_files = []
+        for i, split_dir in enumerate(file_dir_split):
+            marker_path_menu.append(["../"*(len(file_dir_split)-i-1), split_dir])
+
+        for file in tree[file_dir]:
+            if file == "index.html":
+                continue
+
+            file_path = f"{file_dir}/{file}"
+            static_file_path = "static/"+file_path
+            file_is_dir = os.path.isdir(static_file_path)
+            file_size = os.path.getsize(static_file_path) if not file_is_dir else "-1"
+            file_size_fmt = sizeof_fmt(file_size) if not file_is_dir else "&mdash;"
+            modified = os.path.getmtime(static_file_path)
+            file_modified = datetime.fromtimestamp(modified).strftime("%Y-%m-%dT%H:%M:%SZ")
+            file_modified_fmt = datetime.fromtimestamp(modified).strftime("%Y-%m-%d %H:%M:%S")
+
+            marker_files.append({
+                "is_dir": file_is_dir,
+                "name": file,
+                "path": f"./{file}",
+                "size": file_size,
+                "size_fmt": file_size_fmt,
+                "modified": file_modified,
+                "modified_fmt": file_modified_fmt
+            })
+
+        markers = {
+            "path": "/"+file_dir,
+            "path_menu": marker_path_menu,
+            "files": marker_files,
+            "count_dirs": sum(x['is_dir'] is True for x in marker_files),
+            "count_files": sum(x['is_dir'] is False for x in marker_files)
+        }
+        template = env.get_template("__folder_index__.html")
+        html = template.render(markers)
+        path = f"static/{file_dir}/index.html"
+        with open(path, "w") as fh:
+            fh.write(html)
+
+
 if __name__ == '__main__':
-    arguments = docopt(__doc__)
-
-    with open(arguments['--config'], 'r') as f:
-        config = json.load(f)
-
     env = Environment(
-        loader=FileSystemLoader(arguments['--template']),
+        loader=FileSystemLoader("template"),
         trim_blocks=True
     )
     env.filters['md5sum'] = file_add_md5sum
 
-    if arguments['--page'] == "all":
-        files = os.listdir(arguments['--template'])
-        files = filter(lambda x: x.endswith(".html"), files)
-    else:
-        files = [arguments['--page'] + ".html"]
+    copy_last_build_from_archive()
+    recursive_generate_index_pages()
+
+    files = os.listdir("template")
+    files = filter(lambda x: x.endswith(".html"), files)
 
     for _page in files:
         if _page.startswith("_"):
