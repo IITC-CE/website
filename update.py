@@ -64,7 +64,8 @@ def get_telegram_widget(channel):
 def get_screenshots_carousel():
     screenshots = []
     for file in os.listdir('./static/img/screenshots/'):
-        screenshots.append("img/screenshots/"+file)
+        if not file.endswith('.html'):
+            screenshots.append("img/screenshots/"+file)
     return screenshots
 
 
