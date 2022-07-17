@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="7.11mm" height="7.11mm" clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" version="1.1" viewBox="0 0 711 711" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:none}
+    .fil1 {fill:#FF52E7}
+   ]]>
+  </style>
+ </defs>
+ 
+  
+  <rect class="fil0" width="711" height="711"/>
+  <path class="fil1" d="m374 119 89 51 89 52 28-16v-2c0-21 17-37 38-37 20 0 37 16 37 37s-17 38-37 38c-8 0-15-2-20-6l-28 16v207l28 16c5-3 12-5 20-5 20 0 37 16 37 37s-17 38-37 38c-21 0-38-17-38-38v-2l-28-16-89 52-90 52v32c12 6 20 19 20 33 0 21-17 38-37 38-21 0-38-17-38-38 0-14 8-27 20-33v-32l-89-52-90-52-28 16v2c0 21-17 38-37 38-21 0-38-17-38-38s17-37 38-37c7 0 14 2 20 5l28-16v-207l-28-16c-6 4-13 6-20 6-21 0-38-17-38-38s17-37 38-37c20 0 37 16 37 37v2l28 16 180-104v-31c-12-6-21-19-21-34 0-21 17-37 38-37 20 0 37 16 37 37 0 14-8 27-19 33v33zm-18 28 90 52 91 52v209l-91 52-90 53-181-105v-209l90-52 91-52z"/>
+  <path class="fil1" d="m356 185 148 85v171l-148 85-148-85v-171zm0 38 115 66v133l-115 66-115-66v-133z"/>
+ 
+</svg>
