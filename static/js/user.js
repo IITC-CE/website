@@ -12,17 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('tab_beta').click();
     }
 
-    if (window.location.hash.endsWith("_test")) {
-        document.getElementById('tab_test').click();
-    }
-
     let plugin = $_GET("plugin");
-    if (plugin && (plugin.endsWith("_beta") || plugin.endsWith("_test"))) {
+    if (plugin && (plugin.endsWith("_beta"))) {
         if (plugin && plugin.endsWith("_beta")) {
             document.getElementById('tab_beta').click();
-        }
-        if (plugin && plugin.endsWith("_test")) {
-            document.getElementById('tab_test').click();
         }
         document.getElementById(plugin).querySelectorAll('.card-plugin-info')[0].click();
         history.pushState({}, document.title, window.location.href.replace(window.location.search, ""));

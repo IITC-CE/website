@@ -8,6 +8,7 @@ import json
 import os
 import urllib.parse
 import hashlib
+import shutil
 from bs4 import BeautifulSoup
 
 
@@ -36,8 +37,8 @@ def parse_meta(release_type):
 
 def get_all_in_one_zip_file_names():
     ret = dict()
-    for release_type in ["release", "beta", "test"]:
-        build_path = "%s/build/%s/" % ("static", release_type)
+    for release_type in ["release", "beta"]:
+        build_path = f"static/build/{release_type}/"
         files = os.listdir(build_path)
         files = list(filter(lambda x: x.endswith(".zip"), files))
 
@@ -80,14 +81,12 @@ def generate_page(page):
     if page == "download_desktop.html":
         data = parse_meta('release')
         data.update(parse_meta('beta'))
-        data.update(parse_meta('test'))
         data.update(get_all_in_one_zip_file_names())
         markers.update(data)
 
     if page == "download_mobile.html":
         data = parse_meta('release')
         data.update(parse_meta('beta'))
-        data.update(parse_meta('test'))
         markers.update(data)
 
     html = template.render(markers)
@@ -96,12 +95,25 @@ def generate_page(page):
         fh.write(html)
 
 
+def copy_last_build_from_archive():
+    for release_type in ["release", "beta"]:
+        build_path = f"static/build/{release_type}"
+        builds_archive_path = f"static/build/{release_type}_archive"
+        last_build = sorted(os.listdir(builds_archive_path))[-1]
+
+        if os.path.exists(build_path):
+            shutil.rmtree(build_path)
+        shutil.copytree(f"{builds_archive_path}/{last_build}", build_path)
+
+
 if __name__ == '__main__':
     env = Environment(
         loader=FileSystemLoader("template"),
         trim_blocks=True
     )
     env.filters['md5sum'] = file_add_md5sum
+
+    copy_last_build_from_archive()
 
     files = os.listdir("template")
     files = filter(lambda x: x.endswith(".html"), files)
