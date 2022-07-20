@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="7.11mm" height="7.11mm" clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" version="1.1" viewBox="0 0 711 711" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
- 
-<g fill="none" stroke="#e25952" stroke-linecap="round" stroke-width="30"><path d="m115 295 118 47.1"/><path d="m140 234 118 47.1"/><path d="m478 140-46.9 118"/><path d="m417 116-46.9 118"/><path d="m572 478-118-47.2"/><path d="m596 417-118-47.2"/><path d="m295 597 47.1-118"/><path d="m234 572 47.1-118"/></g></svg>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW Home & Student X8 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="84px" height="84px" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
+viewBox="0 0 84 84"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect fill="none" width="84" height="84"/>
+  <path fill="#E25952" fill-rule="nonzero" d="M42 26l5 -13c1,0 1,-1 2,-1 0,0 0,0 1,0 0,0 1,0 1,1 0,0 0,1 0,2l-5 13c-1,0 -1,1 -2,1 0,0 0,0 -1,0 0,0 -1,-1 -1,-1 0,0 0,-1 0,-2z"/>
+  <path id="1" fill="#E25952" fill-rule="nonzero" d="M49 29l6 -13c0,-1 0,-1 1,-1 0,0 1,0 1,0 1,0 1,0 1,1 0,0 0,1 0,1l-5 14c0,0 -1,1 -1,1 -1,0 -1,0 -2,0 0,0 -1,-1 -1,-1 0,-1 0,-1 0,-2z"/>
+  <path fill="#E25952" fill-rule="nonzero" d="M26 42l-13 -5c0,-1 -1,-1 -1,-2 0,0 0,0 0,-1 0,0 0,-1 1,-1 0,0 1,0 2,0l13 5c0,1 1,1 1,2 0,0 0,0 0,1 0,0 -1,1 -1,1 0,0 -1,0 -2,0z"/>
+  <path id="1" fill="#E25952" fill-rule="nonzero" d="M29 35l-13 -6c-1,0 -1,0 -1,-1 0,0 0,-1 0,-1 0,-1 0,-1 1,-1 0,0 1,0 1,0l14 5c0,0 1,1 1,1 0,1 0,1 0,2 0,0 -1,1 -1,1 -1,0 -1,0 -2,0z"/>
+  <path fill="#E25952" fill-rule="nonzero" d="M42 58l-5 13c-1,0 -1,1 -2,1 0,0 0,0 -1,0 0,0 -1,0 -1,-1 0,0 0,-1 0,-2l5 -13c1,0 1,-1 2,-1 0,0 0,0 1,0 0,0 1,1 1,1 0,0 0,1 0,2z"/>
+  <path id="1" fill="#E25952" fill-rule="nonzero" d="M35 55l-6 13c0,1 0,1 -1,1 0,0 -1,0 -1,0 -1,0 -1,0 -1,-1 0,0 0,-1 0,-1l5 -14c0,0 1,-1 1,-1 1,0 1,0 2,0 0,0 1,1 1,1 0,1 0,1 0,2z"/>
+  <path fill="#E25952" fill-rule="nonzero" d="M58 42l13 5c0,1 1,1 1,2 0,0 0,0 0,1 0,0 0,1 -1,1 0,0 -1,0 -2,0l-13 -5c0,-1 -1,-1 -1,-2 0,0 0,0 0,-1 0,0 1,-1 1,-1 0,0 1,0 2,0z"/>
+  <path id="1" fill="#E25952" fill-rule="nonzero" d="M55 49l13 6c1,0 1,0 1,1 0,0 0,1 0,1 0,1 0,1 -1,1 0,0 -1,0 -1,0l-14 -5c0,0 -1,-1 -1,-1 0,-1 0,-1 0,-2 0,0 1,-1 1,-1 1,0 1,0 2,0z"/>
+ </g>
+</svg>

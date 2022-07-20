@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW Home & Student X8 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="60px" height="60px" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
+viewBox="0 0 60 60"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+   <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="4.01828" y1="60.0008" x2="55.9817" y2="60.0008">
+    <stop offset="0" stop-opacity="1" stop-color="gold"/>
+    <stop offset="0.2" stop-opacity="1" stop-color="gold"/>
+    <stop offset="1" stop-opacity="1" stop-color="orange"/>
+   </linearGradient>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <path fill="url(#id0)" d="M30 0l13 7 13 8 0 15 0 15 -13 8 -13 7 -13 -7 -13 -8 0 -15 0 -15 13 -8 13 -7zm0 5l11 6 11 6 0 13 0 13 -11 6 -11 6 -11 -6 -11 -6 0 -13 0 -13 11 -6 11 -6z"/>
+  <polygon fill="#6699FF" points="30,38 35,26 39,14 30,14 21,14 25,26 "/>
+  <path fill="#6699FF" d="M22 32c2,0 5,0 8,0 1,0 2,0 4,0 1,0 2,0 4,0 1,1 3,2 5,2 2,1 5,2 7,3 -1,1 -2,2 -3,4 -1,1 -2,3 -3,4 -5,0 -9,0 -14,0 -4,0 -9,0 -13,0 -2,-2 -3,-3 -4,-5 -1,-1 -2,-2 -3,-3 2,-1 4,-2 6,-3 2,0 4,-1 6,-2zm1 1c2,0 4,0 7,0 2,0 4,0 6,0 2,1 3,1 4,2 2,1 4,1 6,2 -1,1 -2,2 -3,3 -1,1 -2,2 -3,3 -3,0 -6,0 -10,0 -3,0 -6,0 -10,0 -1,-1 -2,-2 -3,-3 -1,-1 -2,-2 -3,-3 2,-1 4,-2 5,-2 2,-1 3,-1 4,-2z"/>
+ </g>
+</svg>

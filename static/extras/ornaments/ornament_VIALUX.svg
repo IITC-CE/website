@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW Home & Student X8 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="60px" height="60px" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
+viewBox="0 0 60 60"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:cc="http://creativecommons.org/ns#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:svg="http://www.w3.org/2000/svg"
+ xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+ xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+ inkscape:version="0.92+devel unknown"
+ sodipodi:docname="via_lux.svg">
+ <defs>
+   <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="4.01828" y1="60.0008" x2="55.9817" y2="60.0008">
+    <stop offset="0" stop-opacity="1" stop-color="gold"/>
+    <stop offset="0.2" stop-opacity="1" stop-color="gold"/>
+    <stop offset="1" stop-opacity="1" stop-color="orange"/>
+   </linearGradient>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <path fill="url(#id0)" d="M30 0l13 7 13 8 0 15 0 15 -13 8 -13 7 -13 -7 -13 -8 0 -15 0 -15 13 -8 13 -7zm0 5l11 6 11 6 0 13 0 13 -11 6 -11 6 -11 -6 -11 -6 0 -13 0 -13 11 -6 11 -6z"/>
+  <g id="_505916776">
+   <path id="circle4297" fill="black" d="M30 9c-8,0 -15,6 -15,15l0 21 30 0 0 -21c0,-9 -7,-15 -15,-15l0 0z" inkscape:connector-curvature="0"/>
+   <path id="circle4299" fill="#F8E7C1" d="M41 24l0 0c0,-7 -5,-12 -11,-12 -6,0 -11,5 -11,12l0 15 22 0 0 -15z"/>
+   <circle id="circle4381" fill="#BD932D" cx="30" cy="25" r="7"/>
+   <path id="circle4301" fill="#FFC423" d="M38 25c0,-1 0,-2 0,-3l3 -2c-1,-2 -2,-3 -3,-5l-3 4c-1,-1 -2,-2 -3,-2l0 -5c0,0 -1,0 -2,0 -1,0 -2,0 -3,1l1 4c-1,0 -2,1 -3,2l-3 -4c-1,2 -2,3 -3,5l3 2c0,1 0,2 0,3 0,5 3,9 8,9 5,0 8,-4 8,-9z"/>
+   <path id="circle4295" fill="#FFC423" d="M30 10c0,0 0,0 0,0 -8,0 -14,6 -14,14l0 19 2 -2 0 -17c0,-7 5,-13 12,-13 0,0 0,0 0,0 6,0 11,5 12,11l0 0c0,0 0,1 0,1 0,0 0,1 0,1l0 17 2 2 0 -19c0,-8 -6,-14 -14,-14 0,0 0,0 0,0l0 0zm-12 32l-1 2 26 0 -2 -2 -23 0z" inkscape:connector-curvature="0"/>
+   <rect id="rect4373" fill="#836528" x="19" y="25" width="22.8366" height="15.4353"/>
+   <path id="circle4303" fill="#BD932D" d="M30 25l7 0c0,-4 -3,-7 -7,-7 -4,0 -7,3 -7,7l7 0z"/>
+   <g id="g4323">
+    <path id="path4319" fill="black" d="M36 17l0 3c0,3 -1,5 -2,7 0,2 -1,3 -1,4 -2,-4 -3,-7 -7,-11l0 1c2,2 4,5 6,11 0,1 -1,2 -1,4 0,0 0,0 0,0 -1,-1 -3,-2 -4,-3 -1,-1 -1,-1 -2,-1l-1 0c1,1 2,2 3,2 2,2 4,4 5,6 1,0 1,0 1,1l2 0c-1,-1 -1,-2 -2,-2 0,-1 -1,-2 -1,-3 0,-3 3,-6 4,-9 1,-2 1,-4 1,-7l-1 -3z" inkscape:connector-curvature="0"/>
+    <g id="g4346">
+     <path id="path4337" fill="black" d="M36 36c0,0 1,2 0,3 -1,2 -3,1 -3,1 0,0 -1,-1 0,-3 1,-1 3,-1 3,-1z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+     <path id="path4342" fill="#F8E7C1" d="M36 37c0,0 0,1 -1,2 0,0 -1,0 -1,0 0,0 0,0 0,-1 1,-1 2,-1 2,-1z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+    </g>
+    <g id="g4352">
+     <path id="path4348" fill="black" d="M31 36c0,0 0,2 -2,3 -2,0 -3,-1 -3,-1 0,0 0,-2 2,-2 2,-1 3,0 3,0z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+     <path id="path4350" fill="#F8E7C1" d="M30 37c0,0 0,0 -1,1 -1,0 -2,-1 -2,-1 0,0 1,0 1,0 1,-1 2,0 2,0z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+    </g>
+    <g id="g4358">
+     <path id="path4354" fill="black" d="M25 32c0,0 -1,1 -3,0 -2,-1 -1,-3 -1,-3 0,0 1,-1 3,0 1,1 1,3 1,3z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+     <path id="path4356" fill="#F8E7C1" d="M24 31c0,0 -1,1 -1,0 -1,0 -1,-1 -1,-1 0,0 0,0 1,0 1,1 1,1 1,1z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+    </g>
+    <g id="g4364">
+     <path id="path4360" fill="black" d="M37 30c0,0 0,2 -2,3 -1,0 -3,-1 -3,-1 0,0 1,-2 2,-2 2,-1 3,0 3,0z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+     <path id="path4362" fill="#F8E7C1" d="M36 31c0,0 0,0 -1,1 -1,0 -1,0 -1,0 0,0 0,-1 1,-1 0,-1 1,0 1,0z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+    </g>
+    <g id="g4370">
+     <path id="path4366" fill="black" d="M31 28c0,0 -1,1 -2,1 -2,0 -3,-2 -3,-2 0,0 1,-2 3,-1 2,0 2,2 2,2z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+     <path id="path4368" fill="#F8E7C1" d="M30 27c0,0 0,1 -1,1 -1,0 -2,-1 -2,-1 0,0 1,0 2,0 1,0 1,0 1,0z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+    </g>
+    <g id="g4376">
+     <path id="path4372" fill="black" d="M36 27c0,0 -2,0 -3,-1 -2,-2 -1,-3 -1,-3 0,0 2,-1 3,1 1,1 1,3 1,3z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+     <path id="path4374" fill="#F8E7C1" d="M35 26c0,0 -1,0 -2,-1 0,-1 0,-1 0,-1 0,0 1,0 1,0 1,1 1,2 1,2z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+    </g>
+    <g id="g4382">
+     <path id="path4378" fill="black" d="M40 21c0,0 0,1 -1,3 -1,1 -3,0 -3,0 0,0 -1,-2 1,-3 1,-1 3,0 3,0z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+     <path id="path4380" fill="#F8E7C1" d="M39 22c0,0 0,0 -1,1 0,0 -1,0 -1,0 0,0 0,0 0,-1 1,-1 2,0 2,0z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+    </g>
+    <g id="g4388">
+     <path id="path4384" fill="black" d="M29 19c0,0 2,1 2,3 0,2 -2,2 -2,2 0,0 -2,-1 -2,-2 1,-2 2,-3 2,-3z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+     <path id="path4386" fill="#F8E7C1" d="M29 20c0,0 1,1 1,2 0,1 -1,1 -1,1 0,0 -1,0 -1,-1 1,-1 1,-2 1,-2l0 0z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+    </g>
+    <g id="g4394">
+     <path id="path4390" fill="black" d="M35 15c0,0 2,0 2,2 1,2 0,3 0,3 0,0 -2,0 -3,-2 0,-1 1,-3 1,-3z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+     <path id="path4392" fill="#F8E7C1" d="M35 16c0,0 1,1 1,1 1,1 0,2 0,2 0,0 0,0 -1,-1 0,-1 0,-2 0,-2z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+    </g>
+    <g id="g4400">
+     <path id="path4396" fill="black" d="M26 21c0,0 -1,1 -3,0 -1,-1 -1,-3 -1,-3 0,0 1,-1 3,0 1,1 1,3 1,3z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+     <path id="path4398" fill="#F8E7C1" d="M25 20c0,0 -1,1 -1,0 -1,0 -1,-1 -1,-1 0,0 1,0 1,0 1,1 1,1 1,1z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+    </g>
+    <g id="g4406">
+     <path id="path4402" fill="black" d="M29 35c0,0 -2,0 -2,-2 0,-2 1,-3 1,-3 0,0 2,1 2,2 0,2 -1,3 -1,3z" sodipodi:nodetypes="czczc" inkscape:connector-curvature="0"/>
+     <path id="path4404" fill="#F8E7C1" d="M29 34c0,0 -1,0 -1,-1 0,-1 0,-2 0,-2 0,0 1,1 1,2 0,0 0,1 0,1z" inkscape:connector-curvature="0" sodipodi:nodetypes="czczc"/>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

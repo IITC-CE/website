@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW Home & Student X8 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="60px" height="60px" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
+viewBox="0 0 60 60"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+   <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="4.01828" y1="60.0008" x2="55.9817" y2="60.0008">
+    <stop offset="0" stop-opacity="1" stop-color="gold"/>
+    <stop offset="0.2" stop-opacity="1" stop-color="gold"/>
+    <stop offset="1" stop-opacity="1" stop-color="orange"/>
+   </linearGradient>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <path fill="#03DC03" d="M28 6l0 11c2,0 3,1 5,1l0 -1c-1,0 -2,-1 -3,-1l0 -6 3 3 0 2 1 0 1 -3 -7 -6zm4 18c-1,1 -2,2 -4,2 -1,0 -2,-1 -3,-2 -1,0 -2,1 -3,2 2,1 4,1 7,1 2,1 4,0 6,-2l-3 -1zm-4 -4c-4,0 -7,2 -10,3 -1,0 -1,0 -2,1 1,0 2,1 3,1 4,-2 4,-3 9,-3 4,0 6,2 10,3 1,-1 1,-1 2,-2 -1,0 -1,0 -2,0 -3,-2 -6,-3 -10,-3zm5 9c-1,1 -3,1 -4,1l0 24 7 -13 -1 -7 -2 1 2 6 -4 6 0 -15c1,0 2,-1 3,-1l-1 -2zm5 -14l-3 4c2,1 3,2 5,3 1,-1 3,-2 4,-2l-6 -5zm-1 3l1 -2 4 3c0,0 -1,1 -2,1 -1,0 -2,-1 -3,-2zm1 8c-1,1 -2,2 -3,2l3 7 4 -7 -4 -2zm-1 3c1,0 1,-1 2,-1l2 1 -2 3 -2 -3z"/>
+  <path fill="url(#id0)" d="M30 0l13 7 13 8 0 15 0 15 -13 8 -13 7 -13 -7 -13 -8 0 -15 0 -15 13 -8 13 -7zm0 5l11 6 11 6 0 13 0 13 -11 6 -11 6 -11 -6 -11 -6 0 -13 0 -13 11 -6 11 -6z"/>
+ </g>
+</svg>
