@@ -1,4 +1,5 @@
 import sys
+import os
 
 
 def store_version(_, outdir):
@@ -24,7 +25,7 @@ builds = {
         'gradle_buildtype': 'release',
         'gradle_distributiontypes': ['apk', 'aab']
     },
-    
+
     'beta': {
         'url_dist_base': 'https://iitc.app/build/beta',
         'gradle_buildtype': 'beta',
@@ -33,10 +34,10 @@ builds = {
     },
 
     'test': {
-        'url_dist_base': 'https://iitc.app/build/test',
+        'url_dist_base': 'https://iitc.app/build/artifact/PR'+os.getenv('github.event.number'),
         'version_timestamp': True,
     },
-    
+
     'check': {
         'version_timestamp': True,
         'post_build': ['build_mobile.py'],
