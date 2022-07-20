@@ -34,7 +34,7 @@ builds = {
     },
 
     'test': {
-        'url_dist_base': 'https://iitc.app/build/artifact/PR'+os.getenv('github.event.number'),
+        'url_dist_base': 'https://iitc.app/build/artifact/PR'+os.getenv('PR_NUMBER', '0'),
         'version_timestamp': True,
     },
 
