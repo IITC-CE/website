@@ -2,12 +2,12 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.0.20220720.162200
+// @version        0.2.0.20220720.171744
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
-// @updateURL      https://iitc.app/build/test/plugins/portal-counts.meta.js
-// @downloadURL    https://iitc.app/build/test/plugins/portal-counts.user.js
+// @updateURL      https://iitc.app/build/artifact/PR571/plugins/portal-counts.meta.js
+// @downloadURL    https://iitc.app/build/artifact/PR571/plugins/portal-counts.user.js
 // @match          https://intel.ingress.com/*
 // @grant          none
 // ==/UserScript==
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-162200';
+plugin_info.dateTimeVersion = '2022-07-20-171744';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
