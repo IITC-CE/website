@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.3.0.20220722.165804
+// @version        0.3.0.20220722.165827
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2022-07-22-165804';
+plugin_info.dateTimeVersion = '2022-07-22-165827';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,10 +33,11 @@ window.plugin.portalslist.sortOrder = -1;
 window.plugin.portalslist.enlP = 0;
 window.plugin.portalslist.resP = 0;
 window.plugin.portalslist.neuP = 0;
+window.plugin.portalslist.visitedP = 0;
+window.plugin.portalslist.capturedP = 0;
+window.plugin.portalslist.scoutControlledP = 0;
 
 window.plugin.portalslist.filter = 0;
-
-window.plugin.portalslist.historySymbol = String.fromCharCode(0x25CF);
 
 /*
  * plugins may add fields by appending their specifiation to the following list. The following members are supported:
@@ -155,7 +156,7 @@ window.plugin.portalslist.fields = [
     },
     defaultOrder: -1,
   },
-  { 
+  {
     title: 'V/C',
     value: function(portal) {
       var history = portal.options.data.history;
@@ -172,12 +173,12 @@ window.plugin.portalslist.fields = [
         'history',
         ['unvisited', 'visited', 'captured'][value]
       ]);
-      cell.append(window.plugin.portalslist.historySymbol);
+      $(cell).append('<div class="icon"></div>');
     }
   },
   {
     title: 'S',
-    value: function(portal) { 
+    value: function(portal) {
       var history = portal.options.data.history;
       if (history) {
         return history.scoutControlled ? 1 : 0;
@@ -190,7 +191,7 @@ window.plugin.portalslist.fields = [
         'history',
         ['unvisited', 'scoutControlled'][value]
       ]);
-      cell.append(window.plugin.portalslist.historySymbol);
+      $(cell).append('<div class="icon"></div>');
     }
   }
 ];
@@ -223,6 +224,9 @@ window.plugin.portalslist.getPortals = function() {
       default:
         window.plugin.portalslist.neuP++;
     }
+    if (portal.options.data.history.visited) window.plugin.portalslist.visitedP++;
+    if (portal.options.data.history.captured) window.plugin.portalslist.capturedP++;
+    if (portal.options.data.history.scoutControlled) window.plugin.portalslist.scoutControlledP++;
 
     // cache values and DOM nodes
     var obj = { portal: portal, values: [], sortValues: [] };
@@ -263,10 +267,13 @@ window.plugin.portalslist.displayPL = function() {
   window.plugin.portalslist.enlP = 0;
   window.plugin.portalslist.resP = 0;
   window.plugin.portalslist.neuP = 0;
+  window.plugin.portalslist.visitedP = 0;
+  window.plugin.portalslist.capturedP = 0;
+  window.plugin.portalslist.scoutControlledP = 0;
   window.plugin.portalslist.filter = 0;
 
   if (window.plugin.portalslist.getPortals()) {
-    list = window.plugin.portalslist.portalTable(window.plugin.portalslist.sortBy, window.plugin.portalslist.sortOrder,window.plugin.portalslist.filter);
+    list = window.plugin.portalslist.portalTable(window.plugin.portalslist.sortBy, window.plugin.portalslist.sortOrder,window.plugin.portalslist.filter, false);
   } else {
     list = $('<table class="noPortals"><tr><td>Nothing to show!</td></tr></table>');
   };
@@ -284,7 +291,7 @@ window.plugin.portalslist.displayPL = function() {
   }
 }
 
-window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
+window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reversed) {
   // save the sortBy/sortOrder/filter
   window.plugin.portalslist.sortBy = sortBy;
   window.plugin.portalslist.sortOrder = sortOrder;
@@ -312,63 +319,83 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
 
   if(filter !== 0) {
     portals = portals.filter(function(obj) {
-      return filter < 0
-        ? obj.portal.options.team+1 != -filter
-        : obj.portal.options.team+1 == filter;
+      switch (filter) {
+        case 1:
+        case 2:
+        case 3:
+          return reversed ^ (1+obj.portal.options.team === filter);
+        case 4:
+          return reversed ^ obj.portal.options.data.history.visited;
+        case 5:
+          return reversed ^ obj.portal.options.data.history.captured;
+        case 6:
+          return reversed ^ obj.portal.options.data.history.scoutControlled;
+      };
     });
   }
 
-  var table, row, cell;
   var container = $('<div>');
 
-  table = document.createElement('table');
-  table.className = 'filter';
-  container.append(table);
-
-  row = table.insertRow(-1);
+  filters = document.createElement('div');
+  filters.className = 'filters';
+  container.append(filters);
 
   var length = window.plugin.portalslist.listPortals.length;
 
-  ["All", "Neutral", "Resistance", "Enlightened"].forEach(function(label, i) {
-    cell = row.appendChild(document.createElement('th'));
-    cell.className = 'filter' + label.substr(0, 3);
+  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Visited', 'Captured', 'Scout Controlled' ].forEach(function(label, i) {
+    var cell = filters.appendChild(document.createElement('div'));
+    cell.className = 'name filter' + label.substr(0, 3);
     cell.textContent = label+':';
-    cell.title = 'Show only portals of this color';
+    cell.title = 'Show only '+label+' portals';
     $(cell).click(function() {
-      $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, i));
+      if (this.classList.contains('active')) {
+        $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, 0, false));
+      } else {
+        $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, i, false));
+      }
     });
 
+    if (filter === i && !reversed) {
+      cell.classList.add('active');
+    }
 
-    cell = row.insertCell(-1);
-    cell.className = 'filter' + label.substr(0, 3);
-    if(i != 0) cell.title = 'Hide portals of this color';
-    $(cell).click(function() {
-      $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, -i));
-    });
+    cell = filters.appendChild(document.createElement('div'));
+    cell.className = 'count filter' + label.substr(0, 3);
 
-    switch(i-1) {
-      case -1:
-        cell.textContent = length;
-        break;
-      case 0:
-        cell.textContent = window.plugin.portalslist.neuP + ' (' + Math.round(window.plugin.portalslist.neuP/length*100) + '%)';
-        break;
-      case 1:
-        cell.textContent = window.plugin.portalslist.resP + ' (' + Math.round(window.plugin.portalslist.resP/length*100) + '%)';
-        break;
-      case 2:
-        cell.textContent = window.plugin.portalslist.enlP + ' (' + Math.round(window.plugin.portalslist.enlP/length*100) + '%)';
+    if (i == 0) {
+      cell.textContent = length;
+    } else {
+      cell.title = 'Hide '+label+' portals ';
+      $(cell).click(function() {
+        if (this.classList.contains('active')) {
+          $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, 0, false));
+        } else {
+          $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, i, true));
+        }
+      });
+
+      if (filter === i && reversed) {
+        cell.classList.add('active');
+      }
+
+      var name = ['neuP', 'resP', 'enlP', 'visitedP', 'capturedP', 'scoutControlledP'][i-1];
+      var count = window.plugin.portalslist[name];
+      cell.textContent = count + ' (' + Math.round(count/length*100) + '%)';
     }
   });
 
-  table = document.createElement('table');
+  var tableDiv = document.createElement('div');
+  tableDiv.className = 'table-container';
+  container.append(tableDiv);
+
+  var table = document.createElement('table');
   table.className = 'portals';
-  container.append(table);
+  tableDiv.appendChild(table);
 
   var thead = table.appendChild(document.createElement('thead'));
-  row = thead.insertRow(-1);
+  var row = thead.insertRow(-1);
 
-  cell = row.appendChild(document.createElement('th'));
+  var cell = row.appendChild(document.createElement('th'));
   cell.textContent = '#';
 
   window.plugin.portalslist.fields.forEach(function(field, i) {
@@ -388,7 +415,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
           order = field.defaultOrder < 0 ? -1 : 1;
         }
 
-        $('#portalslist').empty().append(window.plugin.portalslist.portalTable(i, order, filter));
+        $('#portalslist').empty().append(window.plugin.portalslist.portalTable(i, order, filter, reversed));
       });
     }
   });
@@ -403,7 +430,10 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
   });
 
   container.append('<div class="disclaimer">Click on portals table headers to sort by that column. '
-    + 'Click on <b>All, Neutral, Resistance, Enlightened</b> to only show portals owner by that faction or on the number behind the factions to show all but those portals.</div>');
+    + 'Click on <b>All, Neutral, Resistance, Enlightened</b> to only show portals owned '
+    + 'by that faction or on the number behind the factions to show all but those portals. '
+    + 'Click on <b>Visited, Captured or Scout Controlled</b> to only show portals the user has a history for '
+    + 'or on the number to hide those. </div>');
 
   return container;
 }
@@ -452,11 +482,11 @@ var setup =  function() {
     .html('\
 #portalslist.mobile {\
   background: transparent;\
-  border: 0 none !important;\
-  height: 100% !important;\
-  width: 100% !important;\
-  left: 0 !important;\
-  top: 0 !important;\
+  border: 0 none;\
+  height: 100%;\
+  width: 100%;\
+  left: 0;\
+  top: 0;\
   position: absolute;\
   overflow: auto;\
 }\
@@ -474,6 +504,8 @@ var setup =  function() {
   border-bottom: 1px solid #0b314e;\
   color: white;\
   padding: 3px;\
+  white-space: nowrap;\
+  vertical-align: middle;\
 }\
 \
 #portalslist table th {\
@@ -493,8 +525,8 @@ var setup =  function() {
 }\
 \
 #portalslist table .portalTitle {\
-  min-width: 120px !important;\
-  max-width: 240px !important;\
+  min-width: 120px;\
+  max-width: 240px;\
   overflow: hidden;\
   white-space: nowrap;\
   text-overflow: ellipsis;\
@@ -504,36 +536,140 @@ var setup =  function() {
   color: #FFCE00;\
 }\
 \
-#portalslist table.filter {\
-  table-layout: fixed;\
-  cursor: pointer;\
-  border-collapse: separate;\
-  border-spacing: 1px;\
+#portalslist .filters {\
+  display: grid;\
+  grid-template-columns: 1fr auto 1fr auto 1fr auto;\
+  grid-gap: 1px\
 }\
 \
-#portalslist table.filter th {\
-  text-align: left;\
-  padding-left: 0.3em;\
+#portalslist .filters div {\
+  padding: 0.2em 0.3em;\
   overflow: hidden;\
   text-overflow: ellipsis;\
+  background-color: #0005;\
+  white-space: nowrap;\
 }\
 \
-#portalslist table.filter td {\
+#portalslist .filters .count {\
   text-align: right;\
-  padding-right: 0.3em;\
-  overflow: hidden;\
-  text-overflow: ellipsis;\
 }\
 \
-#portalslist .filterNeu {\
+#portalslist .filters .active {\
+  font-weight: bolder;\
+  color: #FFCE00;\
+}\
+\
+#portalslist .filters .filterAll {\
+  display: none;\
+}\
+\
+#portalslist.mobile .filters .filterAll {\
+  display: block;\
+}\
+\
+/* kitkat fallback */\
+#portalslist.mobile .filters .name {\
+  float: left;\
+}\
+\
+#portalslist .filters .filterNeu,\
+#portalslist .filters .filterRes,\
+#portalslist .filters .filterEnl {\
+  grid-row: 2;\
+}\
+\
+#portalslist .filters .filterVis,\
+#portalslist .filters .filterCap,\
+#portalslist .filters .filterSco {\
+  grid-row: 3;\
+}\
+\
+/* 2 columns */\
+@media (orientation: portrait) {\
+  #portalslist.mobile .filters {\
+    grid-template-columns: 1fr auto 1fr auto;\
+  }\
+\
+  #portalslist.mobile .filters .filterNeu.name,\
+  #portalslist.mobile .filters .filterRes.name,\
+  #portalslist.mobile .filters .filterEnl.name {\
+    grid-column: 1;\
+  }\
+\
+  #portalslist.mobile .filters .filterNeu.count,\
+  #portalslist.mobile .filters .filterRes.count,\
+  #portalslist.mobile .filters .filterEnl.count {\
+    grid-column: 2;\
+  }\
+\
+  #portalslist.mobile .filters .filterVis.name,\
+  #portalslist.mobile .filters .filterCap.name,\
+  #portalslist.mobile .filters .filterSco.name {\
+    grid-column: 3;\
+  }\
+\
+  #portalslist.mobile .filters .filterVis.count,\
+  #portalslist.mobile .filters .filterCap.count,\
+  #portalslist.mobile .filters .filterSco.count {\
+    grid-column: 4;\
+  }\
+\
+  #portalslist.mobile .filters .filterNeu,\
+  #portalslist.mobile .filters .filterVis {\
+    grid-row: 2\
+  }\
+\
+  #portalslist.mobile .filters .filterRes,\
+  #portalslist.mobile .filters .filterCap {\
+    grid-row: 3\
+  }\
+\
+  #portalslist.mobile .filters .filterEnl,\
+  #portalslist.mobile .filters .filterSco {\
+    grid-row: 4\
+  }\
+}\
+\
+#portalslist .filters .filterNeu {\
   background-color: #666;\
 }\
 \
-#portalslist table tr.res td, #portalslist .filterRes {\
+#portalslist .filterVis.name:before,\
+#portalslist .filterCap.name:before,\
+#portalslist .filterSco.name:before {\
+  content: \'\';\
+  display: inline-block;\
+  width: 11px;\
+  height: 11px;\
+  border-radius: 6px;\
+  margin: auto;\
+  margin-right: 0.2em;\
+  vertical-align: -8%;\
+}\
+\
+#portalslist .filterVis:before {\
+  background-color: yellow;\
+}\
+\
+#portalslist .filterCap:before {\
+  background-color: red;\
+}\
+\
+#portalslist .filterSco:before {\
+  background-color: purple;\
+}\
+\
+#portalslist .table-container {\
+  overflow-y: hidden;\
+}\
+\
+#portalslist table tr.res td,\
+#portalslist .filters .filterRes {\
   background-color: #005684;\
 }\
 \
-#portalslist table tr.enl td, #portalslist .filterEnl {\
+#portalslist table tr.enl td,\
+#portalslist .filters .filterEnl {\
   background-color: #017f01;\
 }\
 \
@@ -543,39 +679,29 @@ var setup =  function() {
 \
 #portalslist .disclaimer {\
   margin-top: 10px;\
-  font-size: 10px;\
 }\
 \
-#portalslist .history {\
-  text-align: center;\
-  font-size: 20px;\
-  line-height: 13px;\
-  vertical-align: middle;\
+#portalslist .history .icon {\
+  width: 11px;\
+  height: 11px;\
+  border-radius: 6px;\
+  margin: auto;\
 }\
 \
-#portalslist .history.unvisited {\
-  color: white;\
+#portalslist .history.unvisited .icon{\
+  background-color: white;\
 }\
 \
-#portalslist .history.visited {\
-  color: yellow;\
+#portalslist .history.visited .icon {\
+  background-color: yellow;\
 }\
 \
-#portalslist .history.captured {\
-  color: red;\
+#portalslist .history.captured .icon {\
+  background-color: red;\
 }\
 \
-#portalslist .history.scoutControlled {\
-  color: purple;\
-}\
-\
-#portalslist.mobile table.filter tr {\
-  display: block;\
-  text-align: center;\
-}\
-#portalslist.mobile table.filter th, #portalslist.mobile table.filter td {\
-  display: inline-block;\
-  width: 22%;\
+#portalslist .history.scoutControlled .icon {\
+  background-color: purple;\
 }\
 \
 .ui-dialog.ui-dialog-portalslist {\
