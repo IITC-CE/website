@@ -1,34 +1,42 @@
 {
   "ornaments": {
     "peNIA":{
+      "name": "Beacon Niantic",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_NIANTIC.svg"
     },
     "peAEGISNOVA":{
+      "name": "Beacon Aeagisnova",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_AEGISNOVA.svg"
     },
     "peVIALUX":{
+      "name": "Beacon ViaLux",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_VIALUX.svg"
     },
     "peRES":{
+      "name": "Beacon RES",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_RES.svg"
     },
     "peENL":{
+      "name": "Beacon ENL",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_ENL.svg"
     },
     "peTARGET":{
+      "name": "Beacon Target",
       "offset": [0,0.5],
-      "url": "https://iitc.app/extras/ornaments/ornament_TRAGET.svg"
+      "url": "https://iitc.app/extras/ornaments/ornament_TARGET.svg"
     },
     "peMEET":{
+      "name": "Beacon Meetup",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_MEETUP.svg"
     },
     "peBN_BLM":{
+      "name": "Beacon BLM",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_BLM.svg"
     }
