@@ -1,0 +1,32 @@
+{
+  "ornaments": {
+    "peNIANTIC":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_NIANTIC.svg"
+    },
+    "peAEGISNOVA":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_AEGISNOVA.svg"
+    },
+    "peVIALUX":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_VIALUX.svg"
+    },
+    "peRES":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_RES.svg"
+    },
+    "peENL":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_ENL.svg"
+    },
+    "peTARGET":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_TRAGET.svg"
+    },
+    "peMEET":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_MEETUP.svg"
+    }
+  }
+}
