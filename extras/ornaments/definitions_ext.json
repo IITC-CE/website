@@ -27,6 +27,10 @@
     "peMEET":{
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_MEETUP.svg"
+    },
+    "peBN_BLM":{
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_BLM.svg"
     }
   }
 }
