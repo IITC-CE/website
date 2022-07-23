@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60px" height="60px" clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" version="1.1" viewBox="0 0 60 60" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+   <linearGradient id="id0" x1="4.02" x2="56" y1="60" y2="60" gradientUnits="userSpaceOnUse">
+    <stop stop-color="gold" offset="0"/>
+    <stop stop-color="gold" offset=".2"/>
+    <stop stop-color="orange" offset="1"/>
+   </linearGradient>
+   <linearGradient id="id1" x1="9.54" x2="50.5" y1="40.5" y2="40.5" gradientUnits="userSpaceOnUse">
+    <stop stop-color="gold" offset="0"/>
+    <stop stop-color="gold" offset=".2"/>
+    <stop stop-color="orange" offset="1"/>
+   </linearGradient>
+ </defs>
+ 
+  
+  <path d="m30 0 13 7 13 8v15 15l-13 8-13 7-13-7-13-8v-15-15l13-8 13-7zm0 5 22 12v13 13l-22 12-22-12v-13-13l22-12z" fill="url(#id0)"/>
+  <path d="m16 20h13v20h-13v-20zm0 15c-4 0-6-2-6-6s2-6 6-6m0 2c-2 0-4 2-4 4s2 4 4 4v-8zm28-5h-13v20h13v-20zm0 15c4 0 6-2 6-6s-2-6-6-6m0 2c2 0 4 2 4 4s-2 4-4 4v-8z" fill="url(#id1)" stroke="#000" stroke-linejoin="round" stroke-width=".643"/>
+ 
+</svg>
