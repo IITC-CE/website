@@ -6,14 +6,24 @@
       "url": "https://iitc.app/extras/ornaments/ornament_NIANTIC.svg"
     },
     "peAEGISNOVA":{
-      "name": "Beacon Aeagisnova",
+      "name": "Beacon Aeagis Nova",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_AEGISNOVA.svg"
     },
+    "peNEMESIS":{
+      "name": "Beacon Nemesis",
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_NEMESIS.svg"
+    },
     "peVIALUX":{
-      "name": "Beacon ViaLux",
+      "name": "Beacon Via Lux",
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_VIALUX.svg"
+    },
+    "peVIANOIR":{
+      "name": "Beacon Via Noir",
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_VIANOIR.svg"
     },
     "peRES":{
       "name": "Beacon RES",

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Creator: CorelDRAW Home & Student X8 -->
+<svg width="60px" height="60px" clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" version="1.1" viewBox="-12 -24 84 84" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="id0" x1="4.0183" x2="55.982" y1="60.001" y2="60.001" gradientUnits="userSpaceOnUse">
+    <stop stop-color="gold" offset="0"/>
+    <stop stop-color="gold" offset=".2"/>
+    <stop stop-color="orange" offset="1"/>
+   </linearGradient></defs>
+ 
+  
+  <path d="m30 0 13 7 13 8v15 15l-13 8-13 7-13-7-13-8v-15-15l13-8 13-7zm-6 30-10-16-6 3v13 13l6 3 10-16zm-7-18h26l-2-1-11-6-11 6-2 1zm29 2-10 16 10 16 6-3v-13-13l-6-3zm-3 34h-26l2 1 11 6 11-6 2-1zm-6-14 7 13h-14-14l7-13 2-4-2-4-7-13h14 14l-7 13-2 4 2 4z" fill="url(#id0)"/><g stroke="#000" stroke-linejoin="round"><g stroke-width=".71372">
+  <polygon points="30 38 37 42 44 47 30 47 16 47 23 42" fill="gray"/>
+  <polygon points="35 30 37 34 44 47 37 42 30 38" fill="#B3B3B3"/>
+  <path d="m30 38-7 4-7 5 7-13 2-4 5 8zm0-16v8 8-16z" fill="#B3B3B3"/>
+  <polygon points="30 22 23 18 16 13 30 13 44 13 37 18" fill="#999"/>
+  <polygon points="30 38 23 26 16 13 23 18 30 22 25 30" fill="#B3B3B3"/>
+  <path d="m30 22 7-4 7-5-7 13-2 4-5-8zm0 16v-8-8 16z" fill="#B3B3B3"/></g><g stroke-width=".64286">
+  <polyline points="30 38 30 22 35 30" fill="none"/>
+  <polygon points="30 38 25 30 30 22" fill="gray"/>
+  <polygon points="30 38 35 30 30 22" fill="gray"/>
+ </g></g>
+</svg>
