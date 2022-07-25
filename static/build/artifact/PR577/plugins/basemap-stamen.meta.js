@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.2.1.20220725.223711
+// @version        0.2.2.20220725.223945
 // @description    Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

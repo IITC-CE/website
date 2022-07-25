@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.32.1.20220725.223711
+// @version        0.32.1.20220725.223945
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-25-223711';
+plugin_info.dateTimeVersion = '2022-07-25-223945';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-07-25-223711';
+window.iitcBuildDate = '2022-07-25-223945';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3079,7 +3079,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-07-25-223711');
+  log.log('loading done, booting. Built: '+'2022-07-25-223945');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }

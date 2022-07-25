@@ -2,7 +2,7 @@
 // @author         rongou
 // @name           IITC plugin: Portal Level Numbers
 // @category       Layer
-// @version        0.2.0.20220725.223711
+// @version        0.2.0.20220725.223945
 // @description    Show portal level numbers on map.
 // @id             portal-level-numbers
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

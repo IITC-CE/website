@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.10.0.20220725.223711
+// @version        0.10.0.20220725.223945
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
