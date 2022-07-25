@@ -1,0 +1,684 @@
+{
+  "categories": {
+    "Cache": {
+      "name": "Cache",
+      "name:ru": "Кэш",
+      "description": "Data caching to prevent reloading",
+      "description:ru": "Кэширование данных для предотвращения повторной загрузки",
+      "plugins": [
+        {
+          "filename": "cache-portals-on-map.user.js",
+          "id": "cache-portals-on-map",
+          "name": "Cache viewed portals on map",
+          "author": "jonatkins",
+          "description": "Cache the details of recently viewed portals and use this to populate the map when possible",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        }
+      ]
+    },
+    "Controls": {
+      "name": "Controls",
+      "name:ru": "Управление",
+      "description": "Map controls/widgets",
+      "description:ru": "Виджеты для управления картой",
+      "plugins": [
+        {
+          "filename": "bookmarks.user.js",
+          "id": "bookmarks",
+          "name": "Bookmarks for maps and portals",
+          "author": "ZasoGD",
+          "description": "Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.4.1.20220725.213830"
+        },
+        {
+          "filename": "zoom-slider.user.js",
+          "id": "zoom-slider",
+          "name": "Zoom slider",
+          "author": "fragger",
+          "description": "Show a zoom slider on the map instead of the zoom buttons.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.1.20220725.213830"
+        },
+        {
+          "filename": "multi-projects-extension.user.js",
+          "id": "multi-projects-extension",
+          "name": "Multi Projects Extension",
+          "author": "ZasoGD",
+          "description": "Create separated projects in some plugins.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.1.20220725.213830"
+        },
+        {
+          "filename": "pan-control.user.js",
+          "id": "pan-control",
+          "name": "Pan control",
+          "author": "fragger",
+          "description": "Show a panning control on the map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.2.20220725.213830"
+        },
+        {
+          "filename": "scale-bar.user.js",
+          "id": "scale-bar",
+          "name": "Scale bar",
+          "author": "breunigs",
+          "description": "Show scale bar on the map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.1.20220725.213830"
+        },
+        {
+          "filename": "minimap.user.js",
+          "id": "minimap",
+          "name": "Mini map",
+          "author": "johnd0e",
+          "description": "Show a mini map on the corner of the map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.4.0.20220725.213830"
+        }
+      ]
+    },
+    "Draw": {
+      "name": "Draw",
+      "name:ru": "Рисование",
+      "description": "Allow drawing things onto the current map so you may plan your next move",
+      "description:ru": "Позволяет рисовать на текущей карте, чтобы вы могли спланировать свой следующий шаг",
+      "plugins": [
+        {
+          "filename": "draw-tools.user.js",
+          "id": "draw-tools",
+          "name": "Draw tools",
+          "author": "breunigs",
+          "description": "Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.10.0.20220725.213830"
+        },
+        {
+          "filename": "cross-links.user.js",
+          "id": "cross-links",
+          "name": "Cross links",
+          "author": "mcben",
+          "description": "Checks for existing links that cross planned links. Requires draw-tools plugin.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "1.3.0.20220725.213830"
+        },
+        {
+          "filename": "fly-links.user.js",
+          "id": "fly-links",
+          "name": "Fly Links",
+          "author": "Fly33",
+          "description": "Calculate how to link the portals to create the largest tidy set of nested fields. Enable from the layer chooser.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.5.0.20220725.213830"
+        },
+        {
+          "filename": "done-links.user.js",
+          "id": "done-links",
+          "name": "Done links",
+          "author": "jonatkins",
+          "description": "A companion to the Cross Links plugin. Highlights any links that match existing draw-tools line/polygon edges",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "tidy-links.user.js",
+          "id": "tidy-links",
+          "name": "Tidy Links",
+          "author": "boombuler",
+          "description": "Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (former `Max Links`)",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.6.0.20220725.213830"
+        }
+      ]
+    },
+    "Highlighter": {
+      "name": "Highlighter",
+      "name:ru": "Подсветка",
+      "description": "Portal highlighters",
+      "description:ru": "Подсветка порталов",
+      "plugins": [
+        {
+          "filename": "highlight-forgotten.user.js",
+          "id": "highlight-forgotten",
+          "name": "Highlight inactive portals",
+          "author": "jonatkins",
+          "description": "Use the portal fill color to denote if the portal is unclaimed with no recent activity. Shades of red from one week to one month, then tinted to purple for longer. May also highlight captured portals that are stuck and fail to decay every 24 hours.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "highlight-weakness.user.js",
+          "id": "highlight-weakness",
+          "name": "Highlight portal weakness",
+          "author": "vita10gy",
+          "description": "Use the fill color of the portals to denote if the portal is weak. Stronger red indicates recharge required, missing resonators, or both.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.7.2.20220725.213830"
+        },
+        {
+          "filename": "highlight-missing-resonators.user.js",
+          "id": "highlight-missing-resonators",
+          "name": "Highlight portals missing resonators",
+          "author": "vita10gy",
+          "description": "Use the portal fill color to denote if the portal is missing resonators.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.2.20220725.213830"
+        },
+        {
+          "filename": "highlight-level-color.user.js",
+          "id": "highlight-level-color",
+          "name": "Highlight portals by level color",
+          "author": "vita10gy",
+          "description": "Use the portal fill color to denote the portal level by using the game level colors.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.2.20220725.213830"
+        },
+        {
+          "filename": "highlight-ornaments.user.js",
+          "id": "highlight-ornaments",
+          "name": "Highlight portals with ornaments",
+          "author": "jonatkins",
+          "description": "Use the portal fill color to denote portals with additional 'ornament' markers. e.g. Anomaly portals",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.0.1.20220725.213830"
+        },
+        {
+          "filename": "highlight-high-level.user.js",
+          "id": "highlight-high-level",
+          "name": "Highlight high level portals",
+          "author": "jonatkins",
+          "description": "Use the portal fill color to denote high level portals: Purple L8, Red L7, Orange L6",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "highlight-infrastructure.user.js",
+          "id": "highlight-infrastructure",
+          "name": "Highlight portals with infrastructure problems",
+          "author": "vita10gy",
+          "description": "Use the portal fill color to denote if the portal has any infrastructure problems. Red: no picture. Yellow: potential title issue. Orange:  both of these.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.1.20220725.213830"
+        },
+        {
+          "filename": "highlight-portal-history.user.js",
+          "id": "highlight-portal-history",
+          "name": "Highlight portals based on history",
+          "author": "Johtaja",
+          "description": "Use the portal fill color to denote the portal has been visited, captured, scout controlled",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        },
+        {
+          "filename": "highlight-portals-my-level.user.js",
+          "id": "highlight-portals-my-level",
+          "name": "Highlight portals by my level",
+          "author": "vita10gy",
+          "description": "Use the portal fill color to denote if the portal is either at and above, or at and below your level.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.2.20220725.213830"
+        },
+        {
+          "filename": "highlight-hide-team.user.js",
+          "id": "highlight-hide-team",
+          "name": "Hide portal ownership",
+          "author": "vita10gy",
+          "description": "Show all portals as neutral, as if uncaptured. Great for creating plans.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.1.20220725.213830"
+        },
+        {
+          "filename": "highlight-needs-recharge.user.js",
+          "id": "highlight-needs-recharge",
+          "name": "Highlight portals that need recharging",
+          "author": "vita10gy",
+          "description": "Use the portal fill color to denote if the portal needs recharging and how much. Yellow: above 85%. Orange: above 50%. Red: above 15%. Magenta: below 15%.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.2.20220725.213830"
+        }
+      ]
+    },
+    "Info": {
+      "name": "Info",
+      "name:ru": "Информация",
+      "description": "Display additional information",
+      "description:ru": "Отображение дополнительной информации",
+      "plugins": [
+        {
+          "filename": "layer-count.user.js",
+          "id": "layer-count",
+          "name": "Layer count",
+          "author": "fkloft",
+          "description": "Allow users to count nested fields",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.1.20220725.213830"
+        },
+        {
+          "filename": "ap-stats.user.js",
+          "id": "ap-stats",
+          "name": "Available AP statistics",
+          "author": "Hollow011",
+          "description": "Displays the per-team AP gains available in the current view.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.4.2.20220725.213830"
+        },
+        {
+          "filename": "scoreboard.user.js",
+          "id": "scoreboard",
+          "name": "Localized scoreboard",
+          "author": "Costaspap",
+          "description": "Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        },
+        {
+          "filename": "player-level-guess.user.js",
+          "id": "player-level-guess",
+          "name": "Player level guess",
+          "author": "breunigs",
+          "description": "Try to determine player levels from the data available in the current view.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.5.7.20220725.213830"
+        },
+        {
+          "filename": "score-cycle-times.user.js",
+          "id": "score-cycle-times",
+          "name": "Scoring cycle / checkpoint times",
+          "author": "jonatkins",
+          "description": "Show the times used for the septicycle and checkpoints for regional scoreboards.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        },
+        {
+          "filename": "portals-list.user.js",
+          "id": "portals-list",
+          "name": "Portals list",
+          "author": "teo96",
+          "description": "Display a sortable list of all visible portals with full details about the team, resonators, links, etc.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        },
+        {
+          "filename": "missions.user.js",
+          "id": "missions",
+          "name": "Missions",
+          "author": "jonatkins",
+          "description": "View missions. Marking progress on waypoints/missions basis. Showing mission paths on the map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        },
+        {
+          "filename": "portal-counts.user.js",
+          "id": "portal-counts",
+          "name": "Portal count",
+          "author": "yenky",
+          "description": "Display a list of all localized portals by level and faction.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        }
+      ]
+    },
+    "Keys": {
+      "name": "Keys",
+      "name:ru": "Ключи",
+      "description": "Manual key management",
+      "description:ru": "Ручное управление ключами"
+    },
+    "Layer": {
+      "name": "Layer",
+      "name:ru": "Слои",
+      "description": "Additional map layers",
+      "description:ru": "Дополнительные слои карт",
+      "plugins": [
+        {
+          "filename": "portal-level-numbers.user.js",
+          "id": "portal-level-numbers",
+          "name": "Portal Level Numbers",
+          "author": "rongou",
+          "description": "Show portal level numbers on map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        },
+        {
+          "filename": "overlay-kml.user.js",
+          "id": "overlay-kml",
+          "name": "Overlay KML / GPX / GeoJSON",
+          "author": "danielatkins",
+          "description": "Allow users to overlay their own KML / GPX / GeoJSON files on top of IITC.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        },
+        {
+          "filename": "ornament-icons.user.js",
+          "id": "ornament-icons",
+          "name": "Ornament icons basic",
+          "author": "johtata",
+          "description": "Add own icons and names for ornaments",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "keys-on-map.user.js",
+          "id": "keys-on-map",
+          "name": "Keys on map",
+          "author": "xelio",
+          "description": "Show the manually entered key counts from the 'keys' plugin on the map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        },
+        {
+          "filename": "portal-names.user.js",
+          "id": "portal-names",
+          "name": "Portal Names",
+          "author": "ZasoGD",
+          "description": "Show portal names on the map.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        },
+        {
+          "filename": "zaprange.user.js",
+          "id": "zaprange",
+          "name": "Zaprange",
+          "author": "ZasoGD",
+          "description": "Shows the maximum range of attack by the portals.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.4.20220725.213830"
+        },
+        {
+          "filename": "hide-portal-levels.user.js",
+          "id": "hide-portal-levels",
+          "name": "Hide portal levels",
+          "author": "johnd0e",
+          "description": "Replace all levels with single layerChooser's entry; reverting on longclick",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "ornament-icons-extended.user.js",
+          "id": "ornament-icons-extended",
+          "name": "Ornament icons extended",
+          "author": "johtata",
+          "description": "Additonal icons and names for beacons",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "remove-extra-layers.user.js",
+          "id": "remove-extra-layers",
+          "name": "Remove extra layers",
+          "author": "johnd0e",
+          "description": "Remove 'Artifacts', 'Beacons' and 'Frackers' from layerChooser (still keeping them on map)",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "regions.user.js",
+          "id": "regions",
+          "name": "Ingress scoring regions",
+          "author": "jonatkins",
+          "description": "Show the regional scoring cells grid on the map",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        },
+        {
+          "filename": "player-activity-tracker.user.js",
+          "id": "player-activity-tracker",
+          "name": "Player activity tracker",
+          "author": "breunigs",
+          "description": "Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.12.1.20220725.213830"
+        },
+        {
+          "filename": "farms-find.user.js",
+          "id": "farms-find",
+          "name": "Find farms on map",
+          "author": "949",
+          "description": "Show farms by minimum level",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "1.4.1.20220725.213830"
+        }
+      ]
+    },
+    "Map Tiles": {
+      "name": "Map Tiles",
+      "name:ru": "Провайдеры карт",
+      "description": "Alternative map layers",
+      "description:ru": "Альтернативные провайдеры карт",
+      "plugins": [
+        {
+          "filename": "basemap-kartverket.user.js",
+          "id": "basemap-kartverket",
+          "name": "Kartverket.no maps (Norway)",
+          "author": "johnd0e",
+          "description": "Add Kartverket.no map layers.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.1.20220725.213830"
+        },
+        {
+          "filename": "basemap-stamen.user.js",
+          "id": "basemap-stamen",
+          "name": "Stamen.com map layers",
+          "author": "jonatkins",
+          "description": "Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.1.20220725.213830"
+        },
+        {
+          "filename": "basemap-yandex.user.js",
+          "id": "basemap-yandex",
+          "name": "Yandex maps",
+          "author": "johnd0e",
+          "description": "Add Yandex.com (Russian/Русский) map layers",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        },
+        {
+          "filename": "basemap-openstreetmap.user.js",
+          "id": "basemap-openstreetmap",
+          "name": "OpenStreetMap.org map",
+          "author": "jonatkins",
+          "description": "Add the native OpenStreetMap.org map tiles as an optional layer.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.1.20220725.213830"
+        },
+        {
+          "filename": "basemap-google-gray.user.js",
+          "id": "basemap-google-gray",
+          "name": "Gray Google map",
+          "author": "jacob1123",
+          "description": "Add a simplified gray Version of Google map tiles as an optional layer.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.3.20220725.213830"
+        },
+        {
+          "filename": "basemap-blank.user.js",
+          "id": "basemap-blank",
+          "name": "Blank map",
+          "author": "jonatkins",
+          "description": "Add a blank map layer - no roads or other features.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.2.20220725.213830"
+        },
+        {
+          "filename": "basemap-gaode.user.js",
+          "id": "basemap-gaode",
+          "name": "Gaode (高德地图) / AutoNavi map",
+          "author": "johnd0e",
+          "description": "Map layers from AutoNavi / Gaode (高德地图)",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "basemap-bing.user.js",
+          "id": "basemap-bing",
+          "name": "Bing maps",
+          "author": "johnd0e",
+          "description": "Add the bing.com map layers.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.0.20220725.213830"
+        }
+      ]
+    },
+    "Portal Info": {
+      "name": "Portal Info",
+      "name:ru": "Информация о портале",
+      "description": "Enhanced information on the selected portal",
+      "description:ru": "Подробная информация на выбранном портале",
+      "plugins": [
+        {
+          "filename": "reso-energy-pct.user.js",
+          "id": "reso-energy-pct",
+          "name": "Reso energy % in portal details",
+          "author": "xelio",
+          "description": "Show resonator energy percentage on resonator energy bar in portal details panel.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.2.20220725.213830"
+        },
+        {
+          "filename": "debug-raw-portal-data.user.js",
+          "id": "debug-raw-portal-data",
+          "name": "Debug: Raw portal JSON data",
+          "author": "jonatkins",
+          "description": "Developer debugging aid: Add a link to the portal details to show the raw data of a portal.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.4.20220725.213830"
+        },
+        {
+          "filename": "linked-portals-show.user.js",
+          "id": "linked-portals-show",
+          "name": "Linked portals",
+          "author": "fstopienski",
+          "description": "Try to show the linked portals (image, name and link direction) in portal detail view and jump to linked portal on click.  Some details may not be available if the linked portal is not in the current view.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.4.0.20220725.213830"
+        },
+        {
+          "filename": "distance-to-portal.user.js",
+          "id": "distance-to-portal",
+          "name": "Distance to portal",
+          "author": "jonatkins",
+          "description": "Allows your current location to be set manually, then shows the distance to the selected portal. Useful when managing portal keys.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.0.20220725.213830"
+        }
+      ]
+    },
+    "Tweaks": {
+      "name": "Tweaks",
+      "name:ru": "Настройки",
+      "description": "Adjust IITC settings",
+      "description:ru": "Настройка параметров IITC",
+      "plugins": [
+        {
+          "filename": "periodic-refresh.user.js",
+          "id": "periodic-refresh",
+          "name": "Periodic refresh",
+          "author": "jonatkins",
+          "description": "For use for unattended display screens only, this plugin causes idle mode to be left once per hour.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "link-show-direction.user.js",
+          "id": "link-show-direction",
+          "name": "Direction of links on map",
+          "author": "jonatkins",
+          "description": "Show the direction of links on the map by adding short dashes to the line at the origin portal.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.1.20220725.213830"
+        },
+        {
+          "filename": "scroll-wheel-zoom-disable.user.js",
+          "id": "scroll-wheel-zoom-disable",
+          "name": "Disable mouse wheel zoom",
+          "author": "jonatkins",
+          "description": "Disable the use of mouse wheel to zoom. The map zoom controls or keyboard are still available.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        },
+        {
+          "filename": "fix-china-map-offset.user.js",
+          "id": "fix-china-map-offset",
+          "name": "Fix maps offsets in China",
+          "author": "modos189",
+          "description": "Show correct maps for China user by applying offset tweaks.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.3.1.20220725.213830"
+        }
+      ]
+    },
+    "Misc": {
+      "name": "Misc",
+      "name:ru": "Разное",
+      "description": "Unclassified plugins",
+      "description:ru": "Неклассифицированные плагины",
+      "plugins": [
+        {
+          "filename": "sync.user.js",
+          "id": "sync",
+          "name": "Sync",
+          "author": "xelio",
+          "description": "Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.4.1.20220725.213830"
+        },
+        {
+          "filename": "uniques.user.js",
+          "id": "uniques",
+          "name": "Uniques",
+          "author": "3ch01c",
+          "description": "Allow manual entry of portals visited/captured. Use the 'highlighter-uniques' plugin to show the uniques on the map, and 'sync' to share between multiple browsers or desktop/mobile. It will try and guess which portals you have captured from COMM/portal details, but this will not catch every case.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.2.4.20220725.213830"
+        },
+        {
+          "filename": "keys.user.js",
+          "id": "keys",
+          "name": "Keys",
+          "author": "xelio",
+          "description": "Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.4.0.20220725.213830"
+        },
+        {
+          "filename": "privacy-view.user.js",
+          "id": "privacy-view",
+          "name": "Privacy view on Intel",
+          "author": "johnd0e",
+          "description": "Hide info from intel which shouldn't leak to players of the other faction.",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "1.1.0.20220725.213830"
+        }
+      ]
+    },
+    "Obsolete": {
+      "name": "Obsolete",
+      "name:ru": "Устаревшее",
+      "description": "Plugins that are no longer recommended, due to being superceded by others or similar",
+      "description:ru": "Плагины, которые больше не рекомендуются в связи с заменой другими или аналогичными плагинами"
+    },
+    "Deleted": {
+      "name": "Deleted",
+      "name:ru": "Удалённое",
+      "description": "Deleted plugins – listed here for reference only. No download available",
+      "description:ru": "Удаленные плагины – перечислены здесь только для справки. Нет возможности скачать"
+    },
+    "Debug": {
+      "name": "Debug",
+      "plugins": [
+        {
+          "filename": "debug-console.user.js",
+          "id": "debug-console",
+          "name": "Debug console tab",
+          "author": "jaiperdu",
+          "description": "Add a debug console tab",
+          "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
+          "version": "0.1.0.20220725.213830"
+        }
+      ]
+    }
+  },
+  "iitc_version": "0.32.1.20220725.213830"
+}
