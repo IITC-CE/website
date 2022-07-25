@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.32.1.20220725.154120
+// @version        0.32.1.20220725.173212
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-25-154120';
+plugin_info.dateTimeVersion = '2022-07-25-173212';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-07-25-154120';
+window.iitcBuildDate = '2022-07-25-173212';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -1522,6 +1522,14 @@ svg.icon-button {\
   font-weight: bold;\
   text-shadow: 1px 1px black, -1px -1px black;\
   text-align: center;\
+}\
+\
+.ui-dialog-aboutIITC .plugin-is-standard {\
+  color: darkgray;\
+}\
+\
+.ui-dialog-aboutIITC .plugin-error {\
+  text-decoration: line-through;\
 }\
 '+'</style>'
   + '<style>'+'\
@@ -3087,7 +3095,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-07-25-154120');
+  log.log('loading done, booting. Built: '+'2022-07-25-173212');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20283,7 +20291,7 @@ window.setupDialogs = function() {
 // *** module: dialog_about.js ***
 (function () {
 var log = ulog('dialog_about');
-/* global script_info, app, L */
+/* global script_info, app, log, L */
 
 window.aboutIITC = function() {
   var html = createDialogContent();
@@ -20303,8 +20311,8 @@ function createDialogContent() {
     + '<div>Ingress Intel Total Conversion</div> '
     + '<hr>'
     + '<div>'
-    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |' +
-    '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
+    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |'
+    + '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
     + '   On the script’s homepage you can:'
     + '   <ul>'
     + '     <li>Find Updates</li>'
@@ -20390,22 +20398,22 @@ function convertPluginInfo(info, index) {
 
 function pluginInfoToString(p, extra) {
   var info = {
-    style: '',
+    class: '',
     description: p.description || '',
     name: p.name,
     verinfo: formatVerInfo(p, extra)
   };
 
   if (isStandardPlugin(p)) {
-    info.style += 'color:darkgray;';
+    info.class += 'plugin-is-standard';
   }
 
   if (p.error) {
-    info.style += 'text-decoration:line-through;';
+    info.class += ' plugin-error';
     info.description = p.error;
   }
 
-  return L.Util.template('<li style="{style}" title="{description}">{name}{verinfo}</li>', info);
+  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo}</li>', info);
 }
 
 
@@ -20455,7 +20463,7 @@ function isShortOnLocalStorage() {
   try {
     localStorage.setItem('_MEM_CHECK_', '#'.repeat(MINIMUM_FREE_SPACE));
   } catch (e) {
-    console.error('out of localstorage space', e);
+    log.error('out of localstorage space', e);
     return true;
   }
 
