@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight high level portals
 // @category       Highlighter
-// @version        0.1.0.20220725.154120
+// @version        0.1.0.20220725.173212
 // @description    Use the portal fill color to denote high level portals: Purple L8, Red L7, Orange L6
 // @id             highlight-high-level
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
