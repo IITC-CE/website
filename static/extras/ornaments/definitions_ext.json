@@ -35,10 +35,10 @@
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_ENL.svg"
     },
-    "peTARGET":{
-      "name": "Beacon Target",
+    "peLOOK":{
+      "name": "Beacon Look",
       "offset": [0,0.5],
-      "url": "https://iitc.app/extras/ornaments/ornament_TARGET.svg"
+      "url": "https://iitc.app/extras/ornaments/ornament_LOOK.svg"
     },
     "peMEET":{
       "name": "Beacon Meetup",
