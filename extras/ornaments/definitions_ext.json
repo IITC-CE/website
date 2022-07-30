@@ -25,6 +25,11 @@
       "offset": [0,0.5],
       "url": "https://iitc.app/extras/ornaments/ornament_VIANOIR.svg"
     },
+    "peMAGNUSRE":{
+      "name": "Beacon Magnus Reawakens",
+      "offset": [0,0.5],
+      "url": "https://iitc.app/extras/ornaments/ornament_MAGNUSRE.svg"
+    },
     "peRES":{
       "name": "Beacon RES",
       "offset": [0,0.5],

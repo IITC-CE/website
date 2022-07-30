@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Creator: CorelDRAW Home & Student X8 -->
+<svg width="60" height="60" clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" version="1.1" viewBox="-12 -24 84 84" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+    <linearGradient id="id0" x1="15.468" x2="68.532" y1="72.635" y2="72.635" gradientUnits="userSpaceOnUse">
+     <stop stop-color="gold" offset="0"/>
+     <stop stop-color="gold" offset=".2"/>
+     <stop stop-color="orange" offset="1"/>
+    </linearGradient>
+    <linearGradient id="id1" x1="5.6268" x2="78.373" y1="84" y2="84" gradientUnits="userSpaceOnUse">
+     <stop stop-color="gold" offset="0"/>
+     <stop stop-color="gold" offset=".2"/>
+     <stop stop-color="orange" offset="1"/>
+    </linearGradient>
+ </defs>
+ 
+  
+  <g transform="matrix(.67884 0 0 .70243 1.927 .99101)">
+   <polygon points="42 73 29 65 15 57 15 42 15 27 29 19 42 11 55 19 69 27 69 42 69 57 55 65" fill="url(#id0)"/>
+   <path d="m42 0 18 11 18 10v42l-18 11-18 10-18-10-18-11v-42l18-10zm0 6 15 9 16 9v36l-16 9-15 9-15-9-16-9v-36l16-9z" fill="url(#id1)"/>
+   <g fill="#ef4036">
+    <polygon points="53 30 50 22 56 25"/>
+    <polygon points="51 37 57 26 62 29"/>
+    <polygon points="46 46 49 41 63 30 63 32 49 53"/>
+    <polygon points="50 55 63 35 63 44 56 57 51 56"/>
+    <polygon points="59 57 63 54 63 47 58 57"/>
+    <polygon points="47 27 43 27 41 28 44 28 46 31 34 47 43 66 56 59 50 58 44 46 50 35 48 26"/>
+    <polygon points="39 31 40 29 43 29 44 31 42 31 41 31 41 32"/>
+    <polygon points="41 36 38 34 36 35 36 32 39 32 41 33 42 32 44 32"/>
+    <polygon points="27 26 38 39 37 40 21 30"/>
+    <polygon points="36 63 21 32 36 42 32 47 41 66"/>
+    <polygon points="33 61 29 59 21 45 21 36"/>
+    <polygon points="21 54 21 49 26 57"/>
+    <polygon points="32 30 28 25 35 21"/>
+   </g>
+  </g>
+ 
+</svg>
