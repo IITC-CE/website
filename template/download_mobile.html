@@ -27,12 +27,22 @@
                                 <h4 class="top_zero center">Android</h4>
                                 <div class="hr"></div>
                                 <p>Requires Android 4.2.2 (Jelly Bean) at a minimum.</p>
+                                <p><strong>Note:</strong> Different sources use different signature keys:</p>
+                                <ul class="browser-default">
+                                    <li>Google Play</li>
+                                    <li>official F-Droid repo</li>
+                                    <li>IITC F-Droid repo and our .apk</li>
+                                </ul>
+                                <p>
+                                    So installing the update over the application from another source is not possible. You must first uninstall the previous version.<br>
+                                    Use <a href="https://github.com/IITC-CE/Community-plugins#backuprestore-all-data-by-danielondiordna">plugin for backup/restore</a> to migrate your data.
+                                </p>
                                 <div class="hr"></div>
 
-                                <h5>Get it on <a href="https://f-droid.org/packages/org.exarhteam.iitc_mobile/" target="_blank">F-Droid</a></h5>
-                                <p>IITC Mobile (v{{ release_iitc_version }})</p>
+                                <h5>Get it on <a href="https://f-droid.org/packages/org.exarhteam.iitc_mobile/" target="_blank">official F-Droid repo</a> or <a class="modal-trigger" href="#modal_iitc_fdroid_repo">IITC F-Droid repo</a></h5>
                                 <p>F-Droid is an installable catalogue of FOSS (Free and Open Source Software) applications for the Android platform.
                                     The client makes it easy to browse, install, and keep track of updates on your device.</p>
+                                <p>Unlike the official F-Droid repository, the IITC F-Droid repository also provides beta versions of the mobile app and allows you to receive updates instantly.</p>
 
                                 <h5>— or —</h5>
 
@@ -54,6 +64,33 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="modal_iitc_fdroid_repo" class="modal">
+        <div class="modal-content">
+            <h4>IITC F-Droid repo</h4>
+            <div class="row">
+                <div class="col s12 m6">
+                    <p>To add this repository to your F-Droid client, scan the QR code (click it to enlarge) or use this URL:</p>
+                    <p><a href="https://iitc.app/fdroid/repo?fingerprint=B7899FB661896B374D1003A31BA1C54139A9EFDC6B9D53A70F5180768EF197B9" target="_blank">https://iitc.app/fdroid/repo</a></p>
+                    <p>
+                        If you would like to manually verify the fingerprint (SHA-256) of the repository signing key, here it is:
+                        <br>
+                        <blockcode class="fingerprint">
+                            B7 89 9F B6 61 89 6B 37 4D 10 03 A3 1B A1 C5 41 39 A9 EF DC 6B 9D 53 A7 0F 51 80 76 8E F1 97 B9
+                        </blockcode>
+                    </p>
+                </div>
+                <div class="col s12 m6 center">
+                    <a href="fdroid/repo/index.png" title="QR: IITC F-Droid repo">
+                        <img class="qr-code" alt="QR: IITC F-Droid repo" src="fdroid/repo/index.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect btn-flat">Close</a>
         </div>
     </div>
 

@@ -1,0 +1,134 @@
+name: Remote Dispatch Action Responder
+
+on: [repository_dispatch]
+
+jobs:
+  receive_new_build_job:
+    name: New IITC Release/Beta/PR build
+    runs-on: ubuntu-latest
+    if: github.event.action == 'new_iitc_build'
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          path: "./website"
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+
+      - name: Setup git config
+        run: |
+          cd ./website/
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Receive artifact
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let download = await github.rest.actions.downloadArtifact({
+               owner: '${{ github.event.client_payload.repo.owner }}',
+               repo: '${{ github.event.client_payload.repo.repo }}',
+               artifact_id: '${{ github.event.client_payload.artifact_id }}',
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/build.zip`, Buffer.from(download.data));
+
+      - name: Unzip artifact
+        run: unzip build.zip -d artifact
+
+      - name: Set base env
+        run: |
+          echo "BUILD_TYPE=$(cat ./artifact/.metadata/build_type)" >> "$GITHUB_ENV"
+          echo "COMMIT_HASH=$(cat ./artifact/.metadata/commit)" >> "$GITHUB_ENV"
+          echo "BUILD_APK_FILENAME=$(cat ./artifact/.metadata/apk_filename)" >> "$GITHUB_ENV"
+          echo "BUILD_ZIP_FILENAME=$(cat ./artifact/.metadata/zip_filename)" >> "$GITHUB_ENV"
+          echo "BUILDSTAMP=$(cat ./artifact/.metadata/buildstamp)" >> "$GITHUB_ENV"
+
+      - name: Set env for Release/Beta/PR build
+        run: |
+          if [[ '${{ env.BUILD_TYPE }}' == 'release' ]]; then
+            echo "TARGET_DIR=build/release_archive/${{ env.BUILDSTAMP }}/" >> "$GITHUB_ENV"
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Mobile-Release-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          fi
+          if [[ '${{ env.BUILD_TYPE }}' == 'beta' ]]; then
+            echo "TARGET_DIR=build/beta_archive/${{ env.BUILDSTAMP }}/" >> "$GITHUB_ENV"
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Mobile-Beta-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          fi
+          if [[ '${{ env.BUILD_TYPE }}' == 'PR' ]]; then
+            echo "PR_NUMBER=$(cat ./artifact/.metadata/pr_number)" >> "$GITHUB_ENV"
+            echo "TARGET_DIR=build/artifact/PR$(cat ./artifact/.metadata/pr_number)/" >> "$GITHUB_ENV"
+          fi
+
+      - name: Restore correct mtime
+        run: |
+          sudo apt install git-restore-mtime
+          cd ./website/
+          git restore-mtime
+
+      - name: Delete old builds
+        run: |
+          cd ./website/
+          ls -trd ./static/build/beta_archive/* | head -n -50 | xargs --no-run-if-empty git rm -r
+
+      - name: Copy files to website
+        run: |
+          mkdir -p ./website/static/${{ env.TARGET_DIR }}
+          mkdir -p ./website/static/fdroid/repo/
+
+          cp -r ./artifact/build/* ./website/static/${{ env.TARGET_DIR }}
+          if [[ '${{ env.TARGET_APK_FILENAME_FOR_FDROID }}' != "" ]]; then
+            cp ./artifact/build/${{ env.BUILD_APK_FILENAME }} ./website/static/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }}
+          fi
+
+      - name: Set up F-Droid repo secrets
+        if: ${{ env.BUILD_TYPE != 'PR' }}
+        run: |
+          echo "${{ secrets.KEYSTORE_P12 }}" | base64 -d - > ./website/static/fdroid/keystore.p12
+          echo "${{ secrets.CONFIG_YML }}" | base64 -d - > ./website/static/fdroid/config.yml
+
+      - name: Pull F-Droid server and update repo
+        if: ${{ env.BUILD_TYPE != 'PR' }}
+        uses: addnab/docker-run-action@v3
+        with:
+          image: medzik/fdroidserver:latest
+          options: -v ${{ github.workspace }}/website/static/fdroid/:/repo
+          run: |
+            fdroid update
+
+      - name: Save changes
+        run: |
+          cd ./website/
+          rm -rf ./website/static/fdroid/archive
+          git add -A static/build/ static/fdroid/repo/
+
+      - name: Commit and push changes
+        run: |
+          cd ./website/
+          COMMIT_URL="https://github.com/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/commit/${{ env.COMMIT_HASH }}"
+          if [[ '${{ env.BUILD_TYPE }}' == 'PR' ]]; then
+            git commit -m "🤖 New build PR №${{ env.PR_NUMBER }} from $COMMIT_URL"
+          else
+            git commit -m "🤖 New IITC ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
+          fi
+          git push origin master
+
+  delete_pr_build:
+    name: Delete PR build
+    runs-on: ubuntu-latest
+    if: github.event.action == 'delete_iitc_pr_build'
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+
+      - name: Setup git config
+        run: |
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Delete old build artifacts
+        run: |
+          git rm -r static/build/artifact/PR${{ github.event.client_payload.pr_number }}/
+          git commit -m "🤖 PR №${{ github.event.client_payload.pr_number }} merged, deleting old build artifacts"
+          git push origin master
