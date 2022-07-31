@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20220731.084818
+// @version        0.33.0.20220731.092443
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-31-084818';
+plugin_info.dateTimeVersion = '2022-07-31-092443';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-07-31-084818';
+window.iitcBuildDate = '2022-07-31-092443';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3115,7 +3115,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-07-31-084818');
+  log.log('loading done, booting. Built: '+'2022-07-31-092443');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21078,7 +21078,7 @@ IITC.filters.testFilter = function (type, entity, filter) {
   // use predicate if available
   if (typeof filter.pred === 'function') return filter.pred(entity);
   // if doesn't match data constraint
-  if (filter.data && !genericCompare(filter.data, entity.options.data)) return true;
+  if (filter.data && !genericCompare(filter.data, entity.options.data)) return false;
   // if doesn't match options
   if (filter.options && !genericCompare(filter.options, entity.options)) {return false;}
   // else it matches
