@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.1.0.20220807.211852
+// @version        0.1.0.20220807.212618
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-211852';
+plugin_info.dateTimeVersion = '2022-08-07-212618';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -28,23 +28,23 @@ var debugTab = {};
 // DEBUGGING TOOLS ///////////////////////////////////////////////////
 // meant to be used from browser debugger tools and the like.
 
-debugTab.renderDetails = function() {
-  log.log('portals: ' + Object.keys(window.portals).length);
-  log.log('links:   ' + Object.keys(window.links).length);
-  log.log('fields:  ' + Object.keys(window.fields).length);
-}
+debugTab.renderDetails = function () {
+  console.log('portals: ' + Object.keys(window.portals).length);
+  console.log('links:   ' + Object.keys(window.links).length);
+  console.log('fields:  ' + Object.keys(window.fields).length);
+};
 
-debugTab.printStackTrace = function() {
+debugTab.printStackTrace = function () {
   var e = new Error('dummy');
-  log.error(e.stack);
+  console.error(e.stack);
   return e.stack;
-}
+};
 
-debugTab.console = function() {
+debugTab.console = function () {
   $('#chatdebug').text();
-}
+};
 
-window.debug.console.create = function() {
+window.debug.console.create = function () {
   window.chat.addCommTab({
     channel: 'debug',
     name: 'Debug',
@@ -55,29 +55,35 @@ window.debug.console.create = function() {
       try {
         result = eval(msg);
       } catch (e) {
-        if (e.stack) { log.error(e.stack); }
+        if (e.stack) {
+          console.error(e.stack);
+        }
         throw e; // to trigger native error message
       }
       if (result !== undefined) {
-        log.error(result.toString());
+        console.error(result.toString());
       }
       return result;
     },
   });
-}
+};
 
-debugTab.console.renderLine = function(text, errorType) {
+debugTab.console.renderLine = function (text, errorType) {
   // debug.console.create();
-  switch(errorType) {
-    case 'error':   var color = '#FF424D'; break;
-    case 'warning': var color = '#FFDE42'; break;
-    default:        var color = '#eee';
+  var color = '#eee';
+  switch (errorType) {
+    case 'error':
+      color = '#FF424D';
+      break;
+    case 'warning':
+      color = '#FFDE42';
+      break;
   }
-  if(typeof text !== 'string' && typeof text !== 'number') {
+  if (typeof text !== 'string' && typeof text !== 'number') {
     var cache = [];
-    text = JSON.stringify(text, function(key, value) {
-      if(typeof value === 'object' && value !== null) {
-        if(cache.indexOf(value) !== -1) {
+    text = JSON.stringify(text, function (key, value) {
+      if (typeof value === 'object' && value !== null) {
+        if (cache.indexOf(value) !== -1) {
           // Circular reference found, discard key
           return;
         }
@@ -91,52 +97,50 @@ debugTab.console.renderLine = function(text, errorType) {
   var d = new Date();
   var ta = d.toLocaleTimeString(); // print line instead maybe?
   var tb = d.toLocaleString();
-  var t = '<time title="'+tb+'" data-timestamp="'+d.getTime()+'">'+ta+'</time>';
-  var s = 'style="color:'+color+'"';
-  var l = '<tr><td>'+t+'</td><td><mark '+s+'>'+errorType+'</mark></td><td>'+text+'</td></tr>';
+  var t = '<time title="' + tb + '" data-timestamp="' + d.getTime() + '">' + ta + '</time>';
+  var s = 'style="color:' + color + '"';
+  var l = '<tr><td>' + t + '</td><td><mark ' + s + '>' + errorType + '</mark></td><td>' + text + '</td></tr>';
   $('#chatdebug table').append(l);
-}
+};
 
-debugTab.console.log = function(text) {
-  debug.console.renderLine(text, 'notice');
-}
+debugTab.console.log = function (text) {
+  debugTab.console.renderLine(text, 'notice');
+};
 
-debugTab.console.warn = function(text) {
-  debug.console.renderLine(text, 'warning');
-}
+debugTab.console.warn = function (text) {
+  debugTab.console.renderLine(text, 'warning');
+};
 
-debugTab.console.error = function(text) {
-  debug.console.renderLine(text, 'error');
-}
+debugTab.console.error = function (text) {
+  debugTab.console.renderLine(text, 'error');
+};
 
-debugTab.console.overwriteNative = function() {
+debugTab.console.overwriteNative = function () {
   debugTab.console.create();
 
   var nativeConsole = window.console;
   window.console = $.extend({}, window.console);
 
   function overwrite(which) {
-    window.console[which] = function() {
+    window.console[which] = function () {
       nativeConsole[which].apply(nativeConsole, arguments);
       debugTab.console[which].apply(debugTab.console, arguments);
-    }
+    };
   }
 
-  overwrite("log");
-  overwrite("warn");
-  overwrite("error");
-}
+  overwrite('log');
+  overwrite('warn');
+  overwrite('error');
+};
 
-debugTab.console.overwriteNativeIfRequired = function() {
-  if(!window.console || L.Browser.mobile)
-    debugTab.console.overwriteNative();
-}
-
+debugTab.console.overwriteNativeIfRequired = function () {
+  if (!window.console || L.Browser.mobile) debugTab.console.overwriteNative();
+};
 
 function setup() {
   window.plugin.debug = debugTab;
-  create();
-  overwriteNative();
+  debugTab.console.create();
+  debugTab.console.overwriteNative();
 
   // emulate old API
   window.debug = function () {};
@@ -154,6 +158,7 @@ function setup() {
 
 setup.priority = 'boot';
 
+/* global L */
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if(!window.bootPlugins) window.bootPlugins = [];
