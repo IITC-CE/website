@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Yandex maps
 // @category       Map Tiles
-// @version        0.3.0.20220807.181205
+// @version        0.3.0.20220807.182052
 // @description    Add Yandex.com (Russian/Русский) map layers
 // @id             basemap-yandex
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

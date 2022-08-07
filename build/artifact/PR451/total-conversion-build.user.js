@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20220807.181205
+// @version        0.33.0.20220807.182052
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-181205';
+plugin_info.dateTimeVersion = '2022-08-07-182052';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-08-07-181205';
+window.iitcBuildDate = '2022-08-07-182052';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3115,7 +3115,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-08-07-181205');
+  log.log('loading done, booting. Built: '+'2022-08-07-182052');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22037,7 +22037,7 @@ function createDefaultOverlays () {
     ],
   });
   addLayers['Unclaimed/Placeholder Portals'] = portalsLayers[0];
-  for(var i = 1; i <= 8; i++) {
+  for (var i = 1; i <= 8; i++) {
     var t = 'Level ' + i + ' Portals';
     portalsLayers[i] = new IITC.filters.FilterLayer({
       name: t,
@@ -22051,28 +22051,28 @@ function createDefaultOverlays () {
 
   var fieldsLayer = new IITC.filters.FilterLayer({
     name: 'Fields',
-    filter: { field: true }
+    filter: { field: true },
   });
   addLayers['Fields'] = fieldsLayer;
 
   var linksLayer = new IITC.filters.FilterLayer({
     name: 'Links',
-    filter: { link: true }
+    filter: { link: true },
   });
   addLayers['Links'] = linksLayer;
 
   // faction-specific layers
   var resistanceLayer = new IITC.filters.FilterLayer({
     name: 'Resistance',
-    filter: { portal: true, link: true, field: true, data: { team: 'R' } }
+    filter: { portal: true, link: true, field: true, data: { team: 'R' } },
   });
   var enlightenedLayer = new IITC.filters.FilterLayer({
     name: 'Enlightened',
-    filter: { portal: true, link: true, field: true, data: { team: 'E' } }
+    filter: { portal: true, link: true, field: true, data: { team: 'E' } },
   });
 
   // to avoid any favouritism, we'll put the player's own faction layer first
-  if (PLAYER.team == 'RESISTANCE') {
+  if (PLAYER.team === 'RESISTANCE') {
     addLayers['Resistance'] = resistanceLayer;
     addLayers['Enlightened'] = enlightenedLayer;
   } else {
@@ -22249,6 +22249,7 @@ window.setupMap = function () {
 };
 
 /* global IITC */
+
 
 })();
 
