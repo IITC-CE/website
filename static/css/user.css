@@ -437,3 +437,20 @@ footer i.medium {
 table.striped > tbody > tr:nth-child(2n+1) {
     background-color: #eaeaea;
 }
+
+#modal_iitc_fdroid_repo {
+    max-width: 700px;
+}
+
+#modal_iitc_fdroid_repo .qr-code {
+    width: 100%;
+    border: 1px solid #eee;
+}
+
+#modal_iitc_fdroid_repo .fingerprint {
+    color: #000000;
+    font-weight: bold;
+    font-size: 13px;
+    background: #f3f3f3;
+    border: 1px solid #eee;
+}
