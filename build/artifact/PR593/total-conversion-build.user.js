@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221018.152611
+// @version        0.33.0.20221018.162131
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-18-152611';
+plugin_info.dateTimeVersion = '2022-10-18-162131';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-10-18-152611';
+window.iitcBuildDate = '2022-10-18-162131';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3106,7 +3106,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-10-18-152611');
+  log.log('loading done, booting. Built: '+'2022-10-18-162131');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -23047,19 +23047,20 @@ window.MapDataRequest.prototype.refresh = function() {
   }
 }
 
-
 window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
   if (this.timer === undefined) {
     var _this = this;
     this.timer = setTimeout(function () {
-      _this.timer = setTimeout(function () { _this.timer = undefined; _this.processRequestQueue(); }, seconds * 1000);
+      _this.timer = setTimeout(function () {
+        _this.timer = undefined;
+        _this.processRequestQueue();
+      }, seconds * 1000);
     }, 0);
   }
 }
 
 
 window.MapDataRequest.prototype.processRequestQueue = function () {
-
   // if nothing left in the queue, finish
   if (Object.keys(this.queuedTiles).length == 0) {
     // we leave the renderQueue code to handle ending the render pass now
