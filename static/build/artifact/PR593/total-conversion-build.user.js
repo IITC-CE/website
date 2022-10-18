@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221018.121704
+// @version        0.33.0.20221018.123003
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-18-121704';
+plugin_info.dateTimeVersion = '2022-10-18-123003';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-10-18-121704';
+window.iitcBuildDate = '2022-10-18-123003';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3106,7 +3106,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-10-18-121704');
+  log.log('loading done, booting. Built: '+'2022-10-18-123003');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20036,7 +20036,6 @@ window.DataCache.prototype.runExpire = function() {
   var cacheSize = Object.keys(this._cache).length;
 
   for (var qk in this._cache) {
-
     if (cacheSize > this.REQUEST_CACHE_MAX_ITEMS || this._cacheCharSize > this.REQUEST_CACHE_MAX_CHARS || this._cache[qk].time < t) {
       this._cacheCharSize -= this._cache[qk].dataStr.length;
       delete this._cache[qk];
@@ -21981,7 +21980,6 @@ window.setupDataTileParams = function() {
 
 
 window.getMapZoomTileParameters = function (zoom) {
-
   var maxTilesPerEdge = window.TILE_PARAMS.TILES_PER_EDGE[window.TILE_PARAMS.TILES_PER_EDGE.length - 1];
 
   return {
@@ -22183,10 +22181,9 @@ window.RenderDebugTiles.prototype.runClearPass = function() {
 var log = ulog('map_data_render');
 // MAP DATA RENDER ////////////////////////////////////////////////
 // class to handle rendering into leaflet the JSON data from the servers
+/* global L */
 
-
-
-window.Render = function() {
+window.Render = function () {
   this.portalMarkerScale = undefined;
 }
 
@@ -27942,7 +27939,7 @@ window.convertTextToTableMagic = function(text) {
 }
 
 function clamp(n, max, min) {
-  if (n === 0) { return 0; }
+  if (n === 0) return 0;
   return n > 0 ? Math.min(n, max) : Math.max(n, min);
 }
 
