@@ -4,6 +4,10 @@
       "name": "Scheduled BB",
       "layer": "Battle"
     },
+    "sc4_p": {
+      "name": "Scout volatile",
+      "layer": "Scouting"
+    },
     "sc5_p": {
       "name": "Scout volatile",
       "layer": "Scouting"
