@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221030.222739
+// @version        0.33.0.20221030.223353
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-30-222739';
+plugin_info.dateTimeVersion = '2022-10-30-223353';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-10-30-222739';
+window.iitcBuildDate = '2022-10-30-223353';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3112,7 +3112,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-10-30-222739');
+  log.log('loading done, booting. Built: '+'2022-10-30-223353');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26394,7 +26394,7 @@ window.search.Query.prototype.addResult = function(result) {
       .append($('<em>')
         .append(result.description));
   }
-  
+
 };
 
 window.search.Query.prototype.resultLayer = function(result) {
@@ -26587,7 +26587,9 @@ addHook('search', function(query) {
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
-    var pair = location.split(',').map(function(s) { return parseFloat(s.trim()).toFixed(6); });
+    var pair = location.split(',').map(function (s) {
+      return parseFloat(s.trim()).toFixed(6);
+    });
     var ll = pair.join(",");
     var latlng = L.latLng(pair.map(function(s) { return parseFloat(s); }));
     if(added[ll]) return;
@@ -26643,7 +26645,7 @@ addHook('search', function(query) {
     data.forEach(function(item) {
       if(resultMap[item.place_id]) { return; } // duplicate
       resultMap[item.place_id] = true;
-      
+
       var result = {
         title: item.display_name,
         description: 'Type: ' + item.type,
@@ -26677,11 +26679,11 @@ addHook('search', function(query) {
       query.addResult(result);
     });
   }
-  
+
   // Bounded search allows amenity-only searches (e.g. "amenity=toilet") via special phrases
   // http://wiki.openstreetmap.org/wiki/Nominatim/Special_Phrases/EN
   var bounded = '&bounded=1';
-  
+
   $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
