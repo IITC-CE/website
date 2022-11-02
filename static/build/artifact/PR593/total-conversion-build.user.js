@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221102.094715
+// @version        0.33.0.20221102.100622
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-02-094715';
+plugin_info.dateTimeVersion = '2022-11-02-100622';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-02-094715';
+window.iitcBuildDate = '2022-11-02-100622';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3105,7 +3105,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-02-094715');
+  log.log('loading done, booting. Built: '+'2022-11-02-100622');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26091,8 +26091,7 @@ window.statusSuccessMapTiles = 0;
 window.statusStaleMapTiles = 0;
 window.statusErrorMapTiles = 0;
 
-
-window.requests = function () { }
+window.requests = function () {}
 
 // time of last refresh
 window.requests._lastRefreshTime = 0;
@@ -26130,14 +26129,14 @@ window.startRefreshTimeout = function (override) {
   // may be required to remove 'paused during interaction' message in
   // status bar
   window.renderUpdateStatus();
-  if (refreshTimeout) clearTimeout(refreshTimeout);
-  if (override == -1) return;  //don't set a new timeout
+  if (window.refreshTimeout) clearTimeout(window.refreshTimeout);
+  if (override === -1) return; // don't set a new timeout
 
   var t = 0;
   if (override) {
     t = override;
     //ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
-    timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
+    let timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
     if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0;  //in case of clock adjustments
     if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000)
       t = (MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh);
@@ -26148,7 +26147,7 @@ window.startRefreshTimeout = function (override) {
     if (adj > 0) t += adj * 1000;
   }
 
-  refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
+  window.refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
   renderUpdateStatus();
 }
 
