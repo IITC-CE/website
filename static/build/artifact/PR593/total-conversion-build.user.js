@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221102.101048
+// @version        0.33.0.20221102.101238
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-02-101048';
+plugin_info.dateTimeVersion = '2022-11-02-101238';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-02-101048';
+window.iitcBuildDate = '2022-11-02-101238';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3105,7 +3105,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-02-101048');
+  log.log('loading done, booting. Built: '+'2022-11-02-101238');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26139,7 +26139,7 @@ window.startRefreshTimeout = function (override) {
     let timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
     if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0; // in case of clock adjustments
     if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000) {
-      t = (MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh);
+      t = MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh;
     }
   } else {
     t = REFRESH * 1000;
