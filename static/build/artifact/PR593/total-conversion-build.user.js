@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221018.200338
+// @version        0.33.0.20221102.093842
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-18-200338';
+plugin_info.dateTimeVersion = '2022-11-02-093842';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-10-18-200338';
+window.iitcBuildDate = '2022-11-02-093842';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2386,7 +2386,6 @@ window.urlPortalLL = null;
 window.selectedPortal = null;
 window.portalRangeIndicator = null;
 window.portalAccessIndicator = null;
-window.mapRunsUserAction = false;
 
 // var portalsLayers, linksLayer, fieldsLayer;
 var portalsFactionLayers, linksFactionLayers, fieldsFactionLayers;
@@ -3106,7 +3105,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-10-18-200338');
+  log.log('loading done, booting. Built: '+'2022-11-02-093842');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21829,13 +21828,11 @@ window.setupMap = function () {
   // map update status handling & update map hooks
   // ensures order of calls
   map.on('movestart', function () {
-    window.mapRunsUserAction = true;
     window.requests.abort();
     window.startRefreshTimeout(-1);
   });
   map.on('moveend', function () {
-    window.mapRunsUserAction = false;
-    window.startRefreshTimeout(window.ON_MOVE_REFRESH*1000);
+    window.startRefreshTimeout(window.ON_MOVE_REFRESH * 1000);
   });
 
   // set a 'moveend' handler for the map to clear idle state. e.g. after mobile 'my location' is used.
@@ -21867,7 +21864,7 @@ window.setupMap = function () {
       pos = {center: [0, 0], zoom: 1};
       map.locate({setView: true});
     }
-    map.setView(pos.center, pos.zoom, {reset: true});
+    map.setView(pos.center, pos.zoom);
 
     // read here ONCE, so the URL is only evaluated one time after the
     // necessary data has been loaded.
@@ -26080,6 +26077,7 @@ var HistoryChart = (function() {
 // *** module: request_handling.js ***
 (function () {
 var log = ulog('request_handling');
+/* global REFRESH */
 
 // REQUEST HANDLING //////////////////////////////////////////////////
 // note: only meant for portal/links/fields request, everything else
@@ -26098,7 +26096,6 @@ window.requests = function() {}
 
 //time of last refresh
 window.requests._lastRefreshTime = 0;
-window.requests._quickRefreshPending = false;
 
 window.requests.add = function(ajax) {
   window.activeRequests.push(ajax);
@@ -26137,8 +26134,7 @@ window.startRefreshTimeout = function(override) {
   if(override == -1) return;  //don't set a new timeout
 
   var t = 0;
-  if(override) {
-    window.requests._quickRefreshPending = true;
+  if (override) {
     t = override;
     //ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
     timeSinceLastRefresh = new Date().getTime()-window.requests._lastRefreshTime;
@@ -26146,32 +26142,25 @@ window.startRefreshTimeout = function(override) {
     if(timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH*1000)
       t = (MINIMUM_OVERRIDE_REFRESH*1000-timeSinceLastRefresh);
   } else {
-    window.requests._quickRefreshPending = false;
-    t = REFRESH*1000;
+    t = REFRESH * 1000;
 
     var adj = ZOOM_LEVEL_ADJ * (18 - map.getZoom());
     if(adj > 0) t += adj*1000;
   }
-  var next = new Date(new Date().getTime() + t).toLocaleTimeString();
-//  log.log('planned refresh in ' + (t/1000) + ' seconds, at ' + next);
+
   refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
   renderUpdateStatus();
 }
 
 window.requests._onRefreshFunctions = [];
-window.requests._callOnRefreshFunctions = function() {
-//  log.log('running refresh at ' + new Date().toLocaleTimeString());
+window.requests._callOnRefreshFunctions = function () {
   startRefreshTimeout();
 
-  if(isIdle()) {
-//    log.log('user has been idle for ' + idleTime + ' seconds, or window hidden. Skipping refresh.');
+  if (isIdle()) {
     renderUpdateStatus();
     return;
   }
 
-//  log.log('refreshing');
-
-  //store the timestamp of this refresh
   window.requests._lastRefreshTime = new Date().getTime();
 
   $.each(window.requests._onRefreshFunctions, function(ind, f) {
@@ -26183,17 +26172,6 @@ window.requests._callOnRefreshFunctions = function() {
 // add method here to be notified of auto-refreshes
 window.requests.addRefreshFunction = function(f) {
   window.requests._onRefreshFunctions.push(f);
-}
-
-window.requests.isLastRequest = function(action) {
-  var result = true;
-  $.each(window.activeRequests, function(ind, req) {
-    if(req.action === action) {
-      result = false;
-      return false;
-    }
-  });
-  return result;
 }
 
 
@@ -26510,11 +26488,13 @@ addHook('search', function(query) {
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
 addHook('search', function(query) {
-  var locations = query.term.match(/[+-]?\d+\.\d+,[+-]?\d+\.\d+/g);
+  var locations = query.term.match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
-    var pair = location.split(',').map(function(s) { return parseFloat(s).toFixed(6); });
+    var pair = location.split(',').map(function (s) {
+      return parseFloat(s.trim()).toFixed(6);
+    });
     var ll = pair.join(",");
     var latlng = L.latLng(pair.map(function(s) { return parseFloat(s); }));
     if(added[ll]) return;
@@ -26701,7 +26681,6 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
       req.setRequestHeader('X-CSRFToken', readCookie('csrftoken'));
     }
   });
-  result.action = action;
 
   requests.add(result);
 
