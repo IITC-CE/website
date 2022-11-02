@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221102.100622
+// @version        0.33.0.20221102.101048
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-02-100622';
+plugin_info.dateTimeVersion = '2022-11-02-101048';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-02-100622';
+window.iitcBuildDate = '2022-11-02-101048';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3105,7 +3105,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-02-100622');
+  log.log('loading done, booting. Built: '+'2022-11-02-101048');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26077,7 +26077,7 @@ var HistoryChart = (function() {
 // *** module: request_handling.js ***
 (function () {
 var log = ulog('request_handling');
-/* global REFRESH */
+/* global REFRESH MINIMUM_OVERRIDE_REFRESH */
 
 // REQUEST HANDLING //////////////////////////////////////////////////
 // note: only meant for portal/links/fields request, everything else
@@ -26091,7 +26091,7 @@ window.statusSuccessMapTiles = 0;
 window.statusStaleMapTiles = 0;
 window.statusErrorMapTiles = 0;
 
-window.requests = function () {}
+window.requests = function () {};
 
 // time of last refresh
 window.requests._lastRefreshTime = 0;
@@ -26137,9 +26137,10 @@ window.startRefreshTimeout = function (override) {
     t = override;
     //ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
     let timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
-    if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0;  //in case of clock adjustments
-    if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000)
+    if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0; // in case of clock adjustments
+    if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000) {
       t = (MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh);
+    }
   } else {
     t = REFRESH * 1000;
 
