@@ -12,6 +12,16 @@
       "name": "Scout volatile",
       "layer": "Scouting"
     },
+    "ap1": {
+      "name": "Anomaly Portal 2",
+      "layer": "Anomaly",
+      "url": "https://iitc.app/extras/ornaments/ornament-ap1.svg"
+    },
+    "ap1_v": {
+      "name": "Anomaly Portal 2, volatile",
+      "layer": "Anomaly",
+      "url": "https://iitc.app/extras/ornaments/ornament-ap1_v.svg"
+    },
     "ap2": {
       "name": "Anomaly Portal 2",
       "layer": "Anomaly",
