@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221110.150936
+// @version        0.33.0.20221112.133949
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-10-150936';
+plugin_info.dateTimeVersion = '2022-11-12-133949';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-10-150936';
+window.iitcBuildDate = '2022-11-12-133949';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2330,10 +2330,7 @@ window.CHAT_SHRINKED = 60;
 window.COLOR_SELECTED_PORTAL = '#f0f';
 window.COLORS = ['#FF6600', '#0088FF', '#03DC03']; // none, res, enl
 window.COLORS_LVL = ['#000', '#FECE5A', '#FFA630', '#FF7315', '#E40000', '#FD2992', '#EB26CD', '#C124E0', '#9627F4'];
-window.COLORS_MOD = {VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf'};
-
-
-window.MOD_TYPE = {RES_SHIELD:'Shield', MULTIHACK:'Multi-hack', FORCE_AMP:'Force Amp', HEATSINK:'Heat Sink', TURRET:'Turret', LINK_AMPLIFIER: 'Link Amp'};
+window.COLORS_MOD = { VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf' };
 
 // circles around a selected portal that show from where you can hack
 // it and how far the portal reaches (i.e. how far links may be made
@@ -3105,7 +3102,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-10-150936');
+  log.log('loading done, booting. Built: '+'2022-11-12-133949');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
