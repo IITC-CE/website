@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221113.124329
+// @version        0.33.0.20221113.125143
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -19,7 +19,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-13-124329';
+plugin_info.dateTimeVersion = '2022-11-13-125143';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-13-124329';
+window.iitcBuildDate = '2022-11-13-125143';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2385,7 +2385,7 @@ window.TEAM_RES = 1;
 window.TEAM_ENL = 2;
 window.TEAM_MAC = 3;
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
-window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'Machina'];
+window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
 
 // STORAGE ///////////////////////////////////////////////////////////
 // global variables used for storage. Most likely READ ONLY. Proper
@@ -3117,7 +3117,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-13-124329');
+  log.log('loading done, booting. Built: '+'2022-11-13-125143');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20750,7 +20750,7 @@ window.teamStringToId = function(teamStr) {
   var team = TEAM_NONE;
   if(teamStr === 'ENLIGHTENED') team = TEAM_ENL;
   if(teamStr === 'RESISTANCE') team = TEAM_RES;
-  if (teamStr === 'MACHINA') team = TEAM_MAC;
+  if (teamStr === 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅') team = TEAM_MAC;
   if(teamStr === 'E') team = TEAM_ENL;
   if(teamStr === 'R') team = TEAM_RES;
   if (teamStr === 'M') team = TEAM_MAC;
@@ -21769,9 +21769,9 @@ function createDefaultOverlays () {
     addLayers['Resistance'] = factionLayers[window.TEAM_RES];
   }
 
-  // and just put Machina faction last
-  delete addLayers['Machina'];
-  addLayers['Machina'] = factionLayers[window.TEAM_MAC];
+  // and just put U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅ faction last
+  delete addLayers['U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
+  addLayers['U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'] = factionLayers[window.TEAM_MAC];
 
   return addLayers;
   /* eslint-enable dot-notation  */
