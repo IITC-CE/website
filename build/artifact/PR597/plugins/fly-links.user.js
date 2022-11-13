@@ -2,13 +2,14 @@
 // @author         Fly33
 // @name           IITC plugin: Fly Links
 // @category       Draw
-// @version        0.5.0.20221113.125143
+// @version        0.5.0.20221113.202401
 // @description    Calculate how to link the portals to create the largest tidy set of nested fields. Enable from the layer chooser.
 // @id             fly-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR597/plugins/fly-links.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR597/plugins/fly-links.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-13-125143';
+plugin_info.dateTimeVersion = '2022-11-13-202401';
 plugin_info.pluginId = 'fly-links';
 //END PLUGIN AUTHORS NOTE
 
