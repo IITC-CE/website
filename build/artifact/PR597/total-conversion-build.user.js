@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221113.203651
+// @version        0.33.0.20221113.225655
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-13-203651';
+plugin_info.dateTimeVersion = '2022-11-13-225655';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-13-203651';
+window.iitcBuildDate = '2022-11-13-225655';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2388,6 +2388,11 @@ window.TEAM_MAC = 3;
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
 window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
 
+window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
+window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
+window.TEAM_NAME_ENL = window.TEAM_NAMES[window.TEAM_ENL];
+window.TEAM_NAME_MAC = window.TEAM_NAMES[window.TEAM_MAC];
+
 // STORAGE ///////////////////////////////////////////////////////////
 // global variables used for storage. Most likely READ ONLY. Proper
 // way would be to encapsulate them in an anonymous function and write
@@ -3118,7 +3123,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-13-203651');
+  log.log('loading done, booting. Built: '+'2022-11-13-225655');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21728,6 +21733,10 @@ function createDefaultBaseMapLayers () {
   return baseLayers;
 }
 
+function createFactionLayersArray() {
+  return window.TEAM_NAMES.map(() => L.layerGroup());
+}
+
 function createDefaultOverlays () {
   /* global portalsFactionLayers: true, linksFactionLayers: true, fieldsFactionLayers: true -- eslint*/
   /* eslint-disable dot-notation  */
@@ -21737,17 +21746,17 @@ function createDefaultOverlays () {
   portalsFactionLayers = [];
   var portalsLayers = [];
   for (var i = 0; i <= 8; i++) {
-    portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup(), L.layerGroup()];
+    portalsFactionLayers[i] = createFactionLayersArray();
     portalsLayers[i] = L.layerGroup();
     var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
     addLayers[t] = portalsLayers[i];
   }
 
-  fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  fieldsFactionLayers = createFactionLayersArray();
   var fieldsLayer = L.layerGroup();
   addLayers['Fields'] = fieldsLayer;
 
-  linksFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  linksFactionLayers = createFactionLayersArray();
   var linksLayer = L.layerGroup();
   addLayers['Links'] = linksLayer;
 
@@ -21755,7 +21764,7 @@ function createDefaultOverlays () {
   // these layers don't actually contain any data. instead, every time they're added/removed from the map,
   // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
   // the below 'onoverlayadd/onoverlayremove' events
-  var factionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  var factionLayers = createFactionLayersArray();
   factionLayers.forEach(function (facLayer, facIdx) {
     facLayer.on('add remove', function (e) {
       var fn = e.type + 'Layer';
@@ -21770,13 +21779,13 @@ function createDefaultOverlays () {
 
   // to avoid any favouritism, we'll put the player's own faction layer first
   if (window.PLAYER.team !== 'RESISTANCE') {
-    delete addLayers['Resistance'];
-    addLayers['Resistance'] = factionLayers[window.TEAM_RES];
+    delete addLayers[window.TEAM_NAME_RES];
+    addLayers[window.TEAM_NAME_RES] = factionLayers[window.TEAM_RES];
   }
 
   // and just put U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅ faction last
-  delete addLayers['U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
-  addLayers['U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'] = factionLayers[window.TEAM_MAC];
+  delete addLayers[window.TEAM_NAME_MAC];
+  addLayers[window.TEAM_NAME_MAC] = factionLayers[window.TEAM_MAC];
 
   return addLayers;
   /* eslint-enable dot-notation  */
