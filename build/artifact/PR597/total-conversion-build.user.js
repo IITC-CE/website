@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221114.173236
+// @version        0.33.0.20221114.220519
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-173236';
+plugin_info.dateTimeVersion = '2022-11-14-220519';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-14-173236';
+window.iitcBuildDate = '2022-11-14-220519';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3123,7 +3123,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-14-173236');
+  log.log('loading done, booting. Built: '+'2022-11-14-220519');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20702,10 +20702,6 @@ window.decodeArray.portal = function(a, details) {
 
   if (a.length >= SUMMARY_PORTAL_DATA_LENGTH) {
     $.extend(data, summaryPortalData(a));
-    // fix team
-    if (data.team === 'N' && data.resCount > 0) {
-      data.team = 'M';
-    }
   }
 
   if (a.length >= DETAILED_PORTAL_DATA_LENGTH) {
@@ -22720,10 +22716,6 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
     dLatE6: ent[2][6],
     dLngE6: ent[2][7]
   };
-
-  if (data.team === 'N') {
-    data.team = 'M';
-  }
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
   this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team);
