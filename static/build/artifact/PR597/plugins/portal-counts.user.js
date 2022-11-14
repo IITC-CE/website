@@ -2,7 +2,7 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.2.20221114.070805
+// @version        0.2.2.20221114.171417
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-070805';
+plugin_info.dateTimeVersion = '2022-11-14-171417';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
@@ -78,23 +78,25 @@ window.plugin.portalcounts.createTableHtml = function () {
   tableHtml += '</tr>';
   tableHtml += `<tr><td>Neutral:</td><td colspan="${window.TEAM_NAMES.length - 1}">${self.portalDataByTeam[window.TEAM_NONE].count}</td></tr></table>`;
   return tableHtml;
-}
+};
 
 window.plugin.portalcounts.appendOuterPieLayer = function (parent, originAngle, team, total) {
   var self = window.plugin.portalcounts;
   var startAngle = originAngle;
   self.portalDataByTeam[team].levelCount.forEach((value, index) => {
-    var endAngle = startAngle + (value / total);
+    var endAngle = startAngle + value / total;
     self.makeRing(startAngle, endAngle, index).appendTo(parent);
     startAngle = endAngle;
   });
-}
+};
 
 window.plugin.portalcounts.createPieChart = function (total) {
   var self = window.plugin.portalcounts;
   // pie graph
-  var g = $('<g>')
-  .attr('transform', self.format('translate(%s,%s)', ((window.TEAM_NAMES.length + 1) * (self.BAR_WIDTH + self.BAR_PADDING)) + self.RADIUS_OUTER, self.RADIUS_OUTER));
+  var g = $('<g>').attr(
+    'transform',
+    self.format('translate(%s,%s)', (window.TEAM_NAMES.length + 1) * (self.BAR_WIDTH + self.BAR_PADDING) + self.RADIUS_OUTER, self.RADIUS_OUTER)
+  );
 
   // inner parts - factions
   var startAngle = 0;
@@ -159,7 +161,7 @@ window.plugin.portalcounts.createSvgHtml = function (total) {
   self.createPieChart(total).appendTo(svg);
 
   return svg;
-}
+};
 
 //count portals for each level available on the map
 window.plugin.portalcounts.getPortals = function (){
