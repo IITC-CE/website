@@ -2,7 +2,7 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.2.20221114.171417
+// @version        0.2.2.20221114.172023
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-171417';
+plugin_info.dateTimeVersion = '2022-11-14-172023';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
@@ -137,7 +137,7 @@ window.plugin.portalcounts.createPieChart = function (total) {
   // }
 
   return g;
-}
+};
 
 window.plugin.portalcounts.createSvgHtml = function (total) {
   var self = window.plugin.portalcounts;
@@ -163,11 +163,11 @@ window.plugin.portalcounts.createSvgHtml = function (total) {
   return svg;
 };
 
-//count portals for each level available on the map
-window.plugin.portalcounts.getPortals = function (){
-  //console.log('** getPortals');
+// count portals for each level available on the map
+window.plugin.portalcounts.getPortals = function () {
+  // console.log('** getPortals');
   var self = window.plugin.portalcounts;
-  var displayBounds = map.getBounds();
+  var displayBounds = window.map.getBounds();
 
   self.portalDataByLevel = [...Array(window.MAX_PORTAL_LEVEL + 1).keys()].reduce((p, c) => {
     p[c] = {
@@ -186,7 +186,7 @@ window.plugin.portalcounts.getPortals = function (){
   }, []);
 
   var total = 0;
-  $.each(window.portals, function(i, portal) {
+  $.each(window.portals, function (i, portal) {
     var level = portal.options.level;
     var team = portal.options.team;
     // just count portals in viewport
@@ -204,7 +204,7 @@ window.plugin.portalcounts.getPortals = function (){
   });
 
   var counts = '';
-  if(total > 0) {
+  if (total > 0) {
     counts += self.createTableHtml();
     counts += $('<div>').append(self.createSvgHtml(total)).html();
   } else {
@@ -255,7 +255,7 @@ window.plugin.portalcounts.makeBar = function(portals, text, color, shift) {
           y: top,
           width: self.BAR_WIDTH,
           height: height,
-          fill: COLORS_LVL[i],
+          fill: window.COLORS_LVL[i],
           title: 'L' + i,
         })
         .appendTo(g);
