@@ -2,7 +2,7 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.2.20221114.070326
+// @version        0.2.2.20221114.070805
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-070326';
+plugin_info.dateTimeVersion = '2022-11-14-070805';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
@@ -42,7 +42,7 @@ window.plugin.portalcounts.withPlayerFactionStyles = function (factionFunction) 
     if (index === window.TEAM_NONE) return true;
     factionFunction(teamStyle, index);
   });
-}
+};
 
 window.plugin.portalcounts.createTableHtml = function () {
   var self = window.plugin.portalcounts;
@@ -52,31 +52,31 @@ window.plugin.portalcounts.createTableHtml = function () {
   });
   tableHtml += '</tr>';
 
-  for(var level = window.MAX_PORTAL_LEVEL; level > 0; level--) {
+  for (var level = window.MAX_PORTAL_LEVEL; level > 0; level--) {
     var rowTitle = 'Level ' + level;
-    var levelData = self.portalDataByLevel[ level ];
+    var levelData = self.portalDataByLevel[level];
     tableHtml += '<tr' + (levelData.count ? '' : ' class="zeroes"') + '>';
     tableHtml += `<td class="L${level}">${rowTitle}</td>`;
     self.withPlayerFactionStyles((teamStyle, index) => {
-      tableHtml += `<td class="${teamStyle}">${levelData.teamCount[ index ]}</td>`;
+      tableHtml += `<td class="${teamStyle}">${levelData.teamCount[index]}</td>`;
     });
     tableHtml += '</tr>';
   }
 
-  var neutralData = self.portalDataByLevel[ 0 ];
-  tableHtml += '<tr' + (neutralData.count - neutralData.teamCount[ window.TEAM_NONE ] ? '' : ' class="zeroes"') + '>';
+  var neutralData = self.portalDataByLevel[0];
+  tableHtml += '<tr' + (neutralData.count - neutralData.teamCount[window.TEAM_NONE] ? '' : ' class="zeroes"') + '>';
   tableHtml += `<td class="L0">Placeholders</td>`;
   self.withPlayerFactionStyles((teamStyle, index) => {
-    tableHtml += `<td class="${teamStyle}">${neutralData.teamCount[ index ]}</td>`;
+    tableHtml += `<td class="${teamStyle}">${neutralData.teamCount[index]}</td>`;
   });
   tableHtml += '</tr>';
 
   tableHtml += '<tr><th>Total:</th>';
   self.withPlayerFactionStyles((styleName, teamIndex) => {
-    tableHtml += `<td class="${styleName}">${self.portalDataByTeam[ teamIndex ].count}</td>`;
+    tableHtml += `<td class="${styleName}">${self.portalDataByTeam[teamIndex].count}</td>`;
   });
   tableHtml += '</tr>';
-  tableHtml += `<tr><td>Neutral:</td><td colspan="${window.TEAM_NAMES.length - 1}">${self.portalDataByTeam[ window.TEAM_NONE ].count}</td></tr></table>`;
+  tableHtml += `<tr><td>Neutral:</td><td colspan="${window.TEAM_NAMES.length - 1}">${self.portalDataByTeam[window.TEAM_NONE].count}</td></tr></table>`;
   return tableHtml;
 }
 
@@ -90,7 +90,7 @@ window.plugin.portalcounts.appendOuterPieLayer = function (parent, originAngle, 
   });
 }
 
-window.plugin.portalcounts.createPieChart = function(total) {
+window.plugin.portalcounts.createPieChart = function (total) {
   var self = window.plugin.portalcounts;
   // pie graph
   var g = $('<g>')
