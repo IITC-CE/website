@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.0.20221114.014313
+// @version        0.4.0.20221114.014739
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-014313';
+plugin_info.dateTimeVersion = '2022-11-14-014739';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -349,7 +349,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
 
   var length = window.plugin.portalslist.listPortals.length;
 
-  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Unknown', 'Visited', 'Captured', 'Scout Controlled'].forEach(function(label, i) {
+  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Unknown', 'Visited', 'Captured', 'Scout Controlled'].forEach((label, i) => {
     var cell = filters.appendChild(document.createElement('div'));
     cell.className = 'name filter' + label.substr(0, 3);
     cell.textContent = label+':';
