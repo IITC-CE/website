@@ -2,7 +2,7 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.2.20221114.172023
+// @version        0.2.2.20221114.172802
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-172023';
+plugin_info.dateTimeVersion = '2022-11-14-172802';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
@@ -190,7 +190,7 @@ window.plugin.portalcounts.getPortals = function () {
     var level = portal.options.level;
     var team = portal.options.team;
     // just count portals in viewport
-    if(!displayBounds.contains(portal.getLatLng())) return true;
+    if (!displayBounds.contains(portal.getLatLng())) return true;
 
     total++;
 
@@ -277,7 +277,7 @@ window.plugin.portalcounts.makeBar = function(portals, text, color, shift) {
   return g;
 };
 
-window.plugin.portalcounts.makePie = function(startAngle, endAngle, color, teamName) {
+window.plugin.portalcounts.makePie = function (startAngle, endAngle, color, teamName) {
   if(startAngle == endAngle)
     return $([]); // return empty element query
 
@@ -312,17 +312,16 @@ window.plugin.portalcounts.makePie = function(startAngle, endAngle, color, teamN
     })
     .html(label);
 
-  var path = $('<path>')
-    .attr({
-      fill: color,
-      d: self.format('M %s,%s A %s,%s 0 %s 1 %s,%s L 0,0 z', p1x,p1y, self.RADIUS_INNER,self.RADIUS_INNER, large_arc, p2x,p2y),
-      title: teamName,
-    });
+  var path = $('<path>').attr({
+    fill: color,
+    d: self.format('M %s,%s A %s,%s 0 %s 1 %s,%s L 0,0 z', p1x, p1y, self.RADIUS_INNER, self.RADIUS_INNER, large_arc, p2x, p2y),
+    title: teamName,
+  });
 
   return path.add(text); // concat path and text
 };
 
-window.plugin.portalcounts.makeRing = function(startAngle, endAngle, level) {
+window.plugin.portalcounts.makeRing = function (startAngle, endAngle, level) {
   var self = window.plugin.portalcounts;
   var large_arc = (endAngle - startAngle) > 0.5 ? 1 : 0;
 
@@ -344,16 +343,16 @@ window.plugin.portalcounts.makeRing = function(startAngle, endAngle, level) {
     p3x -= 1E-5;
   }
 
-  return $('<path>')
-    .attr({
-      fill: window.COLORS_LVL[level],
-      d: self.format('M %s,%s ', p1x, p1y)
-       + self.format('A %s,%s 0 %s 1 %s,%s ', self.RADIUS_OUTER,self.RADIUS_OUTER, large_arc, p2x,p2y)
-       + self.format('L %s,%s ', p3x,p3y)
-       + self.format('A %s,%s 0 %s 0 %s,%s ', self.RADIUS_INNER,self.RADIUS_INNER, large_arc, p4x,p4y)
-       + 'Z',
-      title: 'L' + level,
-    });
+  return $('<path>').attr({
+    fill: window.COLORS_LVL[level],
+    d:
+      self.format('M %s,%s ', p1x, p1y) +
+      self.format('A %s,%s 0 %s 1 %s,%s ', self.RADIUS_OUTER, self.RADIUS_OUTER, large_arc, p2x, p2y) +
+      self.format('L %s,%s ', p3x, p3y) +
+      self.format('A %s,%s 0 %s 0 %s,%s ', self.RADIUS_INNER, self.RADIUS_INNER, large_arc, p4x, p4y) +
+      'Z',
+    title: 'L' + level,
+  });
 };
 
 window.plugin.portalcounts.format = function(str) {
