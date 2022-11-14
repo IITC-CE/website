@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.1.20221114.172802
+// @version        0.4.1.20221114.173236
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-172802';
+plugin_info.dateTimeVersion = '2022-11-14-173236';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -436,12 +436,10 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
     table.appendChild(row);
   });
 
-  container.append(
-    '<div class="disclaimer">Click on portals table headers to sort by that column. ' +
-    + 'Click on <b>All, Neutral, Resistance, Enlightened, Unknown</b> to only show portals owned '
-    + 'by that faction or on the number behind the factions to show all but those portals. '
-    + 'Click on <b>Visited, Captured or Scout Controlled</b> to only show portals the user has a history for '
-    + 'or on the number to hide those. </div>');
+  container.append(`<div class="disclaimer">Click on portals table headers to sort by that column.
+Click on <b>All, Neutral, Resistance, Enlightened, Unknown</b> to only show portals owned by that faction or on the number behind the factions to show all but those portals.
+Click on <b>Visited, Captured or Scout Controlled</b> to only show portals the user has a history for or on the number to hide those.
+</div>`);
 
   return container;
 }
