@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.0.20221114.013813
+// @version        0.4.0.20221114.014313
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-14-013813';
+plugin_info.dateTimeVersion = '2022-11-14-014313';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -217,13 +217,13 @@ window.plugin.portalslist.getPortals = function() {
     retval=true;
 
     switch (portal.options.team) {
-      case TEAM_RES:
+      case window.TEAM_RES:
         window.plugin.portalslist.resP++;
         break;
-      case TEAM_ENL:
+      case window.TEAM_ENL:
         window.plugin.portalslist.enlP++;
         break;
-      case TEAM_MAC:
+      case window.TEAM_MAC:
         window.plugin.portalslist.macP++;
         break;
       default:
@@ -330,7 +330,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
         case 2:
         case 3:
         case 4:
-          return reversed ^ (1+obj.portal.options.team === filter);
+          return reversed ^ (1 + obj.portal.options.team === filter);
         case 5:
           return reversed ^ obj.portal.options.data.history.visited;
         case 6:
@@ -349,7 +349,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
 
   var length = window.plugin.portalslist.listPortals.length;
 
-  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Unknown', 'Visited', 'Captured', 'Scout Controlled' ].forEach(function(label, i) {
+  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Unknown', 'Visited', 'Captured', 'Scout Controlled'].forEach(function(label, i) {
     var cell = filters.appendChild(document.createElement('div'));
     cell.className = 'name filter' + label.substr(0, 3);
     cell.textContent = label+':';
@@ -385,7 +385,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
         cell.classList.add('active');
       }
 
-      var name = ['neuP', 'resP', 'enlP', 'macP', 'visitedP', 'capturedP', 'scoutControlledP'][i-1];
+      var name = ['neuP', 'resP', 'enlP', 'macP', 'visitedP', 'capturedP', 'scoutControlledP'][i - 1];
       var count = window.plugin.portalslist[name];
       cell.textContent = count + ' (' + Math.round(count/length*100) + '%)';
     }
