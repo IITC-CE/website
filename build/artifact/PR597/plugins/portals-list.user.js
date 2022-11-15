@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.1.20221115.014627
+// @version        0.4.1.20221115.020918
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-15-014627';
+plugin_info.dateTimeVersion = '2022-11-15-020918';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -544,7 +544,7 @@ var setup =  function() {
 \
 #portalslist .filters {\
   display: grid;\
-  grid-template-columns: 1fr auto 1fr auto;\
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto;\
   grid-gap: 1px\
 }\
 \
@@ -579,22 +579,68 @@ var setup =  function() {
 }\
 \
 #portalslist .filters .filterNeu,\
-#portalslist .filters .filterVis {\
+#portalslist .filters .filterEnl,\
+#portalslist .filters .filterRes,\
+#portalslist .filters .filterUnk {\
   grid-row: 1;\
 }\
 \
-#portalslist .filters .filterEnl,\
-#portalslist .filters .filterCap {\
+#portalslist .filters .filterVis,\
+#portalslist .filters .filterCap,\
+#portalslist .filters .filterSco {\
   grid-row: 2;\
 }\
 \
-#portalslist .filters .filterRes,\
-#portalslist .filters .filterSco {\
-  grid-row: 3;\
-}\
+/* 2 columns */\
+@media (orientation: portrait) {\
+  #portalslist .filters {\
+    grid-template-columns: 1fr auto 1fr auto;\
+  }\
 \
-#portalslist .filters .filterUnk {\
-  grid-row: 4;\
+  #portalslist .filters .filterNeu.name,\
+  #portalslist .filters .filterRes.name,\
+  #portalslist .filters .filterEnl.name,\
+  #portalslist .filters .filterUnk.name {\
+    grid-column: 1;\
+  }\
+\
+  #portalslist .filters .filterNeu.count,\
+  #portalslist .filters .filterRes.count,\
+  #portalslist .filters .filterEnl.count,\
+  #portalslist .filters .filterUnk.count {\
+    grid-column: 2;\
+  }\
+\
+  #portalslist .filters .filterVis.name,\
+  #portalslist .filters .filterCap.name,\
+  #portalslist .filters .filterSco.name {\
+    grid-column: 3;\
+  }\
+\
+  #portalslist .filters .filterVis.count,\
+  #portalslist .filters .filterCap.count,\
+  #portalslist .filters .filterSco.count {\
+    grid-column: 4;\
+  }\
+\
+  #portalslist .filters .filterNeu,\
+  #portalslist .filters .filterVis {\
+    grid-row: 1;\
+  }\
+\
+  #portalslist .filters .filterEnl,\
+  #portalslist .filters .filterCap {\
+    grid-row: 2;\
+  }\
+\
+  #portalslist .filters .filterRes,\
+  #portalslist .filters .filterSco {\
+    grid-row: 3;\
+  }\
+\
+  #portalslist .filters .filterUnk {\
+    grid-row: 4;\
+  }\
 }\
 \
 #portalslist .filters .filterNeu {\
