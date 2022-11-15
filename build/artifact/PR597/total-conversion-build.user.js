@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.33.0.20221115.001007
+// @version        0.33.0.20221115.002658
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-15-001007';
+plugin_info.dateTimeVersion = '2022-11-15-002658';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-15-001007';
+window.iitcBuildDate = '2022-11-15-002658';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3129,7 +3129,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-15-001007');
+  log.log('loading done, booting. Built: '+'2022-11-15-002658');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20745,31 +20745,35 @@ window.decodeArray.portalDetail = function(a) { // deprecated!!
 (function () {
 var log = ulog('entity_info');
 /* exported setup --eslint */
-/* global TEAM_NONE, TEAM_RES, TEAM_ENL, TEAM_MAC */
 
 // ENTITY DETAILS TOOLS //////////////////////////////////////////////
 // hand any of these functions the details-hash of an entity (i.e.
 // portal, link, field) and they will return useful data.
 
-
 // given the entity detail data, returns the team the entity belongs
 // to. Uses TEAM_* enum values.
-window.getTeam = function(details) {
-  return teamStringToId(details.team);
-}
+window.getTeam = function (details) {
+  return window.teamStringToId(details.team);
+};
 
-window.teamStringToId = function(teamStr) {
-  var team = TEAM_NONE;
-  if(teamStr === 'ENLIGHTENED') team = TEAM_ENL;
-  if(teamStr === 'RESISTANCE') team = TEAM_RES;
-  if (teamStr === window.TEAM_NAME_MAC) team = TEAM_MAC;
-  if(teamStr === 'E') team = TEAM_ENL;
-  if(teamStr === 'R') team = TEAM_RES;
-  if (teamStr === window.TEAM_CODE_MAC) team = TEAM_MAC;
-  return team;
-}
+window.teamStringToId = function (teamStr) {
+  switch (teamStr) {
+    case window.TEAM_NAME_ENL:
+    case window.TEAM_CODE_ENL:
+      return window.TEAM_ENL;
 
+    case window.TEAM_NAME_RES:
+    case window.TEAM_CODE_RES:
+      return window.TEAM_RES;
 
+    case window.TEAM_NAME_MAC:
+    case window.TEAM_CODE_MAC:
+      return window.TEAM_MAC;
+
+    default:
+      return window.TEAM_NONE;
+  }
+};
 
 
 })();
