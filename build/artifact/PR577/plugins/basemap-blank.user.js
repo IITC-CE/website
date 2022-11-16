@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Blank map
 // @category       Map Tiles
-// @version        0.1.3.20221116.113900
+// @version        0.1.3.20221116.122020
 // @description    Add a blank map layer - no roads or other features.
 // @id             basemap-blank
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-16-113900';
+plugin_info.dateTimeVersion = '2022-11-16-122020';
 plugin_info.pluginId = 'basemap-blank';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,7 +29,7 @@ plugin_info.pluginId = 'basemap-blank';
 // use own namespace for plugin
 var mapTileBlank = {};
 
-mapTileBlank.addLayer = function() {
+mapTileBlank.addLayer = function () {
 
   var blankOpt = {attribution: '', maxNativeZoom: 18, maxZoom: 21};
   var blankWhite = new L.TileLayer('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gEFCSU6z3A8pwAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=', blankOpt);
@@ -39,7 +39,7 @@ mapTileBlank.addLayer = function() {
   layerChooser.addBaseLayer(blankBlack, 'Blank Map (Black)');
 };
 
-function setup () {
+function setup() {
   mapTileBlank.addLayer();
 }
 
