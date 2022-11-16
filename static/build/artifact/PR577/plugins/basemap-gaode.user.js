@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Gaode (高德地图) / AutoNavi map
 // @category       Map Tiles
-// @version        0.1.1.20221116.122952
+// @version        0.1.1.20221116.123402
 // @description    Map layers from AutoNavi / Gaode (高德地图)
 // @id             basemap-gaode
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-16-122952';
+plugin_info.dateTimeVersion = '2022-11-16-123402';
 plugin_info.pluginId = 'basemap-gaode';
 //END PLUGIN AUTHORS NOTE
 
@@ -96,11 +96,11 @@ mapGaode.setup = function () {
   var Satellite =
     add('Gaode Satellite', new GaodeLayer({ style: 6, type: 'satellite' }));
 
+  // new GaodeLayer({ style: 8, type: 'roadnet', opacity: 0.75, lang: 'zh_cn', scl: 2 }), // (512*512 tile, w/o labels)
+  // new GaodeLayer({ style: 8, type: 'labels', opacity: 0.75, lang: 'zh_cn', ltype: 4 }) // (feature mask) here: 2: roads, 4: labels)
   add('Gaode Hybrid', L.layerGroup([
     Satellite,
     new GaodeLayer({ style: 8, type: 'roadnet', opacity: 0.75 })
-      // new GaodeLayer({ style: 8, type: 'roadnet', opacity: 0.75, lang: 'zh_cn', scl: 2 }), - (512*512 tile, w/o labels)
-      // new GaodeLayer({ style: 8, type: 'labels', opacity: 0.75, lang: 'zh_cn', ltype: 4 }) - (feature mask) here: 2: roads, 4: labels)
   ]));
 };
 
