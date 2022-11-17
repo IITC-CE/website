@@ -2,13 +2,14 @@
 // @author         johnd0e
 // @name           IITC plugin: Yandex maps
 // @category       Map Tiles
-// @version        0.3.0.20221002.183150
+// @version        0.3.1.20221117.095739
 // @description    Add Yandex.com (Russian/Русский) map layers
 // @id             basemap-yandex
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR580/plugins/basemap-yandex.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR580/plugins/basemap-yandex.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,14 +20,14 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-02-183150';
+plugin_info.dateTimeVersion = '2022-11-17-095739';
 plugin_info.pluginId = 'basemap-yandex';
 //END PLUGIN AUTHORS NOTE
 
-
+/* exported setup --eslint */
+/* global L, layerChooser */
 // use own namespace for plugin
 var mapYandex = {};
-window.plugin.mapYandex = mapYandex;
 
 mapYandex.types = {
   map: {
@@ -41,18 +42,18 @@ mapYandex.types = {
 };
 
 mapYandex.options = {
-  //set this to your API key
+  // set this to your API key
   apiParams: '<your API-key>'
 };
 
-function setup () {
+function setup() {
   setupYandexLeaflet();
 
   for (var name in mapYandex.types) {
     var options = L.extend({}, mapYandex.options, mapYandex.types[name]);
     layerChooser.addBaseLayer(L.yandex(options), 'Yandex ' + name);
   }
-};
+}
 
 function setupYandexLeaflet () {
 
@@ -232,7 +233,7 @@ L.yandex = function (type, options) {
 };
 
 
-;
+; // eslint-disable-line
 
     // *** included: external/Yandex.addon.LoadApi.js ***
 // @options apiLoader: function or thennable = undefined
@@ -349,12 +350,12 @@ L.Yandex.include({
 L.Yandex.addInitHook(L.Yandex.prototype._initLoader);
 
 
-;
-    
-    } catch (e) {
-      console.error('Yandex.js loading failed');
-      throw e;
-    }
+; // eslint-disable-line
+
+  } catch (e) {
+    console.error('Yandex.js loading failed');
+    throw e;
+  }
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
