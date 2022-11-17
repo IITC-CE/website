@@ -2,13 +2,14 @@
 // @author         jonatkins
 // @name           IITC plugin: Debug: Raw portal JSON data
 // @category       Portal Info
-// @version        0.2.4.20221002.183150
+// @version        0.2.4.20221117.095739
 // @description    Developer debugging aid: Add a link to the portal details to show the raw data of a portal.
 // @id             debug-raw-portal-data
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR580/plugins/debug-raw-portal-data.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR580/plugins/debug-raw-portal-data.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-02-183150';
+plugin_info.dateTimeVersion = '2022-11-17-095739';
 plugin_info.pluginId = 'debug-raw-portal-data';
 //END PLUGIN AUTHORS NOTE
 

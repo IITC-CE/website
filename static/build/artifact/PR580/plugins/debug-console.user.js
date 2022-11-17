@@ -2,13 +2,14 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.1.0.20221002.183150
+// @version        0.1.0.20221117.095739
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR580/plugins/debug-console.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR580/plugins/debug-console.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-10-02-183150';
+plugin_info.dateTimeVersion = '2022-11-17-095739';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
