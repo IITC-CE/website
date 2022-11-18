@@ -2,13 +2,14 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals missing resonators
 // @category       Highlighter
-// @version        0.2.0.20220807.182401
+// @version        0.2.1.20221118.204128
 // @description    Use the portal fill color to denote if the portal is missing resonators.
 // @id             highlight-missing-resonators
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR451/plugins/highlight-missing-resonators.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/highlight-missing-resonators.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-182401';
+plugin_info.dateTimeVersion = '2022-11-18-204128';
 plugin_info.pluginId = 'highlight-missing-resonators';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +32,7 @@ window.plugin.highlightMissingResonators = highlightMissingResonators;
 
 highlightMissingResonators.styles = {
   common: {
-    fillcolor: 'red'
+    fillColor: 'red',
   }
 };
 

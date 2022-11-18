@@ -2,13 +2,14 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.0.20220807.182401
+// @version        0.4.1.20221118.204128
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR451/plugins/portals-list.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/portals-list.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-182401';
+plugin_info.dateTimeVersion = '2022-11-18-204128';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,6 +34,7 @@ window.plugin.portalslist.sortOrder = -1;
 window.plugin.portalslist.enlP = 0;
 window.plugin.portalslist.resP = 0;
 window.plugin.portalslist.neuP = 0;
+window.plugin.portalslist.macP = 0;
 window.plugin.portalslist.visitedP = 0;
 window.plugin.portalslist.capturedP = 0;
 window.plugin.portalslist.scoutControlledP = 0;
@@ -82,7 +84,7 @@ window.plugin.portalslist.fields = [
     title: "Team",
     value: function(portal) { return portal.options.team; },
     format: function(cell, portal, value) {
-      $(cell).text(['NEU', 'RES', 'ENL'][value]);
+      $(cell).text(['NEU', 'RES', 'ENL', 'UNK'][value]);
     }
   },
   {
@@ -215,11 +217,14 @@ window.plugin.portalslist.getPortals = function() {
     retval=true;
 
     switch (portal.options.team) {
-      case TEAM_RES:
+      case window.TEAM_RES:
         window.plugin.portalslist.resP++;
         break;
-      case TEAM_ENL:
+      case window.TEAM_ENL:
         window.plugin.portalslist.enlP++;
+        break;
+      case window.TEAM_MAC:
+        window.plugin.portalslist.macP++;
         break;
       default:
         window.plugin.portalslist.neuP++;
@@ -267,6 +272,7 @@ window.plugin.portalslist.displayPL = function() {
   window.plugin.portalslist.enlP = 0;
   window.plugin.portalslist.resP = 0;
   window.plugin.portalslist.neuP = 0;
+  window.plugin.portalslist.macP = 0;
   window.plugin.portalslist.visitedP = 0;
   window.plugin.portalslist.capturedP = 0;
   window.plugin.portalslist.scoutControlledP = 0;
@@ -323,12 +329,13 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
         case 1:
         case 2:
         case 3:
-          return reversed ^ (1+obj.portal.options.team === filter);
         case 4:
-          return reversed ^ obj.portal.options.data.history.visited;
+          return reversed ^ (1 + obj.portal.options.team === filter);
         case 5:
-          return reversed ^ obj.portal.options.data.history.captured;
+          return reversed ^ obj.portal.options.data.history.visited;
         case 6:
+          return reversed ^ obj.portal.options.data.history.captured;
+        case 7:
           return reversed ^ obj.portal.options.data.history.scoutControlled;
       };
     });
@@ -342,7 +349,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
 
   var length = window.plugin.portalslist.listPortals.length;
 
-  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Visited', 'Captured', 'Scout Controlled' ].forEach(function(label, i) {
+  ['All', 'Neutral', 'Resistance', 'Enlightened', 'Unknown', 'Visited', 'Captured', 'Scout Controlled'].forEach((label, i) => {
     var cell = filters.appendChild(document.createElement('div'));
     cell.className = 'name filter' + label.substr(0, 3);
     cell.textContent = label+':';
@@ -378,7 +385,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
         cell.classList.add('active');
       }
 
-      var name = ['neuP', 'resP', 'enlP', 'visitedP', 'capturedP', 'scoutControlledP'][i-1];
+      var name = ['neuP', 'resP', 'enlP', 'macP', 'visitedP', 'capturedP', 'scoutControlledP'][i - 1];
       var count = window.plugin.portalslist[name];
       cell.textContent = count + ' (' + Math.round(count/length*100) + '%)';
     }
@@ -429,11 +436,10 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter, reve
     table.appendChild(row);
   });
 
-  container.append('<div class="disclaimer">Click on portals table headers to sort by that column. '
-    + 'Click on <b>All, Neutral, Resistance, Enlightened</b> to only show portals owned '
-    + 'by that faction or on the number behind the factions to show all but those portals. '
-    + 'Click on <b>Visited, Captured or Scout Controlled</b> to only show portals the user has a history for '
-    + 'or on the number to hide those. </div>');
+  container.append(`<div class="disclaimer">Click on portals table headers to sort by that column.
+Click on <b>All, Neutral, Resistance, Enlightened, Unknown</b> to only show portals owned by that faction or on the number behind the factions to show all but those portals.
+Click on <b>Visited, Captured or Scout Controlled</b> to only show portals the user has a history for or on the number to hide those.
+</div>`);
 
   return container;
 }
@@ -538,7 +544,7 @@ var setup =  function() {
 \
 #portalslist .filters {\
   display: grid;\
-  grid-template-columns: 1fr auto 1fr auto 1fr auto;\
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto;\
   grid-gap: 1px\
 }\
 \
@@ -573,60 +579,67 @@ var setup =  function() {
 }\
 \
 #portalslist .filters .filterNeu,\
+#portalslist .filters .filterEnl,\
 #portalslist .filters .filterRes,\
-#portalslist .filters .filterEnl {\
-  grid-row: 2;\
+#portalslist .filters .filterUnk {\
+  grid-row: 1;\
 }\
 \
 #portalslist .filters .filterVis,\
 #portalslist .filters .filterCap,\
 #portalslist .filters .filterSco {\
-  grid-row: 3;\
+  grid-row: 2;\
 }\
 \
 /* 2 columns */\
 @media (orientation: portrait) {\
-  #portalslist.mobile .filters {\
+  #portalslist .filters {\
     grid-template-columns: 1fr auto 1fr auto;\
   }\
 \
-  #portalslist.mobile .filters .filterNeu.name,\
-  #portalslist.mobile .filters .filterRes.name,\
-  #portalslist.mobile .filters .filterEnl.name {\
+  #portalslist .filters .filterNeu.name,\
+  #portalslist .filters .filterRes.name,\
+  #portalslist .filters .filterEnl.name,\
+  #portalslist .filters .filterUnk.name {\
     grid-column: 1;\
   }\
 \
-  #portalslist.mobile .filters .filterNeu.count,\
-  #portalslist.mobile .filters .filterRes.count,\
-  #portalslist.mobile .filters .filterEnl.count {\
+  #portalslist .filters .filterNeu.count,\
+  #portalslist .filters .filterRes.count,\
+  #portalslist .filters .filterEnl.count,\
+  #portalslist .filters .filterUnk.count {\
     grid-column: 2;\
   }\
 \
-  #portalslist.mobile .filters .filterVis.name,\
-  #portalslist.mobile .filters .filterCap.name,\
-  #portalslist.mobile .filters .filterSco.name {\
+  #portalslist .filters .filterVis.name,\
+  #portalslist .filters .filterCap.name,\
+  #portalslist .filters .filterSco.name {\
     grid-column: 3;\
   }\
 \
-  #portalslist.mobile .filters .filterVis.count,\
-  #portalslist.mobile .filters .filterCap.count,\
-  #portalslist.mobile .filters .filterSco.count {\
+  #portalslist .filters .filterVis.count,\
+  #portalslist .filters .filterCap.count,\
+  #portalslist .filters .filterSco.count {\
     grid-column: 4;\
   }\
 \
-  #portalslist.mobile .filters .filterNeu,\
-  #portalslist.mobile .filters .filterVis {\
-    grid-row: 2\
+  #portalslist .filters .filterNeu,\
+  #portalslist .filters .filterVis {\
+    grid-row: 1;\
   }\
 \
-  #portalslist.mobile .filters .filterRes,\
-  #portalslist.mobile .filters .filterCap {\
-    grid-row: 3\
+  #portalslist .filters .filterEnl,\
+  #portalslist .filters .filterCap {\
+    grid-row: 2;\
   }\
 \
-  #portalslist.mobile .filters .filterEnl,\
-  #portalslist.mobile .filters .filterSco {\
-    grid-row: 4\
+  #portalslist .filters .filterRes,\
+  #portalslist .filters .filterSco {\
+    grid-row: 3;\
+  }\
+\
+  #portalslist .filters .filterUnk {\
+    grid-row: 4;\
   }\
 }\
 \
@@ -671,6 +684,11 @@ var setup =  function() {
 #portalslist table tr.enl td,\
 #portalslist .filters .filterEnl {\
   background-color: #017f01;\
+}\
+\
+#portalslist table tr.mac td,\
+#portalslist .filters .filterUnk {\
+  background-color: #a00;\
 }\
 \
 #portalslist table tr.none td {\
