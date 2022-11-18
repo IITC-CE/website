@@ -2,13 +2,14 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.1.20220807.182401
+// @version        0.1.2.20221118.204128
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR451/plugins/basemap-openstreetmap.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/basemap-openstreetmap.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,36 +20,39 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-182401';
+plugin_info.dateTimeVersion = '2022-11-18-204128';
 plugin_info.pluginId = 'basemap-openstreetmap';
 //END PLUGIN AUTHORS NOTE
 
-
+/* exported setup --eslint */
+/* global L, layerChooser */
 // use own namespace for plugin
-window.plugin.mapTileOpenStreetMap = {
-  addLayer: function() {
-    // OpenStreetMap tiles - we shouldn't use these by default - https://wiki.openstreetmap.org/wiki/Tile_usage_policy
-    // "Heavy use (e.g. distributing an app that uses tiles from openstreetmap.org) is forbidden without prior permission from the System Administrators"
+var mapOpenStreetMap = {};
 
-    var osmOpt = {
-      attribution: 'Map data © OpenStreetMap contributors',
-      maxNativeZoom: 18,
-      maxZoom: 21,
-    };
+mapOpenStreetMap.addLayer = function () {
+  // OpenStreetMap tiles - we shouldn't use these by default - https://wiki.openstreetmap.org/wiki/Tile_usage_policy
+  // "Heavy use (e.g. distributing an app that uses tiles from openstreetmap.org) is forbidden without prior permission from the System Administrators"
 
-    var layers = {
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png': 'OpenStreetMap',
-      'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png': 'Humanitarian',
-    };
+  var osmOpt = {
+    attribution: 'Map data © OpenStreetMap contributors',
+    maxNativeZoom: 18,
+    maxZoom: 21,
+  };
 
-    for(var url in layers) {
-      var layer = new L.TileLayer(url, osmOpt);
-      layerChooser.addBaseLayer(layer, layers[url]);
-    }
-  },
+  var layers = {
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png': 'OpenStreetMap',
+    'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png': 'Humanitarian',
+  };
+
+  for (var url in layers) {
+    var layer = new L.TileLayer(url, osmOpt);
+    layerChooser.addBaseLayer(layer, layers[url]);
+  }
 };
 
-var setup =  window.plugin.mapTileOpenStreetMap.addLayer;
+function setup() {
+  mapOpenStreetMap.addLayer();
+}
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if(!window.bootPlugins) window.bootPlugins = [];
