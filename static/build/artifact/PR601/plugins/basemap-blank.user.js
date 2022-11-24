@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Blank map
 // @category       Map Tiles
-// @version        0.1.3.20221118.155251
+// @version        0.1.3.20221124.133034
 // @description    Add a blank map layer - no roads or other features.
 // @id             basemap-blank
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-155251';
+plugin_info.dateTimeVersion = '2022-11-24-133034';
 plugin_info.pluginId = 'basemap-blank';
 //END PLUGIN AUTHORS NOTE
 

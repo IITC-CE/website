@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Reso energy % in portal details
 // @category       Portal Info
-// @version        0.1.2.20221118.155251
+// @version        0.1.2.20221124.133034
 // @description    Show resonator energy percentage on resonator energy bar in portal details panel.
 // @id             reso-energy-pct
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
