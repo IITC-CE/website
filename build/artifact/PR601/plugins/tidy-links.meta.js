@@ -2,7 +2,7 @@
 // @author         boombuler
 // @name           IITC plugin: Tidy Links
 // @category       Draw
-// @version        0.6.0.20221118.155251
+// @version        0.6.0.20221124.133034
 // @description    Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (former `Max Links`)
 // @id             tidy-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.34.0.20221118.155251
+// @version        0.34.0.20221124.133034
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-155251';
+plugin_info.dateTimeVersion = '2022-11-24-133034';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-18-155251';
+window.iitcBuildDate = '2022-11-24-133034';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2379,6 +2379,7 @@ window.TEAM_MAC = 3;
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
 window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
 window.TEAM_CODES = ['N', 'R', 'E', 'M'];
+window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
 
 window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
 window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
@@ -3119,7 +3120,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-18-155251');
+  log.log('loading done, booting. Built: '+'2022-11-24-133034');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20733,7 +20734,7 @@ window.getTeam = function (details) {
 };
 
 window.teamStringToId = function (teamStr) {
-  var teamIndex = window.TEAM_NAMES.indexOf(teamStr);
+  var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
   if (teamIndex >= 0) return teamIndex;
   teamIndex = window.TEAM_CODES.indexOf(teamStr);
   if (teamIndex >= 0) return teamIndex;
