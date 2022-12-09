@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.34.0.20221209.155921
+// @version        0.34.0.20221209.172823
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-12-09-155921';
+plugin_info.dateTimeVersion = '2022-12-09-172823';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-12-09-155921';
+window.iitcBuildDate = '2022-12-09-172823';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2357,7 +2357,7 @@ window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geo
 // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
-window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters 
+window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
@@ -3121,7 +3121,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-12-09-155921');
+  log.log('loading done, booting. Built: '+'2022-12-09-172823');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -24821,7 +24821,7 @@ window.getPortalRange = function(d) {
   });
 
   var range = {
-    base: d.team === 'M' ? window.LINK_RANGE_MAC[d.level] : 160*Math.pow(getPortalLevel(d), 4),
+    base: d.team === 'M' ? window.LINK_RANGE_MAC[d.level] : 160 * Math.pow(window.getPortalLevel(d), 4),
     boost: getLinkAmpRangeBoost(d)
   };
 
