@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.34.0.20221211.180030
+// @version        0.34.0.20221212.053032
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -9,6 +9,7 @@
 // @updateURL      https://iitc.app/build/artifact/PR607/total-conversion-build.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR607/total-conversion-build.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-12-11-180030';
+plugin_info.dateTimeVersion = '2022-12-12-053032';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-12-11-180030';
+window.iitcBuildDate = '2022-12-12-053032';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2932,10 +2933,12 @@ window.artifact.showArtifactList = function() {
 // *** module: boot.js ***
 (function () {
 var log = ulog('boot');
-/// SETUP /////////////////////////////////////////////////////////////
+// SETUP /////////////////////////////////////////////////////////////
 // these functions set up specific areas after the boot function
 // created a basic framework. All of these functions should only ever
 // be run once.
+
+/* global L, dialog -- eslint */
 
 window.setupTooltips = function (element) {
   element = element || $(document);
@@ -3001,6 +3004,21 @@ function setupIngressMarkers () {
   L.divIcon.coloredSvg = function (color, options) {
     return new L.DivIcon.ColoredSvg(color, options);
   };
+}
+
+function checkingIntelURL() {
+  if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
+    dialog({
+      title: 'IITC Warning',
+      html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
+      buttons: {
+        "Close and don't remind me again": function () {
+          $(this).dialog('close');
+          localStorage['pass-checking-intel-url'] = true;
+        },
+      },
+    });
+  }
 }
 
 /*
@@ -3119,7 +3137,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-12-11-180030');
+  log.log('loading done, booting. Built: '+'2022-12-12-053032');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -3129,6 +3147,7 @@ function boot() {
   var loadPlugins = prepPluginsToLoad();
   loadPlugins('boot');
 
+  checkingIntelURL();
   setupIngressMarkers();
   window.extractFromStock();
   window.setupIdle();
