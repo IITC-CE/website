@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.3.2.20221211.180030
+// @version        0.3.2.20221212.053032
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -9,6 +9,7 @@
 // @updateURL      https://iitc.app/build/artifact/PR607/plugins/scoreboard.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR607/plugins/scoreboard.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-12-11-180030';
+plugin_info.dateTimeVersion = '2022-12-12-053032';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 

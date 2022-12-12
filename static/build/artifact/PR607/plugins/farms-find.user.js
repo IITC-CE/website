@@ -2,13 +2,14 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.1.20221211.180030
+// @version        1.4.1.20221212.053032
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR607/plugins/farms-find.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR607/plugins/farms-find.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-12-11-180030';
+plugin_info.dateTimeVersion = '2022-12-12-053032';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 

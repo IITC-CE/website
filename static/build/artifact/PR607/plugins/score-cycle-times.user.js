@@ -2,13 +2,14 @@
 // @author         jonatkins
 // @name           IITC plugin: Scoring cycle / checkpoint times
 // @category       Info
-// @version        0.2.0.20221211.180030
+// @version        0.2.0.20221212.053032
 // @description    Show the times used for the septicycle and checkpoints for regional scoreboards.
 // @id             score-cycle-times
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR607/plugins/score-cycle-times.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR607/plugins/score-cycle-times.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-12-11-180030';
+plugin_info.dateTimeVersion = '2022-12-12-053032';
 plugin_info.pluginId = 'score-cycle-times';
 //END PLUGIN AUTHORS NOTE
 
