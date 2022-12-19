@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Debug: Raw portal JSON data
 // @category       Portal Info
-// @version        0.2.4.20221218.194326
+// @version        0.2.4.20221215.142158
 // @description    Developer debugging aid: Add a link to the portal details to show the raw data of a portal.
 // @id             debug-raw-portal-data
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2022-12-18-194326';
+plugin_info.dateTimeVersion = '2022-12-15-142158';
 plugin_info.pluginId = 'debug-raw-portal-data';
 //END PLUGIN AUTHORS NOTE
 

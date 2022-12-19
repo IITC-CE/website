@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.4.1.20221218.194326
+// @version        0.4.1.20221215.142158
 // @description    Show a mini map on the corner of the map.
 // @id             minimap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2022-12-18-194326';
+plugin_info.dateTimeVersion = '2022-12-15-142158';
 plugin_info.pluginId = 'minimap';
 //END PLUGIN AUTHORS NOTE
 

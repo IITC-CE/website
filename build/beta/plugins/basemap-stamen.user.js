@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.2.2.20221218.194326
+// @version        0.2.2.20221215.142158
 // @description    Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2022-12-18-194326';
+plugin_info.dateTimeVersion = '2022-12-15-142158';
 plugin_info.pluginId = 'basemap-stamen';
 //END PLUGIN AUTHORS NOTE
 
