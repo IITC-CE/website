@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230104.233645
+// @version        0.7.0.20230105.011959
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,17 +20,16 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-04-233645';
+plugin_info.dateTimeVersion = '2023-01-05-011959';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup --eslint */
-/* global , digits, L, map, dialog, getPortalLinks, portalDetail */
+/* global , digits, L, map, dialog, getPortalLinks, portalDetail, turf */
 
 // use own namespace for plugin
 var machinaTools = {};
 window.plugin.machinaTools = machinaTools;
-
 
 // Provides a circle object storage array for adding and
 // removing specific circles from layers.  Keyed by GUID.
@@ -93,7 +92,7 @@ machinaTools.goToParent = function (portalGuid) {
     dialog({
       html: $('<div id="no-machina-parent">No Parent found.</div>'),
       title: 'Machina Tools',
-      id: 'no-machina-parent'
+      id: 'no-machina-parent',
     });
   }
 };
@@ -102,9 +101,7 @@ machinaTools.findSeed = function (portalGuid) {
   var parent = undefined;
   var portal = window.portals[portalGuid];
 
-
   if (portal !== undefined) {
-
     // Since we could be the seed, if there's no
     // parent, then we have to return the portal.
     parent = {};
@@ -173,7 +170,6 @@ machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
   var rc = {};
   var portal = window.portals[portalGuid];
 
-
   rc.children = [];
   rc.guid = portalGuid;
   rc.depth = depth;
@@ -194,7 +190,6 @@ machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
 
   var linkGuids = getPortalLinks(portalGuid);
 
-
   $.each(linkGuids.out, function (i, lguid) {
     var l = window.links[lguid];
     var ld = l.options.data;
@@ -206,7 +201,9 @@ machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
     });
   });
 
-  rc.children.sort(function (a, b) {return a.linkTime - b.linkTime });
+  rc.children.sort(function (a, b) {
+    return a.linkTime - b.linkTime;
+  });
 
   return rc;
 };
@@ -222,11 +219,7 @@ machinaTools.gatherCluster = function (portalGuid) {
     rc.portals = {};
 
     // Add the seed GUID to the queue.
-    processingQueue.push(
-      {guid: seed.guid,
-       depth: 0
-      }
-    );
+    processingQueue.push({ guid: seed.guid, depth: 0 });
   }
 
   curPortal = processingQueue.shift();
@@ -237,7 +230,7 @@ machinaTools.gatherCluster = function (portalGuid) {
     rc.portals[curPortal.guid].children.forEach((element) => {
       processingQueue.push({
         guid: element.childGuid,
-        depth: curPortal.depth + 1
+        depth: curPortal.depth + 1,
       });
     });
 
@@ -253,7 +246,7 @@ machinaTools.clusterDisplayString = function (clusterData) {
   rc += '<div>';
   for (var guid in clusterData.portals) {
     var portal = clusterData.portals[guid];
-    rc += 'Portal: <a onclick="window.zoomToAndShowPortal(\'' + guid + '\', [' + portal.latlng + ']);" title="' + portal.name + '">';
+    rc += 'Portal: <a onclick="window.zoomToAndShowPortal(\'' + guid + "', [" + portal.latlng + ']);" title="' + portal.name + '">';
     rc += portal.name + '</a>(' + portal.level + ') [Depth: ' + portal.depth + ']<br/>';
     if (portal.children.length > 0) {
       rc += '<ul>';
@@ -271,7 +264,7 @@ machinaTools.clusterDisplayString = function (clusterData) {
             lengthDescription += ' (EXCEEDS EXPECTED MAX)';
           }
           rc += '<li>' + new Date(child.linkTime).toUTCString() + ' link to <a onclick="window.zoomToAndShowPortal(\'';
-          rc += child.childGuid + '\', [' + childPortal.latlng + ']);" title="' + childPortal.name + '">' + childPortal.name;
+          rc += child.childGuid + "', [" + childPortal.latlng + ']);" title="' + childPortal.name + '">' + childPortal.name;
           rc += '</a>(' + childPortal.level + ') - ' + lengthDescription + '</li>';
         } else {
           rc += '<li>' + new Date(child.linkTime).toUTCString() + ' link to UNKNOWN</li>';
@@ -300,18 +293,17 @@ machinaTools.displayCluster = function (portalGuid) {
     html += '<br/><pre>' + JSON.stringify(clusterData, null, 4) + '</pre>';
     html += '</div>';
 
-
     dialog({
       html: html,
       title: 'Machina Cluster',
       id: 'machina-cluster',
-      width: 'auto'
+      width: 'auto',
     });
   } else {
     dialog({
       html: $('<div id="no-machina-cluster">No Cluster found.</div>'),
       title: 'Machina Tools',
-      id: 'no-machina-cluster'
+      id: 'no-machina-cluster',
     });
   }
 };
@@ -325,11 +317,18 @@ machinaTools.onPortalDetailsUpdated = function () {
   portalData = portalDetail.get(window.selectedPortal);
 
   if (portalData.team === 'M') {
-
     // Add the 'find Parent' button.
-    $('.linkdetails').append('<aside><a onclick="window.plugin.machinaTools.goToParent(\'' + window.selectedPortal + '\')" title=" Find Machina Parent ">Find Parent</a></aside>');
-    $('.linkdetails').append('<aside><a onclick="window.plugin.machinaTools.goToSeed(\'' + window.selectedPortal + '\')" title="Find Machina Seed">Find Seed</a></aside>');
-    $('.linkdetails').append('<aside><a onclick="window.plugin.machinaTools.displayCluster(\'' + window.selectedPortal + '\')" title="Display Machina Cluster">Cluster Details</a></aside>');
+    $('.linkdetails').append(
+      '<aside><a onclick="window.plugin.machinaTools.goToParent(\'' + window.selectedPortal + '\')" title=" Find Machina Parent ">Find Parent</a></aside>'
+    );
+    $('.linkdetails').append(
+      '<aside><a onclick="window.plugin.machinaTools.goToSeed(\'' + window.selectedPortal + '\')" title="Find Machina Seed">Find Seed</a></aside>'
+    );
+    $('.linkdetails').append(
+      '<aside><a onclick="window.plugin.machinaTools.displayCluster(\'' +
+        window.selectedPortal +
+        '\')" title="Display Machina Cluster">Cluster Details</a></aside>'
+    );
     // Add the 'trace children' button.
 
     // Add this portal's conflict zone to the conflict area
@@ -344,7 +343,6 @@ machinaTools.onPortalDetailsUpdated = function () {
 machinaTools.zoomLevelHasPortals = function () {
   return window.getMapZoomTileParameters(window.getDataZoomForMapZoom(window.map.getZoom())).hasPortals;
 };
-
 
 machinaTools.updateConflictArea = function () {
   if (machinaTools.conflictAreaLast) {
@@ -409,7 +407,7 @@ machinaTools.removePortalExclusion = function (guid) {
   }
 };
 
-machinaTools.removeConflictZone = function(guid) {
+machinaTools.removeConflictZone = function (guid) {
   delete machinaTools.conflictZones[guid];
 };
 /**
@@ -418,12 +416,12 @@ machinaTools.removeConflictZone = function(guid) {
 machinaTools.portalAdded = function (data) {
   // Draw the circle if the team of the portal is Machina.
   data.portal.on('add', function () {
-//debugger;
-  // if (TEAM_NAMES[this.options.team] != undefined) {
-    if (TEAM_NAMES[this.options.team] === TEAM_NAME_MAC) {
+    // debugger;
+    // if (TEAM_NAMES[this.options.team] != undefined) {
+    if (window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
       machinaTools.drawPortalExclusion(this.options.guid);
     }
-  // }
+    // }
   });
 
   // Remove all circles if they exist, since the team may have changed.
@@ -447,7 +445,10 @@ machinaTools.showOrHideMachinaLevelUpRadius = function () {
     // Remove the circle layer from the display layer if necessary, and add the disabled mark.
     if (machinaTools.displayLayer.hasLayer(machinaTools.circleDisplayLayer)) {
       machinaTools.displayLayer.removeLayer(machinaTools.circleDisplayLayer);
-      $('.leaflet-control-layers-list span:contains("Machina Level Up Link Radius")').parent('label').addClass('disabled').attr('title', 'Zoom in to show those.');
+      $('.leaflet-control-layers-list span:contains("Machina Level Up Link Radius")')
+        .parent('label')
+        .addClass('disabled')
+        .attr('title', 'Zoom in to show those.');
     }
   }
 };
@@ -4303,7 +4304,7 @@ exports.default = union;
     console.error('turf-union.js loading failed');
     throw e;
   }
-};
+}
 /* eslint-enable */
 
 setup.info = plugin_info; //add the script info data to the function as a property
