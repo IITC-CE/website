@@ -2,7 +2,7 @@
 // @author         Johtaja
 // @name           IITC plugin: Highlight portals based on history
 // @category       Highlighter
-// @version        0.3.0.20230105.182156
+// @version        0.3.0.20230105.195540
 // @description    Use the portal fill color to denote the portal has been visited, captured, scout controlled
 // @id             highlight-portal-history
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-05-182156';
+plugin_info.dateTimeVersion = '2023-01-05-195540';
 plugin_info.pluginId = 'highlight-portal-history';
 //END PLUGIN AUTHORS NOTE
 
