@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230105.011959
+// @version        0.7.0.20230105.135942
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-05-011959';
+plugin_info.dateTimeVersion = '2023-01-05-135942';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -242,12 +242,11 @@ machinaTools.gatherCluster = function (portalGuid) {
 };
 
 machinaTools.clusterDisplayString = function (clusterData) {
-  var rc = '';
-  rc += '<div>';
+  var rc = '<div>';
   for (var guid in clusterData.portals) {
     var portal = clusterData.portals[guid];
-    rc += 'Portal: <a onclick="window.zoomToAndShowPortal(\'' + guid + "', [" + portal.latlng + ']);" title="' + portal.name + '">';
-    rc += portal.name + '</a>(' + portal.level + ') [Depth: ' + portal.depth + ']<br/>';
+    rc += `Portal: <a onclick="window.zoomToAndShowPortal('${guid}', [${portal.latlng}]);" title="${portal.name}">`;
+    rc += `${portal.name}</a>(${portal.level}) [Depth: ${portal.depth}]<br/>`;
     if (portal.children.length > 0) {
       rc += '<ul>';
       portal.children.forEach((child) => {
@@ -263,11 +262,11 @@ machinaTools.clusterDisplayString = function (clusterData) {
           if (window.LINK_RANGE_MAC[portal.level] < child.length) {
             lengthDescription += ' (EXCEEDS EXPECTED MAX)';
           }
-          rc += '<li>' + new Date(child.linkTime).toUTCString() + ' link to <a onclick="window.zoomToAndShowPortal(\'';
-          rc += child.childGuid + "', [" + childPortal.latlng + ']);" title="' + childPortal.name + '">' + childPortal.name;
-          rc += '</a>(' + childPortal.level + ') - ' + lengthDescription + '</li>';
+          rc += `<li>${new Date(child.linkTime).toUTCString()} link to `;
+          rc += `<a onclick="window.zoomToAndShowPortal('${child.childGuid}', [${childPortal.latlng}]);" title="${childPortal.name}">${childPortal.name}</a>`;
+          rc += `(${childPortal.level}) - ${lengthDescription}</li>`;
         } else {
-          rc += '<li>' + new Date(child.linkTime).toUTCString() + ' link to UNKNOWN</li>';
+          rc += `<li>${new Date(child.linkTime).toUTCString()} link to UNKNOWN</li>`;
         }
       });
 
@@ -318,16 +317,13 @@ machinaTools.onPortalDetailsUpdated = function () {
 
   if (portalData.team === 'M') {
     // Add the 'find Parent' button.
-    $('.linkdetails').append(
-      '<aside><a onclick="window.plugin.machinaTools.goToParent(\'' + window.selectedPortal + '\')" title=" Find Machina Parent ">Find Parent</a></aside>'
+    var linkdetails = $('.linkdetails');
+    linkdetails.append(
+      `<aside><a onclick="window.plugin.machinaTools.goToParent('${window.selectedPortal}')" title=" Find Machina Parent ">Find Parent</a></aside>`
     );
-    $('.linkdetails').append(
-      '<aside><a onclick="window.plugin.machinaTools.goToSeed(\'' + window.selectedPortal + '\')" title="Find Machina Seed">Find Seed</a></aside>'
-    );
-    $('.linkdetails').append(
-      '<aside><a onclick="window.plugin.machinaTools.displayCluster(\'' +
-        window.selectedPortal +
-        '\')" title="Display Machina Cluster">Cluster Details</a></aside>'
+    linkdetails.append(`<aside><a onclick="window.plugin.machinaTools.goToSeed('${window.selectedPortal}')" title="Find Machina Seed">Find Seed</a></aside>`);
+    linkdetails.append(
+      `<aside><a onclick="window.plugin.machinaTools.displayCluster('${window.selectedPortal}')" title="Display Machina Cluster">Cluster Details</a></aside>`
     );
     // Add the 'trace children' button.
 
