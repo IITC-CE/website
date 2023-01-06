@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230105.135942
+// @version        0.7.0.20230106.051513
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-05-135942';
+plugin_info.dateTimeVersion = '2023-01-06-051513';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -136,24 +136,6 @@ machinaTools.goToSeed = function (portalGuid) {
   }
 };
 
-/*
-
-    {
-        [xyz] = {
-            [level] = x
-            [guid] = xyz
-            [latlng] = [lat,lng]
-            [children] = {
-                [childGuid, linkTime],
-                [childGuid, linkTime]
-            }
-        }
-    }
-
-
-
-*/
-
 machinaTools.getOLatLng = function (link) {
   return L.latLng(link.oLatE6 / 1e6, link.oLngE6 / 1e6);
 };
@@ -241,14 +223,17 @@ machinaTools.gatherCluster = function (portalGuid) {
   return rc;
 };
 
-machinaTools.clusterDisplayString = function (clusterData) {
-  var rc = '<div>';
+machinaTools.clusterDisplayNode = function (clusterData) {
+  var rc = $('<div>');
   for (var guid in clusterData.portals) {
     var portal = clusterData.portals[guid];
-    rc += `Portal: <a onclick="window.zoomToAndShowPortal('${guid}', [${portal.latlng}]);" title="${portal.name}">`;
-    rc += `${portal.name}</a>(${portal.level}) [Depth: ${portal.depth}]<br/>`;
+    rc.append('Portal: ');
+    var portalLink = $('<a>', { title: portal.name, html: portal.name, click: window.zoomToAndShowPortal.bind(window, guid, portal.latlng) });
+    rc.append(portalLink);
+    rc.append(`(${portal.level}) [Depth: ${portal.depth}]<br/>`);
     if (portal.children.length > 0) {
-      rc += '<ul>';
+      var childList = $('<ul>');
+      rc.append(childList);
       portal.children.forEach((child) => {
         var childPortal = clusterData.portals[child.childGuid];
         if (childPortal !== undefined) {
@@ -262,21 +247,26 @@ machinaTools.clusterDisplayString = function (clusterData) {
           if (window.LINK_RANGE_MAC[portal.level] < child.length) {
             lengthDescription += ' (EXCEEDS EXPECTED MAX)';
           }
-          rc += `<li>${new Date(child.linkTime).toUTCString()} link to `;
-          rc += `<a onclick="window.zoomToAndShowPortal('${child.childGuid}', [${childPortal.latlng}]);" title="${childPortal.name}">${childPortal.name}</a>`;
-          rc += `(${childPortal.level}) - ${lengthDescription}</li>`;
+          var childListItem = $('<li>');
+          childListItem.append(new Date(child.linkTime).toUTCString());
+          childListItem.append(' link to ');
+          var childLink = $('<a>', {
+            title: childPortal.name,
+            html: childPortal.name,
+            click: window.zoomToAndShowPortal.bind(window, child.childGuid, childPortal.latlng),
+          });
+          childListItem.append(childLink);
+          childListItem.append(`(${childPortal.level}) - ${lengthDescription}`);
+
+          childList.append(childListItem);
         } else {
-          rc += `<li>${new Date(child.linkTime).toUTCString()} link to UNKNOWN</li>`;
+          rc.append($('<li>', { html: `${new Date(child.linkTime).toUTCString()} link to UNKNOWN` }));
         }
       });
-
-      rc += '</ul>';
     } else {
-      rc += '<br/>';
+      rc.append('<br/>');
     }
   }
-
-  rc += '</div>';
 
   return rc;
 };
@@ -285,12 +275,9 @@ machinaTools.displayCluster = function (portalGuid) {
   var clusterData = machinaTools.gatherCluster(portalGuid);
 
   if (clusterData !== undefined) {
-    var html = '';
-
-    html += '<div id="machina-cluster">';
-    html += machinaTools.clusterDisplayString(clusterData);
-    html += '<br/><pre>' + JSON.stringify(clusterData, null, 4) + '</pre>';
-    html += '</div>';
+    var html = $('<div>', { id: 'machina-cluster' });
+    html.append(machinaTools.clusterDisplayNode(clusterData));
+    html.append('<br/><pre>' + JSON.stringify(clusterData, null, 4) + '</pre>');
 
     dialog({
       html: html,
@@ -307,6 +294,12 @@ machinaTools.displayCluster = function (portalGuid) {
   }
 };
 
+function createInfoLink(text, title, clickCallback) {
+  var findParentAside = $('<aside>');
+  $('<a>', { title: title, click: clickCallback, html: text }).appendTo(findParentAside);
+  return findParentAside;
+}
+
 machinaTools.onPortalDetailsUpdated = function () {
   var portalData;
 
@@ -316,16 +309,10 @@ machinaTools.onPortalDetailsUpdated = function () {
   portalData = portalDetail.get(window.selectedPortal);
 
   if (portalData.team === 'M') {
-    // Add the 'find Parent' button.
     var linkdetails = $('.linkdetails');
-    linkdetails.append(
-      `<aside><a onclick="window.plugin.machinaTools.goToParent('${window.selectedPortal}')" title=" Find Machina Parent ">Find Parent</a></aside>`
-    );
-    linkdetails.append(`<aside><a onclick="window.plugin.machinaTools.goToSeed('${window.selectedPortal}')" title="Find Machina Seed">Find Seed</a></aside>`);
-    linkdetails.append(
-      `<aside><a onclick="window.plugin.machinaTools.displayCluster('${window.selectedPortal}')" title="Display Machina Cluster">Cluster Details</a></aside>`
-    );
-    // Add the 'trace children' button.
+    linkdetails.append(createInfoLink('Find Parent', 'Find Machina Parent', () => window.plugin.machinaTools.goToParent(window.selectedPortal)));
+    linkdetails.append(createInfoLink('Find Seed', 'Find Machina Seed', () => window.plugin.machinaTools.goToSeed(window.selectedPortal)));
+    linkdetails.append(createInfoLink('Cluster Details', 'Display Machina Cluster', () => window.plugin.machinaTools.displayCluster(window.selectedPortal)));
 
     // Add this portal's conflict zone to the conflict area
     machinaTools.drawPortalExclusion(window.selectedPortal);
@@ -364,7 +351,7 @@ machinaTools.drawExclusion = function (guid, level, latlng, placeholder) {
     machinaTools.addPortalCircle(guid, new L.Circle(latlng, range, machinaTools.optCircle));
   }
 
-  let zone = new L.geodesicCircle(latlng, range, machinaTools.optConflictZone);
+  var zone = new L.geodesicCircle(latlng, range, machinaTools.optConflictZone);
   machinaTools.addConflictZone(guid, zone);
   machinaTools.updateConflictArea();
 };
@@ -515,7 +502,7 @@ var setup = function () {
   window.addHook('mapDataRefreshEnd', machinaTools.updateConflictArea);
 
   // Add a hook to trigger the showOrHide method when the map finishes zooming or reloads.
-  map.on('zoomend', machinaTools.showOrHideMachinaLevelUpRadius);
+  map.on('zoomed', machinaTools.showOrHideMachinaLevelUpRadius);
   map.on('loading', machinaTools.showOrHideMachinaLevelUpRadius);
   map.on('load', machinaTools.showOrHideMachinaLevelUpRadius);
 
