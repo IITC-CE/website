@@ -13,6 +13,10 @@ jobs:
         with:
           path: "./website"
           token: ${{ secrets.API_TOKEN_GITHUB }}
+          # git restore-mtime uses the ref log to find the correct timestamp
+          # for each file. This requires a full git history. The default value (1)
+          # creates a shallow checkout.
+          fetch-depth: 0
 
       - name: Setup git config
         run: |

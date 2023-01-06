@@ -1,6 +1,8 @@
 name: Build website
 
 on:
+  schedule:
+    - cron: "0 0 * * *" # every day at midnight
   push:
     branches:
       - master
@@ -10,7 +12,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          # git restore-mtime uses the ref log to find the correct timestamp
+          # for each file. This requires a full git history. The default value (1)
+          # creates a shallow checkout.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v4
         with:
@@ -18,6 +25,11 @@ jobs:
           cache: 'pip'
 
       - run: pip install -r requirements.txt
+
+      - name: Restore correct mtime
+        run: |
+          sudo apt install git-restore-mtime
+          git restore-mtime
 
       - name: Build website
         run: python3 update.py
