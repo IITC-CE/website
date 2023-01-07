@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.195000
+// @version        0.7.0.20230107.200751
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-195000';
+plugin_info.dateTimeVersion = '2023-01-07-200751';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -634,7 +634,8 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
 \
 .leaflet-control-machina-record a::after {\
     content: \'\\2022\';\
-    font-size: 5em;\
+    line-height: 26px;\
+    font-size: 52px;\
 }\
 \
 .leaflet-control-machina-record a.active {\
