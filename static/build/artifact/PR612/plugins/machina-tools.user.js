@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.140211
+// @version        0.7.0.20230107.150958
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-140211';
+plugin_info.dateTimeVersion = '2023-01-07-150958';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -452,19 +452,21 @@ machinaTools.guessLevelByRange = function (linkLength) {
   return 0;
 };
 
+machinaTools.drawLinkExclusion = function (link) {
+  // add destination portal - 1 level
+  machinaTools.drawExclusion(link.dGuid, 1, machinaTools.getDLatLng(link), true);
+
+  // add origin portal - level based on link length
+  var linkLength = machinaTools.getLinkLength(link);
+  var level = machinaTools.guessLevelByRange(linkLength);
+  machinaTools.drawExclusion(link.oGuid, level, machinaTools.getOLatLng(link), true);
+};
+
 machinaTools.linkAdded = function (data) {
   data.link.on('add', function () {
     // if (TEAM_NAMES[this.options.team] != undefined) {
     if (window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
-      var link = data.link.options.data;
-
-      // add destination portal - 1 level
-      machinaTools.drawExclusion(link.dGuid, 1, machinaTools.getDLatLng(link), true);
-
-      // add origin portal - level based on link length
-      var linkLength = machinaTools.getLinkLength(link);
-      var level = machinaTools.guessLevelByRange(linkLength);
-      machinaTools.drawExclusion(link.oGuid, level, machinaTools.getOLatLng(link), true);
+      machinaTools.drawLinkExclusion(this.options.data);
     }
     // }
   });
@@ -475,8 +477,7 @@ function humanFileSize(size) {
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
-machinaTools.showConflictAreaInfoDialog = function () {
-  var html = $('<div>');
+function appendAreaInfoDialogContent(html) {
   if (machinaTools.conflictAreaLast && machinaTools.conflictAreaLast.getLayers().length > 0) {
     var ul = $('<ul>');
     ul.appendTo(html);
@@ -500,6 +501,16 @@ machinaTools.showConflictAreaInfoDialog = function () {
   } else {
     html.append('No machina clusters found');
   }
+}
+
+function refreshDialog(html) {
+  html.empty();
+  appendAreaInfoDialogContent(html);
+}
+
+machinaTools.showConflictAreaInfoDialog = function () {
+  var html = $('<div>');
+  appendAreaInfoDialogContent(html);
 
   dialog({
     html: html,
@@ -507,7 +518,11 @@ machinaTools.showConflictAreaInfoDialog = function () {
     id: 'machina-conflict-area-info',
     width: 'auto',
     buttons: {
-      'Reset Conflict Area': machinaTools.resetConflictArea,
+      'Reset Conflict Area': () => {
+        machinaTools.resetConflictArea();
+        refreshDialog(html);
+      },
+      Refresh: () => refreshDialog(html),
     },
   });
 };
@@ -516,6 +531,14 @@ machinaTools.resetConflictArea = function () {
   delete machinaTools.conflictArea;
   delete machinaTools.conflictAreaLast;
   machinaTools.conflictAreaLayer.clearLayers();
+
+  Object.values(window.portals)
+    .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
+    .forEach((portal) => machinaTools.drawPortalExclusion(portal.options.guid));
+
+  Object.values(window.links)
+    .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
+    .forEach((portal) => machinaTools.drawLinkExclusion(portal.options.data));
 };
 
 function setupLayers() {
@@ -556,6 +579,15 @@ var setup = function () {
 };
 /* eslint-disable */
 function loadExternals () {
+  $('<style>').prop('type', 'text/css').html('\
+div[aria-describedby="dialog-machina-conflict-area-info"] button {\
+    margin: 2px;\
+}\
+\
+div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {\
+    float: right;\
+}\
+').appendTo('head');
   try {
    // *** included: external/turf-union.js ***
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.turf = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
@@ -8288,7 +8320,7 @@ module.exports = sizeof
 
 
   } catch (e) {
-    console.error('turf-union.js loading failed');
+    console.error('loading externals failed');
     throw e;
   }
 }
