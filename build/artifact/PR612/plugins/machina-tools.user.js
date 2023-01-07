@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.212446
+// @version        0.7.0.20230107.214144
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-212446';
+plugin_info.dateTimeVersion = '2023-01-07-214144';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -579,7 +579,7 @@ function setupControlButtons() {
     },
     onAdd: function () {
       var button = document.createElement('a');
-      button.innerHTML = '<svg width="26" height="26"><circle class="rec-button" cx="13" cy="13" r="8"></circle></svg>';
+      button.innerHTML = '<svg class="rec-button"><circle></circle></svg>';
       button.className = 'leaflet-bar-part';
       if (machinaTools.recordZones) {
         button.classList.add('recording');
@@ -639,7 +639,20 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
 }\
 \
 .leaflet-control-machina-record a svg {\
-    vertical-align: middle;\
+    width: inherit;\
+    height: inherit;\
+}\
+\
+.leaflet-control-machina-record a svg circle {\
+    cx: 13px;\
+    cy: 13px;\
+    r: 8px;\
+}\
+\
+.leaflet-touch .leaflet-control-machina-record a svg circle {\
+    cx: 15px;\
+    cy: 15px;\
+    r: 9px;\
 }\
 ').appendTo('head');
   try {
