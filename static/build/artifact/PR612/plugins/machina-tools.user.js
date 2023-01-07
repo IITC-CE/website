@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.175629
+// @version        0.7.0.20230107.175901
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-175629';
+plugin_info.dateTimeVersion = '2023-01-07-175901';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -407,10 +407,7 @@ machinaTools.showOrHideMachinaLevelUpRadius = function () {
     // Add the circle layer back to the display layer if necessary, and remove the disabled mark.
     if (!machinaTools.displayLayer.hasLayer(machinaTools.circleDisplayLayer)) {
       machinaTools.displayLayer.addLayer(machinaTools.circleDisplayLayer);
-      $('.leaflet-control-layers-list span:contains("Machina Level Up Link Radius")')
-        .parent('label')
-        .removeClass('disabled')
-        .attr('title', '');
+      $('.leaflet-control-layers-list span:contains("Machina Level Up Link Radius")').parent('label').removeClass('disabled').attr('title', '');
     }
   } else {
     // Remove the circle layer from the display layer if necessary, and add the disabled mark.
