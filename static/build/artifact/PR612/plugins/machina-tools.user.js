@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230106.231146
+// @version        0.7.0.20230107.003519
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-06-231146';
+plugin_info.dateTimeVersion = '2023-01-07-003519';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -526,7 +526,7 @@ machinaTools.resetConflictArea = function () {
 
 function setupLayers() {
   // This layer is added to the layer chooser, to be toggled on/off, regardless of zoom.
-  machinaTools.displayLayer = new L.LayerGroup();
+  machinaTools.displayLayer = new L.LayerGroup([], { minZoom: 15 });
   machinaTools.conflictLayer = new L.LayerGroup();
 
   // This layer is added into the above layer, and removed from it when we zoom out too far.
@@ -538,8 +538,8 @@ function setupLayers() {
   machinaTools.conflictLayer.addLayer(machinaTools.conflictAreaLayer);
 
   // Add the base layer to the main window.
-  window.addLayerGroup('Machina Level Up Link Radius', machinaTools.displayLayer, false);
-  window.addLayerGroup('Machina Conflict Area', machinaTools.conflictLayer, false);
+  window.layerChooser.addOverlay(machinaTools.displayLayer, 'Machina Level Up Link Radius', { default: false });
+  window.layerChooser.addOverlay(machinaTools.conflictLayer, 'Machina Conflict Area', { default: false });
 }
 
 var setup = function () {
@@ -553,12 +553,10 @@ var setup = function () {
   window.addHook('mapDataRefreshEnd', machinaTools.updateConflictArea);
 
   // Add a hook to trigger the showOrHide method when the map finishes zooming or reloads.
-  map.on('zoomed', machinaTools.showOrHideMachinaLevelUpRadius);
+  map.on('zoomend', machinaTools.showOrHideMachinaLevelUpRadius);
   map.on('loading', machinaTools.showOrHideMachinaLevelUpRadius);
   map.on('load', machinaTools.showOrHideMachinaLevelUpRadius);
 
-  // Trigger an initial assessment of displaying the circleDisplayLayer.
-  machinaTools.showOrHideMachinaLevelUpRadius();
   let toolbox = $('#toolbox');
   $('<a>', { title: 'Conflict Area Info', click: machinaTools.showConflictAreaInfoDialog, html: 'Conflict Area Info' }).appendTo(toolbox);
   $('<a>', { title: 'Reset Conflict Area', click: machinaTools.resetConflictArea, html: 'Reset Conflict Area' }).appendTo(toolbox);

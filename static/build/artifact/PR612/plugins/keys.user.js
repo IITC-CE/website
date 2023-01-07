@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.0.20230106.231146
+// @version        0.4.0.20230107.003519
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-06-231146';
+plugin_info.dateTimeVersion = '2023-01-07-003519';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
