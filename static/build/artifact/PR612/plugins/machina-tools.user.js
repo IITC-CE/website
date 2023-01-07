@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.172432
+// @version        0.7.0.20230107.174604
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-172432';
+plugin_info.dateTimeVersion = '2023-01-07-174604';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -319,7 +319,7 @@ machinaTools.onPortalDetailsUpdated = function () {
  * does not factor in other tools that adjust display capabilities.
  */
 machinaTools.zoomLevelHasPortals = function () {
-  return window.getMapZoomTileParameters(window.getDataZoomForMapZoom(window.map.getZoom())).hasPortals;
+  return window.getDataZoomTileParameters().hasPortals;
 };
 
 machinaTools.updateConflictArea = function () {
@@ -432,18 +432,6 @@ machinaTools.showOrHideMachinaLevelUpRadius = function () {
   }
 };
 
-machinaTools.showOrHideMachinaConflictArea = function () {
-  if (!machinaTools.conflictLayer.hasLayer(machinaTools.conflictAreaLayer)) {
-    machinaTools.conflictLayer.addLayer(machinaTools.conflictAreaLayer);
-    console.log('conflictAreaLayer activated');
-    $('.leaflet-control-layers-list span:contains("Machina Conflict Area)').parent('label').removeClass('disabled').attr('title', '');
-  } else {
-    machinaTools.conflictLayer.removeLayer(machinaTools.conflictAreaLayer);
-    console.log('conflictAreaLayer disabled');
-    $('.leaflet-control-layers-list span:contains("Machina Conflict Area")').parent('label').addClass('disabled').attr('title', 'Zoom in to show those.');
-  }
-};
-
 machinaTools.guessLevelByRange = function (linkLength) {
   for (var level = 0; level <= 8; ++level) {
     if (window.LINK_RANGE_MAC[level] >= linkLength) {
@@ -464,16 +452,14 @@ machinaTools.drawLinkExclusion = function (link) {
 };
 
 machinaTools.linkAdded = function (data) {
-  data.link.on('add', function () {
-    if (machinaTools.recordZones && window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
-      machinaTools.drawLinkExclusion(this.options.data);
-    }
-  });
+  if (machinaTools.recordZones && window.TEAM_NAMES[data.link.options.team] === window.TEAM_NAME_MAC) {
+    machinaTools.drawLinkExclusion(data.link.options.data);
+  }
 };
 
 function humanFileSize(size) {
   var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+  return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kiB', 'MiB', 'GiB', 'TiB'][i];
 }
 
 function createAreaInfoDialogContent() {
