@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.003519
+// @version        0.7.0.20230107.140211
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-003519';
+plugin_info.dateTimeVersion = '2023-01-07-140211';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -153,84 +153,75 @@ machinaTools.getLinkLength = function (link) {
 };
 
 machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
-  var rc = {};
   var portal = window.portals[portalGuid];
+  var linkGuids = getPortalLinks(portalGuid);
 
-  rc.children = [];
-  rc.guid = portalGuid;
-  rc.depth = depth;
-  rc.latlng = toLatLng(portal.options.data.latE6, portal.options.data.lngE6);
-  rc.level = portal.options.data.level;
-  rc.name = portal.options.data.title;
+  return {
+    guid: portalGuid,
+    depth: depth,
+    latlng: toLatLng(portal.options.data.latE6, portal.options.data.lngE6),
+    level: Math.max(portal.options.data.level, ...(portal.options.data.resonators || []).map((r) => r.level)),
+    name: portal.options.data.title,
+    children: linkGuids.out
+      .map((lGuid) => {
+        var l = window.links[lGuid];
+        return {
+          childGuid: l.options.data.dGuid,
+          linkTime: l.options.timestamp,
+          length: machinaTools.getLinkLength(l.options.data),
+        };
+      })
+      .sort((a, b) => a.linkTime - b.linkTime),
+  };
+};
 
-  /*
-  Since Machina portal levels are defined by their resonator
-  levels not the sum total of their resonators, find the
-  highest level resonator.
-  */
-  for (var resonator in portal.options.data.resonators) {
-    if (rc.level < portal.options.data.resonators[resonator].level) {
-      rc.level = portal.options.data.resonators[resonator].level;
+/**
+ * <pre>
+ *   {
+ *     [xyz] = {
+ *       [level] = x
+ *       [guid] = xyz
+ *       [latlng] = [lat,lng]
+ *       [children] = {
+ *         [childGuid, linkTime],
+ *         [childGuid, linkTime]
+ *       }
+ *     }
+ *   }
+ * </pre>
+ */
+machinaTools.gatherCluster = function (portalGuid) {
+  var portals = undefined;
+  var seed = machinaTools.findSeed(portalGuid);
+
+  if (seed !== undefined) {
+    portals = {};
+    // Remember the seed.
+    var curPortal = { guid: seed.guid, depth: 0 };
+
+    var processingQueue = [];
+    while (curPortal) {
+      portals[curPortal.guid] = machinaTools.gatherMachinaPortalDetail(curPortal.guid, curPortal.depth);
+
+      portals[curPortal.guid].children.forEach((element) => {
+        processingQueue.push({
+          guid: element.childGuid,
+          depth: curPortal.depth + 1,
+        });
+      });
+
+      // Move on to the next portal on the list.
+      curPortal = processingQueue.shift();
     }
   }
 
-  var linkGuids = getPortalLinks(portalGuid);
-
-  $.each(linkGuids.out, function (i, lguid) {
-    var l = window.links[lguid];
-    var ld = l.options.data;
-
-    rc.children.push({
-      childGuid: ld.dGuid,
-      linkTime: l.options.timestamp,
-      length: machinaTools.getLinkLength(ld),
-    });
-  });
-
-  rc.children.sort(function (a, b) {
-    return a.linkTime - b.linkTime;
-  });
-
-  return rc;
+  return portals;
 };
 
-machinaTools.gatherCluster = function (portalGuid) {
-  var rc = {};
-  var processingQueue = [];
-  var seed = machinaTools.findSeed(portalGuid);
-  var curPortal = undefined;
-
-  if (seed !== undefined) {
-    // Remember the seed.
-    rc.portals = {};
-
-    // Add the seed GUID to the queue.
-    processingQueue.push({ guid: seed.guid, depth: 0 });
-  }
-
-  curPortal = processingQueue.shift();
-
-  while (curPortal !== undefined) {
-    rc.portals[curPortal.guid] = machinaTools.gatherMachinaPortalDetail(curPortal.guid, curPortal.depth);
-
-    rc.portals[curPortal.guid].children.forEach((element) => {
-      processingQueue.push({
-        guid: element.childGuid,
-        depth: curPortal.depth + 1,
-      });
-    });
-
-    // Move on to the next portal on the list.
-    curPortal = processingQueue.shift();
-  }
-
-  return rc;
-};
-
-machinaTools.clusterDisplayNode = function (clusterData) {
+machinaTools.clusterDisplayNode = function (portals) {
   var rc = $('<div>');
-  for (var guid in clusterData.portals) {
-    var portal = clusterData.portals[guid];
+  for (var guid in portals) {
+    var portal = portals[guid];
     rc.append('Portal: ');
     var portalLink = $('<a>', { title: portal.name, html: portal.name, click: window.zoomToAndShowPortal.bind(window, guid, portal.latlng) });
     rc.append(portalLink);
@@ -239,7 +230,7 @@ machinaTools.clusterDisplayNode = function (clusterData) {
       var childList = $('<ul>');
       rc.append(childList);
       portal.children.forEach((child) => {
-        var childPortal = clusterData.portals[child.childGuid];
+        var childPortal = portals[child.childGuid];
         if (childPortal !== undefined) {
           var lengthDescription;
           if (child.length < 100000) {
@@ -276,12 +267,12 @@ machinaTools.clusterDisplayNode = function (clusterData) {
 };
 
 machinaTools.displayCluster = function (portalGuid) {
-  var clusterData = machinaTools.gatherCluster(portalGuid);
+  var portals = machinaTools.gatherCluster(portalGuid);
 
-  if (clusterData !== undefined) {
+  if (portals !== undefined) {
     var html = $('<div>', { id: 'machina-cluster' });
-    html.append(machinaTools.clusterDisplayNode(clusterData));
-    html.append('<br/><pre>' + JSON.stringify(clusterData, null, 4) + '</pre>');
+    html.append(machinaTools.clusterDisplayNode(portals));
+    html.append('<br/><pre>' + JSON.stringify(portals, null, 4) + '</pre>');
 
     dialog({
       html: html,
@@ -515,6 +506,9 @@ machinaTools.showConflictAreaInfoDialog = function () {
     title: 'Machina Conflict Area Info',
     id: 'machina-conflict-area-info',
     width: 'auto',
+    buttons: {
+      'Reset Conflict Area': machinaTools.resetConflictArea,
+    },
   });
 };
 
@@ -559,7 +553,6 @@ var setup = function () {
 
   let toolbox = $('#toolbox');
   $('<a>', { title: 'Conflict Area Info', click: machinaTools.showConflictAreaInfoDialog, html: 'Conflict Area Info' }).appendTo(toolbox);
-  $('<a>', { title: 'Reset Conflict Area', click: machinaTools.resetConflictArea, html: 'Reset Conflict Area' }).appendTo(toolbox);
 };
 /* eslint-disable */
 function loadExternals () {
