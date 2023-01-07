@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.214144
+// @version        0.7.0.20230107.225309
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-214144';
+plugin_info.dateTimeVersion = '2023-01-07-225309';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -157,7 +157,7 @@ machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
     guid: portalGuid,
     depth: depth,
     latlng: toLatLng(portal.options.data.latE6, portal.options.data.lngE6),
-    level: Math.max(portal.options.data.level, ...(portal.options.data.resonators || []).map((r) => r.level)),
+    level: Math.max(portal.options.level, ...(portal.options.data.resonators || []).map((r) => r.level)),
     name: portal.options.data.title,
     children: linkGuids.out
       .map((lGuid) => {
@@ -220,7 +220,12 @@ machinaTools.clusterDisplayNode = function (portals) {
   for (var guid in portals) {
     var portal = portals[guid];
     rc.append('Portal: ');
-    var portalLink = $('<a>', { title: portal.name, html: portal.name, click: window.zoomToAndShowPortal.bind(window, guid, portal.latlng) });
+    var portalName = portal.name || '[Click to load...]';
+    var portalLink = $('<a>', {
+      title: portalName,
+      html: portalName,
+      click: window.zoomToAndShowPortal.bind(window, guid, portal.latlng),
+    });
     rc.append(portalLink);
     rc.append(`(${portal.level}) [Depth: ${portal.depth}]<br/>`);
     if (portal.children.length > 0) {
@@ -307,7 +312,7 @@ machinaTools.onPortalDetailsUpdated = function () {
     linkdetails.append(createInfoLink('Cluster Details', 'Display Machina Cluster', () => window.plugin.machinaTools.displayCluster(window.selectedPortal)));
 
     // Add this portal's conflict zone to the conflict area
-    machinaTools.drawPortalExclusion(window.selectedPortal);
+    machinaTools.drawPortalExclusion(window.portals[window.selectedPortal]);
   }
 };
 
@@ -360,11 +365,10 @@ machinaTools.addConflictZone = function (guid, zone) {
 /**
  * Draw the level-up link radius for a specific portal.
  */
-machinaTools.drawPortalExclusion = function (guid) {
+machinaTools.drawPortalExclusion = function (portal) {
   // Gather the location of the portal, and generate a 20m
   // radius red circle centered on the lat/lng of the portal.
-  var d = window.portals[guid];
-  machinaTools.drawExclusion(guid, d.options.level, d.getLatLng());
+  machinaTools.drawExclusion(portal.options.guid, portal.options.level, portal.getLatLng());
 };
 
 /**
@@ -387,16 +391,17 @@ machinaTools.removePortalExclusion = function (guid) {
  */
 machinaTools.portalAdded = function (data) {
   // Draw the circle if the team of the portal is Machina.
-  data.portal.on('add', function () {
-    if (window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
-      machinaTools.drawPortalExclusion(this.options.guid);
-    }
-  });
+  if (window.TEAM_NAMES[data.portal.options.team] === window.TEAM_NAME_MAC) {
+    machinaTools.drawPortalExclusion(data.portal);
+  }
+};
 
+/**
+ * Reacts to a portal being removed.
+ */
+machinaTools.portalRemoved = function (data) {
   // Remove all circles if they exist, since the team may have changed.
-  data.portal.on('remove', function () {
-    machinaTools.removePortalExclusion(this.options.guid);
-  });
+  machinaTools.removePortalExclusion(data.portal.options.guid);
 };
 
 /**
@@ -506,11 +511,11 @@ machinaTools.showConflictAreaInfoDialog = function () {
 machinaTools.loadConflictAreas = function () {
   Object.values(window.portals)
     .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
-    .forEach((portal) => machinaTools.drawPortalExclusion(portal.options.guid));
+    .forEach((portal) => machinaTools.drawPortalExclusion(portal));
 
   Object.values(window.links)
-    .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
-    .forEach((portal) => machinaTools.drawLinkExclusion(portal.options.data));
+    .filter((l) => window.TEAM_NAMES[l.options.team] === window.TEAM_NAME_MAC)
+    .forEach((link) => machinaTools.drawLinkExclusion(link.options.data));
 
   machinaTools.updateConflictArea();
 };
@@ -552,6 +557,7 @@ function setupHooks() {
   window.addHook('portalDetailsUpdated', machinaTools.onPortalDetailsUpdated);
   // Hook the portalAdded event so that we can adjust circles.
   window.addHook('portalAdded', machinaTools.portalAdded);
+  window.addHook('portalRemoved', machinaTools.portalRemoved);
   window.addHook('linkAdded', machinaTools.linkAdded);
   window.addHook('mapDataRefreshEnd', machinaTools.mapDataRefreshEnd);
 
