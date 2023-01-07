@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.150958
+// @version        0.7.0.20230107.172432
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-150958';
+plugin_info.dateTimeVersion = '2023-01-07-172432';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -329,6 +329,7 @@ machinaTools.updateConflictArea = function () {
   machinaTools.conflictAreaLast = L.geoJson(machinaTools.conflictArea);
   machinaTools.conflictAreaLayer.addLayer(machinaTools.conflictAreaLast);
   machinaTools.conflictAreaLast.setStyle(machinaTools.optConflictZone);
+  refreshDialog();
 };
 
 machinaTools.addPortalCircle = function (guid, circle) {
@@ -396,7 +397,7 @@ machinaTools.portalAdded = function (data) {
   data.portal.on('add', function () {
     // debugger;
     // if (TEAM_NAMES[this.options.team] != undefined) {
-    if (window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
+    if (machinaTools.recordZones && window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
       machinaTools.drawPortalExclusion(this.options.guid);
     }
     // }
@@ -464,11 +465,9 @@ machinaTools.drawLinkExclusion = function (link) {
 
 machinaTools.linkAdded = function (data) {
   data.link.on('add', function () {
-    // if (TEAM_NAMES[this.options.team] != undefined) {
-    if (window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
+    if (machinaTools.recordZones && window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
       machinaTools.drawLinkExclusion(this.options.data);
     }
-    // }
   });
 };
 
@@ -477,7 +476,8 @@ function humanFileSize(size) {
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
-function appendAreaInfoDialogContent(html) {
+function createAreaInfoDialogContent() {
+  var html = $('<div>');
   if (machinaTools.conflictAreaLast && machinaTools.conflictAreaLast.getLayers().length > 0) {
     var ul = $('<ul>');
     ul.appendTo(html);
@@ -501,37 +501,34 @@ function appendAreaInfoDialogContent(html) {
   } else {
     html.append('No machina clusters found');
   }
+  return html;
 }
 
-function refreshDialog(html) {
-  html.empty();
-  appendAreaInfoDialogContent(html);
+function refreshDialog() {
+  if (machinaTools._conflictAreaInfoDialog) {
+    machinaTools._conflictAreaInfoDialog.html(createAreaInfoDialogContent());
+  }
 }
 
 machinaTools.showConflictAreaInfoDialog = function () {
-  var html = $('<div>');
-  appendAreaInfoDialogContent(html);
-
-  dialog({
-    html: html,
+  machinaTools._conflictAreaInfoDialog = dialog({
+    html: createAreaInfoDialogContent(),
     title: 'Machina Conflict Area Info',
     id: 'machina-conflict-area-info',
     width: 'auto',
+    closeCallback: () => {
+      delete machinaTools._conflictAreaInfoDialog;
+    },
     buttons: {
       'Reset Conflict Area': () => {
         machinaTools.resetConflictArea();
-        refreshDialog(html);
+        refreshDialog();
       },
-      Refresh: () => refreshDialog(html),
     },
   });
 };
 
-machinaTools.resetConflictArea = function () {
-  delete machinaTools.conflictArea;
-  delete machinaTools.conflictAreaLast;
-  machinaTools.conflictAreaLayer.clearLayers();
-
+machinaTools.loadConflictAreas = function () {
   Object.values(window.portals)
     .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
     .forEach((portal) => machinaTools.drawPortalExclusion(portal.options.guid));
@@ -539,6 +536,23 @@ machinaTools.resetConflictArea = function () {
   Object.values(window.links)
     .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
     .forEach((portal) => machinaTools.drawLinkExclusion(portal.options.data));
+
+  machinaTools.updateConflictArea();
+};
+
+machinaTools.clearConflictArea = function () {
+  delete machinaTools.conflictArea;
+};
+
+machinaTools.resetConflictArea = function () {
+  machinaTools.clearConflictArea();
+  machinaTools.loadConflictAreas();
+};
+
+machinaTools.mapDataRefreshEnd = function () {
+  if (!machinaTools.recordZones) {
+    machinaTools.resetConflictArea();
+  }
 };
 
 function setupLayers() {
@@ -559,23 +573,78 @@ function setupLayers() {
   window.layerChooser.addOverlay(machinaTools.conflictLayer, 'Machina Conflict Area', { default: false });
 }
 
-var setup = function () {
-  loadExternals(); // initialize leaflet-geodesy and turf-union
-  setupLayers();
-
+function setupHooks() {
   window.addHook('portalDetailsUpdated', machinaTools.onPortalDetailsUpdated);
   // Hook the portalAdded event so that we can adjust circles.
   window.addHook('portalAdded', machinaTools.portalAdded);
   window.addHook('linkAdded', machinaTools.linkAdded);
-  window.addHook('mapDataRefreshEnd', machinaTools.updateConflictArea);
+  window.addHook('mapDataRefreshEnd', machinaTools.mapDataRefreshEnd);
 
   // Add a hook to trigger the showOrHide method when the map finishes zooming or reloads.
   map.on('zoomend', machinaTools.showOrHideMachinaLevelUpRadius);
   map.on('loading', machinaTools.showOrHideMachinaLevelUpRadius);
   map.on('load', machinaTools.showOrHideMachinaLevelUpRadius);
+}
 
+function setupToolBoxLinks() {
   let toolbox = $('#toolbox');
-  $('<a>', { title: 'Conflict Area Info', click: machinaTools.showConflictAreaInfoDialog, html: 'Conflict Area Info' }).appendTo(toolbox);
+  $('<a>', {
+    title: 'Conflict Area Info',
+    click: machinaTools.showConflictAreaInfoDialog,
+    html: 'Conflict Area Info',
+  }).appendTo(toolbox);
+}
+
+function setupControlButtons() {
+  machinaTools.recordZones = localStorage['machina-tools_record-zones'] === 'true';
+
+  var RecordSwitch = L.Control.extend({
+    options: {
+      position: 'topleft',
+    },
+    onAdd: function () {
+      var button = document.createElement('a');
+      button.className = 'leaflet-bar-part';
+      if (machinaTools.recordZones) {
+        button.classList.add('active');
+      }
+      button.addEventListener(
+        'click',
+        () => {
+          machinaTools.recordZones = !machinaTools.recordZones;
+          localStorage['machina-tools_record-zones'] = machinaTools.recordZones;
+          if (machinaTools.recordZones) {
+            if (!machinaTools.conflictArea) {
+              machinaTools.loadConflictAreas();
+            }
+            button.classList.add('active');
+          } else {
+            button.classList.remove('active');
+          }
+        },
+        false
+      );
+      button.title = 'Record Machina Conflict Zones';
+
+      var container = document.createElement('div');
+      container.className = 'leaflet-control-machina-record leaflet-bar';
+      container.appendChild(button);
+      return container;
+    },
+  });
+  new RecordSwitch().addTo(window.map);
+}
+
+function setupUI() {
+  setupToolBoxLinks();
+  setupControlButtons();
+}
+
+var setup = function () {
+  loadExternals(); // initialize leaflet-geodesy and turf-union
+  setupLayers();
+  setupHooks();
+  setupUI();
 };
 /* eslint-disable */
 function loadExternals () {
@@ -586,6 +655,16 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button {\
 \
 div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {\
     float: right;\
+}\
+\
+.leaflet-control-machina-record a::after {\
+    content: \'\\2022\';\
+    font-size: 5em;\
+}\
+\
+.leaflet-control-machina-record a.active {\
+    background-color: #BBB;\
+    color: red;\
 }\
 ').appendTo('head');
   try {
