@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.174604
+// @version        0.7.0.20230107.175629
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-174604';
+plugin_info.dateTimeVersion = '2023-01-07-175629';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -34,7 +34,6 @@ window.plugin.machinaTools = machinaTools;
 // Provides a circle object storage array for adding and
 // removing specific circles from layers.  Keyed by GUID.
 machinaTools.portalCircles = {}; // usual circles
-// machinaTools.conflictZones = {}; // LGeo circles
 machinaTools.optConflictZone = {
   color: 'red',
   opacity: 0.7,
@@ -54,8 +53,6 @@ machinaTools.optCircle = {
   clickable: false,
   interactive: false,
 };
-
-//    machinaTools.confArea = {};
 
 machinaTools.findParent = function (portalGuid) {
   // Get the portal's data.
@@ -353,7 +350,6 @@ machinaTools.drawExclusion = function (guid, level, latlng, placeholder) {
 };
 
 machinaTools.addConflictZone = function (guid, zone) {
-  // machinaTools.conflictZones[guid] = zone;
   if (!machinaTools.conflictArea) {
     machinaTools.conflictArea = zone.toGeoJSON();
   } else {
@@ -386,27 +382,20 @@ machinaTools.removePortalExclusion = function (guid) {
   }
 };
 
-machinaTools.removeConflictZone = function (guid) {
-  delete machinaTools.conflictZones[guid];
-};
 /**
  * Reacts to a portal being added or removed.
  */
 machinaTools.portalAdded = function (data) {
   // Draw the circle if the team of the portal is Machina.
   data.portal.on('add', function () {
-    // debugger;
-    // if (TEAM_NAMES[this.options.team] != undefined) {
     if (machinaTools.recordZones && window.TEAM_NAMES[this.options.team] === window.TEAM_NAME_MAC) {
       machinaTools.drawPortalExclusion(this.options.guid);
     }
-    // }
   });
 
   // Remove all circles if they exist, since the team may have changed.
   data.portal.on('remove', function () {
     machinaTools.removePortalExclusion(this.options.guid);
-    // machinaTools.removeConflictZone(this.options.guid);
   });
 };
 
@@ -418,7 +407,10 @@ machinaTools.showOrHideMachinaLevelUpRadius = function () {
     // Add the circle layer back to the display layer if necessary, and remove the disabled mark.
     if (!machinaTools.displayLayer.hasLayer(machinaTools.circleDisplayLayer)) {
       machinaTools.displayLayer.addLayer(machinaTools.circleDisplayLayer);
-      $('.leaflet-control-layers-list span:contains("Machina Level Up Link Radius")').parent('label').removeClass('disabled').attr('title', '');
+      $('.leaflet-control-layers-list span:contains("Machina Level Up Link Radius")')
+        .parent('label')
+        .removeClass('disabled')
+        .attr('title', '');
     }
   } else {
     // Remove the circle layer from the display layer if necessary, and add the disabled mark.
@@ -627,7 +619,7 @@ function setupUI() {
 }
 
 var setup = function () {
-  loadExternals(); // initialize leaflet-geodesy and turf-union
+  loadExternals(); // initialize turf-union and others
   setupLayers();
   setupHooks();
   setupUI();
