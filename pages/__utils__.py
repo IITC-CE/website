@@ -20,15 +20,39 @@ def file_add_md5sum(filename):
     return filename+"?"+md5sum("static/"+filename)
 
 
-def parse_meta(release_type):
-    meta_path = f"static/build/{release_type}/meta.json"
-    with open(meta_path, 'r') as fm:
-        meta = json.load(fm)
+def get_meta_markers():
+    data = dict()
+    for release_type in ["release", "beta"]:
+        meta_path = f"static/build/{release_type}/meta.json"
+        with open(meta_path, 'r') as fm:
+            meta = json.load(fm)
+            data[release_type + '_iitc_version'] = meta["iitc_version"]
+            for category in meta["categories"]:
+                if "plugins" in meta["categories"][category]:
+                    for i, plugin in enumerate(meta["categories"][category]['plugins']):
+                        meta["categories"][category]['plugins'][i][f"{release_type}_version"] = meta["categories"][category]['plugins'][i]["version"]
+                        del meta["categories"][category]['plugins'][i]["version"]
+            data[release_type + '_categories'] = meta["categories"]
 
-    ret = dict()
-    ret[release_type + '_iitc_version'] = meta["iitc_version"]
-    ret[release_type + '_categories'] = meta["categories"]
-    return ret
+    data['categories'] = data['release_categories']
+    for beta_category in data['beta_categories']:
+        if beta_category not in data['categories']:
+            data['categories'][beta_category] = data['beta_categories'][beta_category]
+
+    for category in data['categories']:
+        if 'plugins' not in data['release_categories'][category]:
+            data['release_categories'][category]['plugins'] = []
+        if 'plugins' not in data['beta_categories'][category]:
+            data['beta_categories'][category]['plugins'] = []
+        for release_plugin in data['release_categories'][category]['plugins']:
+            for beta_plugin in data['beta_categories'][category]['plugins']:
+                if release_plugin['id'] == beta_plugin['id']:
+                    release_plugin['beta_version'] = beta_plugin[f"beta_version"]
+                    break
+
+    del data['release_categories']
+    del data['beta_categories']
+    return data
 
 
 def copy_last_build_from_archive():

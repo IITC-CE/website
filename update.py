@@ -24,8 +24,7 @@ def generate_page(page):
         markers['screenshots_carousel'] = page_index.get_screenshots_carousel()
 
     if page in ["download_desktop.html", "download_mobile.html"]:
-        markers.update(page_utils.parse_meta('release'))
-        markers.update(page_utils.parse_meta('beta'))
+        markers.update(page_utils.get_meta_markers())
 
     if page == "download_desktop.html":
         markers.update(page_download_desktop.get_zip_file_names())

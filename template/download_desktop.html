@@ -65,25 +65,10 @@
         </div>
     </div>
 
-    <ul class="tabs tabs-fixed-width">
-        <li class="tab release col s6"><a id="tab_release" href="#tab_content_release">Release version</a></li>
-        <li class="tab release col s6"><a id="tab_beta" href="#tab_content_beta">Beta version</a></li>
-    </ul>
-
-    <div id="tab_content_release" class="col s12">
-        {% with %}
-            {% set build_type="release" %}
-            {% set categories=release_categories %}
-            {% include '_plugins_table.html' %}
-        {% endwith %}
-    </div>
-    <div id="tab_content_beta" class="col s12">
-        {% with %}
-        {% set build_type="beta" %}
-        {% set categories=beta_categories %}
-        {% include '_plugins_table.html' %}
-        {% endwith %}
-    </div>
+    {% with %}
+    {% set build_type="internal" %}
+    {% include '_plugins_table.html' %}
+    {% endwith %}
 
     <div id="modal_info" class="modal bottom-sheet">
         <div class="modal-content">

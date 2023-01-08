@@ -3,9 +3,9 @@
 
         <div class="section">
 
-            <div id="{{ category.name+'_'+build_type }}" class="scrollspy col s12 plugins_category">
+            <div id="{{ category.name }}" class="scrollspy col s12 plugins_category">
                 <div class="container">
-                    <a class="category_name" href="#{{ category.name+'_'+build_type }}">{{ category.name }}</a>
+                    <a class="category_name" href="#{{ category.name }}">{{ category.name }}</a>
                     <div class="category_description">{{ category.description }}</div>
                 </div>
             </div>
@@ -16,10 +16,10 @@
                         {% set unique_id = [item['id'], item['author']]|join('_bqy_') %}
 
 
-                        <div id="{{ unique_id+'_'+build_type }}" class="scrollspy grid-item">
+                        <div id="{{ unique_id }}" class="scrollspy grid-item">
                             <div class="card-plugin">
-                                <div class="card-header">
-                                    <div class="card-icon">
+                                <div class="header">
+                                    <div class="icon">
                                         {% if item.icon %}
                                             <img loading="lazy" class="lazyload" data-src="{{ item.icon }}">
                                         {% else %}
@@ -27,27 +27,35 @@
                                         {% endif %}
                                     </div>
 
-                                    <div class="card-title">
-                                        <div class="card-title-wrapper">
-                                            <div class="card-plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href="#{{ unique_id+'_'+build_type }}"><span>{{ item.name }}</span></a></div>
+                                    <div class="title">
+                                        <div class="title-wrapper">
+                                            <div class="plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href="#{{ unique_id }}"><span>{{ item.name }}</span></a></div>
                                        <!-- {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;<a href="#{{ item.author }}">{{ item.author }}</a></small>{% endif %}-->
-                                            {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;{{ item.author }}</small>{% endif %}
+                                            {% if item.author %}<small class="plugin-meta plugin-author">by&nbsp;{{ item.author }}</small>{% endif %}
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="card-content">
-                                    <p class="card-plugin-description">{{ item.description }}</p>
+                                <div class="content">
+                                    <p class="plugin-description">{{ item.description }}</p>
                                 </div>
-                                <div class="card-buttons">
-                                    <div class="card-buttons-shadow">
+                                <div class="buttons">
+                                    <div class="buttons-shadow">
                                         {% if build_type == "store" %}
                                             {% set plugin_comments_url = "https://iitc.app/store.html?plugin="+unique_id %}
                                         {% else %}
-                                            {% set plugin_comments_url = "https://iitc.app/download_desktop.html?plugin="+unique_id+"_"+build_type %}
+                                            {% set plugin_comments_url = "https://iitc.app/download_desktop.html?plugin="+unique_id %}
                                         {% endif %}
-                                        <a class="card-plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
-                                        <a class="card-plugin-install waves-effect waves-light" target="_blank" href="/build/{{ build_type }}/plugins/{{ item.filename }}" {% if item.version %}title="Install v{{ item.version }}"{% endif %}>Install</a>
+                                        <a class="plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
+
+                                        <div class="spacer"></div>
+                                        <div class="plugin-install transparent">Install:</div>
+                                        {% if item.release_version %}
+                                            <a class="plugin-install green lighten-4 black-text waves-effect waves-light" target="_blank" href="/build/release/plugins/{{ item.filename }}" title="Install v{{ item.release_version }}">release</a>
+                                        {% endif %}
+                                        {% if item.beta_version %}
+                                            <a class="plugin-install yellow lighten-4 black-text waves-effect waves-light" target="_blank" href="/build/beta/plugins/{{ item.filename }}" title="Install v{{ item.beta_version }}">beta</a>
+                                        {% endif %}
                                     </div>
                                 </div>
 
@@ -65,7 +73,7 @@
 
                             <table class="striped">
                                 <tbody>
-                            {% for key in ['category', 'version', 'updateURL', 'downloadURL', 'supportURL', 'namespace'] %}
+                            {% for key in ['category', 'release_version', 'beta_version', 'updateURL', 'downloadURL', 'supportURL', 'namespace'] %}
                                 {% if item[key] %}
                                     <tr>
                                         <td>{{ key }}</td>

@@ -12,11 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('tab_beta').click();
     }
 
+    // Open modal with comment if hash is set
     let plugin = $_GET("plugin");
     if (plugin && (plugin.endsWith("_beta"))) {
-        if (plugin && plugin.endsWith("_beta")) {
-            document.getElementById('tab_beta').click();
-        }
         document.getElementById(plugin).querySelectorAll('.card-plugin-info')[0].click();
         history.pushState({}, document.title, window.location.href.replace(window.location.search, ""));
     }
@@ -50,7 +48,7 @@ function modal_move_content(content_id, modal_id) {
 }
 
 function init_modal_remark(plugin, el, url) {
-    let name = el.querySelector(".card-plugin-name span").textContent;
+    let name = el.querySelector(".plugin-name span").textContent;
 
     window.remark_config = {
         host: "https://remark42.iitc.app",
