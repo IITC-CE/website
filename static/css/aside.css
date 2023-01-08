@@ -1,0 +1,52 @@
+#logo-container {
+    height: 100px;
+    background: black;
+    text-align: center;
+    padding: 20px;
+}
+
+#front-page-logo {
+    height: 100%;
+    pointer-events: none;
+}
+
+a.sidenav-trigger.top-nav {
+    position: absolute;
+    text-align: center;
+    height: 48px;
+    width: 48px;
+    top: 18px;
+    float: none;
+    margin-left: 1.5rem;
+    color: #fff;
+    font-size: 36px;
+    z-index: 2;
+}
+
+a.sidenav-trigger.top-nav i {
+    font-size: 32px;
+}
+
+.sidenav li > a {
+    transition: background-color 50ms ease;
+}
+
+.sidenav li>a>i.right {
+    margin: 0;
+}
+
+.sidenav .active, .sidenav li > a:hover {
+    background-color: #D7DADC;
+}
+
+.sidenav-download-button {
+    cursor: default;
+}
+
+.sidenav-download-submenu li {
+    background: rgba(0,0,0,0.04);
+}
+
+.sidenav-download-submenu li a {
+    padding-left: 50px;
+}
