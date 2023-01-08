@@ -37,12 +37,12 @@
 
 
 
-header, main, footer {
+aside, main, footer {
     padding-left: 300px;
 }
 
 @media only screen and (max-width : 992px) {
-    header, main, footer {
+    aside, main, footer {
         padding-left: 0;
     }
 }
@@ -108,28 +108,28 @@ a.sidenav-trigger.top-nav i {
     font-size: 32px;
 }
 
+.sidenav li > a {
+    transition: background-color 50ms ease;
+}
+
 .sidenav li>a>i.right {
     margin: 0;
 }
 
-#index-banner {
-    border-bottom: 1px solid rgba(0,0,0,0.14);
-    background: #0e3d4e url("../img/background.jpg");
-    background-size: cover;
-    color: white;
+.sidenav .active, .sidenav li > a:hover {
+    background-color: #D7DADC;
 }
 
-#index-banner .light {
-    font-size: 2rem;
-    line-height: 100%;
-    margin-bottom: 2.8rem;
+.sidenav-download-button {
+    cursor: default;
 }
 
-.header {
-    font-weight: 300;
-    font-size: 3.0rem;
-    line-height: 110%;
-    text-shadow: 0 0 20px #000;
+.sidenav-download-submenu li {
+    background: rgba(0,0,0,0.04);
+}
+
+.sidenav-download-submenu li a {
+    padding-left: 50px;
 }
 
 .container {
@@ -143,11 +143,6 @@ a.sidenav-trigger.top-nav i {
     box-sizing: border-box;
     padding: 0 .75rem;
     min-height: 1px;
-}
-
-.header sup {
-    font-size: 35%;
-    top: -1.75em;
 }
 
 .carousel {
@@ -185,22 +180,6 @@ footer i.medium {
     width: 20px;
     height: 20px;
     vertical-align: text-bottom;
-}
-
-.sidenav-download-button {
-    cursor: default;
-}
-
-.sidenav-download-submenu li {
-    background: rgba(0,0,0,0.05);
-}
-
-.sidenav-download-submenu li a {
-    padding-left: 50px;
-}
-
-.sidenav .active {
-    background-color: rgba(0,0,0,0.05);
 }
 
 #logo-container {

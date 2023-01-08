@@ -1,0 +1,58 @@
+header {
+    border-bottom: 1px solid rgba(0,0,0,0.14);
+    background: #0e3d4e url("../img/background.jpg");
+    background-size: cover;
+    color: white;
+}
+
+header.secondary {
+    height: 100px;
+}
+
+header .light {
+    font-size: 2rem;
+    line-height: 100%;
+    margin-bottom: 2.8rem;
+}
+
+header h1 {
+    font-weight: 300;
+    font-size: 3.0rem;
+    line-height: 110%;
+    text-shadow: 0 0 20px #000;
+}
+
+header h1 sup {
+    font-size: 35%;
+    top: -1.75em;
+}
+
+header.secondary h4 {
+    display: none;
+}
+
+header.secondary h1 {
+    margin: 16px 0;
+    font-size: 2.3rem;
+}
+
+@media only screen and (max-width: 992px) {
+    header.secondary {
+        height: auto;
+        min-height: 100px;
+    }
+    header.secondary h1 {
+        margin: 16px 22px;
+        text-align: center;
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    header h1 sup {
+        font-size: 40%;
+        position: initial;
+        display: block;
+        line-height: 1em;
+        margin: 1em 0;
+    }
+}

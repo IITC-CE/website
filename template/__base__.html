@@ -8,6 +8,7 @@
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/user.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/header.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/telegram-widget-frame.css' | md5sum }}" media="screen,projection"/>
 
     <!--Let browser know website is optimized for mobile-->
@@ -29,7 +30,7 @@
     <meta property="twitter:image" content="apple-touch-icon-precomposed.png">
 </head>
 <body>
-    <header>
+    <aside>
         <ul id="slide-out" class="sidenav sidenav-fixed blue-grey lighten-5">
             <li class="logo">
                 <a id="logo-container" href="/" class="brand-logo">
@@ -53,20 +54,18 @@
             <li><a {% if active_page == "about.html" %}class="active" {% endif %}href="about.html"><i class="material-icons">info_outline</i> About</a></li>
         </ul>
         <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><i class="material-icons">menu</i></a>
-    </header>
+    </aside>
     <main>
-        {% block head %}
-            <div class="section" id="index-banner">
-                <div class="container">
-                    <div class="row" style="margin-bottom: 0;">
-                        <div class="col s12 center-on-small-only">
-                            <h1 class="header">Ingress Intel Total Conversion <sup>Community&nbsp;Edition</sup></h1>
-                            <h4 class="light">A rewrite of the intel.ingress.com map</h4>
-                        </div>
+        <header class="section {% if active_page == "index.html" %}primary{% else %}secondary{% endif %}">
+            <div class="container">
+                <div class="row" style="margin-bottom: 0;">
+                    <div class="col s12 center-on-small-only">
+                        <h1>Ingress Intel Total Conversion <sup>Community&nbsp;Edition</sup></h1>
+                        <h4 class="light">A rewrite of the intel.ingress.com map</h4>
                     </div>
                 </div>
             </div>
-        {% endblock %}
+        </header>
         {% block content %}{% endblock %}
     </main>
     <footer class="page-footer teal">
