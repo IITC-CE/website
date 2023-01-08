@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230107.225309
+// @version        0.7.0.20230108.000832
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-07-225309';
+plugin_info.dateTimeVersion = '2023-01-08-000832';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -34,6 +34,7 @@ window.plugin.machinaTools = machinaTools;
 // Provides a circle object storage array for adding and
 // removing specific circles from layers.  Keyed by GUID.
 machinaTools.portalCircles = {}; // usual circles
+machinaTools._clusterDialogs = {}; // cluster dialogs
 machinaTools.optConflictZone = {
   color: 'red',
   opacity: 0.7,
@@ -187,20 +188,18 @@ machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
  *   }
  * </pre>
  */
-machinaTools.gatherCluster = function (portalGuid) {
-  var portals = undefined;
-  var seed = machinaTools.findSeed(portalGuid);
-
+machinaTools.gatherCluster = function (seed) {
+  var rcPortals = undefined;
   if (seed !== undefined) {
-    portals = {};
+    rcPortals = {};
     // Remember the seed.
     var curPortal = { guid: seed.guid, depth: 0 };
 
     var processingQueue = [];
     while (curPortal) {
-      portals[curPortal.guid] = machinaTools.gatherMachinaPortalDetail(curPortal.guid, curPortal.depth);
+      rcPortals[curPortal.guid] = machinaTools.gatherMachinaPortalDetail(curPortal.guid, curPortal.depth);
 
-      portals[curPortal.guid].children.forEach((element) => {
+      rcPortals[curPortal.guid].children.forEach((element) => {
         processingQueue.push({
           guid: element.childGuid,
           depth: curPortal.depth + 1,
@@ -212,13 +211,13 @@ machinaTools.gatherCluster = function (portalGuid) {
     }
   }
 
-  return portals;
+  return rcPortals;
 };
 
-machinaTools.clusterDisplayNode = function (portals) {
+machinaTools.clusterDisplayNode = function (clusterPortals) {
   var rc = $('<div>');
-  for (var guid in portals) {
-    var portal = portals[guid];
+  for (var guid in clusterPortals) {
+    var portal = clusterPortals[guid];
     rc.append('Portal: ');
     var portalName = portal.name || '[Click to load...]';
     var portalLink = $('<a>', {
@@ -232,7 +231,7 @@ machinaTools.clusterDisplayNode = function (portals) {
       var childList = $('<ul>');
       rc.append(childList);
       portal.children.forEach((child) => {
-        var childPortal = portals[child.childGuid];
+        var childPortal = clusterPortals[child.childGuid];
         if (childPortal !== undefined) {
           var lengthDescription;
           if (child.length < 100000) {
@@ -268,27 +267,35 @@ machinaTools.clusterDisplayNode = function (portals) {
   return rc;
 };
 
-machinaTools.displayCluster = function (portalGuid) {
-  var portals = machinaTools.gatherCluster(portalGuid);
+function doDisplayClusterInfo(seed) {
+  var guid = undefined;
+  var html = $('<div>', { id: 'machina-cluster' });
+  if (seed) {
+    guid = seed.guid;
+    var cluster = machinaTools.gatherCluster(seed);
+    html.append(machinaTools.clusterDisplayNode(cluster));
+    html.append('<br/><pre>' + JSON.stringify(cluster, null, 4) + '</pre>');
+  } else {
+    html.append('No Cluster found.');
+  }
 
-  if (portals !== undefined) {
-    var html = $('<div>', { id: 'machina-cluster' });
-    html.append(machinaTools.clusterDisplayNode(portals));
-    html.append('<br/><pre>' + JSON.stringify(portals, null, 4) + '</pre>');
-
-    dialog({
+  guid = String(guid);
+  if (machinaTools._clusterDialogs[guid]) {
+    machinaTools._clusterDialogs[guid].html(html);
+  } else {
+    machinaTools._clusterDialogs[guid] = dialog({
       html: html,
       title: 'Machina Cluster',
-      id: 'machina-cluster',
+      id: 'machina-cluster-' + guid.replaceAll('.', '_'),
       width: 'auto',
-    });
-  } else {
-    dialog({
-      html: $('<div id="no-machina-cluster">No Cluster found.</div>'),
-      title: 'Machina Tools',
-      id: 'no-machina-cluster',
+      closeCallback: () => delete machinaTools._clusterDialogs[guid],
     });
   }
+}
+
+machinaTools.displayCluster = function (portalGuid) {
+  var seed = machinaTools.findSeed(portalGuid);
+  doDisplayClusterInfo(seed);
 };
 
 function createInfoLink(text, title, clickCallback) {
@@ -331,7 +338,7 @@ machinaTools.updateConflictArea = function () {
   machinaTools.conflictAreaLast = L.geoJson(machinaTools.conflictArea);
   machinaTools.conflictAreaLayer.addLayer(machinaTools.conflictAreaLast);
   machinaTools.conflictAreaLast.setStyle(machinaTools.optConflictZone);
-  refreshDialog();
+  refreshDialogs();
 };
 
 machinaTools.addPortalCircle = function (guid, circle) {
@@ -484,7 +491,13 @@ function createAreaInfoDialogContent() {
   return html;
 }
 
-function refreshDialog() {
+function refreshDialogs() {
+  if (window.selectedPortal && window.TEAM_NAMES[window.portals[window.selectedPortal].options.team] === window.TEAM_NAME_MAC) {
+    var seed = machinaTools.findSeed(window.selectedPortal);
+    if (seed && machinaTools._clusterDialogs[seed.guid]) {
+      doDisplayClusterInfo(seed);
+    }
+  }
   if (machinaTools._conflictAreaInfoDialog) {
     machinaTools._conflictAreaInfoDialog.html(createAreaInfoDialogContent());
   }
@@ -500,10 +513,7 @@ machinaTools.showConflictAreaInfoDialog = function () {
       delete machinaTools._conflictAreaInfoDialog;
     },
     buttons: {
-      'Reset Conflict Area': () => {
-        machinaTools.resetConflictArea();
-        refreshDialog();
-      },
+      'Reset Conflict Area': machinaTools.resetConflictArea,
     },
   });
 };
