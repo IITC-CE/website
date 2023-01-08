@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230108.000832
+// @version        0.7.0.20230108.001631
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-08-000832';
+plugin_info.dateTimeVersion = '2023-01-08-001631';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -214,12 +214,16 @@ machinaTools.gatherCluster = function (seed) {
   return rcPortals;
 };
 
+function getDisplayPortalName(portal) {
+  return portal.name || '[Click to load...]';
+}
+
 machinaTools.clusterDisplayNode = function (clusterPortals) {
   var rc = $('<div>');
   for (var guid in clusterPortals) {
     var portal = clusterPortals[guid];
     rc.append('Portal: ');
-    var portalName = portal.name || '[Click to load...]';
+    var portalName = getDisplayPortalName(portal);
     var portalLink = $('<a>', {
       title: portalName,
       html: portalName,
@@ -246,9 +250,10 @@ machinaTools.clusterDisplayNode = function (clusterPortals) {
           var childListItem = $('<li>');
           childListItem.append(new Date(child.linkTime).toUTCString());
           childListItem.append(' link to ');
+          var childName = getDisplayPortalName(childPortal);
           var childLink = $('<a>', {
-            title: childPortal.name,
-            html: childPortal.name,
+            title: childName,
+            html: childName,
             click: window.zoomToAndShowPortal.bind(window, child.childGuid, childPortal.latlng),
           });
           childListItem.append(childLink);
@@ -331,14 +336,14 @@ machinaTools.zoomLevelHasPortals = function () {
   return window.getDataZoomTileParameters().hasPortals;
 };
 
-machinaTools.updateConflictArea = function () {
+machinaTools.updateConflictArea = function (guid) {
   if (machinaTools.conflictAreaLast) {
     machinaTools.conflictAreaLayer.removeLayer(machinaTools.conflictAreaLast);
   }
   machinaTools.conflictAreaLast = L.geoJson(machinaTools.conflictArea);
   machinaTools.conflictAreaLayer.addLayer(machinaTools.conflictAreaLast);
   machinaTools.conflictAreaLast.setStyle(machinaTools.optConflictZone);
-  refreshDialogs();
+  refreshDialogs(guid);
 };
 
 machinaTools.addPortalCircle = function (guid, circle) {
@@ -358,7 +363,7 @@ machinaTools.drawExclusion = function (guid, level, latlng, placeholder) {
 
   var zone = new L.geodesicCircle(latlng, range, machinaTools.optConflictZone);
   machinaTools.addConflictZone(guid, zone);
-  machinaTools.updateConflictArea();
+  machinaTools.updateConflictArea(guid);
 };
 
 machinaTools.addConflictZone = function (guid, zone) {
@@ -491,9 +496,9 @@ function createAreaInfoDialogContent() {
   return html;
 }
 
-function refreshDialogs() {
-  if (window.selectedPortal && window.TEAM_NAMES[window.portals[window.selectedPortal].options.team] === window.TEAM_NAME_MAC) {
-    var seed = machinaTools.findSeed(window.selectedPortal);
+function refreshDialogs(guid) {
+  if (guid && window.portals[guid] && window.TEAM_NAMES[window.portals[guid].options.team] === window.TEAM_NAME_MAC) {
+    var seed = machinaTools.findSeed(guid);
     if (seed && machinaTools._clusterDialogs[seed.guid]) {
       doDisplayClusterInfo(seed);
     }
