@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230108.000832
+// @version        0.7.0.20230108.001631
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

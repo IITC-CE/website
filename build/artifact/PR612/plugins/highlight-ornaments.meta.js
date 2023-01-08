@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight portals with ornaments
 // @category       Highlighter
-// @version        0.2.1.20230108.000832
+// @version        0.2.1.20230108.001631
 // @description    Use the portal fill color to denote portals with additional 'ornament' markers. e.g. Anomaly portals
 // @id             highlight-ornaments
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
