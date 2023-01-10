@@ -1,24 +1,49 @@
 {% extends "__base__.html" %}
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col s12 center-on-small-only">
-                <div class="section">
-                    <p><abbr title="Ingress Intel Total Conversion">IITC</abbr> is a browser add-on that modifies
-                    the Ingress intel map.
-                    It is faster than the standard site, and offers many more features.
-                    It is available for <a href="download_desktop.html">desktop browsers</a>, such as Firefox and Chrome,
-                    and as a <a href="download_mobile.html">mobile application</a>.</p>
-                    <p>Follow the <a href="https://t.me/iitc_news" target="_blank"><img class="telegram-icon" src="img/icon-telegram.svg" alt="logo telegram"> IITC channel</a> for release announcements.</p>
-                </div>
-                {{ telegram_widget }}
-            </div>
-        </div>
+    <div class="container iitc-screenshots">
+        {% for item in screenshots_carousel %}
+        <img src="{{ item }}">
+        {% endfor %}
     </div>
 
-    <div class="carousel carousel-slider">
-        {% for item in screenshots_carousel %}
-        <img class="carousel-item" draggable="false" src="{{ item }}">
-        {% endfor %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <p>
+                        <abbr title="Ingress Intel Total Conversion Community Edition">IITC-CE</abbr> is a powerful browser add-on that modifies and enhances the official Ingress intel map.
+                        It is faster and more feature-rich than the standard map, making it an essential tool for players of the Ingress game.
+                        The add-on is available for both <a href="download_desktop.html">desktop browsers</a> like Firefox and Chrome, and as a <a href="download_mobile.html">mobile application</a> like Android and iOS.
+                    </p>
+                    <p>
+                        IITC-CE (aka IITC) completely changes the way you interact with the map, providing a more efficient and user-friendly experience through the use of hardware acceleration and a wide range of plugins.
+                        The platform has become the foundation for many tools used by players from both factions, including several confidential plugins for coordinating operations with a team of agents and public plugins that are available to all players.
+                    </p>
+                    <h4>Support</h4>
+                    <p>You can discuss IITC-CE or get help on subreddit <a href="https://www.reddit.com/r/IITC/" target="_blank">/r/IITC</a> and <a href="https://t.me/+1xncfR_TV3BjZTIy" target="_blank">IITC Group [XF]</a> telegram group.</p>
+                    <p>Also follow the <a href="https://t.me/iitc_news" target="_blank">IITC News</a> telegram channel for news.</p>
+                    <h4>Development / Report Problems</h4>
+                    <p>
+                        For those who want to contribute and help with development of the add-on, the source code is available on the project's GitHub repository where you can also report bugs.<br>
+                        You can also join the IITC development community and participate in discussions on the matter.
+                    </p>
+                    <ul class="browser-default">
+                        <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank">IITC UserScripts / IITC Mobile</a></li>
+                        <li><a href="https://github.com/IITC-CE/IITC-Button/" target="_blank">IITC Button</a></li>
+                        <li><a href="https://github.com/IITC-CE/website/" target="_blank">IITC Website</a></li>
+                    </ul>
+                    <h4>Donate</h4>
+                    <p>
+                        IITC-CE are open-source projects and rely on the contributions of its community to keep it running.<br>
+                        If you are finding the tool useful and would like to help keep it running, please consider <a href="donate.html">making a donation</a> to support the project.<br>
+                        Your contributions will help pay for the domain and server costs, and will also help fund future development and improvements to the IITC-CE.
+                    </p>
+                </div>
+                <div class="section">
+                    <h4>Latest from IITC News <a href="https://t.me/s/iitc_news" class="btn" target="_blank" style="margin-top: -8px;margin-left: 10px;">see more</a></h4>
+                    {{ telegram_widget }}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

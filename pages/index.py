@@ -15,7 +15,8 @@ def get_telegram_widget(channel):
 
     posts = soup.find('section', class_='tgme_channel_history').findChildren('div', recursive=False)
     last_post = posts[-1]
-    return last_post
+    message = last_post.find('div', class_='tgme_widget_message_text')
+    return message
 
 
 def get_screenshots_carousel():

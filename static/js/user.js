@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     M.Sidenav.init(document.querySelectorAll('.sidenav'), {});
-    M.Carousel.init(document.querySelectorAll('.carousel'), {indicators: true});
     M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     M.Modal.init(document.querySelectorAll('.modal'), {});
     M.Tabs.init(document.querySelectorAll('.tabs'), {});

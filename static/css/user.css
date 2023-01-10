@@ -104,33 +104,6 @@ main {
     min-height: 1px;
 }
 
-.carousel {
-    margin-top: 3em;
-    margin-bottom: 4em;
-}
-
-.carousel.carousel-slider .carousel-item {
-    width: auto;
-}
-
-.carousel .carousel-item {
-    height: 100%;
-    width: auto;
-}
-
-.carousel img {
-     -webkit-user-select:none;
-     -khtml-user-select:none;
-     -moz-user-select:none;
-     -o-user-select:none;
-      user-select:none;
-      pointer-events:none
-}
-
-.carousel img::selection {
-    background: transparent;
-}
-
 footer i.medium {
     line-height: 1.3em;
 }

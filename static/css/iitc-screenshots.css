@@ -1,0 +1,16 @@
+.iitc-screenshots {
+    display: flex;
+    padding-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.iitc-screenshots img {
+    width: 25%;
+    padding: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+    .iitc-screenshots img {
+        width: 50%;
+    }
+}
