@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.7.0.20230112.121646
+// @version        0.7.0.20230112.183447
 // @description    Machina investigation tools
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-12-121646';
+plugin_info.dateTimeVersion = '2023-01-12-183447';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -448,18 +448,19 @@ machinaTools.guessLevelByRange = function (linkLength) {
 };
 
 machinaTools.drawLinkExclusion = function (link) {
+  var linkData = link.options.data;
   // add destination portal - 1 level
-  machinaTools.drawExclusion(link.dGuid, 1, machinaTools.getDLatLng(link), true);
+  machinaTools.drawExclusion(linkData.dGuid, 1, machinaTools.getDLatLng(linkData), true);
 
   // add origin portal - level based on link length
-  var linkLength = machinaTools.getLinkLength(link);
+  var linkLength = machinaTools.getLinkLength(linkData);
   var level = machinaTools.guessLevelByRange(linkLength);
-  machinaTools.drawExclusion(link.oGuid, level, machinaTools.getOLatLng(link), true);
+  machinaTools.drawExclusion(linkData.oGuid, level, machinaTools.getOLatLng(linkData), true);
 };
 
 machinaTools.linkAdded = function (data) {
   if (window.TEAM_NAMES[data.link.options.team] === window.TEAM_NAME_MAC) {
-    machinaTools.drawLinkExclusion(data.link.options.data);
+    machinaTools.drawLinkExclusion(data.link);
   }
 };
 
@@ -539,11 +540,11 @@ machinaTools.showConflictAreaInfoDialog = function () {
 machinaTools.loadConflictAreas = function () {
   Object.values(window.portals)
     .filter((p) => window.TEAM_NAMES[p.options.team] === window.TEAM_NAME_MAC)
-    .forEach((portal) => machinaTools.drawPortalExclusion(portal));
+    .forEach(machinaTools.drawPortalExclusion);
 
   Object.values(window.links)
     .filter((l) => window.TEAM_NAMES[l.options.team] === window.TEAM_NAME_MAC)
-    .forEach((link) => machinaTools.drawLinkExclusion(link.options.data));
+    .forEach(machinaTools.drawLinkExclusion);
 
   machinaTools.updateConflictArea();
 };
