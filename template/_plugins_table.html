@@ -13,7 +13,7 @@
             <div class="container">
                 <div class="row plugins_container grid">
                     {% for item in category.plugins %}
-                        {% set unique_id = [item['id'], item['author']]|join('_bqy_') %}
+                        {% set unique_id = [item['id'], item['author']]|join('-by-') %}
 
 
                         <div id="{{ unique_id }}" class="scrollspy grid-item">
@@ -30,7 +30,6 @@
                                     <div class="title">
                                         <div class="title-wrapper">
                                             <div class="plugin-name" title="{{ item.name }}"><a title="{{ item.id }}" href="#{{ unique_id }}"><span>{{ item.name }}</span></a></div>
-                                       <!-- {% if item.author %}<small class="card-plugin-meta card-plugin-author">by&nbsp;<a href="#{{ item.author }}">{{ item.author }}</a></small>{% endif %}-->
                                             {% if item.author %}<small class="plugin-meta plugin-author">by&nbsp;{{ item.author }}</small>{% endif %}
                                         </div>
                                     </div>
@@ -46,15 +45,15 @@
                                         {% else %}
                                             {% set plugin_comments_url = "https://iitc.app/download_desktop.html?plugin="+unique_id %}
                                         {% endif %}
-                                        <a class="plugin-info waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
+                                        <a class="plugin-info clickable waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">Info<span class="comments_counter">&nbsp;(<span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span>&nbsp;comments)</span></a>
 
                                         <div class="spacer"></div>
                                         <div class="plugin-install transparent">Install:</div>
                                         {% if item.release_version %}
-                                            <a class="plugin-install green lighten-4 black-text waves-effect waves-light" target="_blank" href="/build/release/plugins/{{ item.filename }}" title="Install v{{ item.release_version }}">release</a>
+                                            <a class="plugin-install clickable green lighten-4 black-text waves-effect" target="_blank" href="/build/release/plugins/{{ item.filename }}" title="Install v{{ item.release_version }}">release</a>
                                         {% endif %}
                                         {% if item.beta_version %}
-                                            <a class="plugin-install yellow lighten-4 black-text waves-effect waves-light" target="_blank" href="/build/beta/plugins/{{ item.filename }}" title="Install v{{ item.beta_version }}">beta</a>
+                                            <a class="plugin-install clickable yellow lighten-4 black-text waves-effect" target="_blank" href="/build/beta/plugins/{{ item.filename }}" title="Install v{{ item.beta_version }}">beta</a>
                                         {% endif %}
                                     </div>
                                 </div>

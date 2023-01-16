@@ -824,9 +824,6 @@ a.tgme_widget_message_contact_wrap:hover {
 .tgme_widget_message_text {
   word-break: break-word;
 }
-.tgme_widget_message_text b {
-  font-weight: 500;
-}
 .tgme_widget_message_text code,
 .tgme_widget_message_text pre {
   font-family: monospace;

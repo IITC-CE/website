@@ -50,6 +50,7 @@
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
+    height: 19px;
 }
 
 .card-plugin .header .title a span {
@@ -58,6 +59,7 @@
 
 .card-plugin .header .plugin-name {
     line-height: 13px;
+    height: 13px;
 }
 
 .card-plugin .header .plugin-meta {
@@ -82,6 +84,14 @@
     display: flex;
     justify-content: flex-end;
     padding: 0;
+}
+
+.card-plugin .buttons .clickable {
+    transition: filter .1s ease-in-out;
+}
+
+.card-plugin .buttons .clickable:hover {
+    filter: brightness(0.9) saturate(170%);
 }
 
 .card-plugin .buttons .buttons-shadow {

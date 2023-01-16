@@ -114,6 +114,18 @@ footer i.medium {
     vertical-align: text-bottom;
 }
 
+.telegram-see-more {
+    margin-top: -8px;
+    margin-left: 10px;
+}
+
+@media only screen and (max-width: 550px) {
+    .telegram-see-more {
+        margin: 15px 0 30px;
+        display: block;
+    }
+}
+
 .fullwidth-image {
     max-width: 100%;
     height: auto;
@@ -132,10 +144,6 @@ footer i.medium {
 .changelog-body ul:not(.browser-default) > li {
     list-style-type: square;
     margin-left: 1.2em;
-}
-
-.collapsible-body {
-    font-weight: 300;
 }
 
 .tgme_widget_message {

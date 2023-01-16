@@ -8,13 +8,13 @@
                 <div class="section">
                     <h2 class="hover">Frequently Asked Questions</h2>
                 </div>
-                <ul class="collapsible popout">
+                <ul class="collapsible popout faq">
                     <li>
                         <div class="collapsible-header">Will I be banned for using IITC?</div>
                         <div class="collapsible-body">
 <p>Niantic consider IITC (and any other unofficial software) against the Ingress ToS. However, just because something is against the ToS it doesn't mean Niantic will enforce it.</p>
 <p>However, in early December 2013, many people started to believe Niantic were banning people for using IITC. This is not the case. However, the following events have lead to this belief:</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>On 27th November 2013, Niantic released a major update of the standard intel site. A couple of days later there were reports of user bans for 'excessive intel use'. A couple of people confirmed it was attempts to use the broken IITC Mobile 0.9 that lead to instant bans.</li>
 <li>About a week later, Niantic made a large batch of user bans 'for ToS violations'. Many users reported their only ToS violation was using IITC - and some said that even IITC hadn't been used. On appeal, many of these bans were reversed - including some confirmed IITC users</li>
 <li>A week after that and and there were more reports of the same.</li>
@@ -29,7 +29,7 @@
                         <div class="collapsible-header">Why is IITC still available? Wasn't it sent a takedown notice?</div>
                         <div class="collapsible-body">
 <p>I've seen several comments of the form "IITC was sent a takedown notice, and at this point it moved to Github and kept going". This is not true.</p>
-<ol class="browser-default">
+<ol class="browser-default list">
 <li>IITC was started on Github, by <a href="https://github.com/breunigs" target="_blank">Stefan breunigs</a>.</li>
 <li>Stefan decided to email Niantic, asking if IITC was OK to develop.</li>
 <li>Niantic replied to this request, stating that any 3rd party software is against the ToS and asked that he delete it from Github.</li>
@@ -50,7 +50,7 @@
 <p>Niantic have removed further details from the sent data. The data available to IITC now is no more than available on the standard intel site. No more details on resonator deployment distances, portal descriptions, and, as of 16th June 2014, no more portal capture data (it's been removed from the standard site too).</p>
 <p>On 27th November 2013 Niantic made a major change to the protocol used by the intel map to display portals. Before this date, the full data for every portal on the map was sent to the browser, so IITC could take advantage of it and provide various features - resonator search, mitigation highlighters, portal age lists, many highlighters, etc.</p>
 <p>After this date they only send the bare minimum of data for all the portals on the screen. The data available is:</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>Location</li>
 <li>Name</li>
 <li>Photo URL</li>
@@ -75,7 +75,7 @@
                     <li>
                         <div class="collapsible-header">No portals are displayed on the map/some portals are missing</div>
                         <div class="collapsible-body">
-<ol class="browser-default">
+<ol class="browser-default list">
 <li>You have some portal layers turned off in the layer chooser</li>
 <li>Niantic have released a site update that broke IITC. Reloading the page might fix it. Otherwise check the IITC Telegram channel as others are likely to post when this is the case.</li>
 <li>Some requests failed - check the status at the bottom-right of the screen</li>
@@ -92,7 +92,7 @@
                         <div class="collapsible-header">IITC Desktop: How do I uninstall/disable IITC or plugins?</div>
                         <div class="collapsible-body">
 <p>This depends on your browser.</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li><strong>Firefox + Greasemonkey</strong>: Click on the arrow next to the monkey icon, and choose 'Manage user scripts'.</li>
 <li><strong>Chrome + Tampermonkey</strong>: Click on the Tampermonkey icon (a dark square with two circles at the bottom) and choose 'Dashboard'.</li>
 <li>For <strong>Opera</strong>, remove the scripts from the userscript folder. For Chrome without Tampermonkey, go to the Tools->Extensions menu.</li>
@@ -104,12 +104,12 @@
                         <div class="collapsible-header">IITC Mobile: Is it possible to add external plugins to IITC Mobile?</div>
                         <div class="collapsible-body">
 <p>Yes it is!</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>Navigate to the IITC Plugins preference screen and click the (+) icon at the top right. You can select the script using a file explorer of your choice.</li>
 <li>IITC Mobile creates a new folder in your home directory, named "IITC_Mobile". Inside this folder you'll find a "plugins" folder where all external plugins are copied to.</li>
 </ul>
 <p>Note:</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>The filename has to end with *.user.js.</li>
 <li>You can also trigger installation by clicking on http(s) links pointing to a plugin, selecting plugins with a file explorer, opening javascript e-mail attachments etc…</li>
 </ul>
@@ -119,14 +119,14 @@
                         <div class="collapsible-header">What do the colours mean in 'DEBUG Data Tiles'</div>
                         <div class="collapsible-body">
 <p>The data from the Niantic server is download in square tiles. Sometimes requests fail. The colours show this status visually. The outline colour shows the state of the request:</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>Blue: data requested, waiting for response</li>
 <li>Grey: queued, waiting for other requests to finish</li>
 <li>Green: successful request/cached data fresh</li>
 <li>Red: Dark red for a complete request failure, lighter red for an individual tile timeout</li>
 </ul>
 <p>The colour within the square shows the state of the data:</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>Blue: data requested, waiting for response</li>
 <li>Grey: queued, waiting for other requests to complete</li>
 <li>Green: successful request</li>
@@ -134,7 +134,7 @@
 <li>Red: request failed - no data from cache</li>
 </ul>
 <p>The status message at the bottom-right of the screen gives a summary.</p>
-<ul class="browser-default">
+<ul class="browser-default list">
 <li>If all requests were successful/fresh from cache (i.e. all green borders) the status is 'Done'.</li>
 <li>If some requests failed, but cached data was available (i.e. some red border/yellow fill) the status is 'Out of date'.</li>
 <li>If some requests failed, but no cached data was available (i.e. some red border/red fill) the status is 'Error'.</li>
