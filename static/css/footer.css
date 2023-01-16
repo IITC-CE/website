@@ -1,0 +1,29 @@
+footer .links {
+    display: flex;
+    justify-content: space-between;
+}
+
+footer .warning-icon {
+    line-height: 1.3em;
+    font-size: 4rem;
+}
+
+@media only screen and (max-width: 760px) {
+    footer .warning-icon {
+        font-size: 2rem;
+        margin-top: 16px;
+        margin-right: 14px;
+    }
+    footer .warning-text {
+        text-align: justify;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    footer .links {
+        flex-direction: column;
+    }
+    footer .links span:first-child {
+        margin-bottom: 8px;
+    }
+}

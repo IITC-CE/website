@@ -17,6 +17,7 @@
     <link type="text/css" rel="stylesheet" href="{{ 'css/iitc-screenshots.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/donate.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/faq.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/footer.css' | md5sum }}" media="screen,projection"/>
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -78,8 +79,8 @@
         <div class="container">
             <div class="row">
                 <div class="col s12">
-                    <i class="medium material-icons left">warning</i>
-                    <p class="grey-text text-lighten-4">
+                    <i class="medium material-icons left warning-icon">warning</i>
+                    <p class="grey-text text-lighten-4 warning-text">
                         This site and the scripts are not officially affiliated with Ingress or Niantic Labs.
                         Using these scripts is likely to be considered against the Ingress Terms of Service.
                         Any use is at your own risk.</p>
@@ -87,11 +88,9 @@
             </div>
         </div>
         <div class="footer-copyright">
-            <div class="container">
-                © <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.
-                <div class="right">
-                    <a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a>
-                </div>
+            <div class="container links">
+                <span>© <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
+                <span><a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
             </div>
         </div>
     </footer>
