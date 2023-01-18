@@ -822,13 +822,7 @@ a.tgme_widget_message_contact_wrap:hover {
   margin-top: 6px;
 }
 .tgme_widget_message_text {
-  font-size: 16px;
-  line-height: 21px;
   word-break: break-word;
-  margin-top: 6px;
-}
-.tgme_widget_message_text b {
-  font-weight: 500;
 }
 .tgme_widget_message_text code,
 .tgme_widget_message_text pre {
