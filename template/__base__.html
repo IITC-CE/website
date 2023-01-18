@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8"/>
 
@@ -8,7 +8,16 @@
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/user.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/aside.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/header.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/plugins-list.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/plugins-card.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/plugins-modal.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/telegram-widget-frame.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/iitc-screenshots.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/donate.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/faq.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/footer.css' | md5sum }}" media="screen,projection"/>
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -29,7 +38,7 @@
     <meta property="twitter:image" content="apple-touch-icon-precomposed.png">
 </head>
 <body>
-    <header>
+    <aside>
         <ul id="slide-out" class="sidenav sidenav-fixed blue-grey lighten-5">
             <li class="logo">
                 <a id="logo-container" href="/" class="brand-logo">
@@ -50,31 +59,28 @@
             <li><a href="https://weblate.iitc.app" target="_blank"><i class="material-icons">translate</i> Localization <i class="material-icons right">exit_to_app</i></a></li>
             <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank"><i class="material-icons">developer_board</i> GitHub Repository <i class="material-icons right">exit_to_app</i></a></li>
             <li><a {% if active_page == "donate.html" %}class="active" {% endif %}href="donate.html"><i class="material-icons">attach_money</i> Donate</a></li>
-            <li><a {% if active_page == "about.html" %}class="active" {% endif %}href="about.html"><i class="material-icons">info_outline</i> About</a></li>
         </ul>
         <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><i class="material-icons">menu</i></a>
-    </header>
+    </aside>
     <main>
-        {% block head %}
-            <div class="section" id="index-banner">
-                <div class="container">
-                    <div class="row" style="margin-bottom: 0;">
-                        <div class="col s12 center-on-small-only">
-                            <h1 class="header">Ingress Intel Total Conversion <sup>Community&nbsp;Edition</sup></h1>
-                            <h4 class="light">A rewrite of the intel.ingress.com map</h4>
-                        </div>
+        <header class="section {% if active_page == "index.html" %}primary{% else %}secondary{% endif %}">
+            <div class="container">
+                <div class="row" style="margin-bottom: 0;">
+                    <div class="col s12 center-on-small-only">
+                        <h1>Ingress Intel Total Conversion <sup>Community&nbsp;Edition</sup></h1>
+                        <h4 class="light">A rewrite of the intel.ingress.com map</h4>
                     </div>
                 </div>
             </div>
-        {% endblock %}
+        </header>
         {% block content %}{% endblock %}
     </main>
     <footer class="page-footer teal">
         <div class="container">
             <div class="row">
                 <div class="col s12">
-                    <i class="medium material-icons left">warning</i>
-                    <p class="grey-text text-lighten-4">
+                    <i class="medium material-icons left warning-icon">warning</i>
+                    <p class="grey-text text-lighten-4 warning-text">
                         This site and the scripts are not officially affiliated with Ingress or Niantic Labs.
                         Using these scripts is likely to be considered against the Ingress Terms of Service.
                         Any use is at your own risk.</p>
@@ -82,11 +88,9 @@
             </div>
         </div>
         <div class="footer-copyright">
-            <div class="container">
-                © <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.
-                <div class="right">
-                    <a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a>
-                </div>
+            <div class="container links">
+                <span>© <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
+                <span><a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
             </div>
         </div>
     </footer>

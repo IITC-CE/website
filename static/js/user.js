@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     M.Sidenav.init(document.querySelectorAll('.sidenav'), {});
-    M.Carousel.init(document.querySelectorAll('.carousel'), {indicators: true});
     M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     M.Modal.init(document.querySelectorAll('.modal'), {});
     M.Tabs.init(document.querySelectorAll('.tabs'), {});
@@ -12,11 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('tab_beta').click();
     }
 
+    // Open modal with comment if hash is set
     let plugin = $_GET("plugin");
     if (plugin && (plugin.endsWith("_beta"))) {
-        if (plugin && plugin.endsWith("_beta")) {
-            document.getElementById('tab_beta').click();
-        }
         document.getElementById(plugin).querySelectorAll('.card-plugin-info')[0].click();
         history.pushState({}, document.title, window.location.href.replace(window.location.search, ""));
     }
@@ -50,7 +47,7 @@ function modal_move_content(content_id, modal_id) {
 }
 
 function init_modal_remark(plugin, el, url) {
-    let name = el.querySelector(".card-plugin-name span").textContent;
+    let name = el.querySelector(".plugin-name span").textContent;
 
     window.remark_config = {
         host: "https://remark42.iitc.app",

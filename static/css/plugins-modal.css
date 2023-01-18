@@ -1,0 +1,13 @@
+/* plugins category modal */
+.plugin_image {
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+.plugin_image img {
+    max-width: 100%;
+}
+
+.modal.bottom-sheet {
+    max-height: 90%;
+}

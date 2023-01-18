@@ -1,0 +1,116 @@
+.card-plugin {
+    display: flex;
+    height: 160px;
+    margin: 0.25rem;
+    transition: border-color .25s;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 3px;
+    box-shadow: 0 3px 3px #eee;
+    border: 1px solid #ddd;
+}
+.grid-item:target .card-plugin {
+    border: 1px solid #1e8cb7;
+}
+
+.card-plugin .buttons, .card-plugin .title {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.card-plugin .plugin-info, .card-plugin .plugin-install {
+    padding: 5px 12px;
+}
+
+/* plugin header */
+.card-plugin .header {
+    display: flex;
+    height: 45px;
+}
+
+.card-plugin .header .icon {
+    padding: 10px;
+}
+
+.card-plugin .header .icon i {
+    font-size: 32px;
+}
+
+.card-plugin .header .icon img {
+    width: 32px;
+    height: 32px;
+}
+
+.card-plugin .header .title {
+    padding: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+.card-plugin .header .title a {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 19px;
+}
+
+.card-plugin .header .title a span {
+    white-space: nowrap;
+}
+
+.card-plugin .header .plugin-name {
+    line-height: 13px;
+    height: 13px;
+}
+
+.card-plugin .header .plugin-meta {
+    white-space: nowrap;
+}
+
+/* plugin content */
+.card-plugin .content {
+    padding: 0 10px;
+    flex-grow: 1;
+    height: 57px;
+}
+
+.card-plugin .content p {
+    margin: 5px 0;
+    max-height: 70px;
+    overflow: hidden;
+}
+
+/* plugin buttons */
+.card-plugin .buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+}
+
+.card-plugin .buttons .clickable {
+    transition: filter .1s ease-in-out;
+}
+
+.card-plugin .buttons .clickable:hover {
+    filter: brightness(0.9) saturate(170%);
+}
+
+.card-plugin .buttons .buttons-shadow {
+    display: flex;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 -5px 0 5px #fff, -10px 0 10px 10px #fff;
+}
+
+.card-plugin .buttons .plugin-info {
+    color: #333;
+    text-align: center;
+    background: #eaeaea;
+}
+
+.card-plugin .buttons .comments_counter {
+    display: none;
+}
+
+.card-plugin .buttons .spacer {
+    flex-grow: 1;
+}

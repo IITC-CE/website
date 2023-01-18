@@ -1,0 +1,98 @@
+.section-donate .dotate-block {
+    display: flex;
+    margin: 10px 0 30px;
+    max-width: 860px;
+}
+
+.section-donate .dotate-block.dotate-block__many {
+    flex-direction: column;
+}
+
+.section-donate .btn {
+    filter: brightness(1.0) saturate(80%);
+    transition: filter .2s ease;
+    padding: 16px 0;
+    height: auto;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 20px;
+    color: #fff;
+    text-transform: none;
+}
+
+.section-donate .btn:hover, .section-donate .btn:focus {
+    filter: brightness(1.1) saturate(170%);
+}
+
+.section-donate .dotate-block a {
+    width: 100%;
+    margin: 4px;
+}
+
+.section-donate .dotate-block a:first-child {
+    margin-left: 0;
+}
+
+.section-donate .dotate-block a:last-child {
+    margin-right: 0;
+}
+
+.section-donate .btn.telegram {
+    background: #4a88e5;
+}
+
+.section-donate .btn.yoomoney {
+    background: #b185fd;
+}
+
+.section-donate .donation-item {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.section-donate .donation-item .item-name {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+    margin-top: 0;
+}
+
+.section-donate .donation-item .item-block {
+    background: #eceff1;
+    border-radius: 6px;
+    padding: 14px 20px;
+}
+
+.section-donate .donation-item .item-value {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.section-donate .donation-item .item-code {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    line-height: 20px;
+    position: relative;
+    word-break: break-word;
+}
+
+@media only screen and (max-width: 600px) {
+    .section-donate .btn {
+        padding: 13px 0;
+        font-size: 16px;
+        line-height: 18px;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    .section-donate .dotate-block {
+        flex-direction: column;
+        margin: 4px 0;
+    }
+    .section-donate .dotate-block a {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
