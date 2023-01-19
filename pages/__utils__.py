@@ -35,6 +35,7 @@ def get_meta_markers():
             data[release_type + '_categories'] = meta["categories"]
 
     data['categories'] = data['release_categories']
+    # Adding categories of beta plugins, if such categories are not in the release
     for beta_category in data['beta_categories']:
         if beta_category not in data['categories']:
             data['categories'][beta_category] = data['beta_categories'][beta_category]
@@ -44,11 +45,23 @@ def get_meta_markers():
             data['release_categories'][category]['plugins'] = []
         if 'plugins' not in data['beta_categories'][category]:
             data['beta_categories'][category]['plugins'] = []
+
+        # If the plugin has a beta version, then adding the beta version number
         for release_plugin in data['release_categories'][category]['plugins']:
             for beta_plugin in data['beta_categories'][category]['plugins']:
                 if release_plugin['id'] == beta_plugin['id']:
                     release_plugin['beta_version'] = beta_plugin[f"beta_version"]
                     break
+
+        # If the plugin is not in the release, then add the plugin from the beta
+        for beta_plugin in data['beta_categories'][category]['plugins']:
+            is_in_release = False
+            for release_plugin in data['release_categories'][category]['plugins']:
+                if beta_plugin['id'] == release_plugin['id']:
+                    is_in_release = True
+                    break
+            if not is_in_release:
+                data['categories'][category]['plugins'].append(beta_plugin)
 
     del data['release_categories']
     del data['beta_categories']
