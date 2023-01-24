@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230124.233500
+// @version        0.8.0.20230124.234544
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-24-233500';
+plugin_info.dateTimeVersion = '2023-01-24-234544';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -237,7 +237,7 @@ function appendPortalLine(rc, portal) {
 }
 
 function createChildListItem(parent, childData, childPortal) {
-  var childListItem = $('<div>');
+  var childListItem = $('<li>');
   childListItem.append(new Date(childData.linkTime).toUTCString());
   childListItem.append(' link to ');
   var childName = getDisplayPortalName(childPortal);
@@ -793,6 +793,10 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
 \
 .machina-tools.ui-dialog {\
     max-width: calc(100vw - 2px);\
+}\
+\
+#dialog-visible-machina-clusters li {\
+    list-style: none;\
 }\
 \
 #dialog-visible-machina-clusters .collapsible:before {\
