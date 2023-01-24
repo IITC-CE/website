@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230124.063703
+// @version        0.8.0.20230124.080205
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-24-063703';
+plugin_info.dateTimeVersion = '2023-01-24-080205';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -597,18 +597,21 @@ function appendChildrenList(appendTo, leaf, clusterPortals) {
   });
   if (!leaf.children.length) {
     appendTo.addClass('empty');
+  } else {
+    leaf.children.forEach((childData) => {
+      appendTo.append(childList);
+      var childPortal = clusterPortals[childData.childGuid];
+      if (childPortal !== undefined) {
+        var childListItem = createChildListItem(leaf, childData, childPortal);
+        childListItem.css('border-left-color', `hsl(${Math.trunc((childData.linkTime / (60 * 60 * 1000)) % 360)},100%,50%)`);
+        childListItem.addClass('striped');
+        appendChildrenList(childListItem, childPortal, clusterPortals);
+        childList.append(childListItem);
+      } else {
+        childList.append($('<li>', { html: `${new Date(childData.linkTime).toUTCString()} link to UNKNOWN` }));
+      }
+    });
   }
-  leaf.children.forEach((childData) => {
-    appendTo.append(childList);
-    var childPortal = clusterPortals[childData.childGuid];
-    if (childPortal !== undefined) {
-      var childListItem = createChildListItem(leaf, childData, childPortal);
-      appendChildrenList(childListItem, childPortal, clusterPortals);
-      childList.append(childListItem);
-    } else {
-      childList.append($('<li>', { html: `${new Date(childData.linkTime).toUTCString()} link to UNKNOWN` }));
-    }
-  });
 }
 
 function createClustersInfoDialog() {
@@ -786,15 +789,8 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
     max-width: calc(100vw - 2px);\
 }\
 \
-#dialog-visible-machina-clusters .collapsible {\
-    padding-left: 1ch;\
-    position: relative;\
-}\
-\
 #dialog-visible-machina-clusters .collapsible:before {\
     content: \'\\25BC\';\
-    position: absolute;\
-    left: -1ch;\
 }\
 \
 #dialog-visible-machina-clusters .collapsible.collapsed:before {\
@@ -806,8 +802,10 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
     content: \'\\25AA\';\
 }\
 \
-#dialog-visible-machina-clusters .childrenList {\
-    margin-left: 40px;\
+#dialog-visible-machina-clusters .striped {\
+    padding-left: 10px;\
+    margin-left: 10px;\
+    border-left: 5px solid;\
 }\
 ').appendTo('head');
 }
