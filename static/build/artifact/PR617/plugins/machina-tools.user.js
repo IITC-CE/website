@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230124.080205
+// @version        0.8.0.20230124.233500
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-24-080205';
+plugin_info.dateTimeVersion = '2023-01-24-233500';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -226,7 +226,10 @@ function appendPortalLine(rc, portal) {
   var portalLink = $('<a>', {
     title: portalName,
     html: portalName,
-    click: window.zoomToAndShowPortal.bind(window, portal.guid, portal.latlng),
+    click: (e) => {
+      window.zoomToAndShowPortal(portal.guid, portal.latlng);
+      e.stopPropagation();
+    },
   });
   rc.append(portalLink);
   rc.append(`(${portal.level}) [Depth: ${portal.depth}]`);
@@ -241,7 +244,10 @@ function createChildListItem(parent, childData, childPortal) {
   var childLink = $('<a>', {
     title: childName,
     html: childName,
-    click: window.zoomToAndShowPortal.bind(window, childData.childGuid, childPortal.latlng),
+    click: (e) => {
+      window.zoomToAndShowPortal(childData.childGuid, childPortal.latlng);
+      e.stopPropagation();
+    },
   });
   childListItem.append(childLink);
 
@@ -791,6 +797,9 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
 \
 #dialog-visible-machina-clusters .collapsible:before {\
     content: \'\\25BC\';\
+    width: 3ch;\
+    display: inline-block;\
+    text-align: center;\
 }\
 \
 #dialog-visible-machina-clusters .collapsible.collapsed:before {\
