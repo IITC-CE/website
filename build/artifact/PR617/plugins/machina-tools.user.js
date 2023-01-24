@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230124.011819
+// @version        0.8.0.20230124.023725
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-24-011819';
+plugin_info.dateTimeVersion = '2023-01-24-023725';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -374,9 +374,11 @@ machinaTools.drawExclusion = function (guid, level, latlng, placeholder) {
     machinaTools.addPortalCircle(guid, new L.Circle(latlng, range, machinaTools.optCircle));
   }
 
-  var zone = new L.geodesicCircle(latlng, range, machinaTools.optConflictZone);
-  machinaTools.addConflictZone(guid, zone);
-  machinaTools.updateConflictArea();
+  if (isConflictLayerEnabled()) {
+    var zone = new L.geodesicCircle(latlng, range, machinaTools.optConflictZone);
+    machinaTools.addConflictZone(guid, zone);
+    machinaTools.updateConflictArea();
+  }
 };
 
 machinaTools.addConflictZone = function (guid, zone) {
@@ -555,16 +557,22 @@ machinaTools.showConflictAreaInfoDialog = function () {
   });
 };
 
+function isConflictLayerEnabled() {
+  return map._layers[machinaTools.conflictLayer._leaflet_id];
+}
+
 machinaTools.loadConflictAreas = function () {
-  Object.values(window.portals)
-    .filter((p) => p.options.team === window.TEAM_MAC)
-    .forEach(machinaTools.drawPortalExclusion);
+  if (isConflictLayerEnabled()) {
+    Object.values(window.portals)
+      .filter((p) => p.options.team === window.TEAM_MAC)
+      .forEach(machinaTools.drawPortalExclusion);
 
-  Object.values(window.links)
-    .filter((l) => l.options.team === window.TEAM_MAC)
-    .forEach(machinaTools.drawLinkExclusion);
+    Object.values(window.links)
+      .filter((l) => l.options.team === window.TEAM_MAC)
+      .forEach(machinaTools.drawLinkExclusion);
 
-  machinaTools.updateConflictArea();
+    machinaTools.updateConflictArea();
+  }
 };
 
 machinaTools.clearConflictArea = function () {
@@ -639,7 +647,7 @@ machinaTools.showClustersDialog = function () {
 };
 
 function setupLayers() {
-  // This layer is added to the layer chooser, to be toggled on/off, regardless of zoom.
+  // This layer is added to the layer chooser, to be toggled on/off
   machinaTools.displayLayer = new L.LayerGroup([], { minZoom: 15 });
   machinaTools.conflictLayer = new L.LayerGroup();
 
@@ -650,6 +658,18 @@ function setupLayers() {
   // Initially add the circle display layer into base display layer.  We will trigger an assessment below.
   machinaTools.displayLayer.addLayer(machinaTools.circleDisplayLayer);
   machinaTools.conflictLayer.addLayer(machinaTools.conflictAreaLayer);
+
+  machinaTools.conflictLayer.on('add', () => {
+    if (machinaTools.recordButton) {
+      machinaTools.recordButton.addTo(window.map);
+    }
+    machinaTools.loadConflictAreas();
+  });
+
+  machinaTools.conflictLayer.on('remove', () => {
+    machinaTools.recordButton.remove();
+    machinaTools.clearConflictArea();
+  });
 
   // Add the base layer to the main window.
   window.layerChooser.addOverlay(machinaTools.displayLayer, 'Machina Level Up Link Radius', { default: false });
@@ -723,7 +743,10 @@ function setupControlButtons() {
       return container;
     },
   });
-  new RecordSwitch().addTo(window.map);
+  machinaTools.recordButton = new RecordSwitch();
+  if (isConflictLayerEnabled()) {
+    machinaTools.recordButton.addTo(window.map);
+  }
 }
 
 function setupCSS() {
