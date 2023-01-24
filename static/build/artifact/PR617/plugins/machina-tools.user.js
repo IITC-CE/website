@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230124.041608
+// @version        0.8.0.20230124.063703
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-24-041608';
+plugin_info.dateTimeVersion = '2023-01-24-063703';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -234,7 +234,7 @@ function appendPortalLine(rc, portal) {
 }
 
 function createChildListItem(parent, childData, childPortal) {
-  var childListItem = $('<li>');
+  var childListItem = $('<div>');
   childListItem.append(new Date(childData.linkTime).toUTCString());
   childListItem.append(' link to ');
   var childName = getDisplayPortalName(childPortal);
@@ -588,28 +588,34 @@ machinaTools.mapDataRefreshEnd = function () {
 };
 
 function appendChildrenList(appendTo, leaf, clusterPortals) {
-  if (leaf.children.length) {
-    var childList = $('<ul>');
-    appendTo.append(childList);
-    leaf.children.forEach((childData) => {
-      var childPortal = clusterPortals[childData.childGuid];
-      if (childPortal !== undefined) {
-        var childListItem = createChildListItem(leaf, childData, childPortal);
-        appendChildrenList(childListItem, childPortal, clusterPortals);
-        childList.append(childListItem);
-      } else {
-        childList.append($('<li>', { html: `${new Date(childData.linkTime).toUTCString()} link to UNKNOWN` }));
-      }
-    });
+  var childList = $('<div>', { class: 'childrenList' });
+  appendTo.addClass('collapsible');
+  appendTo.on('click', (e) => {
+    childList.slideToggle('slow');
+    appendTo.toggleClass('collapsed');
+    e.stopPropagation();
+  });
+  if (!leaf.children.length) {
+    appendTo.addClass('empty');
   }
+  leaf.children.forEach((childData) => {
+    appendTo.append(childList);
+    var childPortal = clusterPortals[childData.childGuid];
+    if (childPortal !== undefined) {
+      var childListItem = createChildListItem(leaf, childData, childPortal);
+      appendChildrenList(childListItem, childPortal, clusterPortals);
+      childList.append(childListItem);
+    } else {
+      childList.append($('<li>', { html: `${new Date(childData.linkTime).toUTCString()} link to UNKNOWN` }));
+    }
+  });
 }
 
 function createClustersInfoDialog() {
   var html = $('<div>');
   var seeds = [];
   Object.values(window.portals)
-    .filter((p) => map.getBounds().contains(p.getLatLng()))
-    .filter((p) => p.options.team === window.TEAM_MAC)
+    .filter((p) => map.getBounds().contains(p.getLatLng()) && p.options.team === window.TEAM_MAC)
     .forEach((p) => {
       var seedData = machinaTools.findSeed(p.options.guid);
       if (!seeds.find((s) => s.guid === seedData.guid)) {
@@ -617,8 +623,10 @@ function createClustersInfoDialog() {
         var clusterPortals = machinaTools.gatherCluster(seedData);
         var seed = clusterPortals[seedData.guid];
         if (seed) {
-          appendPortalLine(html, seed);
-          appendChildrenList(html, seed, clusterPortals);
+          var portalSection = $('<div>');
+          portalSection.appendTo(html);
+          appendPortalLine(portalSection, seed);
+          appendChildrenList(portalSection, seed, clusterPortals);
         }
       }
     });
@@ -776,6 +784,30 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
 \
 .machina-tools.ui-dialog {\
     max-width: calc(100vw - 2px);\
+}\
+\
+#dialog-visible-machina-clusters .collapsible {\
+    padding-left: 1ch;\
+    position: relative;\
+}\
+\
+#dialog-visible-machina-clusters .collapsible:before {\
+    content: \'\\25BC\';\
+    position: absolute;\
+    left: -1ch;\
+}\
+\
+#dialog-visible-machina-clusters .collapsible.collapsed:before {\
+    content: \'\\25B6\';\
+}\
+\
+#dialog-visible-machina-clusters .collapsible.empty:before,\
+#dialog-visible-machina-clusters .collapsible.collapsed.empty:before {\
+    content: \'\\25AA\';\
+}\
+\
+#dialog-visible-machina-clusters .childrenList {\
+    margin-left: 40px;\
 }\
 ').appendTo('head');
 }
