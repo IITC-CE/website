@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230120.032908
+// @version        0.8.0.20230124.011819
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-20-032908';
+plugin_info.dateTimeVersion = '2023-01-24-011819';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -770,24 +770,9 @@ function setupUI() {
   setupControlButtons();
 }
 
-function highlightMachinaSeeds(data, isLeaf) {
-  if (data.portal.options.team === window.TEAM_MAC) {
-    var incomingLink = Object.values(window.links).find((l) => l.options.data.dGuid === data.portal.options.guid);
-    if ((incomingLink && isLeaf) || (!incomingLink && !isLeaf)) {
-      data.portal.setStyle({ fillColor: '#272', fillOpacity: 1 });
-    }
-  }
-}
-
-function addHighlighters() {
-  window.addPortalHighlighter('Machina Seeds', highlightMachinaSeeds);
-  window.addPortalHighlighter('Machina Leafs', (d) => highlightMachinaSeeds(d, true));
-}
-
 var setup = function () {
   loadExternals(); // initialize turf-union and others
   setupLayers();
-  addHighlighters();
   setupHooks();
   setupUI();
 };
