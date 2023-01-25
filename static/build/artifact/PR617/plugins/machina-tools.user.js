@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230124.234544
+// @version        0.8.0.20230125.002712
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-01-24-234544';
+plugin_info.dateTimeVersion = '2023-01-25-002712';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -327,13 +327,37 @@ function createInfoLink(text, title, clickCallback) {
   return aside;
 }
 
-machinaTools.onPortalDetailsUpdated = function () {
-  var portalData;
+var lastRequest = 0;
+var REQUEST_DELAY = 500;
+function doLoadPortalDetail(guid) {
+  var timeout = 0;
+  if (lastRequest) {
+    var diff = Date.now() - lastRequest;
+    if (diff < REQUEST_DELAY) {
+      timeout = REQUEST_DELAY - diff;
+    }
+  }
+  lastRequest = Date.now() + timeout;
+  setTimeout(() => window.portalDetail.request(guid), timeout);
+}
 
+function loadClusterPortalDetails(guid) {
+  var seed = machinaTools.findSeed(guid);
+  if (seed) {
+    var cluster = machinaTools.gatherCluster(seed);
+    Object.values(cluster).forEach((portalData) => {
+      if (!window.portalDetail.isFresh(portalData.guid)) {
+        doLoadPortalDetail(portalData.guid);
+      }
+    });
+  }
+}
+
+machinaTools.onPortalDetailsUpdated = function () {
   // If the portal was cleared then exit.
   if (window.selectedPortal === null) return;
 
-  portalData = portalDetail.get(window.selectedPortal);
+  var portalData = portalDetail.get(window.selectedPortal);
 
   if (portalData.team === window.TEAM_CODE_MAC) {
     var linkdetails = $('.linkdetails');
@@ -344,6 +368,10 @@ machinaTools.onPortalDetailsUpdated = function () {
     // Add this portal's conflict zone to the conflict area
     machinaTools.drawPortalExclusion(window.portals[window.selectedPortal]);
     refreshDialogs(window.selectedPortal);
+
+    if (!machinaTools.zoomLevelHasPortals()) {
+      loadClusterPortalDetails(window.selectedPortal);
+    }
   }
 };
 
