@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.4.1.20230307.181550
+// @version        0.4.1.20230307.182120
 // @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -20,10 +20,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-03-07-181550';
+plugin_info.dateTimeVersion = '2023-03-07-182120';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 
+/* global gapi -- eslint */
 
 ////////////////////////////////////////////////////////////////////////
 // Notice for developers:
@@ -583,38 +584,39 @@ window.plugin.sync.Authorizer.prototype.authComplete = function() {
   }
 };
 
-window.plugin.sync.Authorizer.prototype.updateSigninStatus = function(isSignedIn) {
+window.plugin.sync.Authorizer.prototype.updateSigninStatus = function (isSignedIn) {
   this.authorizing = false;
   if (isSignedIn) {
     this.authorized = true;
-    plugin.sync.logger.log('all', 'Authorized');
+    window.plugin.sync.logger.log('all', 'Authorized');
     this.authComplete();
   } else {
     this.authorized = false;
-    plugin.sync.logger.log('all', 'Not authorized');
+    window.plugin.sync.logger.log('all', 'Not authorized');
     gapi.auth2.getAuthInstance().signIn();
   }
-}
+};
 
-window.plugin.sync.Authorizer.prototype.authorize = function() {
+window.plugin.sync.Authorizer.prototype.authorize = function () {
   this.authorizing = true;
   this.authorized = false;
   const self = this;
 
-  gapi.client.init({
-    apiKey: this.API_KEY,
-    discoveryDocs: this.DISCOVERY_DOCS,
-    client_id: this.CLIENT_ID,
-    scope: this.SCOPES,
-  }).then(function () {
-    // Listen for sign-in state changes.
-    gapi.auth2.getAuthInstance().isSignedIn.listen(self.updateSigninStatus);
+  gapi.client
+    .init({
+      apiKey: this.API_KEY,
+      discoveryDocs: this.DISCOVERY_DOCS,
+      client_id: this.CLIENT_ID,
+      scope: this.SCOPES,
+    })
+    .then(function () {
+      // Listen for sign-in state changes.
+      gapi.auth2.getAuthInstance().isSignedIn.listen(self.updateSigninStatus);
 
-    // Handle the initial sign-in state.
-    self.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-  });
+      // Handle the initial sign-in state.
+      self.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+    });
 };
-
 
 //// end Authorizer
 
