@@ -2,13 +2,14 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight portals with ornaments
 // @category       Highlighter
-// @version        0.0.1.20220720.194524
+// @version        0.2.1.20230308.164324
 // @description    Use the portal fill color to denote portals with additional 'ornament' markers. e.g. Anomaly portals
 // @id             highlight-ornaments
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR420/plugins/highlight-ornaments.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/plugins/highlight-ornaments.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,29 +20,35 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'highlight-ornaments';
 //END PLUGIN AUTHORS NOTE
 
-
+/* exported setup --eslint */
 // use own namespace for plugin
-window.plugin.portalHighlightOrnaments = function() {};
+var highlightOrnaments = {};
+window.plugin.highlightOrnaments = highlightOrnaments;
 
-window.plugin.portalHighlightOrnaments.highlight = function(data) {
+highlightOrnaments.styles = {
+  common: {
+    fillColor: 'red',
+    fillOpacity: 0.75
+  }
+};
+
+function ornamentshighlight (data) {
   var d = data.portal.options.data;
-  if(d.ornaments && d.ornaments.length > 0) {
-    var fill_opacity = 0.75;
-    var color = 'red';
+  if (d.ornaments && d.ornaments.length > 0) {
 
     // TODO? match specific cases of ornament name and/or portals with multiple ornaments, and highlight in different colours?
 
-    var params = {fillColor: color, fillOpacity: fill_opacity};
+    var params = highlightOrnaments.styles.common;
     data.portal.setStyle(params);
   }
 }
 
-var setup =  function() {
-  window.addPortalHighlighter('Ornaments (anomaly portals)', window.plugin.portalHighlightOrnaments.highlight);
+function setup () {
+  window.addPortalHighlighter('Ornaments (anomaly portals)', ornamentshighlight);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

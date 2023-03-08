@@ -2,13 +2,14 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals by level color
 // @category       Highlighter
-// @version        0.1.2.20220720.194524
+// @version        0.2.0.20230308.164324
 // @description    Use the portal fill color to denote the portal level by using the game level colors.
 // @id             highlight-level-color
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR420/plugins/highlight-level-color.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/plugins/highlight-level-color.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,15 +20,14 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'highlight-level-color';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup --eslint */
+/* global COLORS_LVL*/
 
-// use own namespace for plugin
-window.plugin.portalHighlighterPortalsLevelColor = function() {};
-
-window.plugin.portalHighlighterPortalsLevelColor.colorLevel = function(data) {
+function highlightLevelColor (data) {
   var portal_level = data.portal.options.data.level;
   if (portal_level !== undefined) {
     var opacity = .6;
@@ -35,8 +35,8 @@ window.plugin.portalHighlighterPortalsLevelColor.colorLevel = function(data) {
   }
 }
 
-var setup =  function() {
-  window.addPortalHighlighter('Level Color', window.plugin.portalHighlighterPortalsLevelColor.colorLevel);
+function setup () {
+  window.addPortalHighlighter('Level Color', highlightLevelColor);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

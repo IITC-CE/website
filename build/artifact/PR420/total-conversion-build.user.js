@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.32.1.20220720.194524
+// @version        0.34.1.20230308.164324
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -9,6 +9,7 @@
 // @updateURL      https://iitc.app/build/artifact/PR420/total-conversion-build.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/total-conversion-build.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +31,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-07-20-194524';
+window.iitcBuildDate = '2023-03-08-164324';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -191,11 +192,15 @@ i.large { font-size: 6rem; }\
 }\
 \
 .enl {\
-  color: #03fe03 !important;\
+  color: #03fe03;\
 }\
 \
 .res {\
-  color: #00c5ff !important;\
+  color: #00c5ff;\
+}\
+\
+.mac {\
+  color: #ff2020;\
 }\
 \
 .none {\
@@ -203,7 +208,7 @@ i.large { font-size: 6rem; }\
 }\
 \
 .nickname {\
-  cursor: pointer !important;\
+  cursor: pointer;\
 }\
 \
 a {\
@@ -300,7 +305,7 @@ a:hover {\
 \
 #chatcontrols a:first-child {\
   letter-spacing:-1px;\
-  text-decoration: none !important;\
+  text-decoration: none;\
 }\
 \
 #chatcontrols a.active {\
@@ -397,6 +402,14 @@ em {\
   table-layout: fixed;\
   border-spacing: 0;\
   border-collapse: collapse;\
+  /* make the table always scrollable */\
+  min-height: 100%;\
+  margin-bottom: 1px;\
+}\
+\
+/* expand last row if needed */\
+#chat table tr:last-child {\
+    height: 100%;\
 }\
 \
 #chatinput table {\
@@ -407,6 +420,14 @@ em {\
   font-size: 13px;\
   vertical-align: top;\
   padding-bottom: 3px;\
+}\
+\
+#chat .divider {\
+  color: #bbb;\
+}\
+\
+#chat .divider td:nth-child(2) {\
+  text-align: center;\
 }\
 \
 /* time */\
@@ -430,8 +451,24 @@ em {\
   white-space: nowrap;\
 }\
 \
-#chat td .system_narrowcast {\
-  color: #f66 !important;\
+#chat td.system_narrowcast {\
+  color: #f66;\
+}\
+\
+#chatall tr.faction td:nth-child(3):before,\
+#chatalerts tr.faction td:nth-child(3):before {\
+  content: \'[faction]\';\
+  color: #f88;\
+  background-color: #500;\
+  margin-right: .2rem;\
+}\
+\
+#chatall tr.public td:nth-child(3):before,\
+#chatalerts tr.public td:nth-child(3):before {\
+  content: \'[public]\';\
+  color: #ff6;\
+  background-color: #550;\
+  margin-right: .2rem;\
 }\
 \
 mark {\
@@ -1199,25 +1236,28 @@ td + td {\
 }\
 */\
 \
+.pl_nudge_date:after {\
+  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\
+  position:absolute;\
+  content:"";\
+  height:20px;\
+  width: 5px;\
+  right:-5px;\
+  top:-1px\
+}\
+\
 .pl_nudge_date {\
   background-color: #724510;\
   border-left: 1px solid #ffd652;\
   border-bottom: 1px solid #ffd652;\
   border-top: 1px solid #ffd652;\
   color: #ffd652;\
-  display: inline-block;\
-  float: left;\
+  display: block;\
+  position:relative;\
   height: 18px;\
-  text-align: center;\
-}\
-\
-.pl_nudge_pointy_spacer {\
-  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\
-  display: inline-block;\
-  float: left;\
-  height: 20px;\
-  left: 47px;\
-  width: 5px;\
+  width: 36px;\
+  padding-left: 2px;\
+  left: -2px;\
 }\
 \
 .pl_nudge_player {\
@@ -1480,6 +1520,30 @@ svg.icon-button {\
 	height: inherit;\
 	width: inherit;\
 }\
+\
+/* Warning text */\
+.warning {\
+  color: #f77;\
+  font-weight: bold;\
+  text-shadow: 1px 1px black, -1px -1px black;\
+  text-align: center;\
+}\
+\
+.ui-dialog-aboutIITC .plugin-is-standard {\
+  color: darkgray;\
+}\
+\
+.ui-dialog-aboutIITC .plugin-error {\
+  text-decoration: line-through;\
+}\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child {\
+  display: none;\
+}\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2) {\
+  float: left;\
+}\
 '+'</style>'
   + '<style>'+'\
 /* required styles */\
@@ -1529,7 +1593,10 @@ svg.icon-button {\
 	}\
 /* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */\
 /* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */\
-.leaflet-container .leaflet-overlay-pane svg,\
+.leaflet-container .leaflet-overlay-pane svg {\
+	max-width: none !important;\
+	max-height: none !important;\
+	}\
 .leaflet-container .leaflet-marker-pane img,\
 .leaflet-container .leaflet-shadow-pane img,\
 .leaflet-container .leaflet-tile-pane img,\
@@ -1537,6 +1604,8 @@ svg.icon-button {\
 .leaflet-container .leaflet-tile {\
 	max-width: none !important;\
 	max-height: none !important;\
+	width: auto;\
+	padding: 0;\
 	}\
 \
 .leaflet-container.leaflet-touch-zoom {\
@@ -1650,9 +1719,6 @@ svg.icon-button {\
 \
 /* zoom and fade animations */\
 \
-.leaflet-fade-anim .leaflet-tile {\
-	will-change: opacity;\
-	}\
 .leaflet-fade-anim .leaflet-popup {\
 	opacity: 0;\
 	-webkit-transition: opacity 0.2s linear;\
@@ -1667,9 +1733,10 @@ svg.icon-button {\
 	    -ms-transform-origin: 0 0;\
 	        transform-origin: 0 0;\
 	}\
-.leaflet-zoom-anim .leaflet-zoom-animated {\
+svg.leaflet-zoom-animated {\
 	will-change: transform;\
-	}\
+}\
+\
 .leaflet-zoom-anim .leaflet-zoom-animated {\
 	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\
 	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\
@@ -1735,13 +1802,10 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 \
 .leaflet-container {\
 	background: #ddd;\
-	outline: 0;\
+	outline-offset: 1px;\
 	}\
 .leaflet-container a {\
 	color: #0078A8;\
-	}\
-.leaflet-container a.leaflet-active {\
-	outline: 2px solid orange;\
 	}\
 .leaflet-zoom-box {\
 	border: 2px dotted #38f;\
@@ -1751,7 +1815,10 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 \
 /* general typography */\
 .leaflet-container {\
-	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;\
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;\
+	font-size: 12px;\
+	font-size: 0.75rem;\
+	line-height: 1.5;\
 	}\
 \
 \
@@ -1761,8 +1828,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	box-shadow: 0 1px 5px rgba(0,0,0,0.65);\
 	border-radius: 4px;\
 	}\
-.leaflet-bar a,\
-.leaflet-bar a:hover {\
+.leaflet-bar a {\
 	background-color: #fff;\
 	border-bottom: 1px solid #ccc;\
 	width: 26px;\
@@ -1779,7 +1845,8 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	background-repeat: no-repeat;\
 	display: block;\
 	}\
-.leaflet-bar a:hover {\
+.leaflet-bar a:hover,\
+.leaflet-bar a:focus {\
 	background-color: #f4f4f4;\
 	}\
 .leaflet-bar a:first-child {\
@@ -1869,6 +1936,8 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	}\
 .leaflet-control-layers label {\
 	display: block;\
+	font-size: 13px;\
+	font-size: 1.08333em;\
 	}\
 .leaflet-control-layers-separator {\
 	height: 0;\
@@ -1877,7 +1946,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	}\
 \
 /* Default icon URLs */\
-.leaflet-default-icon-path {\
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */\
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAApCAYAAADAk4LOAAAFgUlEQVR4Aa1XA5BjWRTN2oW17d3YaZtr2962HUzbDNpjszW24mRt28p47v7zq/bXZtrp/lWnXr337j3nPCe85NcypgSFdugCpW5YoDAMRaIMqRi6aKq5E3YqDQO3qAwjVWrD8Ncq/RBpykd8oZUb/kaJutow8r1aP9II0WmLKLIsJyv1w/kqw9Ch2MYdB++12Onxee/QMwvf4/Dk/Lfp/i4nxTXtOoQ4pW5Aj7wpici1A9erdAN2OH64x8OSP9j3Ft3b7aWkTg/Fm91siTra0f9on5sQr9INejH6CUUUpavjFNq1B+Oadhxmnfa8RfEmN8VNAsQhPqF55xHkMzz3jSmChWU6f7/XZKNH+9+hBLOHYozuKQPxyMPUKkrX/K0uWnfFaJGS1QPRtZsOPtr3NsW0uyh6NNCOkU3Yz+bXbT3I8G3xE5EXLXtCXbbqwCO9zPQYPRTZ5vIDXD7U+w7rFDEoUUf7ibHIR4y6bLVPXrz8JVZEql13trxwue/uDivd3fkWRbS6/IA2bID4uk0UpF1N8qLlbBlXs4Ee7HLTfV1j54APvODnSfOWBqtKVvjgLKzF5YdEk5ewRkGlK0i33Eofffc7HT56jD7/6U+qH3Cx7SBLNntH5YIPvODnyfIXZYRVDPqgHtLs5ABHD3YzLuespb7t79FY34DjMwrVrcTuwlT55YMPvOBnRrJ4VXTdNnYug5ucHLBjEpt30701A3Ts+HEa73u6dT3FNWwflY86eMHPk+Yu+i6pzUpRrW7SNDg5JHR4KapmM5Wv2E8Tfcb1HoqqHMHU+uWDD7zg54mz5/2BSnizi9T1Dg4QQXLToGNCkb6tb1NU+QAlGr1++eADrzhn/u8Q2YZhQVlZ5+CAOtqfbhmaUCS1ezNFVm2imDbPmPng5wmz+gwh+oHDce0eUtQ6OGDIyR0uUhUsoO3vfDmmgOezH0mZN59x7MBi++WDL1g/eEiU3avlidO671bkLfwbw5XV2P8Pzo0ydy4t2/0eu33xYSOMOD8hTf4CrBtGMSoXfPLchX+J0ruSePw3LZeK0juPJbYzrhkH0io7B3k164hiGvawhOKMLkrQLyVpZg8rHFW7E2uHOL888IBPlNZ1FPzstSJM694fWr6RwpvcJK60+0HCILTBzZLFNdtAzJaohze60T8qBzyh5ZuOg5e7uwQppofEmf2++DYvmySqGBuKaicF1blQjhuHdvCIMvp8whTTfZzI7RldpwtSzL+F1+wkdZ2TBOW2gIF88PBTzD/gpeREAMEbxnJcaJHNHrpzji0gQCS6hdkEeYt9DF/2qPcEC8RM28Hwmr3sdNyht00byAut2k3gufWNtgtOEOFGUwcXWNDbdNbpgBGxEvKkOQsxivJx33iow0Vw5S6SVTrpVq11ysA2Rp7gTfPfktc6zhtXBBC+adRLshf6sG2RfHPZ5EAc4sVZ83yCN00Fk/4kggu40ZTvIEm5g24qtU4KjBrx/BTTH8ifVASAG7gKrnWxJDcU7x8X6Ecczhm3o6YicvsLXWfh3Ch1W0k8x0nXF+0fFxgt4phz8QvypiwCCFKMqXCnqXExjq10beH+UUA7+nG6mdG/Pu0f3LgFcGrl2s0kNNjpmoJ9o4B29CMO8dMT4Q5ox8uitF6fqsrJOr8qnwNbRzv6hSnG5wP+64C7h9lp30hKNtKdWjtdkbuPA19nJ7Tz3zR/ibgARbhb4AlhavcBebmTHcFl2fvYEnW0ox9xMxKBS8btJ+KiEbq9zA4RthQXDhPa0T9TEe69gWupwc6uBUphquXgf+/FrIjweHQS4/pduMe5ERUMHUd9xv8ZR98CxkS4F2n3EUrUZ10EYNw7BWm9x1GiPssi3GgiGRDKWRYZfXlON+dfNbM+GgIwYdwAAAAASUVORK5CYII=);\
 	}\
 \
@@ -1886,23 +1955,24 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 \
 .leaflet-container .leaflet-control-attribution {\
 	background: #fff;\
-	background: rgba(255, 255, 255, 0.7);\
+	background: rgba(255, 255, 255, 0.8);\
 	margin: 0;\
 	}\
 .leaflet-control-attribution,\
 .leaflet-control-scale-line {\
 	padding: 0 5px;\
 	color: #333;\
+	line-height: 1.4;\
 	}\
 .leaflet-control-attribution a {\
 	text-decoration: none;\
 	}\
-.leaflet-control-attribution a:hover {\
+.leaflet-control-attribution a:hover,\
+.leaflet-control-attribution a:focus {\
 	text-decoration: underline;\
 	}\
-.leaflet-container .leaflet-control-attribution,\
-.leaflet-container .leaflet-control-scale {\
-	font-size: 11px;\
+.leaflet-control-attribution svg {\
+	display: inline !important;\
 	}\
 .leaflet-left .leaflet-control-scale {\
 	margin-left: 5px;\
@@ -1915,7 +1985,6 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	border-top: none;\
 	line-height: 1.1;\
 	padding: 2px 5px 1px;\
-	font-size: 11px;\
 	white-space: nowrap;\
 	overflow: hidden;\
 	-moz-box-sizing: border-box;\
@@ -1958,17 +2027,22 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	border-radius: 12px;\
 	}\
 .leaflet-popup-content {\
-	margin: 13px 19px;\
-	line-height: 1.4;\
+	margin: 13px 24px 13px 20px;\
+	line-height: 1.3;\
+	font-size: 13px;\
+	font-size: 1.08333em;\
+	min-height: 1px;\
 	}\
 .leaflet-popup-content p {\
-	margin: 18px 0;\
+	margin: 17px 0;\
+	margin: 1.3em 0;\
 	}\
 .leaflet-popup-tip-container {\
 	width: 40px;\
 	height: 20px;\
 	position: absolute;\
 	left: 50%;\
+	margin-top: -1px;\
 	margin-left: -20px;\
 	overflow: hidden;\
 	pointer-events: none;\
@@ -1979,6 +2053,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	padding: 1px;\
 \
 	margin: -10px auto 0;\
+	pointer-events: auto;\
 \
 	-webkit-transform: rotate(45deg);\
 	   -moz-transform: rotate(45deg);\
@@ -1995,19 +2070,18 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	position: absolute;\
 	top: 0;\
 	right: 0;\
-	padding: 4px 4px 0 0;\
 	border: none;\
 	text-align: center;\
-	width: 18px;\
-	height: 14px;\
-	font: 16px/14px Tahoma, Verdana, sans-serif;\
-	color: #c3c3c3;\
+	width: 24px;\
+	height: 24px;\
+	font: 16px/24px Tahoma, Verdana, sans-serif;\
+	color: #757575;\
 	text-decoration: none;\
-	font-weight: bold;\
 	background: transparent;\
 	}\
-.leaflet-container a.leaflet-popup-close-button:hover {\
-	color: #999;\
+.leaflet-container a.leaflet-popup-close-button:hover,\
+.leaflet-container a.leaflet-popup-close-button:focus {\
+	color: #585858;\
 	}\
 .leaflet-popup-scrolled {\
 	overflow: auto;\
@@ -2024,9 +2098,6 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 \
 	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";\
 	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);\
-	}\
-.leaflet-oldie .leaflet-popup-tip-container {\
-	margin-top: -1px;\
 	}\
 \
 .leaflet-oldie .leaflet-control-zoom,\
@@ -2062,7 +2133,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	pointer-events: none;\
 	box-shadow: 0 1px 3px rgba(0,0,0,0.4);\
 	}\
-.leaflet-tooltip.leaflet-clickable {\
+.leaflet-tooltip.leaflet-interactive {\
 	cursor: pointer;\
 	pointer-events: auto;\
 	}\
@@ -2121,6 +2192,16 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	left: 0;\
 	margin-left: -12px;\
 	border-right-color: #fff;\
+	}\
+\
+/* Printing */\
+	\
+@media print {\
+	/* Prevent printers from removing background-images of controls. */\
+	.leaflet-control {\
+		-webkit-print-color-adjust: exact;\
+		color-adjust: exact;\
+		}\
 	}\
 '+'</style>'
   + '<style>'+'\
@@ -2259,19 +2340,10 @@ window.SIDEBAR_WIDTH = 300;
 window.CHAT_REQUEST_SCROLL_TOP = 200;
 window.CHAT_SHRINKED = 60;
 
-// Minimum area to zoom ratio that field MU's will display
-window.FIELD_MU_DISPLAY_AREA_ZOOM_RATIO = 0.001;
-
-// Point tolerance for displaying MU's
-window.FIELD_MU_DISPLAY_POINT_TOLERANCE = 60;
-
 window.COLOR_SELECTED_PORTAL = '#f0f';
-window.COLORS = ['#FF6600', '#0088FF', '#03DC03']; // none, res, enl
+window.COLORS = ['#FF6600', '#0088FF', '#03DC03', '#FF0028']; // none, res, enl, mac
 window.COLORS_LVL = ['#000', '#FECE5A', '#FFA630', '#FF7315', '#E40000', '#FD2992', '#EB26CD', '#C124E0', '#9627F4'];
-window.COLORS_MOD = {VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf'};
-
-
-window.MOD_TYPE = {RES_SHIELD:'Shield', MULTIHACK:'Multi-hack', FORCE_AMP:'Force Amp', HEATSINK:'Heat Sink', TURRET:'Turret', LINK_AMPLIFIER: 'Link Amp'};
+window.COLORS_MOD = { VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf' };
 
 // circles around a selected portal that show from where you can hack
 // it and how far the portal reaches (i.e. how far links may be made
@@ -2293,6 +2365,7 @@ window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geo
 // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
+window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
@@ -2311,8 +2384,21 @@ window.BASE_HACK_COUNT = 4;
 window.TEAM_NONE = 0;
 window.TEAM_RES = 1;
 window.TEAM_ENL = 2;
-window.TEAM_TO_CSS = ['none', 'res', 'enl'];
-window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened'];
+window.TEAM_MAC = 3;
+window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
+window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
+window.TEAM_CODES = ['N', 'R', 'E', 'M'];
+window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
+
+window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
+window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
+window.TEAM_NAME_ENL = window.TEAM_NAMES[window.TEAM_ENL];
+window.TEAM_NAME_MAC = window.TEAM_NAMES[window.TEAM_MAC];
+
+window.TEAM_CODE_NONE = window.TEAM_CODES[window.TEAM_NONE];
+window.TEAM_CODE_RES = window.TEAM_CODES[window.TEAM_RES];
+window.TEAM_CODE_ENL = window.TEAM_CODES[window.TEAM_ENL];
+window.TEAM_CODE_MAC = window.TEAM_CODES[window.TEAM_MAC];
 
 // STORAGE ///////////////////////////////////////////////////////////
 // global variables used for storage. Most likely READ ONLY. Proper
@@ -2324,7 +2410,6 @@ window.urlPortalLL = null;
 window.selectedPortal = null;
 window.portalRangeIndicator = null;
 window.portalAccessIndicator = null;
-window.mapRunsUserAction = false;
 
 // var portalsLayers, linksLayer, fieldsLayer;
 var portalsFactionLayers, linksFactionLayers, fieldsFactionLayers;
@@ -2857,10 +2942,12 @@ window.artifact.showArtifactList = function() {
 // *** module: boot.js ***
 (function () {
 var log = ulog('boot');
-/// SETUP /////////////////////////////////////////////////////////////
+// SETUP /////////////////////////////////////////////////////////////
 // these functions set up specific areas after the boot function
 // created a basic framework. All of these functions should only ever
 // be run once.
+
+/* global L, dialog -- eslint */
 
 window.setupTooltips = function (element) {
   element = element || $(document);
@@ -2926,6 +3013,25 @@ function setupIngressMarkers () {
   L.divIcon.coloredSvg = function (color, options) {
     return new L.DivIcon.ColoredSvg(color, options);
   };
+}
+
+function checkingIntelURL() {
+  if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
+    dialog({
+      title: 'IITC Warning',
+      html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
+      dialogClass: 'ui-dialog-non-standard-intel',
+      buttons: {
+        "Don't remind me": function () {
+          $(this).dialog('close');
+          localStorage['pass-checking-intel-url'] = true;
+        },
+        Dismiss: function () {
+          $(this).dialog('close');
+        },
+      },
+    });
+  }
 }
 
 /*
@@ -3043,11 +3149,8 @@ function prepPluginsToLoad () {
   };
 }
 
-function boot () {
-  if (!isSmartphone()) { // TODO remove completely?
-    window.debug.console.overwriteNativeIfRequired();
-  }
-  log.log('loading done, booting. Built: '+'2022-07-20-194524');
+function boot() {
+  log.log('loading done, booting. Built: '+'2023-03-08-164324');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -3057,6 +3160,7 @@ function boot () {
   var loadPlugins = prepPluginsToLoad();
   loadPlugins('boot');
 
+  checkingIntelURL();
   setupIngressMarkers();
   window.extractFromStock();
   window.setupIdle();
@@ -3097,17 +3201,17 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   window.L_NO_TOUCH = navigator.maxTouchPoints===0; // prevent mobile style on desktop https://github.com/IITC-CE/ingress-intel-total-conversion/pull/189
   // *** included: external/leaflet-src.js ***
 /* @preserve
- * Leaflet 1.7.1+master.7db94fd, a JS library for interactive maps. http://leafletjs.com
- * (c) 2010-2019 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+ * Leaflet 1.8.0, a JS library for interactive maps. https://leafletjs.com
+ * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.L = {})));
-}(this, (function (exports) { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.leaflet = {}));
+})(this, (function (exports) { 'use strict';
 
-  var version = "1.7.1+master.d8dd2f0a";
+  var version = "1.8.0";
 
   /*
    * @namespace Util
@@ -3131,7 +3235,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   // @function create(proto: Object, properties?: Object): Object
   // Compatibility polyfill for [Object.create](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/create)
-  var create = Object.create || (function () {
+  var create$2 = Object.create || (function () {
   	function F() {}
   	return function (proto) {
   		F.prototype = proto;
@@ -3163,10 +3267,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // @function stamp(obj: Object): Number
   // Returns the unique ID of an object, assigning it one if it doesn't have it.
   function stamp(obj) {
-  	/*eslint-disable */
-  	obj._leaflet_id = obj._leaflet_id || ++lastId;
+  	if (!('_leaflet_id' in obj)) {
+  		obj['_leaflet_id'] = ++lastId;
+  	}
   	return obj._leaflet_id;
-  	/* eslint-enable */
   }
 
   // @function throttle(fn: Function, time: Number, context: Object): Function
@@ -3219,10 +3323,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // Returns a function which always returns `false`.
   function falseFn() { return false; }
 
-  // @function formatNum(num: Number, digits?: Number): Number
-  // Returns the number `num` rounded to `digits` decimals, or to 6 decimals by default.
-  function formatNum(num, digits) {
-  	var pow = Math.pow(10, (digits === undefined ? 6 : digits));
+  // @function formatNum(num: Number, precision?: Number|false): Number
+  // Returns the number `num` rounded with specified `precision`.
+  // The default `precision` value is 6 decimal places.
+  // `false` can be passed to skip any processing (can be useful to avoid round-off errors).
+  function formatNum(num, precision) {
+  	if (precision === false) { return num; }
+  	var pow = Math.pow(10, precision === undefined ? 6 : precision);
   	return Math.round(num * pow) / pow;
   }
 
@@ -3242,7 +3349,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // Merges the given properties to the `options` of the `obj` object, returning the resulting options. See `Class options`. Has an `L.setOptions` shortcut.
   function setOptions(obj, options) {
   	if (!Object.prototype.hasOwnProperty.call(obj, 'options')) {
-  		obj.options = obj.options ? create(obj.options) : {};
+  		obj.options = obj.options ? create$2(obj.options) : {};
   	}
   	for (var i in options) {
   		obj.options[i] = options[i];
@@ -3305,7 +3412,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // mobile devices (by setting image `src` to this string).
   var emptyImageUrl = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
-  // inspired by http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+  // inspired by https://paulirish.com/2011/requestanimationframe-for-smart-animating/
 
   function getPrefixed(name) {
   	return window['webkit' + name] || window['moz' + name] || window['ms' + name];
@@ -3348,11 +3455,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	}
   }
 
-  var Util = ({
+  var Util = {
+    __proto__: null,
     extend: extend,
-    create: create,
+    create: create$2,
     bind: bind,
-    lastId: lastId,
+    get lastId () { return lastId; },
     stamp: stamp,
     throttle: throttle,
     wrapNum: wrapNum,
@@ -3370,7 +3478,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
     cancelFn: cancelFn,
     requestAnimFrame: requestAnimFrame,
     cancelAnimFrame: cancelAnimFrame
-  });
+  };
 
   // @class Class
   // @aka L.Class
@@ -3389,6 +3497,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// Returns a Javascript function that is a class constructor (to be called with `new`).
   	var NewClass = function () {
 
+  		setOptions(this);
+
   		// call the constructor
   		if (this.initialize) {
   			this.initialize.apply(this, arguments);
@@ -3400,7 +3510,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	var parentProto = NewClass.__super__ = this.prototype;
 
-  	var proto = create(parentProto);
+  	var proto = create$2(parentProto);
   	proto.constructor = NewClass;
 
   	NewClass.prototype = proto;
@@ -3415,23 +3525,24 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// mix static properties into the class
   	if (props.statics) {
   		extend(NewClass, props.statics);
-  		delete props.statics;
   	}
 
   	// mix includes into the prototype
   	if (props.includes) {
   		checkDeprecatedMixinEvents(props.includes);
   		extend.apply(null, [proto].concat(props.includes));
-  		delete props.includes;
-  	}
-
-  	// merge options
-  	if (proto.options) {
-  		props.options = extend(create(proto.options), props.options);
   	}
 
   	// mix given properties into the prototype
   	extend(proto, props);
+  	delete proto.statics;
+  	delete proto.includes;
+
+  	// merge options
+  	if (proto.options) {
+  		proto.options = parentProto.options ? create$2(parentProto.options) : {};
+  		extend(proto.options, props.options);
+  	}
 
   	proto._initHooks = [];
 
@@ -3458,7 +3569,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // @function include(properties: Object): this
   // [Includes a mixin](#class-includes) into the current class.
   Class.include = function (props) {
+  	var parentOptions = this.prototype.options;
   	extend(this.prototype, props);
+  	if (props.options) {
+  		this.prototype.options = parentOptions;
+  		this.mergeOptions(props.options);
+  	}
   	return this;
   };
 
@@ -3565,7 +3681,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	 */
   	off: function (types, fn, context) {
 
-  		if (!types) {
+  		if (!arguments.length) {
   			// clear all listeners if called without arguments
   			delete this._events;
 
@@ -3577,8 +3693,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		} else {
   			types = splitWords(types);
 
+  			var removeAll = arguments.length === 1;
   			for (var i = 0, len = types.length; i < len; i++) {
-  				this._off(types[i], fn, context);
+  				if (removeAll) {
+  					this._off(types[i]);
+  				} else {
+  					this._off(types[i], fn, context);
+  				}
   			}
   		}
 
@@ -3587,6 +3708,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	// attach listener (without syntactic sugar now)
   	_on: function (type, fn, context) {
+  		if (typeof fn !== 'function') {
+  			console.warn('wrong listener type: ' + typeof fn);
+  			return;
+  		}
   		this._events = this._events || {};
 
   		/* get/init listeners for type */
@@ -3626,10 +3751,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			return;
   		}
 
-  		if (!fn) {
-  			// Set all removed listeners to noop so they are not called if remove happens in fire
-  			for (i = 0, len = listeners.length; i < len; i++) {
-  				listeners[i].fn = falseFn;
+  		if (arguments.length === 1) { // remove all
+  			if (this._firingCount) {
+  				// Set all removed listeners to noop
+  				// so they are not called if remove happens in fire
+  				for (i = 0, len = listeners.length; i < len; i++) {
+  					listeners[i].fn = falseFn;
+  				}
   			}
   			// clear all listeners for a type if function isn't specified
   			delete this._events[type];
@@ -3640,27 +3768,28 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			context = undefined;
   		}
 
-  		if (listeners) {
-
-  			// find fn and remove it
-  			for (i = 0, len = listeners.length; i < len; i++) {
-  				var l = listeners[i];
-  				if (l.ctx !== context) { continue; }
-  				if (l.fn === fn) {
-
+  		if (typeof fn !== 'function') {
+  			console.warn('wrong listener type: ' + typeof fn);
+  			return;
+  		}
+  		// find fn and remove it
+  		for (i = 0, len = listeners.length; i < len; i++) {
+  			var l = listeners[i];
+  			if (l.ctx !== context) { continue; }
+  			if (l.fn === fn) {
+  				if (this._firingCount) {
   					// set the removed listener to noop so that's not called if remove happens in fire
   					l.fn = falseFn;
 
-  					if (this._firingCount) {
-  						/* copy array in case events are being fired */
-  						this._events[type] = listeners = listeners.slice();
-  					}
-  					listeners.splice(i, 1);
-
-  					return;
+  					/* copy array in case events are being fired */
+  					this._events[type] = listeners = listeners.slice();
   				}
+  				listeners.splice(i, 1);
+
+  				return;
   			}
   		}
+  		console.warn('listener not found');
   	},
 
   	// @method fire(type: String, data?: Object, propagate?: Boolean): this
@@ -3698,9 +3827,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return this;
   	},
 
-  	// @method listens(type: String): Boolean
+  	// @method listens(type: String, propagate?: Boolean): Boolean
   	// Returns `true` if a particular event type has any listeners attached to it.
+  	// The verification can optionally be propagated, it will return `true` if parents have the listener attached to it.
   	listens: function (type, propagate) {
+  		if (typeof type !== 'string') {
+  			console.warn('"string" type argument expected');
+  		}
   		var listeners = this._events && this._events[type];
   		if (listeners && listeners.length) { return true; }
 
@@ -4573,7 +4706,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * Object that defines coordinate reference systems for projecting
    * geographical points into pixel (screen) coordinates and back (and to
    * coordinates in other units for [WMS](https://en.wikipedia.org/wiki/Web_Map_Service) services). See
-   * [spatial reference system](http://en.wikipedia.org/wiki/Coordinate_reference_system).
+   * [spatial reference system](https://en.wikipedia.org/wiki/Spatial_reference_system).
    *
    * Leaflet defines the most usual CRSs by default. If you want to use a
    * CRS not defined by default, take a look at the
@@ -4716,7 +4849,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	// Mean Earth Radius, as recommended for use by
   	// the International Union of Geodesy and Geophysics,
-  	// see http://rosettacode.org/wiki/Haversine_formula
+  	// see https://rosettacode.org/wiki/Haversine_formula
   	R: 6371000,
 
   	// distance between two geographical points using spherical law of cosines approximation
@@ -4900,7 +5033,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		}
 
   		// closes the ring for polygons; "x" is VML syntax
-  		str += closed ? (svg ? 'z' : 'x') : '';
+  		str += closed ? (Browser.svg ? 'z' : 'x') : '';
   	}
 
   	// SVG complains about empty path strings
@@ -4922,7 +5055,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * ```
    */
 
-  var style$1 = document.documentElement.style;
+  var style = document.documentElement.style;
 
   // @property ie: Boolean; `true` for all Internet Explorer versions (not Edge).
   var ie = 'ActiveXObject' in window;
@@ -4938,15 +5071,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   var webkit = userAgentContains('webkit');
 
   // @property android: Boolean
-  // `true` for any browser running on an Android platform.
+  // **Deprecated.** `true` for any browser running on an Android platform.
   var android = userAgentContains('android');
 
-  // @property android23: Boolean; `true` for browsers running on Android 2 or Android 3.
+  // @property android23: Boolean; **Deprecated.** `true` for browsers running on Android 2 or Android 3.
   var android23 = userAgentContains('android 2') || userAgentContains('android 3');
 
   /* See https://stackoverflow.com/a/17961266 for details on detecting stock Android */
   var webkitVer = parseInt(/WebKit\/([0-9]+)|$/.exec(navigator.userAgent)[1], 10); // also matches AppleWebKit
-  // @property androidStock: Boolean; `true` for the Android stock browser (i.e. not Chrome)
+  // @property androidStock: Boolean; **Deprecated.** `true` for the Android stock browser (i.e. not Chrome)
   var androidStock = android && userAgentContains('Google') && webkitVer < 537 && !('AudioNode' in window);
 
   // @property opera: Boolean; `true` for the Opera browser
@@ -4965,19 +5098,19 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   // @property opera12: Boolean
   // `true` for the Opera browser supporting CSS transforms (version 12 or later).
-  var opera12 = 'OTransition' in style$1;
+  var opera12 = 'OTransition' in style;
 
   // @property win: Boolean; `true` when the browser is running in a Windows platform
   var win = navigator.platform.indexOf('Win') === 0;
 
   // @property ie3d: Boolean; `true` for all Internet Explorer versions supporting CSS transforms.
-  var ie3d = ie && ('transition' in style$1);
+  var ie3d = ie && ('transition' in style);
 
   // @property webkit3d: Boolean; `true` for webkit-based browsers supporting CSS transforms.
   var webkit3d = ('WebKitCSSMatrix' in window) && ('m11' in new window.WebKitCSSMatrix()) && !android23;
 
   // @property gecko3d: Boolean; `true` for gecko-based browsers supporting CSS transforms.
-  var gecko3d = 'MozPerspective' in style$1;
+  var gecko3d = 'MozPerspective' in style;
 
   // @property any3d: Boolean
   // `true` for all browsers supporting CSS transforms.
@@ -5001,13 +5134,17 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // `true` for all browsers supporting [pointer events](https://msdn.microsoft.com/en-us/library/dn433244%28v=vs.85%29.aspx).
   var pointer = !!(window.PointerEvent || msPointer);
 
-  // @property touch: Boolean
+  // @property touchNative: Boolean
   // `true` for all browsers supporting [touch events](https://developer.mozilla.org/docs/Web/API/Touch_events).
-  // This does not necessarily mean that the browser is running in a computer with
+  // **This does not necessarily mean** that the browser is running in a computer with
   // a touchscreen, it only means that the browser is capable of understanding
   // touch events.
-  var touch = !window.L_NO_TOUCH && (pointer || 'ontouchstart' in window ||
-  		(window.DocumentTouch && document instanceof window.DocumentTouch));
+  var touchNative = 'ontouchstart' in window || !!window.TouchEvent;
+
+  // @property touch: Boolean
+  // `true` for all browsers supporting either [touch](#browser-touch) or [pointer](#browser-pointer) events.
+  // Note: pointer events will be preferred (if available), and processed for all `touch*` listeners.
+  var touch = !window.L_NO_TOUCH && (touchNative || pointer);
 
   // @property mobileOpera: Boolean; `true` for the Opera browser in a mobile device.
   var mobileOpera = mobile && opera;
@@ -5040,17 +5177,23 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   // @property canvas: Boolean
   // `true` when the browser supports [`<canvas>`](https://developer.mozilla.org/docs/Web/API/Canvas_API).
-  var canvas = (function () {
+  var canvas$1 = (function () {
   	return !!document.createElement('canvas').getContext;
   }());
 
   // @property svg: Boolean
   // `true` when the browser supports [SVG](https://developer.mozilla.org/docs/Web/SVG).
-  var svg = !!(document.createElementNS && svgCreate('svg').createSVGRect);
+  var svg$1 = !!(document.createElementNS && svgCreate('svg').createSVGRect);
+
+  var inlineSvg = !!svg$1 && (function () {
+  	var div = document.createElement('div');
+  	div.innerHTML = '<svg/>';
+  	return (div.firstChild && div.firstChild.namespaceURI) === 'http://www.w3.org/2000/svg';
+  })();
 
   // @property vml: Boolean
   // `true` if the browser supports [VML](https://en.wikipedia.org/wiki/Vector_Markup_Language).
-  var vml = !svg && (function () {
+  var vml = !svg$1 && (function () {
   	try {
   		var div = document.createElement('div');
   		div.innerHTML = '<v:shape adj="1"/>';
@@ -5065,115 +5208,92 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	}
   }());
 
-
   function userAgentContains(str) {
   	return navigator.userAgent.toLowerCase().indexOf(str) >= 0;
   }
 
-  var Browser = ({
-    ie: ie,
-    ielt9: ielt9,
-    edge: edge,
-    webkit: webkit,
-    android: android,
-    android23: android23,
-    androidStock: androidStock,
-    opera: opera,
-    chrome: chrome,
-    gecko: gecko,
-    safari: safari,
-    phantom: phantom,
-    opera12: opera12,
-    win: win,
-    ie3d: ie3d,
-    webkit3d: webkit3d,
-    gecko3d: gecko3d,
-    any3d: any3d,
-    mobile: mobile,
-    mobileWebkit: mobileWebkit,
-    mobileWebkit3d: mobileWebkit3d,
-    msPointer: msPointer,
-    pointer: pointer,
-    touch: touch,
-    mobileOpera: mobileOpera,
-    mobileGecko: mobileGecko,
-    retina: retina,
-    passiveEvents: passiveEvents,
-    canvas: canvas,
-    svg: svg,
-    vml: vml
-  });
+
+  var Browser = {
+  	ie: ie,
+  	ielt9: ielt9,
+  	edge: edge,
+  	webkit: webkit,
+  	android: android,
+  	android23: android23,
+  	androidStock: androidStock,
+  	opera: opera,
+  	chrome: chrome,
+  	gecko: gecko,
+  	safari: safari,
+  	phantom: phantom,
+  	opera12: opera12,
+  	win: win,
+  	ie3d: ie3d,
+  	webkit3d: webkit3d,
+  	gecko3d: gecko3d,
+  	any3d: any3d,
+  	mobile: mobile,
+  	mobileWebkit: mobileWebkit,
+  	mobileWebkit3d: mobileWebkit3d,
+  	msPointer: msPointer,
+  	pointer: pointer,
+  	touch: touch,
+  	touchNative: touchNative,
+  	mobileOpera: mobileOpera,
+  	mobileGecko: mobileGecko,
+  	retina: retina,
+  	passiveEvents: passiveEvents,
+  	canvas: canvas$1,
+  	svg: svg$1,
+  	vml: vml,
+  	inlineSvg: inlineSvg
+  };
 
   /*
    * Extends L.DomEvent to provide touch support for Internet Explorer and Windows-based devices.
    */
 
-
-  var POINTER_DOWN =   msPointer ? 'MSPointerDown'   : 'pointerdown';
-  var POINTER_MOVE =   msPointer ? 'MSPointerMove'   : 'pointermove';
-  var POINTER_UP =     msPointer ? 'MSPointerUp'     : 'pointerup';
-  var POINTER_CANCEL = msPointer ? 'MSPointerCancel' : 'pointercancel';
-
+  var POINTER_DOWN =   Browser.msPointer ? 'MSPointerDown'   : 'pointerdown';
+  var POINTER_MOVE =   Browser.msPointer ? 'MSPointerMove'   : 'pointermove';
+  var POINTER_UP =     Browser.msPointer ? 'MSPointerUp'     : 'pointerup';
+  var POINTER_CANCEL = Browser.msPointer ? 'MSPointerCancel' : 'pointercancel';
+  var pEvent = {
+  	touchstart  : POINTER_DOWN,
+  	touchmove   : POINTER_MOVE,
+  	touchend    : POINTER_UP,
+  	touchcancel : POINTER_CANCEL
+  };
+  var handle = {
+  	touchstart  : _onPointerStart,
+  	touchmove   : _handlePointer,
+  	touchend    : _handlePointer,
+  	touchcancel : _handlePointer
+  };
   var _pointers = {};
   var _pointerDocListener = false;
 
   // Provides a touch events wrapper for (ms)pointer events.
-  // ref http://www.w3.org/TR/pointerevents/ https://www.w3.org/Bugs/Public/show_bug.cgi?id=22890
+  // ref https://www.w3.org/TR/pointerevents/ https://www.w3.org/Bugs/Public/show_bug.cgi?id=22890
 
-  function addPointerListener(obj, type, handler, id) {
+  function addPointerListener(obj, type, handler) {
   	if (type === 'touchstart') {
-  		_addPointerStart(obj, handler, id);
-
-  	} else if (type === 'touchmove') {
-  		_addPointerMove(obj, handler, id);
-
-  	} else if (type === 'touchend') {
-  		_addPointerEnd(obj, handler, id);
+  		_addPointerDocListener();
   	}
-
-  	return this;
+  	if (!handle[type]) {
+  		console.warn('wrong event specified:', type);
+  		return L.Util.falseFn;
+  	}
+  	handler = handle[type].bind(this, handler);
+  	obj.addEventListener(pEvent[type], handler, false);
+  	return handler;
   }
 
-  function removePointerListener(obj, type, id) {
-  	var handler = obj['_leaflet_' + type + id];
-
-  	if (type === 'touchstart') {
-  		obj.removeEventListener(POINTER_DOWN, handler, false);
-
-  	} else if (type === 'touchmove') {
-  		obj.removeEventListener(POINTER_MOVE, handler, false);
-
-  	} else if (type === 'touchend') {
-  		obj.removeEventListener(POINTER_UP, handler, false);
-  		obj.removeEventListener(POINTER_CANCEL, handler, false);
+  function removePointerListener(obj, type, handler) {
+  	if (!pEvent[type]) {
+  		console.warn('wrong event specified:', type);
+  		return;
   	}
-
-  	return this;
-  }
-
-  function _addPointerStart(obj, handler, id) {
-  	var onDown = bind(function (e) {
-  		// IE10 specific: MsTouch needs preventDefault. See #2000
-  		if (e.MSPOINTER_TYPE_TOUCH && e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
-  			preventDefault(e);
-  		}
-
-  		_handlePointer(e, handler);
-  	});
-
-  	obj['_leaflet_touchstart' + id] = onDown;
-  	obj.addEventListener(POINTER_DOWN, onDown, false);
-
-  	// need to keep track of what pointers and how many are active to provide e.touches emulation
-  	if (!_pointerDocListener) {
-  		// we listen document as any drags that end by moving the touch off the screen get fired there
-  		document.addEventListener(POINTER_DOWN, _globalPointerDown, true);
-  		document.addEventListener(POINTER_MOVE, _globalPointerMove, true);
-  		document.addEventListener(POINTER_UP, _globalPointerUp, true);
-  		document.addEventListener(POINTER_CANCEL, _globalPointerUp, true);
-
-  		_pointerDocListener = true;
-  	}
+  	obj.removeEventListener(pEvent[type], handler, false);
   }
 
   function _globalPointerDown(e) {
@@ -5190,7 +5310,22 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	delete _pointers[e.pointerId];
   }
 
-  function _handlePointer(e, handler) {
+  function _addPointerDocListener() {
+  	// need to keep track of what pointers and how many are active to provide e.touches emulation
+  	if (!_pointerDocListener) {
+  		// we listen document as any drags that end by moving the touch off the screen get fired there
+  		document.addEventListener(POINTER_DOWN, _globalPointerDown, true);
+  		document.addEventListener(POINTER_MOVE, _globalPointerMove, true);
+  		document.addEventListener(POINTER_UP, _globalPointerUp, true);
+  		document.addEventListener(POINTER_CANCEL, _globalPointerUp, true);
+
+  		_pointerDocListener = true;
+  	}
+  }
+
+  function _handlePointer(handler, e) {
+  	if (e.pointerType === (e.MSPOINTER_TYPE_MOUSE || 'mouse')) { return; }
+
   	e.touches = [];
   	for (var i in _pointers) {
   		e.touches.push(_pointers[i]);
@@ -5200,108 +5335,83 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	handler(e);
   }
 
-  function _addPointerMove(obj, handler, id) {
-  	var onMove = function (e) {
-  		// don't fire touch moves when mouse isn't down
-  		if ((e.pointerType === (e.MSPOINTER_TYPE_MOUSE || 'mouse')) && e.buttons === 0) {
-  			return;
-  		}
-
-  		_handlePointer(e, handler);
-  	};
-
-  	obj['_leaflet_touchmove' + id] = onMove;
-  	obj.addEventListener(POINTER_MOVE, onMove, false);
-  }
-
-  function _addPointerEnd(obj, handler, id) {
-  	var onUp = function (e) {
-  		_handlePointer(e, handler);
-  	};
-
-  	obj['_leaflet_touchend' + id] = onUp;
-  	obj.addEventListener(POINTER_UP, onUp, false);
-  	obj.addEventListener(POINTER_CANCEL, onUp, false);
+  function _onPointerStart(handler, e) {
+  	// IE10 specific: MsTouch needs preventDefault. See #2000
+  	if (e.MSPOINTER_TYPE_TOUCH && e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
+  		preventDefault(e);
+  	}
+  	_handlePointer(handler, e);
   }
 
   /*
    * Extends the event handling code with double tap support for mobile browsers.
+   *
+   * Note: currently most browsers fire native dblclick, with only a few exceptions
+   * (see https://github.com/Leaflet/Leaflet/issues/7012#issuecomment-595087386)
    */
 
-  var _touchstart = msPointer ? 'MSPointerDown' : pointer ? 'pointerdown' : 'touchstart';
-  var _touchend = msPointer ? 'MSPointerUp' : pointer ? 'pointerup' : 'touchend';
-  var _pre = '_leaflet_';
+  function makeDblclick(event) {
+  	// in modern browsers `type` cannot be just overridden:
+  	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Getter_only
+  	var newEvent = {},
+  	    prop, i;
+  	for (i in event) {
+  		prop = event[i];
+  		newEvent[i] = prop && prop.bind ? prop.bind(event) : prop;
+  	}
+  	event = newEvent;
+  	newEvent.type = 'dblclick';
+  	newEvent.detail = 2;
+  	newEvent.isTrusted = false;
+  	newEvent._simulated = true; // for debug purposes
+  	return newEvent;
+  }
 
-  // inspired by Zepto touch code by Thomas Fuchs
-  function addDoubleTapListener(obj, handler, id) {
-  	var last, touch$$1,
-  	    doubleTap = false,
-  	    delay = 250;
+  var delay = 200;
+  function addDoubleTapListener(obj, handler) {
+  	// Most browsers handle double tap natively
+  	obj.addEventListener('dblclick', handler);
 
-  	function onTouchStart(e) {
-
-  		if (pointer) {
-  			if (!e.isPrimary) { return; }
-  			if (e.pointerType === 'mouse') { return; } // mouse fires native dblclick
-  		} else if (e.touches.length > 1) {
+  	// On some platforms the browser doesn't fire native dblclicks for touch events.
+  	// It seems that in all such cases `detail` property of `click` event is always `1`.
+  	// So here we rely on that fact to avoid excessive 'dblclick' simulation when not needed.
+  	var last = 0,
+  	    detail;
+  	function simDblclick(e) {
+  		if (e.detail !== 1) {
+  			detail = e.detail; // keep in sync to avoid false dblclick in some cases
   			return;
   		}
 
-  		var now = Date.now(),
-  		    delta = now - (last || now);
+  		if (e.pointerType === 'mouse' ||
+  			(e.sourceCapabilities && !e.sourceCapabilities.firesTouchEvents)) {
 
-  		touch$$1 = e.touches ? e.touches[0] : e;
-  		doubleTap = (delta > 0 && delta <= delay);
+  			return;
+  		}
+
+  		var now = Date.now();
+  		if (now - last <= delay) {
+  			detail++;
+  			if (detail === 2) {
+  				handler(makeDblclick(e));
+  			}
+  		} else {
+  			detail = 1;
+  		}
   		last = now;
   	}
 
-  	function onTouchEnd(e) {
-  		if (doubleTap && !touch$$1.cancelBubble) {
-  			if (pointer) {
-  				if (e.pointerType === 'mouse') { return; }
-  				// work around .type being readonly with MSPointer* events
-  				var newTouch = {},
-  				    prop, i;
+  	obj.addEventListener('click', simDblclick);
 
-  				for (i in touch$$1) {
-  					prop = touch$$1[i];
-  					newTouch[i] = prop && prop.bind ? prop.bind(touch$$1) : prop;
-  				}
-  				touch$$1 = newTouch;
-  			}
-  			touch$$1.type = 'dblclick';
-  			touch$$1.button = 0;
-  			handler(touch$$1);
-  			last = null;
-  		}
-  	}
-
-  	obj[_pre + _touchstart + id] = onTouchStart;
-  	obj[_pre + _touchend + id] = onTouchEnd;
-  	obj[_pre + 'dblclick' + id] = handler;
-
-  	obj.addEventListener(_touchstart, onTouchStart, passiveEvents ? {passive: false} : false);
-  	obj.addEventListener(_touchend, onTouchEnd, passiveEvents ? {passive: false} : false);
-
-  	// On some platforms (notably, chrome<55 on win10 + touchscreen + mouse),
-  	// the browser doesn't fire touchend/pointerup events but does fire
-  	// native dblclicks. See #4127.
-  	// Edge 14 also fires native dblclicks, but only for pointerType mouse, see #5180.
-  	obj.addEventListener('dblclick', handler, false);
-
-  	return this;
+  	return {
+  		dblclick: handler,
+  		simDblclick: simDblclick
+  	};
   }
 
-  function removeDoubleTapListener(obj, id) {
-  	var touchstart = obj[_pre + _touchstart + id],
-  	    touchend = obj[_pre + _touchend + id],
-  	    dblclick = obj[_pre + 'dblclick' + id];
-
-  	obj.removeEventListener(_touchstart, touchstart, passiveEvents ? {passive: false} : false);
-  	obj.removeEventListener(_touchend, touchend, passiveEvents ? {passive: false} : false);
-  	obj.removeEventListener('dblclick', dblclick, false);
-
-  	return this;
+  function removeDoubleTapListener(obj, handlers) {
+  	obj.removeEventListener('dblclick', handlers.dblclick);
+  	obj.removeEventListener('click', handlers.simDblclick);
   }
 
   /*
@@ -5515,7 +5625,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	var pos = offset || new Point(0, 0);
 
   	el.style[TRANSFORM] =
-  		(ie3d ?
+  		(Browser.ie3d ?
   			'translate(' + pos.x + 'px,' + pos.y + 'px)' :
   			'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)') +
   		(scale ? ' scale(' + scale + ')' : '');
@@ -5531,7 +5641,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	el._leaflet_pos = point;
   	/* eslint-enable */
 
-  	if (any3d) {
+  	if (Browser.any3d) {
   		setTransform(el, point);
   	} else {
   		el.style.left = point.x + 'px';
@@ -5649,7 +5759,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	};
   }
 
-  var DomUtil = ({
+  var DomUtil = {
+    __proto__: null,
     TRANSFORM: TRANSFORM,
     TRANSITION: TRANSITION,
     TRANSITION_END: TRANSITION_END,
@@ -5670,15 +5781,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
     setTransform: setTransform,
     setPosition: setPosition,
     getPosition: getPosition,
-    disableTextSelection: disableTextSelection,
-    enableTextSelection: enableTextSelection,
+    get disableTextSelection () { return disableTextSelection; },
+    get enableTextSelection () { return enableTextSelection; },
     disableImageDrag: disableImageDrag,
     enableImageDrag: enableImageDrag,
     preventOutline: preventOutline,
     restoreOutline: restoreOutline,
     getSizedParentNode: getSizedParentNode,
     getScale: getScale
-  });
+  };
 
   /*
    * @namespace DomEvent
@@ -5698,7 +5809,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // Adds a set of type/listener pairs, e.g. `{click: onClick, mousemove: onMouseMove}`
   function on(obj, types, fn, context) {
 
-  	if (typeof types === 'object') {
+  	if (types && typeof types === 'object') {
   		for (var type in types) {
   			addOne(obj, type, types[type], fn);
   		}
@@ -5723,32 +5834,48 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // @alternative
   // @function off(el: HTMLElement, eventMap: Object, context?: Object): this
   // Removes a set of type/listener pairs, e.g. `{click: onClick, mousemove: onMouseMove}`
+
+  // @alternative
+  // @function off(el: HTMLElement, types: String): this
+  // Removes all previously added listeners of given types.
+
+  // @alternative
+  // @function off(el: HTMLElement): this
+  // Removes all previously added listeners from given HTMLElement
   function off(obj, types, fn, context) {
 
-  	if (typeof types === 'object') {
+  	if (arguments.length === 1) {
+  		batchRemove(obj);
+  		delete obj[eventsKey];
+
+  	} else if (types && typeof types === 'object') {
   		for (var type in types) {
   			removeOne(obj, type, types[type], fn);
   		}
-  	} else if (types) {
+
+  	} else {
   		types = splitWords(types);
 
-  		for (var i = 0, len = types.length; i < len; i++) {
-  			removeOne(obj, types[i], fn, context);
+  		if (arguments.length === 2) {
+  			batchRemove(obj, function (type) {
+  				return indexOf(types, type) !== -1;
+  			});
+  		} else {
+  			for (var i = 0, len = types.length; i < len; i++) {
+  				removeOne(obj, types[i], fn, context);
+  			}
   		}
-  	} else {
-  		for (var j in obj[eventsKey]) {
-  			removeOne(obj, j, obj[eventsKey][j]);
-  		}
-  		delete obj[eventsKey];
   	}
 
   	return this;
   }
 
-  function browserFiresNativeDblClick() {
-  	// See https://github.com/w3c/pointerevents/issues/171
-  	if (pointer) {
-  		return !(edge || safari);
+  function batchRemove(obj, filterFn) {
+  	for (var id in obj[eventsKey]) {
+  		var type = id.split(/\d/)[0];
+  		if (!filterFn || filterFn(type)) {
+  			removeOne(obj, type, null, null, id);
+  		}
   	}
   }
 
@@ -5769,17 +5896,17 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	var originalHandler = handler;
 
-  	if (pointer && type.indexOf('touch') === 0) {
+  	if (!Browser.touchNative && Browser.pointer && type.indexOf('touch') === 0) {
   		// Needs DomEvent.Pointer.js
-  		addPointerListener(obj, type, handler, id);
+  		handler = addPointerListener(obj, type, handler);
 
-  	} else if (touch && (type === 'dblclick') && !browserFiresNativeDblClick()) {
-  		addDoubleTapListener(obj, handler, id);
+  	} else if (Browser.touch && (type === 'dblclick')) {
+  		handler = addDoubleTapListener(obj, handler);
 
   	} else if ('addEventListener' in obj) {
 
   		if (type === 'touchstart' || type === 'touchmove' || type === 'wheel' ||  type === 'mousewheel') {
-  			obj.addEventListener(mouseSubst[type] || type, handler, passiveEvents ? {passive: false} : false);
+  			obj.addEventListener(mouseSubst[type] || type, handler, Browser.passiveEvents ? {passive: false} : false);
 
   		} else if (type === 'mouseenter' || type === 'mouseleave') {
   			handler = function (e) {
@@ -5794,7 +5921,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			obj.addEventListener(type, originalHandler, false);
   		}
 
-  	} else if ('attachEvent' in obj) {
+  	} else {
   		obj.attachEvent('on' + type, handler);
   	}
 
@@ -5802,24 +5929,23 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	obj[eventsKey][id] = handler;
   }
 
-  function removeOne(obj, type, fn, context) {
-
-  	var id = type + stamp(fn) + (context ? '_' + stamp(context) : ''),
-  	    handler = obj[eventsKey] && obj[eventsKey][id];
+  function removeOne(obj, type, fn, context, id) {
+  	id = id || type + stamp(fn) + (context ? '_' + stamp(context) : '');
+  	var handler = obj[eventsKey] && obj[eventsKey][id];
 
   	if (!handler) { return this; }
 
-  	if (pointer && type.indexOf('touch') === 0) {
-  		removePointerListener(obj, type, id);
+  	if (!Browser.touchNative && Browser.pointer && type.indexOf('touch') === 0) {
+  		removePointerListener(obj, type, handler);
 
-  	} else if (touch && (type === 'dblclick') && !browserFiresNativeDblClick()) {
-  		removeDoubleTapListener(obj, id);
+  	} else if (Browser.touch && (type === 'dblclick')) {
+  		removeDoubleTapListener(obj, handler);
 
   	} else if ('removeEventListener' in obj) {
 
   		obj.removeEventListener(mouseSubst[type] || type, handler, false);
 
-  	} else if ('detachEvent' in obj) {
+  	} else {
   		obj.detachEvent('on' + type, handler);
   	}
 
@@ -5842,7 +5968,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	} else {
   		e.cancelBubble = true;
   	}
-  	skipped(e);
 
   	return this;
   }
@@ -5855,11 +5980,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   }
 
   // @function disableClickPropagation(el: HTMLElement): this
-  // Adds `stopPropagation` to the element's `'click'`, `'doubleclick'`,
+  // Adds `stopPropagation` to the element's `'click'`, `'dblclick'`, `'contextmenu'`,
   // `'mousedown'` and `'touchstart'` events (plus browser variants).
   function disableClickPropagation(el) {
-  	on(el, 'mousedown touchstart dblclick', stopPropagation);
-  	addOne(el, 'click', fakeStop);
+  	on(el, 'mousedown touchstart dblclick contextmenu', stopPropagation);
+  	el['_leaflet_disable_click'] = true;
   	return this;
   }
 
@@ -5907,8 +6032,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // Chrome on Win scrolls double the pixels as in other platforms (see #4538),
   // and Firefox scrolls device pixels, not CSS pixels
   var wheelPxFactor =
-  	(win && chrome) ? 2 * window.devicePixelRatio :
-  	gecko ? window.devicePixelRatio : 1;
+  	(Browser.win && Browser.chrome) ? 2 * window.devicePixelRatio :
+  	Browser.gecko ? window.devicePixelRatio : 1;
 
   // @function getWheelDelta(ev: DOMEvent): Number
   // Gets normalized wheel delta from a wheel DOM event, in vertical
@@ -5916,7 +6041,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // Events from pointing devices without precise scrolling are mapped to
   // a best guess of 60 pixels.
   function getWheelDelta(e) {
-  	return (edge) ? e.wheelDeltaY / 2 : // Don't trust window-geometry-based delta
+  	return (Browser.edge) ? e.wheelDeltaY / 2 : // Don't trust window-geometry-based delta
   	       (e.deltaY && e.deltaMode === 0) ? -e.deltaY / wheelPxFactor : // Pixels
   	       (e.deltaY && e.deltaMode === 1) ? -e.deltaY * 20 : // Lines
   	       (e.deltaY && e.deltaMode === 2) ? -e.deltaY * 60 : // Pages
@@ -5925,20 +6050,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	       (e.detail && Math.abs(e.detail) < 32765) ? -e.detail * 20 : // Legacy Moz lines
   	       e.detail ? e.detail / -32765 * 60 : // Legacy Moz pages
   	       0;
-  }
-
-  var skipEvents = {};
-
-  function fakeStop(e) {
-  	// fakes stopPropagation by setting a special event flag, checked/reset with skipped(e)
-  	skipEvents[e.type] = true;
-  }
-
-  function skipped(e) {
-  	var events = skipEvents[e.type];
-  	// reset when checking, as it's only used in map container and propagates outside of the map
-  	skipEvents[e.type] = false;
-  	return events;
   }
 
   // check if element really left/entered the event target (for mouseenter/mouseleave)
@@ -5958,7 +6069,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return (related !== el);
   }
 
-  var DomEvent = ({
+  var DomEvent = {
+    __proto__: null,
     on: on,
     off: off,
     stopPropagation: stopPropagation,
@@ -5968,12 +6080,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
     stop: stop,
     getMousePosition: getMousePosition,
     getWheelDelta: getWheelDelta,
-    fakeStop: fakeStop,
-    skipped: skipped,
     isExternalTarget: isExternalTarget,
     addListener: on,
     removeListener: off
-  });
+  };
 
   /*
    * @class PosAnimation
@@ -5997,7 +6107,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @method run(el: HTMLElement, newPos: Point, duration?: Number, easeLinearity?: Number)
   	// Run an animation of a given element to a new position, optionally setting
   	// duration in seconds (`0.25` by default) and easing linearity factor (3rd
-  	// argument of the [cubic bezier curve](http://cubic-bezier.com/#0,0,.5,1),
+  	// argument of the [cubic bezier curve](https://cubic-bezier.com/#0,0,.5,1),
   	// `0.5` by default).
   	run: function (el, newPos, duration, easeLinearity) {
   		this.stop();
@@ -6217,7 +6327,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		this.callInitHooks();
 
   		// don't animate on browsers without hardware-accelerated transitions or old Android/Opera
-  		this._zoomAnimated = TRANSITION && any3d && !mobileOpera &&
+  		this._zoomAnimated = TRANSITION && Browser.any3d && !Browser.mobileOpera &&
   				this.options.zoomAnimation;
 
   		// zoom transitions run with the same duration for all layers, so if one of transitionend events
@@ -6282,14 +6392,14 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @method zoomIn(delta?: Number, options?: Zoom options): this
   	// Increases the zoom of the map by `delta` ([`zoomDelta`](#map-zoomdelta) by default).
   	zoomIn: function (delta, options) {
-  		delta = delta || (any3d ? this.options.zoomDelta : 1);
+  		delta = delta || (Browser.any3d ? this.options.zoomDelta : 1);
   		return this.setZoom(this._zoom + delta, options);
   	},
 
   	// @method zoomOut(delta?: Number, options?: Zoom options): this
   	// Decreases the zoom of the map by `delta` ([`zoomDelta`](#map-zoomdelta) by default).
   	zoomOut: function (delta, options) {
-  		delta = delta || (any3d ? this.options.zoomDelta : 1);
+  		delta = delta || (Browser.any3d ? this.options.zoomDelta : 1);
   		return this.setZoom(this._zoom - delta, options);
   	},
 
@@ -6419,7 +6529,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	flyTo: function (targetCenter, targetZoom, options) {
 
   		options = options || {};
-  		if (options.animate === false || !any3d) {
+  		if (options.animate === false || !Browser.any3d) {
   			return this.setView(targetCenter, targetZoom, options);
   		}
 
@@ -6572,10 +6682,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return this;
   	},
 
-  	// @method panInside(latlng: LatLng, options?: options): this
+  	// @method panInside(latlng: LatLng, options?: padding options): this
   	// Pans the map the minimum amount to make the `latlng` visible. Use
-  	// `padding`, `paddingTopLeft` and `paddingTopRight` options to fit
-  	// the display to more restricted bounds, like [`fitBounds`](#map-fitbounds).
+  	// padding options to fit the display to more restricted bounds.
   	// If `latlng` is already within the (optionally padded) display bounds,
   	// the map will not be panned.
   	panInside: function (latlng, options) {
@@ -6583,35 +6692,19 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		var paddingTL = toPoint(options.paddingTopLeft || options.padding || [0, 0]),
   		    paddingBR = toPoint(options.paddingBottomRight || options.padding || [0, 0]),
-  		    center = this.getCenter(),
-  		    pixelCenter = this.project(center),
+  		    pixelCenter = this.project(this.getCenter()),
   		    pixelPoint = this.project(latlng),
   		    pixelBounds = this.getPixelBounds(),
-  		    halfPixelBounds = pixelBounds.getSize().divideBy(2),
-  		    paddedBounds = toBounds([pixelBounds.min.add(paddingTL), pixelBounds.max.subtract(paddingBR)]);
+  		    paddedBounds = toBounds([pixelBounds.min.add(paddingTL), pixelBounds.max.subtract(paddingBR)]),
+  		    paddedSize = paddedBounds.getSize();
 
   		if (!paddedBounds.contains(pixelPoint)) {
   			this._enforcingBounds = true;
-  			var diff = pixelCenter.subtract(pixelPoint),
-  			    newCenter = toPoint(pixelPoint.x + diff.x, pixelPoint.y + diff.y);
-
-  			if (pixelPoint.x < paddedBounds.min.x || pixelPoint.x > paddedBounds.max.x) {
-  				newCenter.x = pixelCenter.x - diff.x;
-  				if (diff.x > 0) {
-  					newCenter.x += halfPixelBounds.x - paddingTL.x;
-  				} else {
-  					newCenter.x -= halfPixelBounds.x - paddingBR.x;
-  				}
-  			}
-  			if (pixelPoint.y < paddedBounds.min.y || pixelPoint.y > paddedBounds.max.y) {
-  				newCenter.y = pixelCenter.y - diff.y;
-  				if (diff.y > 0) {
-  					newCenter.y += halfPixelBounds.y - paddingTL.y;
-  				} else {
-  					newCenter.y -= halfPixelBounds.y - paddingBR.y;
-  				}
-  			}
-  			this.panTo(this.unproject(newCenter), options);
+  			var centerOffset = pixelPoint.subtract(paddedBounds.getCenter());
+  			var offset = paddedBounds.extend(pixelPoint).getSize().subtract(paddedSize);
+  			pixelCenter.x += centerOffset.x < 0 ? -offset.x : offset.x;
+  			pixelCenter.y += centerOffset.y < 0 ? -offset.y : offset.y;
+  			this.panTo(this.unproject(pixelCenter), options);
   			this._enforcingBounds = false;
   		}
   		return this;
@@ -6742,6 +6835,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_handleGeolocationError: function (error) {
+  		if (!this._container._leaflet_id) { return; }
+
   		var c = error.code,
   		    message = error.message ||
   		            (c === 1 ? 'permission denied' :
@@ -6761,6 +6856,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_handleGeolocationResponse: function (pos) {
+  		if (!this._container._leaflet_id) { return; }
+
   		var lat = pos.coords.latitude,
   		    lng = pos.coords.longitude,
   		    latlng = new LatLng(lat, lng),
@@ -6813,7 +6910,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	remove: function () {
 
   		this._initEvents(true);
-  		this.off('moveend', this._panInsideMaxBounds);
+  		if (this.options.maxBounds) { this.off('moveend', this._panInsideMaxBounds); }
 
   		if (this._containerId !== this._container._leaflet_id) {
   			throw new Error('Map container is being reused by another instance');
@@ -6945,7 +7042,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		    se = bounds.getSouthEast(),
   		    size = this.getSize().subtract(padding),
   		    boundsSize = toBounds(this.project(se, zoom), this.project(nw, zoom)).getSize(),
-  		    snap = any3d ? this.options.zoomSnap : 1,
+  		    snap = Browser.any3d ? this.options.zoomSnap : 1,
   		    scalex = size.x / boundsSize.x,
   		    scaley = size.y / boundsSize.y,
   		    scale = inside ? Math.max(scalex, scaley) : Math.min(scalex, scaley);
@@ -7173,13 +7270,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	_initLayout: function () {
   		var container = this._container;
 
-  		this._fadeAnimated = this.options.fadeAnimation && any3d;
+  		this._fadeAnimated = this.options.fadeAnimation && Browser.any3d;
 
   		addClass(container, 'leaflet-container' +
-  			(touch ? ' leaflet-touch' : '') +
-  			(retina ? ' leaflet-retina' : '') +
-  			(ielt9 ? ' leaflet-oldie' : '') +
-  			(safari ? ' leaflet-safari' : '') +
+  			(Browser.touch ? ' leaflet-touch' : '') +
+  			(Browser.retina ? ' leaflet-retina' : '') +
+  			(Browser.ielt9 ? ' leaflet-oldie' : '') +
+  			(Browser.safari ? ' leaflet-safari' : '') +
   			(this._fadeAnimated ? ' leaflet-fade-anim' : ''));
 
   		var position = getStyle(container, 'position');
@@ -7285,7 +7382,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return this;
   	},
 
-  	_move: function (center, zoom, data) {
+  	_move: function (center, zoom, data, supressEvent) {
   		if (zoom === undefined) {
   			zoom = this._zoom;
   		}
@@ -7295,29 +7392,34 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		this._lastCenter = center;
   		this._pixelOrigin = this._getNewPixelOrigin(center);
 
-  		// @event zoom: Event
-  		// Fired repeatedly during any change in zoom level, including zoom
-  		// and fly animations.
-  		if (zoomChanged || (data && data.pinch)) {	// Always fire 'zoom' if pinching because #3530
+  		if (!supressEvent) {
+  			// @event zoom: Event
+  			// Fired repeatedly during any change in zoom level,
+  			// including zoom and fly animations.
+  			if (zoomChanged || (data && data.pinch)) {	// Always fire 'zoom' if pinching because #3530
+  				this.fire('zoom', data);
+  			}
+
+  			// @event move: Event
+  			// Fired repeatedly during any movement of the map,
+  			// including pan and fly animations.
+  			this.fire('move', data);
+  		} else if (data && data.pinch) {	// Always fire 'zoom' if pinching because #3530
   			this.fire('zoom', data);
   		}
-
-  		// @event move: Event
-  		// Fired repeatedly during any movement of the map, including pan and
-  		// fly animations.
-  		return this.fire('move', data);
+  		return this;
   	},
 
   	_moveEnd: function (zoomChanged) {
   		// @event zoomend: Event
-  		// Fired when the map has changed, after any animations.
+  		// Fired when the map zoom changed, after any animations.
   		if (zoomChanged) {
   			this.fire('zoomend');
   		}
 
   		// @event moveend: Event
-  		// Fired when the center of the map stops changing (e.g. user stopped
-  		// dragging the map).
+  		// Fired when the center of the map stops changing
+  		// (e.g. user stopped dragging the map or after non-centered zoom).
   		return this.fire('moveend');
   	},
 
@@ -7352,11 +7454,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// DOM event handling
 
   	// @section Interaction events
-  	_initEvents: function (remove$$1) {
+  	_initEvents: function (remove) {
   		this._targets = {};
   		this._targets[stamp(this._container)] = this;
 
-  		var onOff = remove$$1 ? off : on;
+  		var onOff = remove ? off : on;
 
   		// @event click: MouseEvent
   		// Fired when the user clicks (or taps) the map.
@@ -7392,8 +7494,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			onOff(window, 'resize', this._onResize, this);
   		}
 
-  		if (any3d && this.options.transform3DLimit) {
-  			(remove$$1 ? this.off : this.on).call(this, 'moveend', this._onMoveEnd);
+  		if (Browser.any3d && this.options.transform3DLimit) {
+  			(remove ? this.off : this.on).call(this, 'moveend', this._onMoveEnd);
   		}
   	},
 
@@ -7412,7 +7514,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		var pos = this._getMapPanePos();
   		if (Math.max(Math.abs(pos.x), Math.abs(pos.y)) >= this.options.transform3DLimit) {
   			// https://bugzilla.mozilla.org/show_bug.cgi?id=1203873 but Webkit also have
-  			// a pixel offset on very high values, see: http://jsfiddle.net/dg6r5hhb/
+  			// a pixel offset on very high values, see: https://jsfiddle.net/dg6r5hhb/
   			this._resetView(this.getCenter(), this.getZoom());
   		}
   	},
@@ -7426,7 +7528,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		while (src) {
   			target = this._targets[stamp(src)];
-  			if (target && (type === 'click' || type === 'preclick') && !e._simulated && this._draggableMoved(target)) {
+  			if (target && (type === 'click' || type === 'preclick') && this._draggableMoved(target)) {
   				// Prevent firing click after you just dragged an object.
   				dragging = true;
   				break;
@@ -7439,20 +7541,30 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			if (src === this._container) { break; }
   			src = src.parentNode;
   		}
-  		if (!targets.length && !dragging && !isHover && isExternalTarget(src, e)) {
+  		if (!targets.length && !dragging && !isHover && this.listens(type, true)) {
   			targets = [this];
   		}
   		return targets;
   	},
 
+  	_isClickDisabled: function (el) {
+  		while (el !== this._container) {
+  			if (el['_leaflet_disable_click']) { return true; }
+  			el = el.parentNode;
+  		}
+  	},
+
   	_handleDOMEvent: function (e) {
-  		if (!this._loaded || skipped(e)) { return; }
+  		var el = (e.target || e.srcElement);
+  		if (!this._loaded || el['_leaflet_disable_events'] || e.type === 'click' && this._isClickDisabled(el)) {
+  			return;
+  		}
 
   		var type = e.type;
 
   		if (type === 'mousedown') {
   			// prevents outline when clicking on keyboard-focusable element
-  			preventOutline(e.target || e.srcElement);
+  			preventOutline(el);
   		}
 
   		this._fireDOMEvent(e, type);
@@ -7460,7 +7572,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	_mouseEvents: ['click', 'dblclick', 'mouseover', 'mouseout', 'contextmenu'],
 
-  	_fireDOMEvent: function (e, type, targets) {
+  	_fireDOMEvent: function (e, type, canvasTargets) {
 
   		if (e.type === 'click') {
   			// Fire a synthetic 'preclick' event which propagates up (mainly for closing popups).
@@ -7470,21 +7582,29 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			// handlers start running).
   			var synth = extend({}, e);
   			synth.type = 'preclick';
-  			this._fireDOMEvent(synth, synth.type, targets);
+  			this._fireDOMEvent(synth, synth.type, canvasTargets);
   		}
 
-  		if (e._stopped) { return; }
-
   		// Find the layer the event is propagating from and its parents.
-  		targets = (targets || []).concat(this._findEventTargets(e, type));
+  		var targets = this._findEventTargets(e, type);
+
+  		if (canvasTargets) {
+  			var filtered = []; // pick only targets with listeners
+  			for (var i = 0; i < canvasTargets.length; i++) {
+  				if (canvasTargets[i].listens(type, true)) {
+  					filtered.push(canvasTargets[i]);
+  				}
+  			}
+  			targets = filtered.concat(targets);
+  		}
 
   		if (!targets.length) { return; }
 
-  		var target = targets[0];
-  		if (type === 'contextmenu' && target.listens(type, true)) {
+  		if (type === 'contextmenu') {
   			preventDefault(e);
   		}
 
+  		var target = targets[0];
   		var data = {
   			originalEvent: e
   		};
@@ -7497,7 +7617,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			data.latlng = isMarker ? target.getLatLng() : this.layerPointToLatLng(data.layerPoint);
   		}
 
-  		for (var i = 0; i < targets.length; i++) {
+  		for (i = 0; i < targets.length; i++) {
   			targets[i].fire(type, data, true);
   			if (data.originalEvent._stopped ||
   				(targets[i].options.bubblingMouseEvents === false && indexOf(this._mouseEvents, type) !== -1)) { return; }
@@ -7633,7 +7753,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	_limitZoom: function (zoom) {
   		var min = this.getMinZoom(),
   		    max = this.getMaxZoom(),
-  		    snap = any3d ? this.options.zoomSnap : 1;
+  		    snap = Browser.any3d ? this.options.zoomSnap : 1;
   		if (snap) {
   			zoom = Math.round(zoom / snap) * snap;
   		}
@@ -7753,6 +7873,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			noUpdate: noUpdate
   		});
 
+  		if (!this._tempFireZoomEvent) {
+  			this._tempFireZoomEvent = this._zoom !== this._animateToZoom;
+  		}
+
+  		this._move(this._animateToCenter, this._animateToZoom, undefined, true);
+
   		// Work around webkit not firing 'transitionend', see https://github.com/Leaflet/Leaflet/issues/3689, 2693
   		setTimeout(bind(this._onZoomTransitionEnd, this), 250);
   	},
@@ -7766,12 +7892,16 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		this._animatingZoom = false;
 
-  		this._move(this._animateToCenter, this._animateToZoom);
+  		this._move(this._animateToCenter, this._animateToZoom, undefined, true);
 
-  		// This anim frame should prevent an obscure iOS webkit tile loading race condition.
-  		requestAnimFrame(function () {
-  			this._moveEnd(true);
-  		}, this);
+  		if (this._tempFireZoomEvent) {
+  			this.fire('zoom');
+  		}
+  		delete this._tempFireZoomEvent;
+
+  		this.fire('move');
+
+  		this._moveEnd(true);
   	}
   });
 
@@ -7800,7 +7930,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   var Control = Class.extend({
   	// @section
-  	// @aka Control options
+  	// @aka Control Options
   	options: {
   		// @option position: String = 'topright'
   		// The position of the control (one of the map corners). Possible values are `'topleft'`,
@@ -7963,7 +8093,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * @aka L.Control.Layers
    * @inherits Control
    *
-   * The layers control gives users the ability to switch between different base layers and switch overlays on/off (check out the [detailed example](http://leafletjs.com/examples/layers-control/)). Extends `Control`.
+   * The layers control gives users the ability to switch between different base layers and switch overlays on/off (check out the [detailed example](https://leafletjs.com/examples/layers-control/)). Extends `Control`.
    *
    * @example
    *
@@ -8002,7 +8132,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @aka Control.Layers options
   	options: {
   		// @option collapsed: Boolean = true
-  		// If `true`, the control will be collapsed into an icon and expanded on mouse hover or touch.
+  		// If `true`, the control will be collapsed into an icon and expanded on mouse hover, touch, or keyboard activation.
   		collapsed: true,
   		position: 'topright',
 
@@ -8140,24 +8270,25 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		if (collapsed) {
   			this._map.on('click', this.collapse, this);
 
-  			if (!android) {
-  				on(container, {
-  					mouseenter: this.expand,
-  					mouseleave: this.collapse
-  				}, this);
-  			}
+  			on(container, {
+  				mouseenter: function () {
+  					on(section, 'click', preventDefault);
+  					this.expand();
+  					setTimeout(function () {
+  						off(section, 'click', preventDefault);
+  					});
+  				},
+  				mouseleave: this.collapse
+  			}, this);
   		}
 
   		var link = this._layersLink = create$1('a', className + '-toggle', container);
   		link.href = '#';
   		link.title = 'Layers';
+  		link.setAttribute('role', 'button');
 
-  		if (touch) {
-  			on(link, 'click', stop);
-  			on(link, 'click', this.expand, this);
-  		} else {
-  			on(link, 'focus', this.expand, this);
-  		}
+  		on(link, 'click', preventDefault); // prevent link function
+  		on(link, 'focus', this.expand, this);
 
   		if (!collapsed) {
   			this.expand();
@@ -8293,7 +8424,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		// Helps from preventing layer control flicker when checkboxes are disabled
   		// https://github.com/Leaflet/Leaflet/issues/2771
-  		var holder = document.createElement('div');
+  		var holder = document.createElement('span');
 
   		label.appendChild(holder);
   		holder.appendChild(input);
@@ -8362,16 +8493,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			this.expand();
   		}
   		return this;
-  	},
-
-  	_expand: function () {
-  		// Backward compatibility, remove me in 1.1.
-  		return this.expand();
-  	},
-
-  	_collapse: function () {
-  		// Backward compatibility, remove me in 1.1.
-  		return this.collapse();
   	}
 
   });
@@ -8397,17 +8518,17 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	options: {
   		position: 'topleft',
 
-  		// @option zoomInText: String = '+'
+  		// @option zoomInText: String = '<span aria-hidden="true">+</span>'
   		// The text set on the 'zoom in' button.
-  		zoomInText: '+',
+  		zoomInText: '<span aria-hidden="true">+</span>',
 
   		// @option zoomInTitle: String = 'Zoom in'
   		// The title set on the 'zoom in' button.
   		zoomInTitle: 'Zoom in',
 
-  		// @option zoomOutText: String = '&#x2212;'
+  		// @option zoomOutText: String = '<span aria-hidden="true">&#x2212;</span>'
   		// The text set on the 'zoom out' button.
-  		zoomOutText: '&#x2212;',
+  		zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
 
   		// @option zoomOutTitle: String = 'Zoom out'
   		// The title set on the 'zoom out' button.
@@ -8653,6 +8774,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return new Scale(options);
   };
 
+  var ukrainianFlag = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8"><path fill="#4C7BE1" d="M0 0h12v4H0z"/><path fill="#FFD500" d="M0 4h12v3H0z"/><path fill="#E0BC00" d="M0 7h12v1H0z"/></svg>';
+
+
   /*
    * @class Control.Attribution
    * @aka L.Control.Attribution
@@ -8667,9 +8791,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	options: {
   		position: 'bottomright',
 
-  		// @option prefix: String = 'Leaflet'
+  		// @option prefix: String|false = 'Leaflet'
   		// The HTML text shown before the attributions. Pass `false` to disable.
-  		prefix: '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>'
+  		prefix: '<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">' + (Browser.inlineSvg ? ukrainianFlag + ' ' : '') + 'Leaflet</a>'
   	},
 
   	initialize: function (options) {
@@ -8692,11 +8816,26 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		this._update();
 
+  		map.on('layeradd', this._addAttribution, this);
+
   		return this._container;
   	},
 
-  	// @method setPrefix(prefix: String): this
-  	// Sets the text before the attributions.
+  	onRemove: function (map) {
+  		map.off('layeradd', this._addAttribution, this);
+  	},
+
+  	_addAttribution: function (ev) {
+  		if (ev.layer.getAttribution) {
+  			this.addAttribution(ev.layer.getAttribution());
+  			ev.layer.once('remove', function () {
+  				this.removeAttribution(ev.layer.getAttribution());
+  			}, this);
+  		}
+  	},
+
+  	// @method setPrefix(prefix: String|false): this
+  	// The HTML text shown before the attributions. Pass `false` to disable.
   	setPrefix: function (prefix) {
   		this.options.prefix = prefix;
   		this._update();
@@ -8751,7 +8890,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			prefixAndAttribs.push(attribs.join(', '));
   		}
 
-  		this._container.innerHTML = prefixAndAttribs.join(' | ');
+  		this._container.innerHTML = prefixAndAttribs.join(' <span aria-hidden="true">|</span> ');
   	}
   });
 
@@ -8860,20 +8999,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * ```
    */
 
-  var START = touch ? 'touchstart mousedown' : 'mousedown';
-  var END = {
-  	mousedown: 'mouseup',
-  	touchstart: 'touchend',
-  	pointerdown: 'touchend',
-  	MSPointerDown: 'touchend'
-  };
-  var MOVE = {
-  	mousedown: 'mousemove',
-  	touchstart: 'touchmove',
-  	pointerdown: 'touchmove',
-  	MSPointerDown: 'touchmove'
-  };
-
+  var START = Browser.touch ? 'touchstart mousedown' : 'mousedown';
 
   var Draggable = Evented.extend({
 
@@ -8888,12 +9014,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	// @constructor L.Draggable(el: HTMLElement, dragHandle?: HTMLElement, preventOutline?: Boolean, options?: Draggable options)
   	// Creates a `Draggable` object for moving `el` when you start dragging the `dragHandle` element (equals `el` itself by default).
-  	initialize: function (element, dragStartTarget, preventOutline$$1, options) {
+  	initialize: function (element, dragStartTarget, preventOutline, options) {
   		setOptions(this, options);
 
   		this._element = element;
   		this._dragStartTarget = dragStartTarget || element;
-  		this._preventOutline = preventOutline$$1;
+  		this._preventOutline = preventOutline;
   	},
 
   	// @method enable()
@@ -8914,7 +9040,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// If we're currently dragging this draggable,
   		// disabling it counts as first ending the drag.
   		if (Draggable._dragging === this) {
-  			this.finishDrag();
+  			this.finishDrag(true);
   		}
 
   		off(this._dragStartTarget, START, this._onDown, this);
@@ -8924,16 +9050,21 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_onDown: function (e) {
-  		// Ignore simulated events, since we handle both touch and
-  		// mouse explicitly; otherwise we risk getting duplicates of
-  		// touch events, see #4315.
-  		// Also ignore the event if disabled; this happens in IE11
+  		// Ignore the event if disabled; this happens in IE11
   		// under some circumstances, see #3666.
-  		if (e._simulated || !this._enabled) { return; }
+  		if (!this._enabled) { return; }
 
   		this._moved = false;
 
   		if (hasClass(this._element, 'leaflet-zoom-anim')) { return; }
+
+  		if (e.touches && e.touches.length !== 1) {
+  			// Finish dragging to avoid conflict with touchZoom
+  			if (Draggable._dragging === this) {
+  				this.finishDrag();
+  			}
+  			return;
+  		}
 
   		if (Draggable._dragging || e.shiftKey || ((e.which !== 1) && (e.button !== 1) && !e.touches)) { return; }
   		Draggable._dragging = this;  // Prevent dragging multiple objects at once.
@@ -8955,21 +9086,20 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		    sizedParent = getSizedParentNode(this._element);
 
   		this._startPoint = new Point(first.clientX, first.clientY);
+  		this._startPos = getPosition(this._element);
 
   		// Cache the scale, so that we can continuously compensate for it during drag (_onMove).
   		this._parentScale = getScale(sizedParent);
 
-  		on(document, MOVE[e.type], this._onMove, this);
-  		on(document, END[e.type], this._onUp, this);
+  		var mouseevent = e.type === 'mousedown';
+  		on(document, mouseevent ? 'mousemove' : 'touchmove', this._onMove, this);
+  		on(document, mouseevent ? 'mouseup' : 'touchend touchcancel', this._onUp, this);
   	},
 
   	_onMove: function (e) {
-  		// Ignore simulated events, since we handle both touch and
-  		// mouse explicitly; otherwise we risk getting duplicates of
-  		// touch events, see #4315.
-  		// Also ignore the event if disabled; this happens in IE11
+  		// Ignore the event if disabled; this happens in IE11
   		// under some circumstances, see #3666.
-  		if (e._simulated || !this._enabled) { return; }
+  		if (!this._enabled) { return; }
 
   		if (e.touches && e.touches.length > 1) {
   			this._moved = true;
@@ -8996,7 +9126,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			this.fire('dragstart');
 
   			this._moved = true;
-  			this._startPos = getPosition(this._element).subtract(offset);
 
   			addClass(document.body, 'leaflet-dragging');
 
@@ -9012,9 +9141,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		this._newPos = this._startPos.add(offset);
   		this._moving = true;
 
-  		cancelAnimFrame(this._animRequest);
   		this._lastEvent = e;
-  		this._animRequest = requestAnimFrame(this._updatePosition, this, true);
+  		this._updatePosition();
   	},
 
   	_updatePosition: function () {
@@ -9031,17 +9159,14 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		this.fire('drag', e);
   	},
 
-  	_onUp: function (e) {
-  		// Ignore simulated events, since we handle both touch and
-  		// mouse explicitly; otherwise we risk getting duplicates of
-  		// touch events, see #4315.
-  		// Also ignore the event if disabled; this happens in IE11
+  	_onUp: function () {
+  		// Ignore the event if disabled; this happens in IE11
   		// under some circumstances, see #3666.
-  		if (e._simulated || !this._enabled) { return; }
+  		if (!this._enabled) { return; }
   		this.finishDrag();
   	},
 
-  	finishDrag: function () {
+  	finishDrag: function (noInertia) {
   		removeClass(document.body, 'leaflet-dragging');
 
   		if (this._lastTarget) {
@@ -9049,21 +9174,18 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			this._lastTarget = null;
   		}
 
-  		for (var i in MOVE) {
-  			off(document, MOVE[i], this._onMove, this);
-  			off(document, END[i], this._onUp, this);
-  		}
+  		off(document, 'mousemove touchmove', this._onMove, this);
+  		off(document, 'mouseup touchend touchcancel', this._onUp, this);
 
   		enableImageDrag();
   		enableTextSelection();
 
   		if (this._moved && this._moving) {
-  			// ensure drag is not fired after dragend
-  			cancelAnimFrame(this._animRequest);
 
   			// @event dragend: DragEndEvent
   			// Fired when the drag ends.
   			this.fire('dragend', {
+  				noInertia: noInertia,
   				distance: this._newPos.distanceTo(this._startPos)
   			});
   		}
@@ -9086,11 +9208,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // @function simplify(points: Point[], tolerance: Number): Point[]
   // Dramatically reduces the number of points in a polyline while retaining
   // its shape and returns a new array of simplified points, using the
-  // [Douglas-Peucker algorithm](http://en.wikipedia.org/wiki/Douglas-Peucker_algorithm).
+  // [Ramer-Douglas-Peucker algorithm](https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm).
   // Used for a huge performance boost when processing/displaying Leaflet polylines for
   // each zoom level and also reducing visual noise. tolerance affects the amount of
   // simplification (lesser value means higher quality but slower and with more points).
-  // Also released as a separated micro-library [Simplify.js](http://mourner.github.com/simplify-js/).
+  // Also released as a separated micro-library [Simplify.js](https://mourner.github.io/simplify-js/).
   function simplify(points, tolerance) {
   	if (!tolerance || !points.length) {
   		return points.slice();
@@ -9119,7 +9241,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return _sqClosestPointOnSegment(p, p1, p2);
   }
 
-  // Douglas-Peucker simplification, see http://en.wikipedia.org/wiki/Douglas-Peucker_algorithm
+  // Ramer-Douglas-Peucker simplification, see https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm
   function _simplifyDP(points, sqTolerance) {
 
   	var len = points.length,
@@ -9313,7 +9435,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return isFlat(latlngs);
   }
 
-  var LineUtil = ({
+  var LineUtil = {
+    __proto__: null,
     simplify: simplify,
     pointToSegmentDistance: pointToSegmentDistance,
     closestPointOnSegment: closestPointOnSegment,
@@ -9323,7 +9446,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
     _sqClosestPointOnSegment: _sqClosestPointOnSegment,
     isFlat: isFlat,
     _flat: _flat
-  });
+  };
 
   /*
    * @namespace PolyUtil
@@ -9379,9 +9502,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return points;
   }
 
-  var PolyUtil = ({
+  var PolyUtil = {
+    __proto__: null,
     clipPolygon: clipPolygon
-  });
+  };
 
   /*
    * @namespace Projection
@@ -9458,7 +9582,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * @class Projection
 
    * An object with methods for projecting geographical coordinates of the world onto
-   * a flat surface (and back). See [Map projection](http://en.wikipedia.org/wiki/Map_projection).
+   * a flat surface (and back). See [Map projection](https://en.wikipedia.org/wiki/Map_projection).
 
    * @property bounds: Bounds
    * The bounds (specified in CRS units) where the projection is valid
@@ -9477,11 +9601,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
    */
 
-  var index = ({
+  var index = {
+    __proto__: null,
     LonLat: LonLat,
     Mercator: Mercator,
     SphericalMercator: SphericalMercator
-  });
+  };
 
   /*
    * @namespace CRS
@@ -9668,10 +9793,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		this.onAdd(map);
 
-  		if (this.getAttribution && map.attributionControl) {
-  			map.attributionControl.addAttribution(this.getAttribution());
-  		}
-
   		this.fire('add');
   		map.fire('layeradd', {layer: this});
   	}
@@ -9744,10 +9865,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			layer.onRemove(this);
   		}
 
-  		if (layer.getAttribution && this.attributionControl) {
-  			this.attributionControl.removeAttribution(layer.getAttribution());
-  		}
-
   		delete this._layers[id];
 
   		if (this._loaded) {
@@ -9763,7 +9880,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @method hasLayer(layer: Layer): Boolean
   	// Returns `true` if the given layer is currently added to the map
   	hasLayer: function (layer) {
-  		return !!layer && (stamp(layer) in this._layers);
+  		return stamp(layer) in this._layers;
   	},
 
   	/* @method eachLayer(fn: Function, context?: Object): this
@@ -9790,7 +9907,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_addZoomLimit: function (layer) {
-  		if (isNaN(layer.options.maxZoom) || !isNaN(layer.options.minZoom)) {
+  		if (!isNaN(layer.options.maxZoom) || !isNaN(layer.options.minZoom)) {
   			this._zoomBoundLayers[stamp(layer)] = layer;
   			this._updateZoomLevels();
   		}
@@ -9840,7 +9957,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   /*
    * @class LayerGroup
    * @aka L.LayerGroup
-   * @inherits Layer
+   * @inherits Interactive layer
    *
    * Used to group several layers and handle them as one. If you add it to the map,
    * any layers added or removed from the group will be added/removed on the map as
@@ -9908,7 +10025,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @method hasLayer(id: Number): Boolean
   	// Returns `true` if the given internal ID is currently added to the group.
   	hasLayer: function (layer) {
-  		if (!layer) { return false; }
   		var layerId = typeof layer === 'number' ? layer : this.getLayerId(layer);
   		return layerId in this._layers;
   	},
@@ -10236,7 +10352,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_getIconUrl: function (name) {
-  		return retina && this.options[name + 'RetinaUrl'] || this.options[name + 'Url'];
+  		return Browser.retina && this.options[name + 'RetinaUrl'] || this.options[name + 'Url'];
   	}
   });
 
@@ -10277,7 +10393,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_getIconUrl: function (name) {
-  		if (!IconDefault.imagePath) {	// Deprecated, backwards-compatibility only
+  		if (typeof IconDefault.imagePath !== 'string') {	// Deprecated, backwards-compatibility only
   			IconDefault.imagePath = this._detectIconPath();
   		}
 
@@ -10288,20 +10404,26 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return (this.options.imagePath || IconDefault.imagePath) + Icon.prototype._getIconUrl.call(this, name);
   	},
 
+  	_stripUrl: function (path) {	// separate function to use in tests
+  		var strip = function (str, re, idx) {
+  			var match = re.exec(str);
+  			return match && match[idx];
+  		};
+  		path = strip(path, /^url\((['"])?(.+)\1\)$/, 2);
+  		return path && strip(path, /^(.*)marker-icon\.png$/, 1);
+  	},
+
   	_detectIconPath: function () {
   		var el = create$1('div',  'leaflet-default-icon-path', document.body);
   		var path = getStyle(el, 'background-image') ||
   		           getStyle(el, 'backgroundImage');	// IE8
 
   		document.body.removeChild(el);
-
-  		if (path === null || path.indexOf('url') !== 0) {
-  			path = '';
-  		} else {
-  			path = path.replace(/^url\(["']?/, '').replace(/marker-icon\.png["']?\)$/, '');
-  		}
-
-  		return path;
+  		path = this._stripUrl(path);
+  		if (path) { return path; }
+  		var link = document.querySelector('link[href$="leaflet.css"]');
+  		if (!link) { return ''; }
+  		return link.href.substring(0, link.href.length - 'leaflet.css'.length - 1);
   	}
   });
 
@@ -10493,11 +10615,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		// @option title: String = ''
   		// Text for the browser tooltip that appear on marker hover (no tooltip by default).
+  		// [Useful for accessibility](https://leafletjs.com/examples/accessibility/#markers-must-be-labelled).
   		title: '',
 
-  		// @option alt: String = ''
-  		// Text for the `alt` attribute of the icon image (useful for accessibility).
-  		alt: '',
+  		// @option alt: String = 'Marker'
+  		// Text for the `alt` attribute of the icon image.
+  		// [Useful for accessibility](https://leafletjs.com/examples/accessibility/#markers-must-be-labelled).
+  		alt: 'Marker',
 
   		// @option zIndexOffset: Number = 0
   		// By default, marker images zIndex is set automatically based on its latitude. Use this option if you want to put the marker on top of all others (or below), specifying a high value like `1000` (or high negative value, respectively).
@@ -10527,6 +10651,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// When `true`, a mouse event on this marker will trigger the same event on the map
   		// (unless [`L.DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
   		bubblingMouseEvents: false,
+
+  		// @option autoPanOnFocus: Boolean = true
+  		// When `true`, the map will pan whenever the marker is focused (via
+  		// e.g. pressing `tab` on the keyboard) to ensure the marker is
+  		// visible within the map's bounds
+  		autoPanOnFocus: true,
 
   		// @section Draggable marker options
   		// @option draggable: Boolean = false
@@ -10680,6 +10810,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		if (options.keyboard) {
   			icon.tabIndex = '0';
+  			icon.setAttribute('role', 'button');
   		}
 
   		this._icon = icon;
@@ -10689,6 +10820,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   				mouseover: this._bringToFront,
   				mouseout: this._resetZIndex
   			});
+  		}
+
+  		if (this.options.autoPanOnFocus) {
+  			on(icon, 'focus', this._panOnFocus, this);
   		}
 
   		var newShadow = options.icon.createShadow(this._shadow),
@@ -10726,6 +10861,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   				mouseover: this._bringToFront,
   				mouseout: this._resetZIndex
   			});
+  		}
+
+  		if (this.options.autoPanOnFocus) {
+  			off(this._icon, 'focus', this._panOnFocus, this);
   		}
 
   		remove(this._icon);
@@ -10820,6 +10959,20 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	_resetZIndex: function () {
   		this._updateZIndex(0);
+  	},
+
+  	_panOnFocus: function () {
+  		var map = this._map;
+  		if (!map) { return; }
+
+  		var iconOpts = this.options.icon.options;
+  		var size = iconOpts.iconSize ? toPoint(iconOpts.iconSize) : toPoint(0, 0);
+  		var anchor = iconOpts.iconAnchor ? toPoint(iconOpts.iconAnchor) : toPoint(0, 0);
+
+  		map.panInside(this._latlng, {
+  			paddingTopLeft: anchor,
+  			paddingBottomRight: size.subtract(anchor)
+  		});
   	},
 
   	_getPopupAnchor: function () {
@@ -10981,7 +11134,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	_clickTolerance: function () {
   		// used when doing hit detection for Canvas layers
-  		return (this.options.stroke ? this.options.weight / 2 : 0) + this._renderer.options.tolerance;
+  		return (this.options.stroke ? this.options.weight / 2 : 0) +
+  		  (this._renderer.options.tolerance || 0);
   	}
   });
 
@@ -11303,7 +11457,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	// @method getCenter(): LatLng
-  	// Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the polyline.
+  	// Returns the center ([centroid](https://en.wikipedia.org/wiki/Centroid)) of the polyline.
   	getCenter: function () {
   		// throws error when not yet added to map as this center calculation requires projected coordinates
   		if (!this._map) {
@@ -11401,6 +11555,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	_updateBounds: function () {
   		var w = this._clickTolerance(),
   		    p = new Point(w, w);
+
+  		if (!this._rawPxBounds) {
+  			return;
+  		}
+
   		this._pxBounds = new Bounds([
   			this._rawPxBounds.min.subtract(p),
   			this._rawPxBounds.max.add(p)
@@ -11942,18 +12101,20 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return latlngs;
   }
 
-  // @function latLngToCoords(latlng: LatLng, precision?: Number): Array
+  // @function latLngToCoords(latlng: LatLng, precision?: Number|false): Array
   // Reverse of [`coordsToLatLng`](#geojson-coordstolatlng)
+  // Coordinates values are rounded with [`formatNum`](#util-formatnum) function.
   function latLngToCoords(latlng, precision) {
-  	precision = typeof precision === 'number' ? precision : 6;
+  	latlng = toLatLng(latlng);
   	return latlng.alt !== undefined ?
   		[formatNum(latlng.lng, precision), formatNum(latlng.lat, precision), formatNum(latlng.alt, precision)] :
   		[formatNum(latlng.lng, precision), formatNum(latlng.lat, precision)];
   }
 
-  // @function latLngsToCoords(latlngs: Array, levelsDeep?: Number, closed?: Boolean): Array
+  // @function latLngsToCoords(latlngs: Array, levelsDeep?: Number, closed?: Boolean, precision?: Number|false): Array
   // Reverse of [`coordsToLatLngs`](#geojson-coordstolatlngs)
   // `closed` determines whether the first point should be appended to the end of the array to close the feature, only used when `levelsDeep` is 0. False by default.
+  // Coordinates values are rounded with [`formatNum`](#util-formatnum) function.
   function latLngsToCoords(latlngs, levelsDeep, closed, precision) {
   	var coords = [];
 
@@ -12001,26 +12162,23 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   // @namespace Marker
   // @section Other methods
-  // @method toGeoJSON(precision?: Number): Object
-  // `precision` is the number of decimal places for coordinates.
-  // The default value is 6 places.
-  // Returns a [`GeoJSON`](http://en.wikipedia.org/wiki/GeoJSON) representation of the marker (as a GeoJSON `Point` Feature).
+  // @method toGeoJSON(precision?: Number|false): Object
+  // Coordinates values are rounded with [`formatNum`](#util-formatnum) function with given `precision`.
+  // Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON) representation of the marker (as a GeoJSON `Point` Feature).
   Marker.include(PointToGeoJSON);
 
   // @namespace CircleMarker
-  // @method toGeoJSON(precision?: Number): Object
-  // `precision` is the number of decimal places for coordinates.
-  // The default value is 6 places.
-  // Returns a [`GeoJSON`](http://en.wikipedia.org/wiki/GeoJSON) representation of the circle marker (as a GeoJSON `Point` Feature).
+  // @method toGeoJSON(precision?: Number|false): Object
+  // Coordinates values are rounded with [`formatNum`](#util-formatnum) function with given `precision`.
+  // Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON) representation of the circle marker (as a GeoJSON `Point` Feature).
   Circle.include(PointToGeoJSON);
   CircleMarker.include(PointToGeoJSON);
 
 
   // @namespace Polyline
-  // @method toGeoJSON(precision?: Number): Object
-  // `precision` is the number of decimal places for coordinates.
-  // The default value is 6 places.
-  // Returns a [`GeoJSON`](http://en.wikipedia.org/wiki/GeoJSON) representation of the polyline (as a GeoJSON `LineString` or `MultiLineString` Feature).
+  // @method toGeoJSON(precision?: Number|false): Object
+  // Coordinates values are rounded with [`formatNum`](#util-formatnum) function with given `precision`.
+  // Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON) representation of the polyline (as a GeoJSON `LineString` or `MultiLineString` Feature).
   Polyline.include({
   	toGeoJSON: function (precision) {
   		var multi = !isFlat(this._latlngs);
@@ -12035,10 +12193,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   });
 
   // @namespace Polygon
-  // @method toGeoJSON(precision?: Number): Object
-  // `precision` is the number of decimal places for coordinates.
-  // The default value is 6 places.
-  // Returns a [`GeoJSON`](http://en.wikipedia.org/wiki/GeoJSON) representation of the polygon (as a GeoJSON `Polygon` or `MultiPolygon` Feature).
+  // @method toGeoJSON(precision?: Number|false): Object
+  // Coordinates values are rounded with [`formatNum`](#util-formatnum) function with given `precision`.
+  // Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON) representation of the polygon (as a GeoJSON `Polygon` or `MultiPolygon` Feature).
   Polygon.include({
   	toGeoJSON: function (precision) {
   		var holes = !isFlat(this._latlngs),
@@ -12073,10 +12230,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		});
   	},
 
-  	// @method toGeoJSON(precision?: Number): Object
-  	// `precision` is the number of decimal places for coordinates.
-  	// The default value is 6 places.
-  	// Returns a [`GeoJSON`](http://en.wikipedia.org/wiki/GeoJSON) representation of the layer group (as a GeoJSON `FeatureCollection`, `GeometryCollection`, or `MultiPoint`).
+  	// @method toGeoJSON(precision?: Number|false): Object
+  	// Coordinates values are rounded with [`formatNum`](#util-formatnum) function with given `precision`.
+  	// Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON) representation of the layer group (as a GeoJSON `FeatureCollection`, `GeometryCollection`, or `MultiPoint`).
   	toGeoJSON: function (precision) {
 
   		var type = this.feature && this.feature.geometry && this.feature.geometry.type;
@@ -12141,7 +12297,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * @example
    *
    * ```js
-   * var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
+   * var imageUrl = 'https://maps.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
    * 	imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
    * L.imageOverlay(imageUrl, imageBounds).addTo(map);
    * ```
@@ -12380,6 +12536,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			this._url = errorUrl;
   			this._image.src = errorUrl;
   		}
+  	},
+
+  	// @method getCenter(): LatLng
+  	// Returns the center of the ImageOverlay.
+  	getCenter: function () {
+  		return this._bounds.getCenter();
   	}
   });
 
@@ -12416,6 +12578,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	options: {
   		// @option autoplay: Boolean = true
   		// Whether the video starts playing automatically when loaded.
+  		// On some browsers autoplay will only work with `muted: true`
   		autoplay: true,
 
   		// @option loop: Boolean = true
@@ -12429,7 +12592,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		// @option muted: Boolean = false
   		// Whether the video starts on mute when loaded.
-  		muted: false
+  		muted: false,
+
+  		// @option playsInline: Boolean = true
+  		// Mobile browsers will play the video right where it is instead of open it up in fullscreen mode.
+  		playsInline: true
   	},
 
   	_initImage: function () {
@@ -12466,6 +12633,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		vid.autoplay = !!this.options.autoplay;
   		vid.loop = !!this.options.loop;
   		vid.muted = !!this.options.muted;
+  		vid.playsInline = !!this.options.playsInline;
   		for (var i = 0; i < this._url.length; i++) {
   			var source = create$1('source');
   			source.src = this._url[i];
@@ -12536,9 +12704,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   /*
    * @class DivOverlay
-   * @inherits Layer
+   * @inherits Interactive layer
    * @aka L.DivOverlay
-   * Base model for L.Popup and L.Tooltip. Inherit from it for custom popup like plugins.
+   * Base model for L.Popup and L.Tooltip. Inherit from it for custom overlays like plugins.
    */
 
   // @namespace DivOverlay
@@ -12547,24 +12715,70 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @section
   	// @aka DivOverlay options
   	options: {
-  		// @option offset: Point = Point(0, 7)
-  		// The offset of the popup position. Useful to control the anchor
-  		// of the popup when opening it on some overlays.
-  		offset: [0, 7],
+  		// @option interactive: Boolean = false
+  		// If true, the popup/tooltip will listen to the mouse events.
+  		interactive: false,
+
+  		// @option offset: Point = Point(0, 0)
+  		// The offset of the overlay position.
+  		offset: [0, 0],
 
   		// @option className: String = ''
-  		// A custom CSS class name to assign to the popup.
+  		// A custom CSS class name to assign to the overlay.
   		className: '',
 
-  		// @option pane: String = 'popupPane'
-  		// `Map pane` where the popup will be added.
-  		pane: 'popupPane'
+  		// @option pane: String = undefined
+  		// `Map pane` where the overlay will be added.
+  		pane: undefined
   	},
 
   	initialize: function (options, source) {
   		setOptions(this, options);
 
   		this._source = source;
+  	},
+
+  	// @method openOn(map: Map): this
+  	// Adds the overlay to the map.
+  	// Alternative to `map.openPopup(popup)`/`.openTooltip(tooltip)`.
+  	openOn: function (map) {
+  		map = arguments.length ? map : this._source._map; // experimental, not the part of public api
+  		if (!map.hasLayer(this)) {
+  			map.addLayer(this);
+  		}
+  		return this;
+  	},
+
+  	// @method close(): this
+  	// Closes the overlay.
+  	// Alternative to `map.closePopup(popup)`/`.closeTooltip(tooltip)`
+  	// and `layer.closePopup()`/`.closeTooltip()`.
+  	close: function () {
+  		if (this._map) {
+  			this._map.removeLayer(this);
+  		}
+  		return this;
+  	},
+
+  	// @method toggle(layer?: Layer): this
+  	// Opens or closes the overlay bound to layer depending on its current state.
+  	// Argument may be omitted only for overlay bound to layer.
+  	// Alternative to `layer.togglePopup()`/`.toggleTooltip()`.
+  	toggle: function (layer) {
+  		if (this._map) {
+  			this.close();
+  		} else {
+  			if (arguments.length) {
+  				this._source = layer;
+  			} else {
+  				layer = this._source;
+  			}
+  			this._prepareOpen();
+
+  			// open the overlay on the map
+  			this.openOn(layer._map);
+  		}
+  		return this;
   	},
 
   	onAdd: function (map) {
@@ -12587,6 +12801,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		}
 
   		this.bringToFront();
+
+  		if (this.options.interactive) {
+  			addClass(this._container, 'leaflet-interactive');
+  			this.addInteractiveTarget(this._container);
+  		}
   	},
 
   	onRemove: function (map) {
@@ -12596,17 +12815,22 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		} else {
   			remove(this._container);
   		}
+
+  		if (this.options.interactive) {
+  			removeClass(this._container, 'leaflet-interactive');
+  			this.removeInteractiveTarget(this._container);
+  		}
   	},
 
-  	// @namespace Popup
+  	// @namespace DivOverlay
   	// @method getLatLng: LatLng
-  	// Returns the geographical point of popup.
+  	// Returns the geographical point of the overlay.
   	getLatLng: function () {
   		return this._latlng;
   	},
 
   	// @method setLatLng(latlng: LatLng): this
-  	// Sets the geographical point where the popup will open.
+  	// Sets the geographical point where the overlay will open.
   	setLatLng: function (latlng) {
   		this._latlng = toLatLng(latlng);
   		if (this._map) {
@@ -12617,13 +12841,14 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	// @method getContent: String|HTMLElement
-  	// Returns the content of the popup.
+  	// Returns the content of the overlay.
   	getContent: function () {
   		return this._content;
   	},
 
   	// @method setContent(htmlContent: String|HTMLElement|Function): this
-  	// Sets the HTML content of the popup. If a function is passed the source layer will be passed to the function. The function should return a `String` or `HTMLElement` to be used in the popup.
+  	// Sets the HTML content of the overlay. If a function is passed the source layer will be passed to the function.
+  	// The function should return a `String` or `HTMLElement` to be used in the overlay.
   	setContent: function (content) {
   		this._content = content;
   		this.update();
@@ -12631,13 +12856,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	// @method getElement: String|HTMLElement
-  	// Returns the HTML container of the popup.
+  	// Returns the HTML container of the overlay.
   	getElement: function () {
   		return this._container;
   	},
 
   	// @method update: null
-  	// Updates the popup content, layout and position. Useful for updating the popup after something inside changed, e.g. image loaded.
+  	// Updates the overlay content, layout and position. Useful for updating the overlay after something inside changed, e.g. image loaded.
   	update: function () {
   		if (!this._map) { return; }
 
@@ -12665,13 +12890,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	// @method isOpen: Boolean
-  	// Returns `true` when the popup is visible on the map.
+  	// Returns `true` when the overlay is visible on the map.
   	isOpen: function () {
   		return !!this._map && this._map.hasLayer(this);
   	},
 
   	// @method bringToFront: this
-  	// Brings this popup in front of other popups (in the same map pane).
+  	// Brings this overlay in front of other overlays (in the same map pane).
   	bringToFront: function () {
   		if (this._map) {
   			toFront(this._container);
@@ -12680,7 +12905,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	// @method bringToBack: this
-  	// Brings this popup to the back of other popups (in the same map pane).
+  	// Brings this overlay to the back of other overlays (in the same map pane).
   	bringToBack: function () {
   		if (this._map) {
   			toBack(this._container);
@@ -12688,38 +12913,45 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return this;
   	},
 
-  	_prepareOpen: function (parent, layer, latlng) {
-  		if (!(layer instanceof Layer)) {
-  			latlng = layer;
-  			layer = parent;
-  		}
+  	// prepare bound overlay to open: update latlng pos / content source (for FeatureGroup)
+  	_prepareOpen: function (latlng) {
+  		var source = this._source;
+  		if (!source._map) { return false; }
 
-  		if (layer instanceof FeatureGroup) {
-  			for (var id in parent._layers) {
-  				layer = parent._layers[id];
-  				break;
+  		if (source instanceof FeatureGroup) {
+  			source = null;
+  			var layers = this._source._layers;
+  			for (var id in layers) {
+  				if (layers[id]._map) {
+  					source = layers[id];
+  					break;
+  				}
   			}
+  			if (!source) { return false; } // Unable to get source layer.
+
+  			// set overlay source to this layer
+  			this._source = source;
   		}
 
   		if (!latlng) {
-  			if (layer.getCenter) {
-  				latlng = layer.getCenter();
-  			} else if (layer.getLatLng) {
-  				latlng = layer.getLatLng();
-  			} else if (layer.getBounds) {
-  				latlng = layer.getBounds().getCenter();
+  			if (source.getCenter) {
+  				latlng = source.getCenter();
+  			} else if (source.getLatLng) {
+  				latlng = source.getLatLng();
+  			} else if (source.getBounds) {
+  				latlng = source.getBounds().getCenter();
   			} else {
   				throw new Error('Unable to get source layer LatLng.');
   			}
   		}
+  		this.setLatLng(latlng);
 
-  		// set overlay source to this layer
-  		this._source = layer;
+  		if (this._map) {
+  			// update the overlay (content, layout, etc...)
+  			this.update();
+  		}
 
-  		// update the overlay (content, layout, ect...)
-  		this.update();
-
-  		return latlng;
+  		return true;
   	},
 
   	_updateContent: function () {
@@ -12736,6 +12968,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			}
   			node.appendChild(content);
   		}
+
+  		// @namespace DivOverlay
+  		// @section DivOverlay events
+  		// @event contentupdate: Event
+  		// Fired when the content of the overlay is updated
   		this.fire('contentupdate');
   	},
 
@@ -12755,7 +12992,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		var bottom = this._containerBottom = -offset.y,
   		    left = this._containerLeft = -Math.round(this._containerWidth / 2) + offset.x;
 
-  		// bottom position the popup in case the height of the popup changes (images loading etc)
+  		// bottom position the overlay in case the height of the overlay changes (images loading etc)
   		this._container.style.bottom = bottom + 'px';
   		this._container.style.left = left + 'px';
   	},
@@ -12764,6 +13001,34 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return [0, 0];
   	}
 
+  });
+
+  Map.include({
+  	_initOverlay: function (OverlayClass, content, latlng, options) {
+  		var overlay = content;
+  		if (!(overlay instanceof OverlayClass)) {
+  			overlay = new OverlayClass(options).setContent(content);
+  		}
+  		if (latlng) {
+  			overlay.setLatLng(latlng);
+  		}
+  		return overlay;
+  	}
+  });
+
+
+  Layer.include({
+  	_initOverlay: function (OverlayClass, old, content, options) {
+  		var overlay = content;
+  		if (overlay instanceof OverlayClass) {
+  			setOptions(overlay, options);
+  			overlay._source = this;
+  		} else {
+  			overlay = (old && !options) ? old : new OverlayClass(options, this);
+  			overlay.setContent(content);
+  		}
+  		return overlay;
+  	}
   });
 
   /*
@@ -12799,6 +13064,14 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @section
   	// @aka Popup options
   	options: {
+  		// @option pane: String = 'popupPane'
+  		// `Map pane` where the popup will be added.
+  		pane: 'popupPane',
+
+  		// @option offset: Point = Point(0, 7)
+  		// The offset of the popup position.
+  		offset: [0, 7],
+
   		// @option maxWidth: Number = 300
   		// Max width of the popup, in pixels.
   		maxWidth: 300,
@@ -12861,10 +13134,17 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	// @namespace Popup
   	// @method openOn(map: Map): this
-  	// Adds the popup to the map and closes the previous one. The same as `map.openPopup(popup)`.
+  	// Alternative to `map.openPopup(popup)`.
+  	// Adds the popup to the map and closes the previous one.
   	openOn: function (map) {
-  		map.openPopup(this);
-  		return this;
+  		map = arguments.length ? map : this._source._map; // experimental, not the part of public api
+
+  		if (!map.hasLayer(this) && map._popup && map._popup.options.autoClose) {
+  			map.removeLayer(map._popup);
+  		}
+  		map._popup = this;
+
+  		return DivOverlay.prototype.openOn.call(this, map);
   	},
 
   	onAdd: function (map) {
@@ -12915,7 +13195,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		var events = DivOverlay.prototype.getEvents.call(this);
 
   		if (this.options.closeOnClick !== undefined ? this.options.closeOnClick : this._map.options.closePopupOnClick) {
-  			events.preclick = this._close;
+  			events.preclick = this.close;
   		}
 
   		if (this.options.keepInView) {
@@ -12923,12 +13203,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		}
 
   		return events;
-  	},
-
-  	_close: function () {
-  		if (this._map) {
-  			this._map.closePopup(this);
-  		}
   	},
 
   	_initLayout: function () {
@@ -12949,10 +13223,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		if (this.options.closeButton) {
   			var closeButton = this._closeButton = create$1('a', prefix + '-close-button', container);
+  			closeButton.setAttribute('role', 'button'); // overrides the implicit role=link of <a> elements #7399
+  			closeButton.setAttribute('aria-label', 'Close popup');
   			closeButton.href = '#close';
-  			closeButton.innerHTML = '&#215;';
+  			closeButton.innerHTML = '<span aria-hidden="true">&#215;</span>';
 
-  			on(closeButton, 'click', this._onCloseButtonClick, this);
+  			on(closeButton, 'click', this.close, this);
   		}
   	},
 
@@ -12992,7 +13268,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		setPosition(this._container, pos.add(anchor));
   	},
 
-  	_adjustPan: function () {
+  	_adjustPan: function (e) {
   		if (!this.options.autoPan) { return; }
   		if (this._map._panAnim) { this._map._panAnim.stop(); }
 
@@ -13032,13 +13308,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		if (dx || dy) {
   			map
   			    .fire('autopanstart')
-  			    .panBy([dx, dy]);
+  			    .panBy([dx, dy], {animate: e && e.type === 'moveend'});
   		}
-  	},
-
-  	_onCloseButtonClick: function (e) {
-  		this._close();
-  		stop(e);
   	},
 
   	_getAnchor: function () {
@@ -13075,35 +13346,18 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @method openPopup(content: String|HTMLElement, latlng: LatLng, options?: Popup options): this
   	// Creates a popup with the specified content and options and opens it in the given point on a map.
   	openPopup: function (popup, latlng, options) {
-  		if (!(popup instanceof Popup)) {
-  			popup = new Popup(options).setContent(popup);
-  		}
+  		this._initOverlay(Popup, popup, latlng, options)
+  		  .openOn(this);
 
-  		if (latlng) {
-  			popup.setLatLng(latlng);
-  		}
-
-  		if (this.hasLayer(popup)) {
-  			return this;
-  		}
-
-  		if (this._popup && this._popup.options.autoClose) {
-  			this.closePopup();
-  		}
-
-  		this._popup = popup;
-  		return this.addLayer(popup);
+  		return this;
   	},
 
   	// @method closePopup(popup?: Popup): this
   	// Closes the popup previously opened with [openPopup](#map-openpopup) (or the given one).
   	closePopup: function (popup) {
-  		if (!popup || popup === this._popup) {
-  			popup = this._popup;
-  			this._popup = null;
-  		}
+  		popup = arguments.length ? popup : this._popup;
   		if (popup) {
-  			this.removeLayer(popup);
+  			popup.close();
   		}
   		return this;
   	}
@@ -13132,18 +13386,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// necessary event listeners. If a `Function` is passed it will receive
   	// the layer as the first argument and should return a `String` or `HTMLElement`.
   	bindPopup: function (content, options) {
-
-  		if (content instanceof Popup) {
-  			setOptions(content, options);
-  			this._popup = content;
-  			content._source = this;
-  		} else {
-  			if (!this._popup || options) {
-  				this._popup = new Popup(options, this);
-  			}
-  			this._popup.setContent(content);
-  		}
-
+  		this._popup = this._initOverlay(Popup, this._popup, content, options);
   		if (!this._popupHandlersAdded) {
   			this.on({
   				click: this._openPopup,
@@ -13175,14 +13418,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	// @method openPopup(latlng?: LatLng): this
   	// Opens the bound popup at the specified `latlng` or at the default popup anchor if no `latlng` is passed.
-  	openPopup: function (layer, latlng) {
-  		if (this._popup && this._map) {
-  			latlng = this._popup._prepareOpen(this, layer, latlng);
-
+  	openPopup: function (latlng) {
+  		if (this._popup && this._popup._prepareOpen(latlng)) {
   			// open the popup on the map
-  			this._map.openPopup(this._popup, latlng);
+  			this._popup.openOn(this._map);
   		}
-
   		return this;
   	},
 
@@ -13190,20 +13430,16 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// Closes the popup bound to this layer if it is open.
   	closePopup: function () {
   		if (this._popup) {
-  			this._popup._close();
+  			this._popup.close();
   		}
   		return this;
   	},
 
   	// @method togglePopup(): this
   	// Opens or closes the popup bound to this layer depending on its current state.
-  	togglePopup: function (target) {
+  	togglePopup: function () {
   		if (this._popup) {
-  			if (this._popup._map) {
-  				this.closePopup();
-  			} else {
-  				this.openPopup(target);
-  			}
+  			this._popup.toggle(this);
   		}
   		return this;
   	},
@@ -13230,33 +13466,25 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_openPopup: function (e) {
-  		var layer = e.layer || e.target;
-
-  		if (!this._popup) {
+  		if (!this._popup || !this._map) {
   			return;
   		}
-
-  		if (!this._map) {
-  			return;
-  		}
-
   		// prevent map click
   		stop(e);
 
-  		// if this inherits from Path its a vector and we can just
-  		// open the popup at the new location
-  		if (layer instanceof Path) {
-  			this.openPopup(e.layer || e.target, e.latlng);
+  		var target = e.layer || e.target;
+  		if (this._popup._source === target && !(target instanceof Path)) {
+  			// treat it like a marker and figure out
+  			// if we should toggle it open/closed
+  			if (this._map.hasLayer(this._popup)) {
+  				this.closePopup();
+  			} else {
+  				this.openPopup(e.latlng);
+  			}
   			return;
   		}
-
-  		// otherwise treat it like a marker and figure out
-  		// if we should toggle it open/closed
-  		if (this._map.hasLayer(this._popup) && this._popup._source === layer) {
-  			this.closePopup();
-  		} else {
-  			this.openPopup(layer, e.latlng);
-  		}
+  		this._popup._source = target;
+  		this.openPopup(e.latlng);
   	},
 
   	_movePopup: function (e) {
@@ -13320,10 +13548,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// If true, the tooltip will follow the mouse instead of being fixed at the feature center.
   		sticky: false,
 
-  		// @option interactive: Boolean = false
-  		// If true, the tooltip will listen to the feature events.
-  		interactive: false,
-
   		// @option opacity: Number = 0.9
   		// Tooltip container opacity.
   		opacity: 0.9
@@ -13340,6 +13564,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		map.fire('tooltipopen', {tooltip: this});
 
   		if (this._source) {
+  			this.addEventParent(this._source);
+
   			// @namespace Layer
   			// @section Tooltip events
   			// @event tooltipopen: TooltipEvent
@@ -13358,6 +13584,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		map.fire('tooltipclose', {tooltip: this});
 
   		if (this._source) {
+  			this.removeEventParent(this._source);
+
   			// @namespace Layer
   			// @section Tooltip events
   			// @event tooltipclose: TooltipEvent
@@ -13369,17 +13597,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	getEvents: function () {
   		var events = DivOverlay.prototype.getEvents.call(this);
 
-  		if (touch && !this.options.permanent) {
-  			events.preclick = this._close;
+  		if (!this.options.permanent) {
+  			events.preclick = this.close;
   		}
 
   		return events;
-  	},
-
-  	_close: function () {
-  		if (this._map) {
-  			this._map.closeTooltip(this);
-  		}
   	},
 
   	_initLayout: function () {
@@ -13482,27 +13704,16 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @method openTooltip(content: String|HTMLElement, latlng: LatLng, options?: Tooltip options): this
   	// Creates a tooltip with the specified content and options and open it.
   	openTooltip: function (tooltip, latlng, options) {
-  		if (!(tooltip instanceof Tooltip)) {
-  			tooltip = new Tooltip(options).setContent(tooltip);
-  		}
+  		this._initOverlay(Tooltip, tooltip, latlng, options)
+  		  .openOn(this);
 
-  		if (latlng) {
-  			tooltip.setLatLng(latlng);
-  		}
-
-  		if (this.hasLayer(tooltip)) {
-  			return this;
-  		}
-
-  		return this.addLayer(tooltip);
+  		return this;
   	},
 
-  	// @method closeTooltip(tooltip?: Tooltip): this
+  	// @method closeTooltip(tooltip: Tooltip): this
   	// Closes the tooltip given as parameter.
   	closeTooltip: function (tooltip) {
-  		if (tooltip) {
-  			this.removeLayer(tooltip);
-  		}
+  		tooltip.close();
   		return this;
   	}
 
@@ -13530,18 +13741,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// the layer as the first argument and should return a `String` or `HTMLElement`.
   	bindTooltip: function (content, options) {
 
-  		if (content instanceof Tooltip) {
-  			setOptions(content, options);
-  			this._tooltip = content;
-  			content._source = this;
-  		} else {
-  			if (!this._tooltip || options) {
-  				this._tooltip = new Tooltip(options, this);
-  			}
-  			this._tooltip.setContent(content);
-
+  		if (this._tooltip && this.isTooltipOpen()) {
+  			this.unbindTooltip();
   		}
 
+  		this._tooltip = this._initOverlay(Tooltip, this._tooltip, content, options);
   		this._initTooltipInteractions();
 
   		if (this._tooltip.options.permanent && this._map && this._map.hasLayer(this)) {
@@ -13562,9 +13766,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		return this;
   	},
 
-  	_initTooltipInteractions: function (remove$$1) {
-  		if (!remove$$1 && this._tooltipHandlersAdded) { return; }
-  		var onOff = remove$$1 ? 'off' : 'on',
+  	_initTooltipInteractions: function (remove) {
+  		if (!remove && this._tooltipHandlersAdded) { return; }
+  		var onOff = remove ? 'off' : 'on',
   		    events = {
   			remove: this.closeTooltip,
   			move: this._moveTooltip
@@ -13572,36 +13776,24 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		if (!this._tooltip.options.permanent) {
   			events.mouseover = this._openTooltip;
   			events.mouseout = this.closeTooltip;
-  			if (this._tooltip.options.sticky) {
-  				events.mousemove = this._moveTooltip;
-  			}
-  			if (touch) {
-  				events.click = this._openTooltip;
-  			}
+  			events.click = this._openTooltip;
   		} else {
   			events.add = this._openTooltip;
   		}
+  		if (this._tooltip.options.sticky) {
+  			events.mousemove = this._moveTooltip;
+  		}
   		this[onOff](events);
-  		this._tooltipHandlersAdded = !remove$$1;
+  		this._tooltipHandlersAdded = !remove;
   	},
 
   	// @method openTooltip(latlng?: LatLng): this
   	// Opens the bound tooltip at the specified `latlng` or at the default tooltip anchor if no `latlng` is passed.
-  	openTooltip: function (layer, latlng) {
-  		if (this._tooltip && this._map) {
-  			latlng = this._tooltip._prepareOpen(this, layer, latlng);
-
+  	openTooltip: function (latlng) {
+  		if (this._tooltip && this._tooltip._prepareOpen(latlng)) {
   			// open the tooltip on the map
-  			this._map.openTooltip(this._tooltip, latlng);
-
-  			// Tooltip container may not be defined if not permanent and never
-  			// opened.
-  			if (this._tooltip.options.interactive && this._tooltip._container) {
-  				addClass(this._tooltip._container, 'leaflet-clickable');
-  				this.addInteractiveTarget(this._tooltip._container);
-  			}
+  			this._tooltip.openOn(this._map);
   		}
-
   		return this;
   	},
 
@@ -13609,24 +13801,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// Closes the tooltip bound to this layer if it is open.
   	closeTooltip: function () {
   		if (this._tooltip) {
-  			this._tooltip._close();
-  			if (this._tooltip.options.interactive && this._tooltip._container) {
-  				removeClass(this._tooltip._container, 'leaflet-clickable');
-  				this.removeInteractiveTarget(this._tooltip._container);
-  			}
+  			return this._tooltip.close();
   		}
-  		return this;
   	},
 
   	// @method toggleTooltip(): this
   	// Opens or closes the tooltip bound to this layer depending on its current state.
-  	toggleTooltip: function (target) {
+  	toggleTooltip: function () {
   		if (this._tooltip) {
-  			if (this._tooltip._map) {
-  				this.closeTooltip();
-  			} else {
-  				this.openTooltip(target);
-  			}
+  			this._tooltip.toggle(this);
   		}
   		return this;
   	},
@@ -13653,12 +13836,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_openTooltip: function (e) {
-  		var layer = e.layer || e.target;
-
-  		if (!this._tooltip || !this._map) {
+  		if (!this._tooltip || !this._map || (this._map.dragging && this._map.dragging.moving())) {
   			return;
   		}
-  		this.openTooltip(layer, this._tooltip.options.sticky ? e.latlng : undefined);
+  		this._tooltip._source = e.layer || e.target;
+
+  		this.openTooltip(this._tooltip.options.sticky ? e.latlng : undefined);
   	},
 
   	_moveTooltip: function (e) {
@@ -13829,7 +14012,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// `true` by default on mobile browsers, in order to avoid too many requests and keep smooth navigation.
   		// `false` otherwise in order to display new tiles _during_ panning, since it is easy to pan outside the
   		// [`keepBuffer`](#gridlayer-keepbuffer) option in desktop browsers.
-  		updateWhenIdle: mobile,
+  		updateWhenIdle: Browser.mobile,
 
   		// @option updateWhenZooming: Boolean = true
   		// By default, a smooth zoom animation (during a [touch zoom](#map-touchzoom) or a [`flyTo()`](#map-flyto)) will update grid layers every integer zoom level. Setting this option to `false` will update the grid layer only when the smooth animation ends.
@@ -13898,8 +14081,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		this._levels = {};
   		this._tiles = {};
 
-  		this._resetView();
-  		this._update();
+  		this._resetView(); // implicit _update() call
   	},
 
   	beforeAdd: function (map) {
@@ -13968,6 +14150,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	redraw: function () {
   		if (this._map) {
   			this._removeAllTiles();
+  			var tileZoom = this._clampZoom(this._map.getZoom());
+  			if (tileZoom !== this._tileZoom) {
+  				this._tileZoom = tileZoom;
+  				this._updateLevels();
+  			}
   			this._update();
   		}
   		return this;
@@ -14046,7 +14233,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		if (!this._map) { return; }
 
   		// IE doesn't inherit filter opacity properly, so we're forced to set it on tiles
-  		if (ielt9) { return; }
+  		if (Browser.ielt9) { return; }
 
   		setOpacity(this._container, this.options.opacity);
 
@@ -14332,7 +14519,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		    translate = level.origin.multiplyBy(scale)
   		        .subtract(this._map._getNewPixelOrigin(center, zoom)).round();
 
-  		if (any3d) {
+  		if (Browser.any3d) {
   			setTransform(level.el, translate, scale);
   		} else {
   			setPosition(level.el, translate);
@@ -14533,14 +14720,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		tile.onmousemove = falseFn;
 
   		// update opacity on tiles in IE7-8 because of filter inheritance problems
-  		if (ielt9 && this.options.opacity < 1) {
+  		if (Browser.ielt9 && this.options.opacity < 1) {
   			setOpacity(tile, this.options.opacity);
-  		}
-
-  		// without this hack, tiles disappear after zoom on Chrome for Android
-  		// https://github.com/Leaflet/Leaflet/issues/2078
-  		if (android && !android23) {
-  			tile.style.WebkitBackfaceVisibility = 'hidden';
   		}
   	},
 
@@ -14620,7 +14801,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			// Fired when the grid layer loaded all visible tiles.
   			this.fire('load');
 
-  			if (ielt9 || !this._map._fadeAnimated) {
+  			if (Browser.ielt9 || !this._map._fadeAnimated) {
   				requestAnimFrame(this._pruneTiles, this);
   			} else {
   				// Wait a bit more than 0.2 secs (the duration of the tile fade-in)
@@ -14681,7 +14862,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * A string of the following form:
    *
    * ```
-   * 'http://{s}.somedomain.com/blabla/{z}/{x}/{y}{r}.png'
+   * 'https://{s}.somedomain.com/blabla/{z}/{x}/{y}{r}.png'
    * ```
    *
    * `{s}` means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options; `a`, `b` or `c` by default, can be omitted), `{z}` — zoom level, `{x}` and `{y}` — tile coordinates. `{r}` can be used to add "&commat;2x" to the URL to load retina tiles.
@@ -14689,7 +14870,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * You can use custom keys in the template, which will be [evaluated](#util-template) from TileLayer options, like this:
    *
    * ```
-   * L.tileLayer('http://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
+   * L.tileLayer('https://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
    * ```
    */
 
@@ -14735,7 +14916,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// Whether the crossOrigin attribute will be added to the tiles.
   		// If a String is provided, all tiles will have their crossOrigin attribute set to the String provided. This is needed if you want to access tile pixel data.
   		// Refer to [CORS Settings](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes) for valid String values.
-  		crossOrigin: false
+  		crossOrigin: false,
+
+  		// @option referrerPolicy: Boolean|String = false
+  		// Whether the referrerPolicy attribute will be added to the tiles.
+  		// If a String is provided, all tiles will have their referrerPolicy attribute set to the String provided.
+  		// This may be needed if your map's rendering context has a strict default but your tile provider expects a valid referrer
+  		// (e.g. to validate an API token).
+  		// Refer to [HTMLImageElement.referrerPolicy](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/referrerPolicy) for valid String values.
+  		referrerPolicy: false
   	},
 
   	initialize: function (url, options) {
@@ -14745,7 +14934,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		options = setOptions(this, options);
 
   		// detecting retina displays, adjusting tileSize and zoom levels
-  		if (options.detectRetina && retina && options.maxZoom > 0) {
+  		if (options.detectRetina && Browser.retina && options.maxZoom > 0) {
 
   			options.tileSize = Math.floor(options.tileSize / 2);
 
@@ -14764,10 +14953,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			options.subdomains = options.subdomains.split('');
   		}
 
-  		// for https://github.com/Leaflet/Leaflet/issues/137
-  		if (!android) {
-  			this.on('tileunload', this._onTileRemove);
-  		}
+  		this.on('tileunload', this._onTileRemove);
   	},
 
   	// @method setUrl(url: String, noRedraw?: Boolean): this
@@ -14801,9 +14987,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			tile.crossOrigin = this.options.crossOrigin === true ? '' : this.options.crossOrigin;
   		}
 
+  		// for this new option we follow the documented behavior
+  		// more closely by only setting the property when string
+  		if (typeof this.options.referrerPolicy === 'string') {
+  			tile.referrerPolicy = this.options.referrerPolicy;
+  		}
+
   		/*
   		 Alt tag is set to empty string to keep screen readers from reading URL and for compliance reasons
-  		 http://www.w3.org/TR/WCAG20-TECHS/H67
+  		 https://www.w3.org/TR/WCAG20-TECHS/H67
   		*/
   		tile.alt = '';
 
@@ -14826,7 +15018,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// Classes extending `TileLayer` can override this function to provide custom tile URL naming schemes.
   	getTileUrl: function (coords) {
   		var data = {
-  			r: retina ? '@2x' : '',
+  			r: Browser.retina ? '@2x' : '',
   			s: this._getSubdomain(coords),
   			x: coords.x,
   			y: coords.y,
@@ -14845,7 +15037,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	_tileOnLoad: function (done, tile) {
   		// For https://github.com/Leaflet/Leaflet/issues/3332
-  		if (ielt9) {
+  		if (Browser.ielt9) {
   			setTimeout(bind(done, this, null, tile), 0);
   		} else {
   			done(null, tile);
@@ -14894,8 +15086,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   				if (!tile.complete) {
   					tile.src = emptyImageUrl;
+  					var coords = this._tiles[i].coords;
   					remove(tile);
   					delete this._tiles[i];
+  					// @event tileabort: TileEvent
+  					// Fired when a tile was loading but is now not wanted.
+  					this.fire('tileabort', {
+  						tile: tile,
+  						coords: coords
+  					});
   				}
   			}
   		}
@@ -14906,11 +15105,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		if (!tile) { return; }
 
   		// Cancels any pending http requests associated with the tile
-  		// unless we're on Android's stock browser,
-  		// see https://github.com/Leaflet/Leaflet/issues/137
-  		if (!androidStock) {
-  			tile.el.setAttribute('src', emptyImageUrl);
-  		}
+  		tile.el.setAttribute('src', emptyImageUrl);
 
   		return GridLayer.prototype._removeTile.call(this, key);
   	},
@@ -14956,7 +15151,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// @aka TileLayer.WMS options
   	// If any custom options not documented here are used, they will be sent to the
   	// WMS server as extra parameters in each request URL. This can be useful for
-  	// [non-standard vendor WMS parameters](http://docs.geoserver.org/stable/en/user/services/wms/vendor.html).
+  	// [non-standard vendor WMS parameters](https://docs.geoserver.org/stable/en/user/services/wms/vendor.html).
   	defaultWmsParams: {
   		service: 'WMS',
   		request: 'GetMap',
@@ -15008,7 +15203,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   		options = setOptions(this, options);
 
-  		var realRetina = options.detectRetina && retina ? 2 : 1;
+  		var realRetina = options.detectRetina && Browser.retina ? 2 : 1;
   		var tileSize = this.getTileSize();
   		wmsParams.width = tileSize.x * realRetina;
   		wmsParams.height = tileSize.y * realRetina;
@@ -15095,11 +15290,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// @option padding: Number = 0.1
   		// How much to extend the clip area around the map view (relative to its size)
   		// e.g. 0.1 would be 10% of map view in each direction
-  		padding: 0.1,
-
-  		// @option tolerance: Number = 0
-  		// How much to extend click tolerance round a path/object on the map
-  		tolerance : 0
+  		padding: 0.1
   	},
 
   	initialize: function (options) {
@@ -15150,15 +15341,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   	_updateTransform: function (center, zoom) {
   		var scale = this._map.getZoomScale(zoom, this._zoom),
-  		    position = getPosition(this._container),
   		    viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding),
   		    currentCenterPoint = this._map.project(this._center, zoom),
-  		    destCenterPoint = this._map.project(center, zoom),
-  		    centerOffset = destCenterPoint.subtract(currentCenterPoint),
 
-  		    topLeftOffset = viewHalf.multiplyBy(-scale).add(position).add(viewHalf).subtract(centerOffset);
+  		    topLeftOffset = viewHalf.multiplyBy(-scale).add(currentCenterPoint)
+  				  .subtract(this._map._getNewPixelOrigin(center, zoom));
 
-  		if (any3d) {
+  		if (Browser.any3d) {
   			setTransform(this._container, topLeftOffset, scale);
   		} else {
   			setPosition(this._container, topLeftOffset);
@@ -15208,7 +15397,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * Allows vector layers to be displayed with [`<canvas>`](https://developer.mozilla.org/docs/Web/API/Canvas_API).
    * Inherits `Renderer`.
    *
-   * Due to [technical limitations](http://caniuse.com/#search=canvas), Canvas is not
+   * Due to [technical limitations](https://caniuse.com/canvas), Canvas is not
    * available in all web browsers, notably IE8, and overlapping geometries might
    * not display properly in some edge cases.
    *
@@ -15233,6 +15422,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    */
 
   var Canvas = Renderer.extend({
+
+  	// @section
+  	// @aka Canvas options
+  	options: {
+  		// @option tolerance: Number = 0
+  		// How much to extend the click tolerance around a path/object on the map.
+  		tolerance: 0
+  	},
+
   	getEvents: function () {
   		var events = Renderer.prototype.getEvents.call(this);
   		events.viewprereset = this._onViewPreReset;
@@ -15258,6 +15456,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		on(container, 'mousemove', this._onMouseMove, this);
   		on(container, 'click dblclick mousedown mouseup contextmenu', this._onClick, this);
   		on(container, 'mouseout', this._handleMouseOut, this);
+  		container['_leaflet_disable_events'] = true;
 
   		this._ctx = container.getContext('2d');
   	},
@@ -15290,7 +15489,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		var b = this._bounds,
   		    container = this._container,
   		    size = b.getSize(),
-  		    m = retina ? 2 : 1;
+  		    m = Browser.retina ? 2 : 1;
 
   		setPosition(container, b.min);
 
@@ -15300,7 +15499,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		container.style.width = size.x + 'px';
   		container.style.height = size.y + 'px';
 
-  		if (retina) {
+  		if (Browser.retina) {
   			this._ctx.scale(2, 2);
   		}
 
@@ -15544,15 +15743,12 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		for (var order = this._drawFirst; order; order = order.next) {
   			layer = order.layer;
   			if (layer.options.interactive && layer._containsPoint(point)) {
-  				if (!(e.type === 'click' || e.type !== 'preclick') || !this._map._draggableMoved(layer)) {
+  				if (!(e.type === 'click' || e.type === 'preclick') || !this._map._draggableMoved(layer)) {
   					clickedLayer = layer;
   				}
   			}
   		}
-  		if (clickedLayer)  {
-  			fakeStop(e);
-  			this._fireEvent([clickedLayer], e);
-  		}
+  		this._fireEvent(clickedLayer ? [clickedLayer] : false, e);
   	},
 
   	_onMouseMove: function (e) {
@@ -15598,9 +15794,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   			}
   		}
 
-  		if (this._hoveredLayer) {
-  			this._fireEvent([this._hoveredLayer], e);
-  		}
+  		this._fireEvent(this._hoveredLayer ? [this._hoveredLayer] : false, e);
 
   		this._mouseHoverThrottled = true;
   		setTimeout(bind(function () {
@@ -15677,8 +15871,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   // @factory L.canvas(options?: Renderer options)
   // Creates a Canvas renderer with the given options.
-  function canvas$1(options) {
-  	return canvas ? new Canvas(options) : null;
+  function canvas(options) {
+  	return Browser.canvas ? new Canvas(options) : null;
   }
 
   /*
@@ -15822,7 +16016,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	}
   };
 
-  var create$2 = vml ? vmlCreate : svgCreate;
+  var create = Browser.vml ? vmlCreate : svgCreate;
 
   /*
    * @class SVG
@@ -15832,7 +16026,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
    * Allows vector layers to be displayed with [SVG](https://developer.mozilla.org/docs/Web/SVG).
    * Inherits `Renderer`.
    *
-   * Due to [technical limitations](http://caniuse.com/#search=svg), SVG is not
+   * Due to [technical limitations](https://caniuse.com/svg), SVG is not
    * available in all web browsers, notably Android 2.x and 3.x.
    *
    * Although SVG is not available on IE7 and IE8, these browsers support
@@ -15862,19 +16056,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
   var SVG = Renderer.extend({
 
-  	getEvents: function () {
-  		var events = Renderer.prototype.getEvents.call(this);
-  		events.zoomstart = this._onZoomStart;
-  		return events;
-  	},
-
   	_initContainer: function () {
-  		this._container = create$2('svg');
+  		this._container = create('svg');
 
   		// makes it possible to click through svg root; we'll reset it back in individual paths
   		this._container.setAttribute('pointer-events', 'none');
 
-  		this._rootGroup = create$2('g');
+  		this._rootGroup = create('g');
   		this._container.appendChild(this._rootGroup);
   	},
 
@@ -15884,13 +16072,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		delete this._container;
   		delete this._rootGroup;
   		delete this._svgSize;
-  	},
-
-  	_onZoomStart: function () {
-  		// Drag-then-pinch interactions might mess up the center and zoom.
-  		// In this case, the easiest way to prevent this is re-do the renderer
-  		//   bounds and padding when the zooming starts.
-  		this._update();
   	},
 
   	_update: function () {
@@ -15919,7 +16100,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// methods below are called by vector layers implementations
 
   	_initPath: function (layer) {
-  		var path = layer._path = create$2('path');
+  		var path = layer._path = create('path');
 
   		// @namespace Path
   		// @option className: String = null
@@ -16023,15 +16204,15 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	}
   });
 
-  if (vml) {
+  if (Browser.vml) {
   	SVG.include(vmlMixin);
   }
 
   // @namespace SVG
   // @factory L.svg(options?: Renderer options)
   // Creates a SVG renderer with the given options.
-  function svg$1(options) {
-  	return svg || vml ? new SVG(options) : null;
+  function svg(options) {
+  	return Browser.svg || Browser.vml ? new SVG(options) : null;
   }
 
   Map.include({
@@ -16072,7 +16253,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		// @namespace Map; @option preferCanvas: Boolean = false
   		// Whether `Path`s should be rendered on a `Canvas` renderer.
   		// By default, all `Path`s are rendered in a `SVG` renderer.
-  		return (this.options.preferCanvas && canvas$1(options)) || svg$1(options);
+  		return (this.options.preferCanvas && canvas(options)) || svg(options);
   	}
   });
 
@@ -16131,7 +16312,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	return new Rectangle(latLngBounds, options);
   }
 
-  SVG.create = create$2;
+  SVG.create = create;
   SVG.pointsToPath = pointsToPath;
 
   GeoJSON.geometryToLayer = geometryToLayer;
@@ -16276,6 +16457,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	_onKeyDown: function (e) {
   		if (e.keyCode === 27) {
   			this._finish();
+  			this._clearDeferredResetState();
+  			this._resetState();
   		}
   	}
   });
@@ -16346,7 +16529,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   // @section Interaction Options
   Map.mergeOptions({
   	// @option dragging: Boolean = true
-  	// Whether the map be draggable with mouse/touch or not.
+  	// Whether the map is draggable with mouse/touch or not.
   	dragging: true,
 
   	// @section Panning Inertia Options
@@ -16354,8 +16537,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// If enabled, panning of the map will have an inertia effect where
   	// the map builds momentum while dragging and continues moving in
   	// the same direction for some time. Feels especially nice on touch
-  	// devices. Enabled by default unless running on old Android devices.
-  	inertia: !android23,
+  	// devices. Enabled by default.
+  	inertia: true,
 
   	// @option inertiaDeceleration: Number = 3000
   	// The rate with which the inertial movement slows down, in pixels/second².
@@ -16519,7 +16702,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		var map = this._map,
   		    options = map.options,
 
-  		    noInertia = !options.inertia || this._times.length < 2;
+  		    noInertia = !options.inertia || e.noInertia || this._times.length < 2;
 
   		map.fire('dragend', e);
 
@@ -16827,19 +17010,19 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   Map.addInitHook('addHandler', 'scrollWheelZoom', ScrollWheelZoom);
 
   /*
-   * L.Map.Tap is used to enable mobile hacks like quick taps and long hold.
+   * L.Map.TapHold is used to simulate `contextmenu` event on long hold,
+   * which otherwise is not fired by mobile Safari.
    */
+
+  var tapHoldDelay = 600;
 
   // @namespace Map
   // @section Interaction Options
   Map.mergeOptions({
   	// @section Touch interaction options
-  	// @option tap: Boolean
-  	// Enables mobile hacks for supporting instant taps (fixing 200ms click
-  	// delay on iOS/Android) and touch holds (fired as `contextmenu` events).
-  	// This is legacy option, by default enabled in mobile Safari only
-  	// (because we still need `contextmenu` simulation for iOS).
-  	tap: safari && mobile,
+  	// @option tapHold: Boolean
+  	// Enables simulation of `contextmenu` event, default is `true` for mobile Safari.
+  	tapHold: Browser.touchNative && Browser.safari && Browser.mobile,
 
   	// @option tapTolerance: Number = 15
   	// The max number of pixels a user can shift his finger during touch
@@ -16847,7 +17030,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	tapTolerance: 15
   });
 
-  var Tap = Handler.extend({
+  var TapHold = Handler.extend({
   	addHooks: function () {
   		on(this._map._container, 'touchstart', this._onDown, this);
   	},
@@ -16857,102 +17040,70 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	},
 
   	_onDown: function (e) {
-  		if (!e.touches) { return; }
+  		clearTimeout(this._holdTimeout);
+  		if (e.touches.length !== 1) { return; }
 
-  		preventDefault(e);
-
-  		this._fireClick = true;
-
-  		// don't simulate click or track longpress if more than 1 touch
-  		if (e.touches.length > 1) {
-  			this._fireClick = false;
-  			clearTimeout(this._holdTimeout);
-  			return;
-  		}
-
-  		var first = e.touches[0],
-  		    el = first.target;
-
+  		var first = e.touches[0];
   		this._startPos = this._newPos = new Point(first.clientX, first.clientY);
 
-  		// if touching a link, highlight it
-  		if (el.tagName && el.tagName.toLowerCase() === 'a') {
-  			addClass(el, 'leaflet-active');
-  		}
-
-  		// simulate long hold but setting a timeout
   		this._holdTimeout = setTimeout(bind(function () {
-  			if (this._isTapValid()) {
-  				this._fireClick = false;
-  				this._onUp();
-  				this._simulateEvent('contextmenu', first);
-  			}
-  		}, this), 1000);
+  			this._cancel();
+  			if (!this._isTapValid()) { return; }
 
-  		this._simulateEvent('mousedown', first);
+  			// prevent simulated mouse events https://w3c.github.io/touch-events/#mouse-events
+  			on(document, 'touchend', preventDefault);
+  			on(document, 'touchend touchcancel', this._cancelClickPrevent);
+  			this._simulateEvent('contextmenu', first);
+  		}, this), tapHoldDelay);
 
-  		on(document, {
-  			touchmove: this._onMove,
-  			touchend: this._onUp
-  		}, this);
+  		on(document, 'touchend touchcancel contextmenu', this._cancel, this);
+  		on(document, 'touchmove', this._onMove, this);
   	},
 
-  	_onUp: function (e) {
+  	_cancelClickPrevent: function cancelClickPrevent() {
+  		off(document, 'touchend', preventDefault);
+  		off(document, 'touchend touchcancel', cancelClickPrevent);
+  	},
+
+  	_cancel: function () {
   		clearTimeout(this._holdTimeout);
+  		off(document, 'touchend touchcancel contextmenu', this._cancel, this);
+  		off(document, 'touchmove', this._onMove, this);
+  	},
 
-  		off(document, {
-  			touchmove: this._onMove,
-  			touchend: this._onUp
-  		}, this);
-
-  		if (this._fireClick && e && e.changedTouches) {
-
-  			var first = e.changedTouches[0],
-  			    el = first.target;
-
-  			if (el && el.tagName && el.tagName.toLowerCase() === 'a') {
-  				removeClass(el, 'leaflet-active');
-  			}
-
-  			this._simulateEvent('mouseup', first);
-
-  			// simulate click if the touch didn't move too much
-  			if (this._isTapValid()) {
-  				this._simulateEvent('click', first);
-  			}
-  		}
+  	_onMove: function (e) {
+  		var first = e.touches[0];
+  		this._newPos = new Point(first.clientX, first.clientY);
   	},
 
   	_isTapValid: function () {
   		return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance;
   	},
 
-  	_onMove: function (e) {
-  		var first = e.touches[0];
-  		this._newPos = new Point(first.clientX, first.clientY);
-  		this._simulateEvent('mousemove', first);
-  	},
-
   	_simulateEvent: function (type, e) {
-  		var simulatedEvent = document.createEvent('MouseEvents');
+  		var simulatedEvent = new MouseEvent(type, {
+  			bubbles: true,
+  			cancelable: true,
+  			view: window,
+  			// detail: 1,
+  			screenX: e.screenX,
+  			screenY: e.screenY,
+  			clientX: e.clientX,
+  			clientY: e.clientY,
+  			// button: 2,
+  			// buttons: 2
+  		});
 
   		simulatedEvent._simulated = true;
-  		e.target._simulatedClick = true;
-
-  		simulatedEvent.initMouseEvent(
-  		        type, true, true, window, 1,
-  		        e.screenX, e.screenY,
-  		        e.clientX, e.clientY,
-  		        false, false, false, false, 0, null);
 
   		e.target.dispatchEvent(simulatedEvent);
   	}
   });
 
   // @section Handlers
-  // @property tap: Handler
-  // Mobile touch hacks (quick tap and touch hold) handler.
-  Map.addInitHook('addHandler', 'tap', Tap);
+  // @property tapHold: Handler
+  // Long tap handler to simulate `contextmenu` event (useful in mobile Safari).
+  Map.addInitHook('addHandler', 'tapHold', TapHold);
 
   /*
    * L.Handler.TouchZoom is used by L.Map to add pinch zoom on supported mobile browsers.
@@ -16966,8 +17117,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   	// Whether the map can be zoomed by touch-dragging with two fingers. If
   	// passed `'center'`, it will zoom to the center of the view regardless of
   	// where the touch events (fingers) were. Enabled for touch-capable web
-  	// browsers except for old Androids.
-  	touchZoom: touch && !android23,
+  	// browsers.
+  	touchZoom: Browser.touch,
 
   	// @option bounceAtZoomLimits: Boolean = true
   	// Set it to false if you don't want the map to zoom beyond min/max zoom
@@ -17008,7 +17159,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		map._stop();
 
   		on(document, 'touchmove', this._onTouchMove, this);
-  		on(document, 'touchend', this._onTouchEnd, this);
+  		on(document, 'touchend touchcancel', this._onTouchEnd, this);
 
   		preventDefault(e);
   	},
@@ -17062,7 +17213,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   		cancelAnimFrame(this._animRequest);
 
   		off(document, 'touchmove', this._onTouchMove, this);
-  		off(document, 'touchend', this._onTouchEnd, this);
+  		off(document, 'touchend touchcancel', this._onTouchEnd, this);
 
   		// Pinch updates GridLayers' levels only when zoomSnap is off, so zoomSnap becomes noUpdate.
   		if (this._map.options.zoomAnimation) {
@@ -17083,98 +17234,97 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
   Map.Drag = Drag;
   Map.Keyboard = Keyboard;
   Map.ScrollWheelZoom = ScrollWheelZoom;
-  Map.Tap = Tap;
+  Map.TapHold = TapHold;
   Map.TouchZoom = TouchZoom;
 
-  exports.version = version;
-  exports.Control = Control;
-  exports.control = control;
+  exports.Bounds = Bounds;
   exports.Browser = Browser;
-  exports.Evented = Evented;
-  exports.Mixin = Mixin;
-  exports.Util = Util;
+  exports.CRS = CRS;
+  exports.Canvas = Canvas;
+  exports.Circle = Circle;
+  exports.CircleMarker = CircleMarker;
   exports.Class = Class;
-  exports.Handler = Handler;
-  exports.extend = extend;
-  exports.bind = bind;
-  exports.stamp = stamp;
-  exports.setOptions = setOptions;
+  exports.Control = Control;
+  exports.DivIcon = DivIcon;
+  exports.DivOverlay = DivOverlay;
   exports.DomEvent = DomEvent;
   exports.DomUtil = DomUtil;
-  exports.PosAnimation = PosAnimation;
   exports.Draggable = Draggable;
-  exports.LineUtil = LineUtil;
-  exports.PolyUtil = PolyUtil;
-  exports.Point = Point;
-  exports.point = toPoint;
-  exports.Bounds = Bounds;
-  exports.bounds = toBounds;
-  exports.Transformation = Transformation;
-  exports.transformation = toTransformation;
-  exports.Projection = index;
-  exports.LatLng = LatLng;
-  exports.latLng = toLatLng;
-  exports.LatLngBounds = LatLngBounds;
-  exports.latLngBounds = toLatLngBounds;
-  exports.CRS = CRS;
+  exports.Evented = Evented;
+  exports.FeatureGroup = FeatureGroup;
   exports.GeoJSON = GeoJSON;
-  exports.geoJSON = geoJSON;
-  exports.geoJson = geoJson;
+  exports.GridLayer = GridLayer;
+  exports.Handler = Handler;
+  exports.Icon = Icon;
+  exports.ImageOverlay = ImageOverlay;
+  exports.LatLng = LatLng;
+  exports.LatLngBounds = LatLngBounds;
   exports.Layer = Layer;
   exports.LayerGroup = LayerGroup;
-  exports.layerGroup = layerGroup;
-  exports.FeatureGroup = FeatureGroup;
-  exports.featureGroup = featureGroup;
-  exports.ImageOverlay = ImageOverlay;
-  exports.imageOverlay = imageOverlay;
-  exports.VideoOverlay = VideoOverlay;
-  exports.videoOverlay = videoOverlay;
-  exports.SVGOverlay = SVGOverlay;
-  exports.svgOverlay = svgOverlay;
-  exports.DivOverlay = DivOverlay;
-  exports.Popup = Popup;
-  exports.popup = popup;
-  exports.Tooltip = Tooltip;
-  exports.tooltip = tooltip;
-  exports.Icon = Icon;
-  exports.icon = icon;
-  exports.DivIcon = DivIcon;
-  exports.divIcon = divIcon;
-  exports.Marker = Marker;
-  exports.marker = marker;
-  exports.TileLayer = TileLayer;
-  exports.tileLayer = tileLayer;
-  exports.GridLayer = GridLayer;
-  exports.gridLayer = gridLayer;
-  exports.SVG = SVG;
-  exports.svg = svg$1;
-  exports.Renderer = Renderer;
-  exports.Canvas = Canvas;
-  exports.canvas = canvas$1;
-  exports.Path = Path;
-  exports.CircleMarker = CircleMarker;
-  exports.circleMarker = circleMarker;
-  exports.Circle = Circle;
-  exports.circle = circle;
-  exports.Polyline = Polyline;
-  exports.polyline = polyline;
-  exports.Polygon = Polygon;
-  exports.polygon = polygon;
-  exports.Rectangle = Rectangle;
-  exports.rectangle = rectangle;
+  exports.LineUtil = LineUtil;
   exports.Map = Map;
+  exports.Marker = Marker;
+  exports.Mixin = Mixin;
+  exports.Path = Path;
+  exports.Point = Point;
+  exports.PolyUtil = PolyUtil;
+  exports.Polygon = Polygon;
+  exports.Polyline = Polyline;
+  exports.Popup = Popup;
+  exports.PosAnimation = PosAnimation;
+  exports.Projection = index;
+  exports.Rectangle = Rectangle;
+  exports.Renderer = Renderer;
+  exports.SVG = SVG;
+  exports.SVGOverlay = SVGOverlay;
+  exports.TileLayer = TileLayer;
+  exports.Tooltip = Tooltip;
+  exports.Transformation = Transformation;
+  exports.Util = Util;
+  exports.VideoOverlay = VideoOverlay;
+  exports.bind = bind;
+  exports.bounds = toBounds;
+  exports.canvas = canvas;
+  exports.circle = circle;
+  exports.circleMarker = circleMarker;
+  exports.control = control;
+  exports.divIcon = divIcon;
+  exports.extend = extend;
+  exports.featureGroup = featureGroup;
+  exports.geoJSON = geoJSON;
+  exports.geoJson = geoJson;
+  exports.gridLayer = gridLayer;
+  exports.icon = icon;
+  exports.imageOverlay = imageOverlay;
+  exports.latLng = toLatLng;
+  exports.latLngBounds = toLatLngBounds;
+  exports.layerGroup = layerGroup;
   exports.map = createMap;
+  exports.marker = marker;
+  exports.point = toPoint;
+  exports.polygon = polygon;
+  exports.polyline = polyline;
+  exports.popup = popup;
+  exports.rectangle = rectangle;
+  exports.setOptions = setOptions;
+  exports.stamp = stamp;
+  exports.svg = svg;
+  exports.svgOverlay = svgOverlay;
+  exports.tileLayer = tileLayer;
+  exports.tooltip = tooltip;
+  exports.transformation = toTransformation;
+  exports.version = version;
+  exports.videoOverlay = videoOverlay;
 
   var oldL = window.L;
   exports.noConflict = function() {
   	window.L = oldL;
   	return this;
   }
-
   // Always export us to window global (see #2364)
   window.L = exports;
 
-})));
+}));
 //# sourceMappingURL=leaflet-src.js.map
 
 
@@ -18407,7 +18557,8 @@ function layerFactory (L) {
         },
 
         _redraw: function () {
-            this._redrawRequest = this._redrawRequest || L.Util.requestAnimFrame(L.Canvas.prototype._redraw, this);
+            this._redrawRequest = this._redrawRequest || 
+                L.Util.requestAnimFrame(L.Canvas.prototype._redraw, this);
         },
 
         _clear: function () {
@@ -18938,18 +19089,21 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     // after the request is finished – i.e. there would be one almost
     // useless request.
     chat._faction.data = {};
+    chat._faction.guids = [];
     chat._faction.oldestTimestamp = -1;
     chat._faction.newestTimestamp = -1;
     delete chat._faction.oldestGUID;
     delete chat._faction.newestGUID;
 
     chat._public.data = {};
+    chat._public.guids = [];
     chat._public.oldestTimestamp = -1;
     chat._public.newestTimestamp = -1;
     delete chat._public.oldestGUID;
     delete chat._public.newestGUID;
 
     chat._alerts.data = {};
+    chat._alerts.guids = [];
     chat._alerts.oldestTimestamp = -1;
     chat._alerts.newestTimestamp = -1;
     delete chat._alerts.oldestGUID;
@@ -18961,7 +19115,6 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
   var ne = b.getNorthEast();
   var sw = b.getSouthWest();
   var data = {
-//    desiredNumItems: isFaction ? CHAT_FACTION_ITEMS : CHAT_PUBLIC_ITEMS ,
     minLatE6: Math.round(sw.lat*1E6),
     minLngE6: Math.round(sw.lng*1E6),
     maxLatE6: Math.round(ne.lat*1E6),
@@ -18969,9 +19122,9 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     minTimestampMs: -1,
     maxTimestampMs: -1,
     tab: channel,
-  }
+  };
 
-  if(getOlderMsgs) {
+  if (getOlderMsgs) {
     // ask for older chat when scrolling up
     data = $.extend(data, {
       maxTimestampMs: storageHash.oldestTimestamp,
@@ -18981,18 +19134,14 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     // ask for newer chat
     var min = storageHash.newestTimestamp;
     // the initial request will have both timestamp values set to -1,
-    // thus we receive the newest desiredNumItems. After that, we will
-    // only receive messages with a timestamp greater or equal to min
-    // above.
+    // thus we receive the newest 50. After that, we will only receive
+    // messages with a timestamp greater or equal to min above.
     // After resuming from idle, there might be more new messages than
     // desiredNumItems. So on the first request, we are not really up to
     // date. We will eventually catch up, as long as there are less new
-    // messages than desiredNumItems per each refresh cycle.
+    // messages than 50 per each refresh cycle.
     // A proper solution would be to query until no more new results are
-    // returned. Another way would be to set desiredNumItems to a very
-    // large number so we really get all new messages since the last
-    // request. Setting desiredNumItems to -1 does unfortunately not
-    // work.
+    // returned.
     // Currently this edge case is not handled. Let’s see if this is a
     // problem in crowded areas.
     $.extend(data, {
@@ -19004,7 +19153,7 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     if (min > -1) $.extend(data, {ascendingTimestampOrder: true});
   }
   return data;
-}
+};
 
 
 
@@ -19031,7 +19180,7 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
 }
 
 
-window.chat._faction = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
+window.chat._faction = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
 window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestFactionRunning = false;
   $("#chatcontrols a:contains('faction')").removeClass('loading');
@@ -19058,7 +19207,7 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
 }
 
 window.chat.renderFaction = function(oldMsgsWereAdded) {
-  chat.renderData(chat._faction.data, 'chatfaction', oldMsgsWereAdded);
+  chat.renderData(chat._faction.data, 'chatfaction', oldMsgsWereAdded, chat._faction.guids);
 }
 
 
@@ -19084,7 +19233,7 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
   );
 }
 
-window.chat._public = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
+window.chat._public = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
 window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestPublicRunning = false;
   $("#chatcontrols a:contains('all')").removeClass('loading');
@@ -19112,7 +19261,7 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
 }
 
 window.chat.renderPublic = function(oldMsgsWereAdded) {
-  chat.renderData(chat._public.data, 'chatall', oldMsgsWereAdded);
+  chat.renderData(chat._public.data, 'chatall', oldMsgsWereAdded, chat._public.guids);
 }
 
 
@@ -19139,7 +19288,7 @@ window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
 }
 
 
-window.chat._alerts = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
+window.chat._alerts = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
 window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestAlertsRunning = false;
   $("#chatcontrols a:contains('alerts')").removeClass('loading');
@@ -19155,14 +19304,14 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   chat.writeDataToHash(data, chat._alerts, undefined, olderMsgs, ascendingTimestampOrder); //NOTE: isPublic passed as undefined - it's nether public or private!
   var oldMsgsWereAdded = old !== chat._alerts.oldestTimestamp;
 
-// no hoot for alerts - API change planned here...
-//  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
+  // hook for alerts - API change planned here for next refactor
+  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
 
   window.chat.renderAlerts(oldMsgsWereAdded);
 }
 
 window.chat.renderAlerts = function(oldMsgsWereAdded) {
-  chat.renderData(chat._alerts.data, 'chatalerts', oldMsgsWereAdded);
+  chat.renderData(chat._alerts.data, 'chatalerts', oldMsgsWereAdded, chat._alerts.guids);
 }
 
 
@@ -19171,9 +19320,15 @@ window.chat.renderAlerts = function(oldMsgsWereAdded) {
 // common
 //
 
+window.chat.addNickname= function(nick) {
+  var c = document.getElementById("chattext");
+  c.value = [c.value.trim(), nick].join(" ").trim() + " ";
+  c.focus()
+}
+
 window.chat.nicknameClicked = function(event, nickname) {
   var hookData = { event: event, nickname: nickname };
-  
+
   if (window.runHooks('nicknameClicked', hookData)) {
     window.chat.addNickname('@' + nickname);
   }
@@ -19183,10 +19338,9 @@ window.chat.nicknameClicked = function(event, nickname) {
   return false;
 }
 
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
-
+window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAscendingOrder) {
+  // track oldest + newest timestamps/GUID
   if (newData.result.length > 0) {
-    //track oldest + newest timestamps/GUID
     var first = {
       guid: newData.result[0][0],
       time: newData.result[0][1]
@@ -19201,184 +19355,311 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
       last = temp;
     }
     if (storageHash.oldestTimestamp === -1 || storageHash.oldestTimestamp >= last.time) {
-      if (isOlderMsgs || storageHash.oldestTimestamp != last.time) {
+      if (isOlderMsgs || storageHash.oldestTimestamp !== last.time) {
         storageHash.oldestTimestamp = last.time;
         storageHash.oldestGUID = last.guid;
       }
     }
     if (storageHash.newestTimestamp === -1 || storageHash.newestTimestamp <= first.time) {
-      if (!isOlderMsgs || storageHash.newestTimestamp != first.time) {
+      if (!isOlderMsgs || storageHash.newestTimestamp !== first.time) {
         storageHash.newestTimestamp = first.time;
         storageHash.newestGUID = first.guid;
       }
     }
   }
-  $.each(newData.result, function(ind, json) {
-    // avoid duplicates
-    if(json[0] in storageHash.data) return true;
+};
 
-    var isSecureMessage = false;
-    var msgToPlayer = false;
+window.chat.parseMsgData = function(data) {
+  var categories = data[2].plext.categories;
+  var isPublic = (categories & 1) === 1;
+  var isSecure = (categories & 2) === 2;
+  var msgAlert = (categories & 4) === 4;
 
-    var time = json[1];
-    var team = json[2].plext.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
-    var auto = json[2].plext.plextType !== 'PLAYER_GENERATED';
-    var systemNarrowcast = json[2].plext.plextType === 'SYSTEM_NARROWCAST';
+  var msgToPlayer = msgAlert && (isPublic || isSecure);
 
-    //remove "Your X on Y was destroyed by Z" from the faction channel
-//    if (systemNarrowcast && !isPublicChannel) return true;
+  var time = data[1];
+  var team = data[2].plext.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
+  var auto = data[2].plext.plextType !== 'PLAYER_GENERATED';
+  var systemNarrowcast = data[2].plext.plextType === 'SYSTEM_NARROWCAST';
 
-    var msg = '', nick = '';
-    $.each(json[2].plext.markup, function(ind, markup) {
-      switch(markup[0]) {
-      case 'SENDER': // user generated messages
-        nick = markup[1].plain.slice(0, -2); // cut “: ” at end
-        break;
+  var markup = data[2].plext.markup;
 
-      case 'PLAYER': // automatically generated messages
-        nick = markup[1].plain;
-        team = markup[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
-        if(ind > 0) msg += nick; // don’t repeat nick directly
-        break;
+  var nick = '';
+  markup.forEach(function(ent) {
+    switch (ent[0]) {
+    case 'SENDER': // user generated messages
+      nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+      break;
 
-      case 'TEXT':
-        msg += $('<div/>').text(markup[1].plain).html().autoLink();
-        break;
+    case 'PLAYER': // automatically generated messages
+      nick = ent[1].plain;
+      team = ent[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
+      break;
 
-      case 'AT_PLAYER':
-        var thisToPlayer = (markup[1].plain == ('@'+window.PLAYER.nickname));
-        var spanClass = thisToPlayer ? "pl_nudge_me" : (markup[1].team + " pl_nudge_player");
-        var atPlayerName = markup[1].plain.replace(/^@/, "");
-        msg += $('<div/>').html($('<span/>')
-                          .attr('class', spanClass)
-                          .attr('onclick',"window.chat.nicknameClicked(event, '"+atPlayerName+"')")
-                          .text(markup[1].plain)).html();
-        msgToPlayer = msgToPlayer || thisToPlayer;
-        break;
-
-      case 'PORTAL':
-        var lat = markup[1].latE6/1E6, lng = markup[1].lngE6/1E6;
-        var perma = window.makePermalink([lat,lng]);
-        var js = 'window.selectPortalByLatLng('+lat+', '+lng+');return false';
-
-        msg += '<a onclick="'+js+'"'
-          + ' title="'+markup[1].address+'"'
-          + ' href="'+perma+'" class="help">'
-          + window.chat.getChatPortalName(markup[1])
-          + '</a>';
-        break;
-
-      case 'SECURE':
-        //NOTE: we won't add the '[secure]' string here - it'll be handled below instead
-        isSecureMessage = true;
-        break;
-
-      default:
-        //handle unknown types by outputting the plain text version, marked with it's type
-        msg += $('<div/>').text(markup[0]+':<'+markup[1].plain+'>').html();
-        break;
-      }
-    });
-
-
-//    //skip secure messages on the public channel
-//    if (isPublicChannel && isSecureMessage) return true;
-
-//    //skip public messages (e.g. @player mentions) on the secure channel
-//    if ((!isPublicChannel) && (!isSecureMessage)) return true;
-
-
-    //NOTE: these two are redundant with the above two tests in place - but things have changed...
-    //from the server, private channel messages are flagged with a SECURE string '[secure] ', and appear in
-    //both the public and private channels
-    //we don't include this '[secure]' text above, as it's redundant in the faction-only channel
-    //let's add it here though if we have a secure message in the public channel, or the reverse if a non-secure in the faction one
-    if (!auto && !(isPublicChannel===false) && isSecureMessage) msg = '<span style="color: #f88; background-color: #500;">[faction]</span> ' + msg;
-    //and, add the reverse - a 'public' marker to messages in the private channel
-    if (!auto && !(isPublicChannel===true) && (!isSecureMessage)) msg = '<span style="color: #ff6; background-color: #550">[public]</span> ' + msg;
-
-
-    // format: timestamp, autogenerated, HTML message
-    storageHash.data[json[0]] = [json[1], auto, chat.renderMsg(msg, nick, time, team, msgToPlayer, systemNarrowcast), nick];
-
+    default:
+      break;
+    }
   });
-}
+
+  return {
+    guid: data[0],
+    time: time,
+    public: isPublic,
+    secure: isSecure,
+    alert: msgAlert,
+    msgToPlayer: msgToPlayer,
+    type: data[2].plext.plextType,
+    narrowcast: systemNarrowcast,
+    auto: auto,
+    player: {
+      name: nick,
+      team: team,
+    },
+    markup: markup,
+  };
+};
+
+window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
+  window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
+
+  newData.result.forEach(function(json) {
+    // avoid duplicates
+    if (json[0] in storageHash.data) {
+      return true;
+    }
+
+    var parsedData = chat.parseMsgData(json);
+
+    // format: timestamp, autogenerated, HTML message, nick, additional data (parsed, plugin specific data...)
+    storageHash.data[parsedData.guid] = [parsedData.time, parsedData.auto, chat.renderMsgRow(parsedData), parsedData.player.name, parsedData];
+    if (isAscendingOrder) {
+      storageHash.guids.push(parsedData.guid);
+    } else {
+      storageHash.guids.unshift(parsedData.guid);
+    }
+  });
+};
+
+//
+// Rendering primitive for markup, chat cells (td) and chat row (tr)
+//
+
+window.chat.renderText = function (text) {
+  return $('<div>').text(text.plain).html().autoLink();
+};
 
 // Override portal names that are used over and over, such as 'US Post Office'
 window.chat.getChatPortalName = function(markup) {
   var name = markup.name;
-  if(name === 'US Post Office') {
+  if (name === 'US Post Office') {
     var address = markup.address.split(',');
     name = 'USPS: ' + address[0];
   }
   return name;
-}
+};
 
-// renders data from the data-hash to the element defined by the given
-// ID. Set 3rd argument to true if it is likely that old data has been
-// added. Latter is only required for scrolling.
-window.chat.renderData = function(data, element, likelyWereOldMsgs) {
-  var elm = $('#'+element);
-  if(elm.is(':hidden')) return;
+window.chat.renderPortal = function (portal) {
+  var lat = portal.latE6/1E6, lng = portal.lngE6/1E6;
+  var perma = window.makePermalink([lat,lng]);
+  var js = 'window.selectPortalByLatLng('+lat+', '+lng+');return false';
+  return '<a onclick="'+js+'"'
+    + ' title="'+portal.address+'"'
+    + ' href="'+perma+'" class="help">'
+    + window.chat.getChatPortalName(portal)
+    + '</a>';
+};
 
-  // discard guids and sort old to new
-//TODO? stable sort, to preserve server message ordering? or sort by GUID if timestamps equal?
-  var vals = $.map(data, function(v, k) { return [v]; });
-  vals = vals.sort(function(a, b) { return a[0]-b[0]; });
+window.chat.renderFactionEnt = function (faction) {
+  var name = faction.team === 'ENLIGHTENED' ? 'Enlightened' : 'Resistance';
+  var spanClass = faction.team === 'ENLIGHTENED' ? TEAM_TO_CSS[TEAM_ENL] : TEAM_TO_CSS[TEAM_RES];
+  return $('<div>').html($('<span>')
+    .attr('class', spanClass)
+    .text(name)).html();
+};
 
-  // render to string with date separators inserted
-  var msgs = '';
-  var prevTime = null;
-  $.each(vals, function(ind, msg) {
-    var nextTime = new Date(msg[0]).toLocaleDateString();
-    if(prevTime && prevTime !== nextTime)
-      msgs += chat.renderDivider(nextTime);
-    msgs += msg[2];
-    prevTime = nextTime;
+window.chat.renderPlayer = function (player, at, sender) {
+  var name = player.plain;
+  if (sender) {
+    name = player.plain.replace(/: $/, '');
+  } else if (at) {
+    name = player.plain.replace(/^@/, '');
+  }
+  var thisToPlayer = name === window.PLAYER.nickname;
+  var spanClass = thisToPlayer ? 'pl_nudge_me' : (player.team + ' pl_nudge_player');
+  return $('<div>').html($('<span>')
+    .attr('class', spanClass)
+    .attr('onclick',"window.chat.nicknameClicked(event, '"+name+"')")
+    .text((at ? '@' : '') + name)).html();
+};
+
+window.chat.renderMarkupEntity = function (ent) {
+  switch (ent[0]) {
+  case 'TEXT':
+    return chat.renderText(ent[1]);
+  case 'PORTAL':
+    return chat.renderPortal(ent[1]);
+  case 'FACTION':
+    return chat.renderFactionEnt(ent[1]);
+  case 'SENDER':
+    return chat.renderPlayer(ent[1], false, true);
+  case 'PLAYER':
+    return chat.renderPlayer(ent[1]);
+  case 'AT_PLAYER':
+    return chat.renderPlayer(ent[1], true);
+  default:
+  }
+  return $('<div>').text(ent[0]+':<'+ent[1].plain+'>').html();
+};
+
+window.chat.renderMarkup = function (markup) {
+  var msg = '';
+  markup.forEach(function(ent, ind) {
+    switch (ent[0]) {
+    case 'SENDER':
+    case 'SECURE':
+      // skip as already handled
+      break;
+
+    case 'PLAYER': // automatically generated messages
+      if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
+      break;
+
+    default:
+      // add other enitities whatever the type
+      msg += chat.renderMarkupEntity(ent);
+      break;
+    }
   });
+  return msg;
+};
 
-  var scrollBefore = scrollBottom(elm);
-  elm.html('<table>' + msgs + '</table>');
-  chat.keepScrollPosition(elm, scrollBefore, likelyWereOldMsgs);
-}
+window.chat.renderTimeCell = function(time, classNames) {
+  var ta = unixTimeToHHmm(time);
+  var tb = unixTimeToDateTimeString(time, true);
+  // add <small> tags around the milliseconds
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+  return '<td><time class="' + classNames + '" title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time></td>';
+};
 
+window.chat.renderNickCell = function(nick, classNames) {
+  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
+  return '<td>'+i[0]+'<mark class="' + classNames + '">'+ nick+'</mark>'+i[1]+'</td>';
+};
 
-window.chat.renderDivider = function(text) {
-  var d = ' ──────────────────────────────────────────────────────────────────────────';
-  return '<tr><td colspan="3" style="padding-top:3px"><summary>─ ' + text + d + '</summary></td></tr>';
-}
+window.chat.renderMsgCell = function(msg, classNames) {
+  return '<td class="' + classNames + '">'+msg+'</td>';
+};
 
+window.chat.renderMsgRow = function(data) {
+  var timeClass = (data.msgToPlayer) ? 'pl_nudge_date' : '';
+  var timeCell = chat.renderTimeCell(data.time, timeClass);
 
+  var nickClasses = ['nickname'];
+  if (data.player.team === TEAM_ENL || data.player.team === TEAM_RES) {
+    nickClasses.push(TEAM_TO_CSS[data.player.team]);
+  }
+  // highlight things said/done by the player in a unique colour
+  // (similar to @player mentions from others in the chat text itself)
+  if (data.player.name === window.PLAYER.nickname) {
+    nickClasses.push('pl_nudge_me');
+  }
+  var nickCell = chat.renderNickCell(data.player.name, nickClasses.join(' '));
+
+  var msg = chat.renderMarkup(data.markup);
+  var msgClass = data.narrowcast ? 'system_narrowcast' : '';
+  var msgCell = chat.renderMsgCell(msg, msgClass);
+
+  var className = '';
+  if (!data.auto && data.public) {
+    className = 'public';
+  } else if (!data.auto && data.secure) {
+    className = 'faction';
+  }
+  return '<tr data-guid="' + data.guid + '" class="' + className + '">' + timeCell + nickCell + msgCell + '</tr>';
+};
+
+// legacy rendering, not used internaly, but left there for backward compatibilty in case a plugin uses it directly
 window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
   var ta = unixTimeToHHmm(time);
   var tb = unixTimeToDateTimeString(time, true);
-  //add <small> tags around the milliseconds
-  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // add <small> tags around the milliseconds
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 
   // help cursor via “#chat time”
   var t = '<time title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time>';
-  if ( msgToPlayer )
-  {
+  if (msgToPlayer) {
     t = '<div class="pl_nudge_date">' + t + '</div><div class="pl_nudge_pointy_spacer"></div>';
   }
-  if (systemNarrowcast)
-  {
+  if (systemNarrowcast) {
     msg = '<div class="system_narrowcast">' + msg + '</div>';
   }
   var color = COLORS[team];
-  if (nick === window.PLAYER.nickname) color = '#fd6';    //highlight things said/done by the player in a unique colour (similar to @player mentions from others in the chat text itself)
+  // highlight things said/done by the player in a unique colour (similar to @player mentions from others in the chat text itself)
+  if (nick === window.PLAYER.nickname) {
+    color = '#fd6';
+  }
   var s = 'style="cursor:pointer; color:'+color+'"';
   var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
   return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
 }
 
-window.chat.addNickname= function(nick) {
-  var c = document.getElementById("chattext");
-  c.value = [c.value.trim(), nick].join(" ").trim() + " ";
-  c.focus()
-}
+window.chat.renderDivider = function(text) {
+  return '<tr class="divider"><td><hr></td><td>' + text + '</td><td><hr></td></tr>';
+};
 
+// renders data from the data-hash to the element defined by the given
+// ID. Set 3rd argument to true if it is likely that old data has been
+// added. Latter is only required for scrolling.
+window.chat.renderData = function(data, element, likelyWereOldMsgs, sortedGuids) {
+  var elm = $('#'+element);
+  if (elm.is(':hidden')) {
+    return;
+  }
 
+  // if sortedGuids is not specified (legacy), sort old to new
+  // (disregarding server order)
+  var vals = sortedGuids;
+  if (vals === undefined) {
+    vals = $.map(data, function(v, k) { return [[v[0], k]]; });
+    vals = vals.sort(function(a, b) { return a[0]-b[0]; });
+    vals = vals.map(function(v) { return v[1]; });
+  }
+
+  // render to string with date separators inserted
+  var msgs = '';
+  var prevTime = null;
+  vals.forEach(function(guid) {
+    var msg = data[guid];
+    var nextTime = new Date(msg[0]).toLocaleDateString();
+    if (prevTime && prevTime !== nextTime) {
+      msgs += chat.renderDivider(nextTime);
+    }
+    msgs += msg[2];
+    prevTime = nextTime;
+  });
+
+  var firstRender = elm.is(':empty');
+  var scrollBefore = scrollBottom(elm);
+  elm.html('<table>' + msgs + '</table>');
+
+  if (firstRender) {
+    elm.data('needsScrollTop', 99999999);
+  } else {
+    chat.keepScrollPosition(elm, scrollBefore, likelyWereOldMsgs);
+  }
+
+  if(elm.data('needsScrollTop')) {
+    elm.data('ignoreNextScroll', true);
+    elm.scrollTop(elm.data('needsScrollTop'));
+    elm.data('needsScrollTop', null);
+  }
+};
 
 
 window.chat.getActive = function() {
@@ -19452,7 +19733,9 @@ window.chat.request = function() {
 // loads more if not.
 window.chat.needMoreMessages = function() {
   var activeTab = chat.getActive();
-  if(activeTab === 'debug') return;
+  if (activeTab !== 'all' && activeTab !== 'faction' && activeTab !== 'alerts') {
+    return;
+  }
 
   var activeChat = $('#chat > :visible');
   if(activeChat.length === 0) return;
@@ -19460,11 +19743,12 @@ window.chat.needMoreMessages = function() {
   var hasScrollbar = scrollBottom(activeChat) !== 0 || activeChat.scrollTop() !== 0;
   var nearTop = activeChat.scrollTop() <= CHAT_REQUEST_SCROLL_TOP;
   if(hasScrollbar && !nearTop) return;
-  
-  if(activeTab === 'faction')
+
+  if(activeTab === 'faction') {
     chat.requestFaction(true);
-  else
+  } else {
     chat.requestPublic(true);
+  }
 };
 
 
@@ -19518,12 +19802,6 @@ window.chat.chooseTab = function(tab) {
 
     default:
       throw new Error('chat.chooser was asked to handle unknown button: ' + tt);
-  }
-
-  if(elm.data('needsScrollTop')) {
-    elm.data('ignoreNextScroll', true);
-    elm.scrollTop(elm.data('needsScrollTop'));
-    elm.data('needsScrollTop', null);
   }
 }
 
@@ -19673,22 +19951,13 @@ window.chat.postMsg = function() {
   if(c == 'alerts')
     return alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
 
+  // unknown tab, ignore
+  if (c !== 'all' && c !== 'faction') {
+    return;
+  }
+
   var msg = $.trim($('#chatinput input').val());
   if(!msg || msg === '') return;
-
-  if (c === 'debug') {
-    var result;
-    try {
-      result = eval(msg);
-    } catch (e) {
-      if (e.stack) { log.error(e.stack); }
-      throw e; // to trigger native error message
-    }
-    if (result !== undefined) {
-      log.error(result.toString());
-    }
-    return result;
-  }
 
   var latlng = map.getCenter();
 
@@ -19746,11 +20015,7 @@ window.DataCache = function() {
 
 }
 
-window.DataCache.prototype.store = function(qk,data,freshTime) {
-  // fixme? common behaviour for objects is that properties are kept in the order they're added
-  // this is handy, as it allows easy retrieval of the oldest entries for expiring
-  // however, this is not guaranteed by the standards, but all our supported browsers work this way
-
+window.DataCache.prototype.store = function (qk, data, freshTime) {
   this.remove(qk);
 
   var time = new Date().getTime();
@@ -19815,137 +20080,13 @@ window.DataCache.prototype.runExpire = function() {
 
   var cacheSize = Object.keys(this._cache).length;
 
-  for(var qk in this._cache) {
-
-    // fixme? our MAX_SIZE test here assumes we're processing the oldest first. this relies
-    // on looping over object properties in the order they were added. this is true in most browsers,
-    // but is not a requirement of the standards
+  for (var qk in this._cache) {
     if (cacheSize > this.REQUEST_CACHE_MAX_ITEMS || this._cacheCharSize > this.REQUEST_CACHE_MAX_CHARS || this._cache[qk].time < t) {
       this._cacheCharSize -= this._cache[qk].dataStr.length;
       delete this._cache[qk];
       cacheSize--;
     }
   }
-}
-
-
-window.DataCache.prototype.debug = function() {
-//NOTE: ECMAScript strings use 16 bit chars (it's in the standard), so convert for bytes/Kb
-  return 'Cache: '+Object.keys(this._cache).length+' items, '+(this._cacheCharSize*2).toLocaleString()+' bytes ('+Math.ceil(this._cacheCharSize/512).toLocaleString()+'K)';
-}
-
-
-})();
-
-
-// *** module: debugging.js ***
-(function () {
-var log = ulog('debugging');
-
-// DEBUGGING TOOLS ///////////////////////////////////////////////////
-// meant to be used from browser debugger tools and the like.
-
-window.debug = function() {}
-
-window.debug.renderDetails = function() {
-  log.log('portals: ' + Object.keys(window.portals).length);
-  log.log('links:   ' + Object.keys(window.links).length);
-  log.log('fields:  ' + Object.keys(window.fields).length);
-}
-
-window.debug.printStackTrace = function() {
-  var e = new Error('dummy');
-  log.error(e.stack);
-  return e.stack;
-}
-
-
-
-window.debug.console = function() {
-  $('#debugconsole').text();
-}
-
-window.debug.console.show = function() {
-    $('#chat, #chatinput').show();
-    window.debug.console.create();
-    $('#chatinput mark').css('cssText', 'color: #bbb !important').text('debug:');
-    $('#chat > div').hide();
-    $('#debugconsole').show();
-    $('#chatcontrols .active').removeClass('active');
-    $("#chatcontrols a:contains('debug')").addClass('active');
-}
-
-window.debug.console.create = function() {
-  if($('#debugconsole').length) return;
-  $('#chatcontrols').append('<a>debug</a>');
-  $('#chatcontrols a:last').click(window.debug.console.show);
-  $('#chat').append('<div style="display: none" id="debugconsole"><table></table></div>');
-}
-
-window.debug.console.renderLine = function(text, errorType) {
-  debug.console.create();
-  switch(errorType) {
-    case 'error':   var color = '#FF424D'; break;
-    case 'warning': var color = '#FFDE42'; break;
-    default:        var color = '#eee';
-  }
-  if(typeof text !== 'string' && typeof text !== 'number') {
-    var cache = [];
-    text = JSON.stringify(text, function(key, value) {
-      if(typeof value === 'object' && value !== null) {
-        if(cache.indexOf(value) !== -1) {
-          // Circular reference found, discard key
-          return;
-        }
-        // Store value in our collection
-        cache.push(value);
-      }
-      return value;
-    });
-    cache = null;
-  }
-  var d = new Date();
-  var ta = d.toLocaleTimeString(); // print line instead maybe?
-  var tb = d.toLocaleString();
-  var t = '<time title="'+tb+'" data-timestamp="'+d.getTime()+'">'+ta+'</time>';
-  var s = 'style="color:'+color+'"';
-  var l = '<tr><td>'+t+'</td><td><mark '+s+'>'+errorType+'</mark></td><td>'+text+'</td></tr>';
-  $('#debugconsole table').prepend(l);
-}
-
-window.debug.console.log = function(text) {
-  debug.console.renderLine(text, 'notice');
-}
-
-window.debug.console.warn = function(text) {
-  debug.console.renderLine(text, 'warning');
-}
-
-window.debug.console.error = function(text) {
-  debug.console.renderLine(text, 'error');
-}
-
-window.debug.console.overwriteNative = function() {
-  window.debug.console.create();
-
-  var nativeConsole = window.console;
-  window.console = {};
-
-  function overwrite(which) {
-    window.console[which] = function() {
-      nativeConsole[which].apply(nativeConsole, arguments);
-      window.debug.console[which].apply(window.debug.console, arguments);
-    }
-  }
-
-  overwrite("log");
-  overwrite("warn");
-  overwrite("error");
-}
-
-window.debug.console.overwriteNativeIfRequired = function() {
-  if(!window.console || L.Browser.mobile)
-    window.debug.console.overwriteNative();
 }
 
 
@@ -20236,6 +20377,193 @@ window.setupDialogs = function() {
 })();
 
 
+// *** module: dialog_about.js ***
+(function () {
+var log = ulog('dialog_about');
+/* global script_info, app, log, L */
+
+window.aboutIITC = function() {
+  var html = createDialogContent();
+
+  dialog({
+    title: 'IITC ' + getIITCVersion(),
+    id: 'iitc-about',
+    html: html,
+    width: 'auto',
+    dialogClass: 'ui-dialog-aboutIITC'
+  });
+}
+
+function createDialogContent() {
+  var html = ''
+    + '<div><b>About IITC</b></div> '
+    + '<div>Ingress Intel Total Conversion</div> '
+    + '<hr>'
+    + '<div>'
+    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |'
+    + '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
+    + '   On the script’s homepage you can:'
+    + '   <ul>'
+    + '     <li>Find Updates</li>'
+    + '     <li>Get Plugins</li>'
+    + '     <li>Report Bugs</li>'
+    + '     <li>Contribute!</li>'
+    + '   </ul>'
+    + '</div>'
+    + '<hr>'
+    + '<div>Version: ' + getIITCVersion() + '</div>';
+
+  if (isShortOnLocalStorage()) {
+    html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
+  }
+
+  if (window.isApp && app.getVersionName) {
+    html += '<div>IITC Mobile ' + app.getVersionName() + '</div>';
+  }
+
+  var plugins = getPlugins();
+  if (plugins) {
+    html += '<div><p>Plugins:</p><ul>' + plugins + '</ul></div>';
+  }
+
+  return html;
+}
+
+
+function getPlugins() {
+  var pluginsInfo = window.bootPlugins.info;
+
+  while (window.bootPlugins[0]) {
+    var plugin = window.bootPlugins.shift();
+    pluginsInfo.push(plugin.info || {});
+  }
+
+  var extra = getIITCVersionAddition();
+
+  var plugins = pluginsInfo.map(convertPluginInfo)
+    .sort(function (a, b) { return a.name > b.name ? 1 : -1; })
+    .map(function (p) { return pluginInfoToString(p, extra); })
+    .join('\n');
+
+  return plugins;
+}
+
+function convertPluginInfo(info, index) {
+  // Plugins metadata come from 2 sources:
+  // - buildName, pluginId, dateTimeVersion: inserted in plugin body by build script
+  //   (only standard plugins)
+  // - script.name/version/description: from GM_info object, passed to wrapper
+  //   `script` may be not available if userscript manager does not provede GM_info
+  //   (atm: IITC-Mobile for iOS)
+  var result = {
+    build: info.buildName,
+    name: info.pluginId,
+    date: info.dateTimeVersion,
+    error: info.error,
+    version: undefined,
+    description: undefined
+  };
+
+  var script = info.script;
+  if (script) {
+    if (typeof script.name === 'string') {
+      result.name = script.name.replace(/^IITC[\s-]+plugin:\s+/i, ''); // cut non-informative name part
+    }
+    result.version = script.version;
+    result.description = script.description;
+  }
+
+  if (!result.name) {
+    if (script_info.script) { // check if GM_info is available
+      result.name = '[unknown plugin: index ' + index + ']';
+      result.description = "this plugin does not have proper wrapper; report to it's author";
+    } else { // userscript manager fault
+      result.name = '[3rd-party plugin: index ' + index + ']';
+    }
+  }
+
+  return result;
+}
+
+function pluginInfoToString(p, extra) {
+  var info = {
+    class: '',
+    description: p.description || '',
+    name: p.name,
+    verinfo: formatVerInfo(p, extra)
+  };
+
+  if (isStandardPlugin(p)) {
+    info.class += 'plugin-is-standard';
+  }
+
+  if (p.error) {
+    info.class += ' plugin-error';
+    info.description = p.error;
+  }
+
+  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo}</li>', info);
+}
+
+
+function isStandardPlugin(plugin) {
+  return (plugin.build === script_info.buildName && plugin.date === script_info.dateTimeVersion);
+}
+
+
+function getIITCVersion() {
+  var iitc = script_info;
+  return (iitc.script && iitc.script.version || iitc.dateTimeVersion) + ' [' + iitc.buildName + ']';
+}
+
+
+function getIITCVersionAddition() {
+  var extra = script_info.script && script_info.script.version.match(/^\d+\.\d+\.\d+(\..+)$/);
+  return extra && extra[1];
+}
+
+
+function formatVerInfo(p, extra) {
+  if (p.version && extra) {
+    var cutPos = p.version.length - extra.length;
+    // cut extra version component (timestamp) if it is equal to main script's one
+    if (p.version.substring(cutPos) === extra) {
+      p.version = p.version.substring(0,cutPos);
+    }
+  }
+
+  p.version = p.version || p.date;
+  if (p.version) {
+    var tooltip = [];
+    if (p.build) { tooltip.push('[' + p.build + ']'); }
+    if (p.date && p.date !== p.version) { tooltip.push(p.date); }
+    return L.Util.template(' - <code{title}>{version}</code>', {
+      title: tooltip[0] ? ' title="' + tooltip.join(' ') + '"' : '',
+      version: p.version
+    });
+  }
+
+  return '';
+}
+
+
+function isShortOnLocalStorage() {
+  var MINIMUM_FREE_SPACE = 100000;
+  try {
+    localStorage.setItem('_MEM_CHECK_', '#'.repeat(MINIMUM_FREE_SPACE));
+  } catch (e) {
+    log.error('out of localstorage space', e);
+    return true;
+  }
+
+  localStorage.removeItem('_MEM_CHECK_');
+  return false;
+}
+
+
+})();
+
+
 // *** module: entity_decode.js ***
 (function () {
 var log = ulog('entity_decode');
@@ -20424,29 +20752,25 @@ window.decodeArray.portalDetail = function(a) { // deprecated!!
 // *** module: entity_info.js ***
 (function () {
 var log = ulog('entity_info');
-
+/* exported setup --eslint */
 
 // ENTITY DETAILS TOOLS //////////////////////////////////////////////
 // hand any of these functions the details-hash of an entity (i.e.
 // portal, link, field) and they will return useful data.
 
-
 // given the entity detail data, returns the team the entity belongs
 // to. Uses TEAM_* enum values.
-window.getTeam = function(details) {
-  return teamStringToId(details.team);
-}
+window.getTeam = function (details) {
+  return window.teamStringToId(details.team);
+};
 
-window.teamStringToId = function(teamStr) {
-  var team = TEAM_NONE;
-  if(teamStr === 'ENLIGHTENED') team = TEAM_ENL;
-  if(teamStr === 'RESISTANCE') team = TEAM_RES;
-  if(teamStr === 'E') team = TEAM_ENL;
-  if(teamStr === 'R') team = TEAM_RES;
-  return team;
-}
-
-
+window.teamStringToId = function (teamStr) {
+  var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
+  if (teamIndex >= 0) return teamIndex;
+  teamIndex = window.TEAM_CODES.indexOf(teamStr);
+  if (teamIndex >= 0) return teamIndex;
+  return window.TEAM_NONE;
+};
 
 
 })();
@@ -20639,7 +20963,8 @@ var log = ulog('hooks');
 // portalSelected: called when portal on map is selected/unselected.
 //              Provide guid of selected and unselected portal.
 // mapDataRefreshStart: called when we start refreshing map data
-// mapDataEntityInject: called just as we start to render data. has callback to inject cached entities into the map render
+// mapDataEntityInject: called just as we start to render data. has callback to
+//                      Sinject cached entities into the map render
 // mapDataRefreshEnd: called when we complete the map data load
 // portalAdded: called when a portal has been received and is about to
 //              be added to its layer group. Note that this does NOT
@@ -20662,6 +20987,11 @@ var log = ulog('hooks');
 //              processed raw ajax response as well as the processed
 //              chat data that is going to be used for display.
 // factionChatDataAvailable: this hook runs after data for the faction
+//              chat has been received and processed, but not yet been
+//              displayed. The data hash contains both the unprocessed
+//              raw ajax response as well as the processed chat data
+//              that is going to be used for display.
+// alertsChatDataAvailable: this hook runs after data for the alerts
 //              chat has been received and processed, but not yet been
 //              displayed. The data hash contains both the unprocessed
 //              raw ajax response as well as the processed chat data
@@ -21287,7 +21617,7 @@ window.removeLayerGroup = function (layerGroup) {
 // *** module: map.js ***
 (function () {
 var log = ulog('map');
-/* global log -- eslint */
+/* global log,L -- eslint */
 function setupCRS () {
 
   // use the earth radius value from s2 geometry library
@@ -21406,6 +21736,10 @@ function createDefaultBaseMapLayers () {
   return baseLayers;
 }
 
+function createFactionLayersArray() {
+  return window.TEAM_NAMES.map(() => L.layerGroup());
+}
+
 function createDefaultOverlays () {
   /* global portalsFactionLayers: true, linksFactionLayers: true, fieldsFactionLayers: true -- eslint*/
   /* eslint-disable dot-notation  */
@@ -21415,17 +21749,17 @@ function createDefaultOverlays () {
   portalsFactionLayers = [];
   var portalsLayers = [];
   for (var i = 0; i <= 8; i++) {
-    portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+    portalsFactionLayers[i] = createFactionLayersArray();
     portalsLayers[i] = L.layerGroup();
     var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
     addLayers[t] = portalsLayers[i];
   }
 
-  fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  fieldsFactionLayers = createFactionLayersArray();
   var fieldsLayer = L.layerGroup();
   addLayers['Fields'] = fieldsLayer;
 
-  linksFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  linksFactionLayers = createFactionLayersArray();
   var linksLayer = L.layerGroup();
   addLayers['Links'] = linksLayer;
 
@@ -21433,7 +21767,7 @@ function createDefaultOverlays () {
   // these layers don't actually contain any data. instead, every time they're added/removed from the map,
   // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
   // the below 'onoverlayadd/onoverlayremove' events
-  var factionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  var factionLayers = createFactionLayersArray();
   factionLayers.forEach(function (facLayer, facIdx) {
     facLayer.on('add remove', function (e) {
       var fn = e.type + 'Layer';
@@ -21448,9 +21782,13 @@ function createDefaultOverlays () {
 
   // to avoid any favouritism, we'll put the player's own faction layer first
   if (window.PLAYER.team !== 'RESISTANCE') {
-    delete addLayers['Resistance'];
-    addLayers['Resistance'] = factionLayers[window.TEAM_RES];
+    delete addLayers[window.TEAM_NAME_RES];
+    addLayers[window.TEAM_NAME_RES] = factionLayers[window.TEAM_RES];
   }
+
+  // and just put U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅ faction last
+  delete addLayers[window.TEAM_NAME_MAC];
+  addLayers[window.TEAM_NAME_MAC] = factionLayers[window.TEAM_MAC];
 
   return addLayers;
   /* eslint-enable dot-notation  */
@@ -21540,13 +21878,11 @@ window.setupMap = function () {
   // map update status handling & update map hooks
   // ensures order of calls
   map.on('movestart', function () {
-    window.mapRunsUserAction = true;
     window.requests.abort();
     window.startRefreshTimeout(-1);
   });
   map.on('moveend', function () {
-    window.mapRunsUserAction = false;
-    window.startRefreshTimeout(window.ON_MOVE_REFRESH*1000);
+    window.startRefreshTimeout(window.ON_MOVE_REFRESH * 1000);
   });
 
   // set a 'moveend' handler for the map to clear idle state. e.g. after mobile 'my location' is used.
@@ -21690,35 +22026,8 @@ window.setupDataTileParams = function() {
 }
 
 
-window.debugMapZoomParameters = function() {
-
-  //for debug purposes, log the tile params used for each zoom level
-  log.log('DEBUG: Map Zoom Parameters');
-  var doneZooms = {};
-  for (var z=MIN_ZOOM; z<=21; z++) {
-    var ourZoom = getDataZoomForMapZoom(z);
-    log.log('DEBUG: map zoom '+z+': IITC requests '+ourZoom+(ourZoom!=z?' instead':''));
-    if (!doneZooms[ourZoom]) {
-      var params = getMapZoomTileParameters(ourZoom);
-      var msg = 'DEBUG: data zoom '+ourZoom;
-      if (params.hasPortals) {
-        msg += ' has portals, L'+params.level+'+';
-      } else {
-        msg += ' NO portals (was L'+params.level+'+)';
-      }
-      msg += ', minLinkLength='+params.minLinkLength;
-      msg += ', tiles per edge='+params.tilesPerEdge;
-      log.log(msg);
-      doneZooms[ourZoom] = true;
-    }
-  }
-}
-
-
-
-window.getMapZoomTileParameters = function(zoom) {
-
-  var maxTilesPerEdge = window.TILE_PARAMS.TILES_PER_EDGE[window.TILE_PARAMS.TILES_PER_EDGE.length-1];
+window.getMapZoomTileParameters = function (zoom) {
+  var maxTilesPerEdge = window.TILE_PARAMS.TILES_PER_EDGE[window.TILE_PARAMS.TILES_PER_EDGE.length - 1];
 
   return {
     level: window.TILE_PARAMS.ZOOM_TO_LEVEL[zoom] || 0, // deprecated
@@ -21919,25 +22228,19 @@ window.RenderDebugTiles.prototype.runClearPass = function() {
 var log = ulog('map_data_render');
 // MAP DATA RENDER ////////////////////////////////////////////////
 // class to handle rendering into leaflet the JSON data from the servers
+/* global L */
 
-
-
-window.Render = function() {
+window.Render = function () {
   this.portalMarkerScale = undefined;
 }
 
 // start a render pass. called as we start to make the batch of data requests to the servers
-window.Render.prototype.startRenderPass = function(level,bounds) {
-  this.isRendering = true;
-
+window.Render.prototype.startRenderPass = function (bounds) {
   this.deletedGuid = {};  // object - represents the set of all deleted game entity GUIDs seen in a render pass
 
   this.seenPortalsGuid = {};
   this.seenLinksGuid = {};
   this.seenFieldsGuid = {};
-
-  this.bounds = bounds;
-  this.level = level;
 
   // we pad the bounds used for clearing a litle bit, as entities are sometimes returned outside of their specified tile boundaries
   // this will just avoid a few entity removals at start of render when they'll just be added again
@@ -21952,20 +22255,17 @@ window.Render.prototype.startRenderPass = function(level,bounds) {
   this.rescalePortalMarkers();
 }
 
-window.Render.prototype.clearPortalsOutsideBounds = function(bounds) {
-  var count = 0;
+window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
   for (var guid in window.portals) {
     var p = portals[guid];
     // clear portals outside visible bounds - unless it's the selected portal, or it's relevant to artifacts
     if (!bounds.contains(p.getLatLng()) && guid !== selectedPortal && !artifact.isInterestingPortal(guid)) {
       this.deletePortalEntity(guid);
-      count++;
     }
   }
 }
 
-window.Render.prototype.clearLinksOutsideBounds = function(bounds) {
-  var count = 0;
+window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
   for (var guid in window.links) {
     var l = links[guid];
 
@@ -21976,24 +22276,21 @@ window.Render.prototype.clearLinksOutsideBounds = function(bounds) {
 
     if (!bounds.intersects(linkBounds)) {
       this.deleteLinkEntity(guid);
-      count++;
     }
   }
 }
 
-window.Render.prototype.clearFieldsOutsideBounds = function(bounds) {
-  var count = 0;
+window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
   for (var guid in window.fields) {
     var f = fields[guid];
 
     // NOTE: our geodesic polys can have lots of intermediate points. the bounds calculation hasn't been optimised for this
     // so can be particularly slow. a simple bounds check based on corner points will be good enough for this check
     var lls = f.getLatLngs();
-    var fieldBounds = L.latLngBounds([lls[0],lls[1]]).extend(lls[2]);
+    var fieldBounds = L.latLngBounds([lls[0], lls[1]]).extend(lls[2]);
 
     if (!bounds.intersects(fieldBounds)) {
       this.deleteFieldEntity(guid);
-      count++;
     }
   }
 }
@@ -22088,8 +22385,6 @@ window.Render.prototype.endRenderPass = function() {
   // reorder portals to be after links/fields
   this.bringPortalsToFront();
 
-  this.isRendering = false;
-
   // re-select the selected portal, to re-render the side-bar. ensures that any data calculated from the map data is up to date
   if (selectedPortal) {
     renderPortalDetails (selectedPortal);
@@ -22158,7 +22453,6 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
 window.Render.prototype.deleteFieldEntity = function(guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
-    var fd = f.options.details;
 
     fieldsFactionLayers[f.options.team].removeLayer(f);
     delete window.fields[guid];
@@ -22365,7 +22659,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   fieldsFactionLayers[poly.options.team].addLayer(poly);
 }
 
-window.Render.prototype.createLinkEntity = function(ent,faked) {
+window.Render.prototype.createLinkEntity = function (ent) {
   // Niantic have been faking link entities, based on data from fields
   // these faked links are sent along with the real portal links, causing duplicates
   // the faked ones all have longer GUIDs, based on the field GUID (with _ab, _ac, _bc appended)
@@ -22393,10 +22687,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
 
   // check if entity already exists
   if (ent[0] in window.links) {
-    // yes. now, as sometimes links are 'faked', they have incomplete data. if the data we have is better, replace the data
     var l = window.links[ent[0]];
-
-    // the faked data will have older timestamps than real data (currently, faked set to zero)
     if (l.options.timestamp >= ent[1]) return; // this data is older or identical to the rendered data - abort processing
 
     // the data is newer/better - two options
@@ -22413,7 +22704,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
   var poly = L.geodesicPolyline(latlngs, {
     color: COLORS[team],
     opacity: 1,
-    weight: faked ? 1 : 2,
+    weight: 2,
     interactive: false,
 
     team: team,
@@ -22573,9 +22864,8 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
   this.pauseRenderQueue(true);
 }
 
-window.MapDataRequest.prototype.mapMoveEnd = function() {
+window.MapDataRequest.prototype.mapMoveEnd = function () {
   var bounds = clampLatLngBounds(map.getBounds());
-  var zoom = map.getZoom();
 
   if (this.fetchedDataParams) {
     // we have fetched (or are fetching) data...
@@ -22704,7 +22994,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
   window.runHooks ('mapDataRefreshStart', {bounds: bounds, mapZoom: mapZoom, dataZoom: dataZoom, minPortalLevel: tileParams.level, tileBounds: dataBounds});
 
-  this.render.startRenderPass(tileParams.level, dataBounds);
+  this.render.startRenderPass(dataBounds);
 
   window.runHooks ('mapDataEntityInject', {callback: this.render.processGameEntities.bind(this.render)});
 
@@ -22741,12 +23031,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
       this.debugTiles.create(tile_id,[[latSouth,lngWest],[latNorth,lngEast]]);
 
-//TODO: with recent backend changes there are now multiple zoom levels of data that is identical except perhaps for some
-// reduction of detail when zoomed out. to take good advantage of the cache, a check for cached data at a closer zoom
-// but otherwise the same parameters (min portal level, tiles per edge) will mean less downloads when zooming out
-// (however, the default code in getDataZoomForMapZoom currently reduces the need for this, as it forces the furthest 
-//  out zoom tiles for a detail level)
-      if (this.cache && this.cache.isFresh(tile_id) ) {
+      if (this.cache && this.cache.isFresh(tile_id)) {
         // data is fresh in the cache - just render it
         this.pushRenderQueue(tile_id,this.cache.get(tile_id),'cache-fresh');
         this.cachedTileCount += 1;
@@ -22795,26 +23080,27 @@ window.MapDataRequest.prototype.refresh = function() {
 
   if (Object.keys(this.queuedTiles).length > 0) {
     // queued requests - don't start processing the download queue immediately - start it after a short delay
-    this.delayProcessRequestQueue (this.DOWNLOAD_DELAY,true);
+    this.delayProcessRequestQueue(this.DOWNLOAD_DELAY);
   } else {
     // all data was from the cache, nothing queued - run the queue 'immediately' so it handles the end request processing
-    this.delayProcessRequestQueue (0,true);
+    this.delayProcessRequestQueue(0);
   }
 }
 
-
-window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFirst) {
+window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
   if (this.timer === undefined) {
     var _this = this;
-    this.timer = setTimeout ( function() {
-      _this.timer = setTimeout ( function() { _this.timer = undefined; _this.processRequestQueue(isFirst); }, seconds*1000 );
+    this.timer = setTimeout(function () {
+      _this.timer = setTimeout(function () {
+        _this.timer = undefined;
+        _this.processRequestQueue();
+      }, seconds * 1000);
     }, 0);
   }
 }
 
 
-window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
-
+window.MapDataRequest.prototype.processRequestQueue = function () {
   // if nothing left in the queue, finish
   if (Object.keys(this.queuedTiles).length == 0) {
     // we leave the renderQueue code to handle ending the render pass now
@@ -23032,10 +23318,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
     }
 
-    // TODO? check for any requested tiles in 'tiles' not being mentioned in the response - and handle as if it's a 'timeout'?
-
-
-    window.runHooks('requestFinished', {success: true});
+    window.runHooks('requestFinished', { success: true });
   }
 
   // set the queue delay based on any errors or timeouts
@@ -23499,9 +23782,6 @@ window.show = function(id) {
     case 'alerts':
       window.chat.show(id);
       break;
-    case 'debug':
-      window.debug.console.show();
-      break;
     case 'map':
       window.smartphone.mapButton.click();
       $('#portal_highlight_select').show();
@@ -23771,6 +24051,10 @@ window.portalDetail.setup = function() {
 window.portalDetail.get = function(guid) {
   return cache.get(guid);
 }
+
+window.portalDetail.store = function (guid, dict, freshtime) {
+  return cache.store(guid, dict, freshtime);
+};
 
 window.portalDetail.isFresh = function(guid) {
   return cache.isFresh(guid);
@@ -24557,7 +24841,6 @@ window.getPortalRange = function(d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 
-  var lvl = 0;
   var resoMissing = false;
   // currently we get a short resonator array when some are missing
   if (d.resonators.length < 8) {
@@ -24572,7 +24855,7 @@ window.getPortalRange = function(d) {
   });
 
   var range = {
-    base: 160*Math.pow(getPortalLevel(d), 4),
+    base: d.team === 'M' ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(window.getPortalLevel(d), 4),
     boost: getLinkAmpRangeBoost(d)
   };
 
@@ -25847,6 +26130,7 @@ var HistoryChart = (function() {
 // *** module: request_handling.js ***
 (function () {
 var log = ulog('request_handling');
+/* global REFRESH MINIMUM_OVERRIDE_REFRESH */
 
 // REQUEST HANDLING //////////////////////////////////////////////////
 // note: only meant for portal/links/fields request, everything else
@@ -25860,32 +26144,30 @@ window.statusSuccessMapTiles = 0;
 window.statusStaleMapTiles = 0;
 window.statusErrorMapTiles = 0;
 
+window.requests = function () {};
 
-window.requests = function() {}
-
-//time of last refresh
+// time of last refresh
 window.requests._lastRefreshTime = 0;
-window.requests._quickRefreshPending = false;
 
-window.requests.add = function(ajax) {
+window.requests.add = function (ajax) {
   window.activeRequests.push(ajax);
   renderUpdateStatus();
 }
 
-window.requests.remove = function(ajax) {
+window.requests.remove = function (ajax) {
   window.activeRequests.splice(window.activeRequests.indexOf(ajax), 1);
   renderUpdateStatus();
 }
 
-window.requests.abort = function() {
-  $.each(window.activeRequests, function(ind, actReq) {
-    if(actReq) actReq.abort();
+window.requests.abort = function () {
+  $.each(window.activeRequests, function (ind, actReq) {
+    if (actReq) actReq.abort();
   });
 
   window.activeRequests = [];
   window.failedRequestCount = 0;
-  window.chat._requestPublicRunning  = false;
-  window.chat._requestFactionRunning  = false;
+  window.chat._requestPublicRunning = false;
+  window.chat._requestFactionRunning = false;
 
   renderUpdateStatus();
 }
@@ -25896,71 +26178,53 @@ window.requests.abort = function() {
 // is queued. May be given 'override' in milliseconds if time should
 // not be guessed automatically. Especially useful if a little delay
 // is required, for example when zooming.
-window.startRefreshTimeout = function(override) {
+window.startRefreshTimeout = function (override) {
   // may be required to remove 'paused during interaction' message in
   // status bar
   window.renderUpdateStatus();
-  if(refreshTimeout) clearTimeout(refreshTimeout);
-  if(override == -1) return;  //don't set a new timeout
+  if (window.refreshTimeout) clearTimeout(window.refreshTimeout);
+  if (override === -1) return; // don't set a new timeout
 
   var t = 0;
-  if(override) {
-    window.requests._quickRefreshPending = true;
+  if (override) {
     t = override;
     //ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
-    timeSinceLastRefresh = new Date().getTime()-window.requests._lastRefreshTime;
-    if(timeSinceLastRefresh < 0) timeSinceLastRefresh = 0;  //in case of clock adjustments
-    if(timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH*1000)
-      t = (MINIMUM_OVERRIDE_REFRESH*1000-timeSinceLastRefresh);
+    let timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
+    if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0; // in case of clock adjustments
+    if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000) {
+      t = MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh;
+    }
   } else {
-    window.requests._quickRefreshPending = false;
-    t = REFRESH*1000;
+    t = REFRESH * 1000;
 
     var adj = ZOOM_LEVEL_ADJ * (18 - map.getZoom());
-    if(adj > 0) t += adj*1000;
+    if (adj > 0) t += adj * 1000;
   }
-  var next = new Date(new Date().getTime() + t).toLocaleTimeString();
-//  log.log('planned refresh in ' + (t/1000) + ' seconds, at ' + next);
-  refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
+
+  window.refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
   renderUpdateStatus();
 }
 
 window.requests._onRefreshFunctions = [];
-window.requests._callOnRefreshFunctions = function() {
-//  log.log('running refresh at ' + new Date().toLocaleTimeString());
+window.requests._callOnRefreshFunctions = function () {
   startRefreshTimeout();
 
-  if(isIdle()) {
-//    log.log('user has been idle for ' + idleTime + ' seconds, or window hidden. Skipping refresh.');
+  if (window.isIdle()) {
     renderUpdateStatus();
     return;
   }
 
-//  log.log('refreshing');
-
-  //store the timestamp of this refresh
   window.requests._lastRefreshTime = new Date().getTime();
 
-  $.each(window.requests._onRefreshFunctions, function(ind, f) {
+  $.each(window.requests._onRefreshFunctions, function (ind, f) {
     f();
   });
 }
 
 
 // add method here to be notified of auto-refreshes
-window.requests.addRefreshFunction = function(f) {
+window.requests.addRefreshFunction = function (f) {
   window.requests._onRefreshFunctions.push(f);
-}
-
-window.requests.isLastRequest = function(action) {
-  var result = true;
-  $.each(window.activeRequests, function(ind, req) {
-    if(req.action === action) {
-      result = false;
-      return false;
-    }
-  });
-  return result;
 }
 
 
@@ -26277,11 +26541,13 @@ addHook('search', function(query) {
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
 addHook('search', function(query) {
-  var locations = query.term.match(/[+-]?\d+\.\d+,[+-]?\d+\.\d+/g);
+  var locations = query.term.match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
-    var pair = location.split(',').map(function(s) { return parseFloat(s).toFixed(6); });
+    var pair = location.split(',').map(function (s) {
+      return parseFloat(s.trim()).toFixed(6);
+    });
     var ll = pair.join(",");
     var latlng = L.latLng(pair.map(function(s) { return parseFloat(s); }));
     if(added[ll]) return;
@@ -26468,7 +26734,6 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
       req.setRequestHeader('X-CSRFToken', readCookie('csrftoken'));
     }
   });
-  result.action = action;
 
   requests.add(result);
 
@@ -26646,112 +26911,6 @@ function setupLargeImagePreview  () {
 
 // fixed Addons ****************************************************************
 
-function aboutIITC () {
-  // Plugins metadata come from 2 sources:
-  // - buildName, pluginId, dateTimeVersion: inserted in plugin body by build script
-  //   (only standard plugins)
-  // - script.name/version/description: from GM_info object, passed to wrapper
-  //   `script` may be not available if userscript manager does not provede GM_info
-  //   (atm: IITC-Mobile for iOS)
-  var pluginsInfo = window.bootPlugins.info;
-  var iitc = script_info;
-  var iitcVersion = (iitc.script && iitc.script.version || iitc.dateTimeVersion) + ' [' + iitc.buildName + ']';
-  function prepData (info,idx) { // try to gather plugin metadata from both sources
-    var data = {
-      build: info.buildName,
-      name: info.pluginId,
-      date: info.dateTimeVersion,
-      error: info.error
-    };
-    var script = info.script;
-    if (script) {
-      if (typeof script.name === 'string') { // cut non-informative name part
-        data.name = script.name.replace(/^IITC plugin: /,'');
-      }
-      data.version = script.version;
-      data.description = script.description;
-    }
-    if (!data.name) {
-      if (iitc.script) { // check if GM_info is available
-        data.name = '[unknown plugin: index ' + idx + ']';
-        data.description = "this plugin does not have proper wrapper; report to it's author";
-      } else { // userscript manager fault
-        data.name = '[3rd-party plugin: index ' + idx + ']';
-      }
-    }
-    return data;
-  }
-  var extra = iitc.script && iitc.script.version.match(/^\d+\.\d+\.\d+(\..+)$/);
-  extra = extra && extra[1];
-  function formatVerInfo (p) {
-    if (p.version && extra) {
-      var cutPos = p.version.length-extra.length;
-      // cut extra version component (timestamp) if it is equal to main script's one
-      if (p.version.substring(cutPos) === extra) {
-        p.version = p.version.substring(0,cutPos);
-      }
-    }
-    p.version = p.version || p.date;
-    if (p.version) {
-      var tooltip = [];
-      if (p.build) { tooltip.push('[' + p.build + ']'); }
-      if (p.date && p.date !== p.version) { tooltip.push(p.date); }
-      return L.Util.template(' - <code{title}>{version}</code>', {
-        title: tooltip[0] ? ' title="' + tooltip.join(' ') + '"' : '',
-        version: p.version
-      });
-    }
-  }
-  var plugins = pluginsInfo.map(prepData)
-    .sort(function (a,b) { return a.name > b.name ? 1 : -1; })
-    .map(function (p) {
-      p.style = '';
-      p.description = p.description || '';
-      if (p.error) {
-        p.style += 'text-decoration:line-through;';
-        p.description = p.error;
-      } else if (p.build === iitc.buildName && p.date === iitc.dateTimeVersion) { // is standard plugin
-        p.style += 'color:darkgray;';
-      }
-      p.verinfo = formatVerInfo(p) || '';
-      return L.Util.template('<li style="{style}" title="{description}">{name}{verinfo}</li>', p);
-    })
-    .join('\n');
-
-  var html = ''
-  + '<div><b>About IITC</b></div> '
-  + '<div>Ingress Intel Total Conversion</div> '
-  + '<hr>'
-  + '<div>'
-  + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |' +
-    '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
-  + '   On the script’s homepage you can:'
-  + '   <ul>'
-  + '     <li>Find Updates</li>'
-  + '     <li>Get Plugins</li>'
-  + '     <li>Report Bugs</li>'
-  + '     <li>Contribute!</li>'
-  + '   </ul>'
-  + '</div>'
-  + '<hr>'
-  + '<div>Version: ' + iitcVersion + '</div>';
-
-  if (window.isApp && app.getVersionName) {
-    html += '<div>IITC Mobile ' + app.getVersionName() + '</div>';
-  }
-  if (plugins) {
-    html += '<div><p>Plugins:</p><ul>' + plugins + '</ul></div>';
-  }
-
-  dialog({
-    title: 'IITC ' + iitcVersion,
-    id: 'iitc-about',
-    html: html,
-    width: 'auto',
-    dialogClass: 'ui-dialog-aboutIITC'
-  });
-}
-
 function setPermaLink () {
   this.href = window.makePermalink(null, true);
 }
@@ -26886,7 +27045,7 @@ body {\
   height: 6px;\
   width: 6px;\
   left: 50%;\
-  top: -3px; \
+  top: -3px;\
   margin-left: -3px;\
   position: absolute;\
   z-index: -1;\
@@ -26904,6 +27063,10 @@ body {\
 \
 #mobileinfo .res .filllevel {\
   background-color: #00c5ff !important;\
+}\
+\
+#mobileinfo .mac .filllevel {\
+  background-color: #ff0028 !important;\
 }\
 \
 #name #signout { /* no hover, always show signout button */\
@@ -27593,18 +27756,6 @@ window.eraseCookie = function(name) {
   document.cookie = name + '=; expires=Thu, 1 Jan 1970 00:00:00 GMT; path=/';
 }
 
-//certain values were stored in cookies, but we're better off using localStorage instead - make it easy to convert
-window.convertCookieToLocalStorage = function(name) {
-  var cookie=readCookie(name);
-  if(cookie !== undefined) {
-    log.log('converting cookie '+name+' to localStorage');
-    if(localStorage[name] === undefined) {
-      localStorage[name] = cookie;
-    }
-    eraseCookie(name);
-  }
-}
-
 // add thousand separators to given number.
 // http://stackoverflow.com/a/1990590/1684530 by Doug Neiner.
 window.digits = function(d) {
@@ -27814,14 +27965,9 @@ window.convertTextToTableMagic = function(text) {
   return table;
 }
 
-// Given 3 sets of points in an array[3]{lat, lng} returns the area of the triangle
-window.calcTriArea = function(p) {
-  return Math.abs((p[0].lat*(p[1].lng-p[2].lng)+p[1].lat*(p[2].lng-p[0].lng)+p[2].lat*(p[0].lng-p[1].lng))/2);
-}
-
-function clamp (n,max,min) {
-  if (n===0) { return 0; }
-  return n>0 ? Math.min(n,max) : Math.max(n,min);
+function clamp(n, max, min) {
+  if (n === 0) return 0;
+  return n > 0 ? Math.min(n, max) : Math.max(n, min);
 }
 
 var MAX_LATITUDE = 85.051128; // L.Projection.SphericalMercator.MAX_LATITUDE
@@ -27894,7 +28040,11 @@ window.makePermalink = function (latlng, options) {
     if ('lat' in latlng) { latlng = [latlng.lat, latlng.lng]; }
     args.push('pll='+latlng.join(','));
   }
-  var url = options.fullURL ? 'https://intel.ingress.com/' : '/';
+  var url = '';
+  if (options.fullURL) {
+    url += new URL(document.baseURI).origin;
+  }
+  url += '/';
   return url + '?' + args.join('&');
 };
 
