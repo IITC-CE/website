@@ -2,13 +2,14 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portal weakness
 // @category       Highlighter
-// @version        0.7.2.20220720.194524
+// @version        0.8.0.20230308.164324
 // @description    Use the fill color of the portals to denote if the portal is weak. Stronger red indicates recharge required, missing resonators, or both.
 // @id             highlight-weakness
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR420/plugins/highlight-weakness.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/plugins/highlight-weakness.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,41 +20,41 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'highlight-weakness';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup --eslint */
+/* global TEAM_NONE */
 
-// use own namespace for plugin
-window.plugin.portalWeakness = function() {};
+function weaknessHighlight (data) {
 
-window.plugin.portalWeakness.highlightWeakness = function(data) {
-
-  if(data.portal.options.data.resCount !== undefined && data.portal.options.data.health !== undefined && data.portal.options.team != TEAM_NONE) {
+  if (data.portal.options.data.resCount !== undefined
+      && data.portal.options.data.health !== undefined
+      && data.portal.options.team !== TEAM_NONE) {
     var res_count = data.portal.options.data.resCount;
     var portal_health = data.portal.options.data.health;
 
     var strength = (res_count/8) * (portal_health/100);
-   
-    if(strength < 1) {
+    if (strength < 1) {
       var fill_opacity = (1-strength)*.85 + .15;
       var color = 'red';
       var params = {fillColor: color, fillOpacity: fill_opacity};
 
       // Hole per missing resonator
       if (res_count < 8) {
-        var dash = new Array((8 - res_count) + 1).join("1,4,") + "100,0"
+        var dash = new Array((8 - res_count) + 1).join('1,4,') + '100,0';
         params.dashArray = dash;
       }
 
       data.portal.setStyle(params);
-    } 
+    }
   }
 
 }
 
-var setup =  function() {
-  window.addPortalHighlighter('Portal Weakness', window.plugin.portalWeakness.highlightWeakness);
+function setup () {
+  window.addPortalHighlighter('Portal Weakness', weaknessHighlight);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

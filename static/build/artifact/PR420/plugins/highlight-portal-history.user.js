@@ -2,13 +2,14 @@
 // @author         Johtaja
 // @name           IITC plugin: Highlight portals based on history
 // @category       Highlighter
-// @version        0.2.0.20220720.194524
+// @version        0.3.0.20230308.164324
 // @description    Use the portal fill color to denote the portal has been visited, captured, scout controlled
 // @id             highlight-portal-history
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR420/plugins/highlight-portal-history.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/plugins/highlight-portal-history.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,15 +20,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'highlight-portal-history';
 //END PLUGIN AUTHORS NOTE
 
-
+/* exported setup --eslint */
+/* global L */
 // use own namespace for plugin
 var portalsHistory = {};
 window.plugin.portalHighlighterPortalsHistory = portalsHistory;
 
+// exposed objects
 portalsHistory.styles = {
   common: {
     fillOpacity: 1
@@ -43,11 +46,7 @@ portalsHistory.styles = {
   }
 };
 
-portalsHistory.setStyle = function (data, name) {
-  data.portal.setStyle(portalsHistory.styles[name]);
-};
-
-portalsHistory.visited = function (data) {
+function highlightPortalsHistoryVisited (data) {
   var history = data.portal.options.data.history;
   if (!history) {
     return;
@@ -60,9 +59,9 @@ portalsHistory.visited = function (data) {
   } else if (!$.isEmptyObject(s.otherVC)) {
     data.portal.setStyle(s.otherVC);
   }
-};
+}
 
-portalsHistory.notVisited = function (data) {
+function highlightPortalsHistoryNotVisited (data) {
   var history = data.portal.options.data.history;
   if (!history) {
     return;
@@ -75,9 +74,9 @@ portalsHistory.notVisited = function (data) {
   } else if (!$.isEmptyObject(s.otherNotVC)) {
     data.portal.setStyle(s.otherNotVC);
   }
-};
+}
 
-portalsHistory.scoutControlled = function (data) {
+function highlightPortalsHistoryScoutControlled (data) {
   var history = data.portal.options.data.history;
   if (!history) {
     return;
@@ -88,9 +87,9 @@ portalsHistory.scoutControlled = function (data) {
   } else if (!$.isEmptyObject(s.otherScout)) {
     data.portal.setStyle(s.otherScout);
   }
-};
+}
 
-portalsHistory.notScoutControlled = function (data) {
+function highlightPortalsHistoryNotScoutControlled (data) {
   var history = data.portal.options.data.history;
   if (!history) {
     return;
@@ -101,7 +100,7 @@ portalsHistory.notScoutControlled = function (data) {
   } else if (!$.isEmptyObject(s.otherNotScout)) {
     data.portal.setStyle(s.otherNotScout);
   }
-};
+}
 
 // Creating styles based on a given template
 function inherit (parentName, childNames) {
@@ -112,17 +111,17 @@ function inherit (parentName, childNames) {
   });
 }
 
-var setup = function () {
+function setup () {
   inherit('common', ['marked', 'semiMarked']);
   inherit('semiMarked', ['visited', 'captureTarget']);
   inherit('marked', ['captured', 'visitTarget', 'scoutControlled', 'scoutControllTarget']);
   inherit('commonOther', ['otherVC', 'otherNotVC', 'otherScout', 'otherNotScout']);
 
-  window.addPortalHighlighter('History: visited/captured', portalsHistory.visited);
-  window.addPortalHighlighter('History: not visited/captured', portalsHistory.notVisited);
-  window.addPortalHighlighter('History: scout controlled', portalsHistory.scoutControlled);
-  window.addPortalHighlighter('History: not scout controlled', portalsHistory.notScoutControlled);
-};
+  window.addPortalHighlighter('History: visited/captured', highlightPortalsHistoryVisited);
+  window.addPortalHighlighter('History: not visited/captured', highlightPortalsHistoryNotVisited);
+  window.addPortalHighlighter('History: scout controlled', highlightPortalsHistoryScoutControlled);
+  window.addPortalHighlighter('History: not scout controlled', highlightPortalsHistoryNotScoutControlled);
+}
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if(!window.bootPlugins) window.bootPlugins = [];

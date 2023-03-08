@@ -2,13 +2,14 @@
 // @author         vita10gy
 // @name           IITC plugin: Hide portal ownership
 // @category       Highlighter
-// @version        0.1.1.20220720.194524
+// @version        0.2.0.20230308.164324
 // @description    Show all portals as neutral, as if uncaptured. Great for creating plans.
 // @id             highlight-hide-team
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR420/plugins/highlight-hide-team.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/plugins/highlight-hide-team.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,23 +20,20 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'highlight-hide-team';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup --eslint */
+/* global TEAM_NONE, getMarkerStyleOptions*/
 
-// use own namespace for plugin
-window.plugin.portalHighlighterHideOwnership = function() {};
-
-window.plugin.portalHighlighterHideOwnership.highlight = function(data) {
-  var scale = window.portalMarkerScale();
-
+function hideOwnership (data) {
   var params = getMarkerStyleOptions({team: TEAM_NONE, level: 0});
   data.portal.setStyle(params);
 }
 
-var setup =  function() {
-  window.addPortalHighlighter('Hide portal ownership', window.plugin.portalHighlighterHideOwnership.highlight);
+function setup () {
+  window.addPortalHighlighter('Hide portal ownership', hideOwnership);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

@@ -2,13 +2,14 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.2.1.20220720.194524
+// @version        0.2.2.20230308.164324
 // @description    Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR420/plugins/basemap-stamen.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR420/plugins/basemap-stamen.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
@@ -19,15 +20,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-20-194524';
+plugin_info.dateTimeVersion = '2023-03-08-164324';
 plugin_info.pluginId = 'basemap-stamen';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup --eslint */
+/* global L, layerChooser */
+// use own namespace for plugin
+var mapStamen = {};
 
 // see API here http://maps.stamen.com/
 // https://stamen-maps.a.ssl.fastly.net/js/tile.stamen.js (overcomplicated)
 
-function setup () {
+mapStamen.setup = function () {
   var baseUrl = 'https://stamen-tiles-{s}.a.ssl.fastly.net/{layer}/{z}/{x}/{y}.{type}';
   var L_StamenTileLayer = L.TileLayer.extend({
     options: {
@@ -80,6 +85,10 @@ function setup () {
     ].join('')
   };
   addLayer('Watercolor',options);
+};
+
+function setup() {
+  mapStamen.setup();
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
