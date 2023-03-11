@@ -11,6 +11,8 @@ def store_version(_, outdir):
 
 defaults = {
     'update_file': '.meta.js',
+    'url_icon_base': 'https://iitc.app/extras/plugin-icons/{}.png',
+    'url_icon_64_base': 'https://iitc.app/extras/plugin-icons/{}-64.png',
     'post_build': [
         'build_mobile.py',
         'web_meta_gen.py',
