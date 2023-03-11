@@ -13,7 +13,7 @@
           "author": "jonatkins",
           "description": "Cache the details of recently viewed portals and use this to populate the map when possible",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/cache-portals-on-map.png",
           "icon64": "https://iitc.app/extras/plugin-icons/cache-portals-on-map-64.png"
         }
@@ -32,7 +32,7 @@
           "author": "ZasoGD",
           "description": "Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.2.20230311.190736",
+          "version": "0.4.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/bookmarks.png",
           "icon64": "https://iitc.app/extras/plugin-icons/bookmarks-64.png"
         },
@@ -43,7 +43,7 @@
           "author": "fragger",
           "description": "Show a panning control on the map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.2.20230311.190736",
+          "version": "0.2.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/pan-control.png",
           "icon64": "https://iitc.app/extras/plugin-icons/pan-control-64.png"
         },
@@ -54,7 +54,7 @@
           "author": "johnd0e",
           "description": "Show a mini map on the corner of the map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.1.20230311.190736",
+          "version": "0.4.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/minimap.png",
           "icon64": "https://iitc.app/extras/plugin-icons/minimap-64.png"
         },
@@ -65,7 +65,7 @@
           "author": "breunigs",
           "description": "Show scale bar on the map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.1.20230311.190736",
+          "version": "0.1.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/scale-bar.png",
           "icon64": "https://iitc.app/extras/plugin-icons/scale-bar-64.png"
         },
@@ -76,7 +76,7 @@
           "author": "fragger",
           "description": "Show a zoom slider on the map instead of the zoom buttons.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/zoom-slider.png",
           "icon64": "https://iitc.app/extras/plugin-icons/zoom-slider-64.png"
         },
@@ -87,7 +87,7 @@
           "author": "ZasoGD",
           "description": "Create separated projects in some plugins.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.1.20230311.190736",
+          "version": "0.1.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/multi-projects-extension.png",
           "icon64": "https://iitc.app/extras/plugin-icons/multi-projects-extension-64.png"
         }
@@ -106,7 +106,7 @@
           "author": "jonatkins",
           "description": "A companion to the Cross Links plugin. Highlights any links that match existing draw-tools line/polygon edges",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.1.20230311.190736",
+          "version": "0.1.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/done-links.png",
           "icon64": "https://iitc.app/extras/plugin-icons/done-links-64.png"
         },
@@ -117,7 +117,7 @@
           "author": "Fly33",
           "description": "Calculate how to link the portals to create the largest tidy set of nested fields. Enable from the layer chooser.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.5.0.20230311.190736",
+          "version": "0.5.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/fly-links.png",
           "icon64": "https://iitc.app/extras/plugin-icons/fly-links-64.png"
         },
@@ -128,7 +128,7 @@
           "author": "mcben",
           "description": "Checks for existing links that cross planned links. Requires draw-tools plugin.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "1.3.1.20230311.190736",
+          "version": "1.3.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/cross-links.png",
           "icon64": "https://iitc.app/extras/plugin-icons/cross-links-64.png"
         },
@@ -139,7 +139,7 @@
           "author": "boombuler",
           "description": "Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (former `Max Links`)",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.6.0.20230311.190736",
+          "version": "0.6.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/tidy-links.png",
           "icon64": "https://iitc.app/extras/plugin-icons/tidy-links-64.png"
         },
@@ -150,7 +150,7 @@
           "author": "breunigs",
           "description": "Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.10.0.20230311.190736",
+          "version": "0.10.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/draw-tools.png",
           "icon64": "https://iitc.app/extras/plugin-icons/draw-tools-64.png"
         }
@@ -169,7 +169,7 @@
           "author": "vita10gy",
           "description": "Show all portals as neutral, as if uncaptured. Great for creating plans.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-hide-team.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-hide-team-64.png"
         },
@@ -180,7 +180,7 @@
           "author": "vita10gy",
           "description": "Use the fill color of the portals to denote if the portal is weak. Stronger red indicates recharge required, missing resonators, or both.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.8.0.20230311.190736",
+          "version": "0.8.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-weakness.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-weakness-64.png"
         },
@@ -191,7 +191,7 @@
           "author": "vita10gy",
           "description": "Use the portal fill color to denote if the portal is missing resonators.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-missing-resonators.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-missing-resonators-64.png"
         },
@@ -202,7 +202,7 @@
           "author": "Johtaja",
           "description": "Use the portal fill color to denote the portal has been visited, captured, scout controlled",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.0.20230311.190736",
+          "version": "0.3.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-portal-history.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-portal-history-64.png"
         },
@@ -213,7 +213,7 @@
           "author": "jonatkins",
           "description": "Use the portal fill color to denote if the portal is unclaimed with no recent activity. Shades of red from one week to one month, then tinted to purple for longer. May also highlight captured portals that are stuck and fail to decay every 24 hours.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-forgotten.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-forgotten-64.png"
         },
@@ -224,7 +224,7 @@
           "author": "vita10gy",
           "description": "Use the portal fill color to denote the portal level by using the game level colors.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-level-color.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-level-color-64.png"
         },
@@ -235,7 +235,7 @@
           "author": "vita10gy",
           "description": "Use the portal fill color to denote if the portal needs recharging and how much. Yellow: above 85%. Orange: above 70%. Red: above 15%. Magenta: below 15%.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-needs-recharge.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-needs-recharge-64.png"
         },
@@ -246,7 +246,7 @@
           "author": "jonatkins",
           "description": "Use the portal fill color to denote high level portals: Purple L8, Red L7, Orange L6",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-high-level.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-high-level-64.png"
         },
@@ -257,7 +257,7 @@
           "author": "jonatkins",
           "description": "Use the portal fill color to denote portals with additional 'ornament' markers. e.g. Anomaly portals",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-ornaments.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-ornaments-64.png"
         },
@@ -268,7 +268,7 @@
           "author": "vita10gy",
           "description": "Use the portal fill color to denote if the portal is either at and above, or at and below your level.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/highlight-portals-my-level.png",
           "icon64": "https://iitc.app/extras/plugin-icons/highlight-portals-my-level-64.png"
         }
@@ -287,7 +287,7 @@
           "author": "breunigs",
           "description": "Try to determine player levels from the data available in the current view.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.5.7.20230311.190736",
+          "version": "0.5.7.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/player-level-guess.png",
           "icon64": "https://iitc.app/extras/plugin-icons/player-level-guess-64.png"
         },
@@ -298,7 +298,7 @@
           "author": "jonatkins",
           "description": "Show the times used for the septicycle and checkpoints for regional scoreboards.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/score-cycle-times.png",
           "icon64": "https://iitc.app/extras/plugin-icons/score-cycle-times-64.png"
         },
@@ -309,7 +309,7 @@
           "author": "teo96",
           "description": "Display a sortable list of all visible portals with full details about the team, resonators, links, etc.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.1.20230311.190736",
+          "version": "0.4.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/portals-list.png",
           "icon64": "https://iitc.app/extras/plugin-icons/portals-list-64.png"
         },
@@ -320,7 +320,7 @@
           "author": "jonatkins",
           "description": "View missions. Marking progress on waypoints/missions basis. Showing mission paths on the map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.0.20230311.190736",
+          "version": "0.3.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/missions.png",
           "icon64": "https://iitc.app/extras/plugin-icons/missions-64.png"
         },
@@ -331,7 +331,7 @@
           "author": "Hollow011",
           "description": "Displays the per-team AP gains available in the current view.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.2.20230311.190736",
+          "version": "0.4.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/ap-stats.png",
           "icon64": "https://iitc.app/extras/plugin-icons/ap-stats-64.png"
         },
@@ -342,7 +342,7 @@
           "author": "Costaspap",
           "description": "Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.2.20230311.190736",
+          "version": "0.3.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/scoreboard.png",
           "icon64": "https://iitc.app/extras/plugin-icons/scoreboard-64.png"
         },
@@ -353,7 +353,7 @@
           "author": "yenky",
           "description": "Display a list of all localized portals by level and faction.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.2.20230311.190736",
+          "version": "0.2.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/portal-counts.png",
           "icon64": "https://iitc.app/extras/plugin-icons/portal-counts-64.png"
         },
@@ -364,7 +364,7 @@
           "author": "fkloft",
           "description": "Allow users to count nested fields",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.2.20230311.190736",
+          "version": "0.2.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/layer-count.png",
           "icon64": "https://iitc.app/extras/plugin-icons/layer-count-64.png"
         }
@@ -389,7 +389,7 @@
           "author": "johnd0e",
           "description": "Replace all levels with single layerChooser's entry; reverting on longclick",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/hide-portal-levels.png",
           "icon64": "https://iitc.app/extras/plugin-icons/hide-portal-levels-64.png"
         },
@@ -400,7 +400,7 @@
           "author": "johtata",
           "description": "Additonal icons and names for beacons",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/ornament-icons-extended.png",
           "icon64": "https://iitc.app/extras/plugin-icons/ornament-icons-extended-64.png"
         },
@@ -411,7 +411,7 @@
           "author": "breunigs",
           "description": "Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.12.1.20230311.190736",
+          "version": "0.12.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/player-activity-tracker.png",
           "icon64": "https://iitc.app/extras/plugin-icons/player-activity-tracker-64.png"
         },
@@ -422,7 +422,7 @@
           "author": "rongou",
           "description": "Show portal level numbers on map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/portal-level-numbers.png",
           "icon64": "https://iitc.app/extras/plugin-icons/portal-level-numbers-64.png"
         },
@@ -433,7 +433,7 @@
           "author": "ZasoGD",
           "description": "Shows the maximum range of attack by the portals.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.5.20230311.190736",
+          "version": "0.1.5.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/zaprange.png",
           "icon64": "https://iitc.app/extras/plugin-icons/zaprange-64.png"
         },
@@ -444,7 +444,7 @@
           "author": "johnd0e",
           "description": "Remove 'Artifacts', 'Beacons' and 'Frackers' from layerChooser (still keeping them on map)",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/remove-extra-layers.png",
           "icon64": "https://iitc.app/extras/plugin-icons/remove-extra-layers-64.png"
         },
@@ -455,7 +455,7 @@
           "author": "xelio",
           "description": "Show the manually entered key counts from the 'keys' plugin on the map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.1.20230311.190736",
+          "version": "0.3.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/keys-on-map.png",
           "icon64": "https://iitc.app/extras/plugin-icons/keys-on-map-64.png"
         },
@@ -466,7 +466,7 @@
           "author": "949",
           "description": "Show farms by minimum level",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "1.4.1.20230311.190736",
+          "version": "1.4.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/farms-find.png",
           "icon64": "https://iitc.app/extras/plugin-icons/farms-find-64.png"
         },
@@ -477,7 +477,7 @@
           "author": "jonatkins",
           "description": "Show the regional scoring cells grid on the map",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/regions.png",
           "icon64": "https://iitc.app/extras/plugin-icons/regions-64.png"
         },
@@ -488,7 +488,7 @@
           "author": "ZasoGD",
           "description": "Show portal names on the map.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/portal-names.png",
           "icon64": "https://iitc.app/extras/plugin-icons/portal-names-64.png"
         },
@@ -499,7 +499,7 @@
           "author": "johtata",
           "description": "Add own icons and names for ornaments",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/ornament-icons.png",
           "icon64": "https://iitc.app/extras/plugin-icons/ornament-icons-64.png"
         },
@@ -510,7 +510,7 @@
           "author": "danielatkins",
           "description": "Allow users to overlay their own KML / GPX / GeoJSON files on top of IITC.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.0.20230311.190736",
+          "version": "0.3.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/overlay-kml.png",
           "icon64": "https://iitc.app/extras/plugin-icons/overlay-kml-64.png"
         }
@@ -529,7 +529,7 @@
           "author": "johnd0e",
           "description": "Add Kartverket.no map layers.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.2.20230311.190736",
+          "version": "0.2.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-kartverket.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-kartverket-64.png"
         },
@@ -540,7 +540,7 @@
           "author": "jonatkins",
           "description": "Add a blank map layer - no roads or other features.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.3.20230311.190736",
+          "version": "0.1.3.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-blank.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-blank-64.png"
         },
@@ -551,7 +551,7 @@
           "author": "jonatkins",
           "description": "Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.2.20230311.190736",
+          "version": "0.2.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-stamen.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-stamen-64.png"
         },
@@ -562,7 +562,7 @@
           "author": "johnd0e",
           "description": "Add the bing.com map layers.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.1.20230311.190736",
+          "version": "0.3.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-bing.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-bing-64.png"
         },
@@ -573,7 +573,7 @@
           "author": "jacob1123",
           "description": "Add a simplified gray Version of Google map tiles as an optional layer.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.4.20230311.190736",
+          "version": "0.1.4.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-google-gray.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-google-gray-64.png"
         },
@@ -584,7 +584,7 @@
           "author": "johnd0e",
           "description": "Map layers from AutoNavi / Gaode (高德地图)",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.1.20230311.190736",
+          "version": "0.1.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-gaode.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-gaode-64.png"
         },
@@ -595,7 +595,7 @@
           "author": "johnd0e",
           "description": "Add Yandex.com (Russian/Русский) map layers",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.1.20230311.190736",
+          "version": "0.3.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-yandex.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-yandex-64.png"
         },
@@ -606,7 +606,7 @@
           "author": "jonatkins",
           "description": "Add the native OpenStreetMap.org map tiles as an optional layer.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.2.20230311.190736",
+          "version": "0.1.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/basemap-openstreetmap.png",
           "icon64": "https://iitc.app/extras/plugin-icons/basemap-openstreetmap-64.png"
         }
@@ -625,7 +625,7 @@
           "author": "jonatkins",
           "description": "Allows your current location to be set manually, then shows the distance to the selected portal. Useful when managing portal keys.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.0.20230311.190736",
+          "version": "0.2.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/distance-to-portal.png",
           "icon64": "https://iitc.app/extras/plugin-icons/distance-to-portal-64.png"
         },
@@ -636,7 +636,7 @@
           "author": "fstopienski",
           "description": "Try to show the linked portals (image, name and link direction) in portal detail view and jump to linked portal on click.  Some details may not be available if the linked portal is not in the current view.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.0.20230311.190736",
+          "version": "0.4.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/linked-portals-show.png",
           "icon64": "https://iitc.app/extras/plugin-icons/linked-portals-show-64.png"
         },
@@ -647,7 +647,7 @@
           "author": "jonatkins",
           "description": "Developer debugging aid: Add a link to the portal details to show the raw data of a portal.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.4.20230311.190736",
+          "version": "0.2.4.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/debug-raw-portal-data.png",
           "icon64": "https://iitc.app/extras/plugin-icons/debug-raw-portal-data-64.png"
         },
@@ -658,7 +658,7 @@
           "author": "xelio",
           "description": "Show resonator energy percentage on resonator energy bar in portal details panel.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.2.20230311.190736",
+          "version": "0.1.2.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/reso-energy-pct.png",
           "icon64": "https://iitc.app/extras/plugin-icons/reso-energy-pct-64.png"
         }
@@ -677,7 +677,7 @@
           "author": "jonatkins",
           "description": "For use for unattended display screens only, this plugin causes idle mode to be left once per hour.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/periodic-refresh.png",
           "icon64": "https://iitc.app/extras/plugin-icons/periodic-refresh-64.png"
         },
@@ -688,7 +688,7 @@
           "author": "jonatkins",
           "description": "Disable the use of mouse wheel to zoom. The map zoom controls or keyboard are still available.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/scroll-wheel-zoom-disable.png",
           "icon64": "https://iitc.app/extras/plugin-icons/scroll-wheel-zoom-disable-64.png"
         },
@@ -699,7 +699,7 @@
           "author": "jonatkins",
           "description": "Show the direction of links on the map by adding short dashes to the line at the origin portal.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.1.20230311.190736",
+          "version": "0.2.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/link-show-direction.png",
           "icon64": "https://iitc.app/extras/plugin-icons/link-show-direction-64.png"
         },
@@ -710,7 +710,7 @@
           "author": "modos189",
           "description": "Show correct maps for China user by applying offset tweaks.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.3.1.20230311.190736",
+          "version": "0.3.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/fix-china-map-offset.png",
           "icon64": "https://iitc.app/extras/plugin-icons/fix-china-map-offset-64.png"
         }
@@ -729,7 +729,7 @@
           "author": "johnd0e",
           "description": "Hide info from intel which shouldn't leak to players of the other faction.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "1.1.0.20230311.190736",
+          "version": "1.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/privacy-view.png",
           "icon64": "https://iitc.app/extras/plugin-icons/privacy-view-64.png"
         },
@@ -740,7 +740,7 @@
           "author": "xelio",
           "description": "Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.0.20230311.190736",
+          "version": "0.4.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/keys.png",
           "icon64": "https://iitc.app/extras/plugin-icons/keys-64.png"
         },
@@ -751,7 +751,7 @@
           "author": "Perringaiden",
           "description": "Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.8.0.20230311.190736",
+          "version": "0.8.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/machina-tools.png",
           "icon64": "https://iitc.app/extras/plugin-icons/machina-tools-64.png"
         },
@@ -762,7 +762,7 @@
           "author": "3ch01c",
           "description": "Allow manual entry of portals visited/captured. Use the 'highlighter-uniques' plugin to show the uniques on the map, and 'sync' to share between multiple browsers or desktop/mobile. It will try and guess which portals you have captured from COMM/portal details, but this will not catch every case.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.2.4.20230311.190736",
+          "version": "0.2.4.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/uniques.png",
           "icon64": "https://iitc.app/extras/plugin-icons/uniques-64.png"
         },
@@ -773,7 +773,7 @@
           "author": "xelio",
           "description": "Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.4.1.20230311.190736",
+          "version": "0.4.1.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/sync.png",
           "icon64": "https://iitc.app/extras/plugin-icons/sync-64.png"
         }
@@ -801,12 +801,12 @@
           "author": "jaiperdu",
           "description": "Add a debug console tab",
           "namespace": "https://github.com/IITC-CE/ingress-intel-total-conversion",
-          "version": "0.1.0.20230311.190736",
+          "version": "0.1.0.20230311.191501",
           "icon": "https://iitc.app/extras/plugin-icons/debug-console.png",
           "icon64": "https://iitc.app/extras/plugin-icons/debug-console-64.png"
         }
       ]
     }
   },
-  "iitc_version": "0.34.1.20230311.190736"
+  "iitc_version": "0.34.1.20230311.191501"
 }
