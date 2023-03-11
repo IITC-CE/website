@@ -20,8 +20,8 @@
                             <div class="card-plugin">
                                 <div class="header">
                                     <div class="icon">
-                                        {% if item.icon %}
-                                            <img loading="lazy" class="lazyload" data-src="{{ item.icon }}">
+                                        {% if item.icon or item.icon64 %}
+                                            <img loading="lazy" class="lazyload" data-src="{{ item.icon or item.icon64 }}">
                                         {% else %}
                                             <i class="material-icons">extension</i>
                                         {% endif %}
