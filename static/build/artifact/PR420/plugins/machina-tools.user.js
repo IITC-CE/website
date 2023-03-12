@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.0.20230311.220521
+// @version        0.8.0.20230312.202159
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-03-11-220521';
+plugin_info.dateTimeVersion = '2023-03-12-202159';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -229,7 +229,7 @@ function appendPortalLine(rc, portal) {
     title: portalName,
     html: portalName,
     click: (e) => {
-      window.zoomToAndShowPortal(portal.guid, portal.latlng);
+      window.renderPortalDetails(portal.guid);
       e.stopPropagation();
     },
   });
@@ -247,7 +247,7 @@ function createChildListItem(parent, childData, childPortal) {
     title: childName,
     html: childName,
     click: (e) => {
-      window.zoomToAndShowPortal(childData.childGuid, childPortal.latlng);
+      window.renderPortalDetails(childData.childGuid);
       e.stopPropagation();
     },
   });
@@ -626,7 +626,7 @@ function createClustersInfoDialog() {
   var html = $('<div>');
   var seeds = [];
   Object.values(window.portals)
-    .filter((p) => map.getBounds().contains(p.getLatLng()) && p.options.team === window.TEAM_MAC)
+    .filter((p) => p.options.team === window.TEAM_MAC && map.getBounds().contains(p.getLatLng()))
     .forEach((p) => {
       var seedData = machinaTools.findSeed(p.options.guid);
       if (!seeds.find((s) => s.guid === seedData.guid)) {
