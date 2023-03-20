@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals by level color
 // @category       Highlighter
-// @version        0.2.0.20230320.182834
+// @version        0.2.0.20230320.195418
 // @description    Use the portal fill color to denote the portal level by using the game level colors.
 // @id             highlight-level-color
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
