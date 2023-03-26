@@ -2,7 +2,7 @@
 // @author         Hollow011
 // @name           IITC plugin: Available AP statistics
 // @category       Info
-// @version        0.4.2.20230326.134411
+// @version        0.4.2.20230326.171552
 // @description    Displays the per-team AP gains available in the current view.
 // @id             ap-stats
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
