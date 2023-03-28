@@ -2,7 +2,7 @@
 // @author         johtata
 // @name           IITC plugin: Ornament icons extended
 // @category       Layer
-// @version        0.1.0.20230205.140902
+// @version        0.1.0.20230328.101256
 // @description    Additonal icons and names for beacons
 // @id             ornament-icons-extended
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,5 +10,7 @@
 // @downloadURL    https://iitc.app/build/artifact/PR614/plugins/ornament-icons-extended.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/ornament-icons-extended.png
+// @icon64         https://iitc.app/extras/plugin-icons/ornament-icons-extended-64.png
 // @grant          none
 // ==/UserScript==

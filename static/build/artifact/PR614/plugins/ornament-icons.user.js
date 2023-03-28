@@ -2,7 +2,7 @@
 // @author         johtata
 // @name           IITC plugin: Ornament icons basic
 // @category       Layer
-// @version        0.1.0.20230205.140902
+// @version        0.1.0.20230328.101256
 // @description    Add own icons and names for ornaments
 // @id             ornament-icons
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR614/plugins/ornament-icons.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/ornament-icons.png
+// @icon64         https://iitc.app/extras/plugin-icons/ornament-icons-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-02-05-140902';
+plugin_info.dateTimeVersion = '2023-03-28-101256';
 plugin_info.pluginId = 'ornament-icons';
 //END PLUGIN AUTHORS NOTE
 

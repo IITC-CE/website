@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Done links
 // @category       Draw
-// @version        0.1.1.20230205.140902
+// @version        0.1.1.20230328.101256
 // @description    A companion to the Cross Links plugin. Highlights any links that match existing draw-tools line/polygon edges
 // @id             done-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR614/plugins/done-links.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/done-links.png
+// @icon64         https://iitc.app/extras/plugin-icons/done-links-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-02-05-140902';
+plugin_info.dateTimeVersion = '2023-03-28-101256';
 plugin_info.pluginId = 'done-links';
 //END PLUGIN AUTHORS NOTE
 

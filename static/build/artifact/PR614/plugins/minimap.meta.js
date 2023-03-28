@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.4.1.20230205.140902
+// @version        0.4.1.20230328.101256
 // @description    Show a mini map on the corner of the map.
 // @id             minimap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,5 +10,7 @@
 // @downloadURL    https://iitc.app/build/artifact/PR614/plugins/minimap.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/minimap.png
+// @icon64         https://iitc.app/extras/plugin-icons/minimap-64.png
 // @grant          none
 // ==/UserScript==
