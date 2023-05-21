@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.0.20230521.125130
+// @version        0.35.0.20230521.130120
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-21-125130';
+plugin_info.dateTimeVersion = '2023-05-21-130120';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-05-21-125130';
+window.iitcBuildDate = '2023-05-21-130120';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-05-21-125130');
+  log.log('loading done, booting. Built: '+'2023-05-21-130120');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19013,7 +19013,7 @@ if (document.readyState === 'complete') { // IITCm
 // *** module: chat.js ***
 (function () {
 var log = ulog('chat');
-/* global teamStringToId, TEAM_TO_CSS */
+/* global TEAM_TO_CSS */
 
 window.chat = function() {};
 
@@ -19395,10 +19395,10 @@ window.chat.parseMsgData = function (data) {
       nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
       break;
 
-    case 'PLAYER': // automatically generated messages
-      nick = ent[1].plain;
-      team = window.teamStringToId(ent[1].team);
-      break;
+      case 'PLAYER': // automatically generated messages
+        nick = ent[1].plain;
+        team = window.teamStringToId(ent[1].team);
+        break;
 
     default:
       break;
