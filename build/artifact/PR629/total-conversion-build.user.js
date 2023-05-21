@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.0.20230515.153724
+// @version        0.35.0.20230521.125130
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-15-153724';
+plugin_info.dateTimeVersion = '2023-05-21-125130';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-05-15-153724';
+window.iitcBuildDate = '2023-05-21-125130';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-05-15-153724');
+  log.log('loading done, booting. Built: '+'2023-05-21-125130');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19013,6 +19013,8 @@ if (document.readyState === 'complete') { // IITCm
 // *** module: chat.js ***
 (function () {
 var log = ulog('chat');
+/* global teamStringToId, TEAM_TO_CSS */
+
 window.chat = function() {};
 
 //WORK IN PROGRESS - NOT YET USED!!
@@ -19371,13 +19373,6 @@ window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAsc
   }
 };
 
-function team2id(team) {
-  if (team === 'RESISTANCE') return TEAM_RES;
-  if (team === 'ENLIGHTENED') return TEAM_ENL;
-  return TEAM_NONE;
-}
-
-
 window.chat.parseMsgData = function (data) {
   var categories = data[2].plext.categories;
   var isPublic = (categories & 1) === 1;
@@ -19387,7 +19382,7 @@ window.chat.parseMsgData = function (data) {
   var msgToPlayer = msgAlert && (isPublic || isSecure);
 
   var time = data[1];
-  var team = team2id(data[2].plext.team);
+  var team = window.teamStringToId(data[2].plext.team);
   var auto = data[2].plext.plextType !== 'PLAYER_GENERATED';
   var systemNarrowcast = data[2].plext.plextType === 'SYSTEM_NARROWCAST';
 
@@ -19402,7 +19397,7 @@ window.chat.parseMsgData = function (data) {
 
     case 'PLAYER': // automatically generated messages
       nick = ent[1].plain;
-        team = team2id(ent[1].team);
+      team = window.teamStringToId(ent[1].team);
       break;
 
     default:
