@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.0.20230522.183908
+// @version        0.35.0.20230522.184604
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-22-183908';
+plugin_info.dateTimeVersion = '2023-05-22-184604';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-05-22-183908';
+window.iitcBuildDate = '2023-05-22-184604';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-05-22-183908');
+  log.log('loading done, booting. Built: '+'2023-05-22-184604');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19472,8 +19472,9 @@ window.chat.renderPortal = function (portal) {
 };
 
 window.chat.renderFactionEnt = function (faction) {
-  var name = faction.team === 'ENLIGHTENED' ? 'Enlightened' : 'Resistance';
-  var spanClass = faction.team === 'ENLIGHTENED' ? window.TEAM_TO_CSS[TEAM_ENL] : window.TEAM_TO_CSS[TEAM_RES];
+  var teamId = window.teamStringToId(faction.team);
+  var name = window.TEAM_NAMES[teamId];
+  var spanClass = window.TEAM_TO_CSS[teamId];
   return $('<div>').html($('<span>')
     .attr('class', spanClass)
     .text(name)).html();
