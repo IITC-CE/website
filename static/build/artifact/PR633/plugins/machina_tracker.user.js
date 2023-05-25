@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.0.0.20230525.184337
+// @version        1.0.0.20230525.185040
 // @description    Show locations of Machina activities
 // @id             machina_tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-25-184337';
+plugin_info.dateTimeVersion = '2023-05-25-185040';
 plugin_info.pluginId = 'machina_tracker';
 //END PLUGIN AUTHORS NOTE
 

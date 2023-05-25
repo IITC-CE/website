@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.0.20230525.184337
+// @version        0.35.0.20230525.185040
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-25-184337';
+plugin_info.dateTimeVersion = '2023-05-25-185040';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-05-25-184337';
+window.iitcBuildDate = '2023-05-25-185040';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-05-25-184337');
+  log.log('loading done, booting. Built: '+'2023-05-25-185040');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19389,17 +19389,17 @@ window.chat.parseMsgData = function (data) {
   var nick = '';
   markup.forEach(function(ent) {
     switch (ent[0]) {
-    case 'SENDER': // user generated messages
-      nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
-      break;
+      case 'SENDER': // user generated messages
+        nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        break;
 
-    case 'PLAYER': // automatically generated messages
-      nick = ent[1].plain;
-      team = window.teamStringToId(ent[1].team);
-      break;
+      case 'PLAYER': // automatically generated messages
+        nick = ent[1].plain;
+        team = window.teamStringToId(ent[1].team);
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   });
 
