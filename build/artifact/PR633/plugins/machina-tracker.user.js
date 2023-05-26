@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.0.0.20230526.015943
+// @version        1.0.0.20230526.020755
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-26-015943';
+plugin_info.dateTimeVersion = '2023-05-26-020755';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -53,13 +53,7 @@ machinaTracker.setup = () => {
 }\
 \
 .plugin-machina-tracker-popup-header {\
-    display: flex;\
-    justify-content: space-between;\
     white-space: nowrap;\
-}\
-\
-.plugin-machina-tracker-popup-header a {\
-    margin-left: 3px;\
 }\
 \
 ul.plugin-machina-tracker-link-list {\
@@ -244,7 +238,7 @@ machinaTracker.drawData = function () {
     var opacity = 1 - 0.2 * ageBucket;
 
     var popup = $('<div>').addClass('plugin-machina-tracker-popup');
-    $('<div>').addClass('plugin-machina-tracker-popup-header').append('From ').append(machinaTracker.createPortalLink(event.from)).appendTo(popup);
+    $('<div>').addClass('plugin-machina-tracker-popup-header').append(machinaTracker.createPortalLink(event.from)).appendTo(popup);
 
     var linkList = $('<ul>').addClass('plugin-machina-tracker-link-list');
     linkList.appendTo(popup);
