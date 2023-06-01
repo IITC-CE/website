@@ -2,7 +2,7 @@
 // @author         screach
 // @name           IITC plugin: Links to moved portals
 // @category       Layer
-// @version        0.1.0.20230601.013639
+// @version        0.1.0.20230601.014957
 // @description    Show links to portals with different location data
 // @id             links-to-moved-portals
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-01-013639';
+plugin_info.dateTimeVersion = '2023-06-01-014957';
 plugin_info.pluginId = 'links-to-moved-portals';
 //END PLUGIN AUTHORS NOTE
 
@@ -61,6 +61,10 @@ var addLinks = (linkGuids) => {
   linkGuids.map((lGuid) => window.links[lGuid]).forEach(plugin.addLink);
 };
 
+var findLayer = (lguid) => {
+  return plugin.linkLayer.getLayers().find((l) => l.options.guid === lguid);
+};
+
 plugin.portalLoaded = (data) => {
   if (!plugin.disabled) {
     var portalLinks = window.getPortalLinks(data.guid);
@@ -70,7 +74,7 @@ plugin.portalLoaded = (data) => {
 
 plugin.onLinkRemoved = (data) => {
   if (!plugin.disabled) {
-    var layer = plugin.linkLayer.getLayers().find((l) => l.options.guid === data.link.options.guid);
+    var layer = findLayer(data.link.options.guid);
     if (layer) {
       layer.remove();
     }
@@ -78,7 +82,7 @@ plugin.onLinkRemoved = (data) => {
 };
 
 plugin.addLink = (link) => {
-  if (!plugin.disabled) {
+  if (!plugin.disabled && !findLayer(link.options.guid)) {
     var linkData = link.options.data;
     var origin = getPortalLatLng(window.portals[linkData.oGuid]);
     var destination = getPortalLatLng(window.portals[linkData.dGuid]);
@@ -117,11 +121,15 @@ var createLayer = () => {
   }
 };
 
-var setup = () => {
-  createLayer();
+var addHooks = () => {
   window.addHook('mapDataRefreshEnd', plugin.checkAllLinks);
   window.addHook('portalDetailsUpdated', plugin.portalLoaded);
   window.addHook('linkRemoved', plugin.onLinkRemoved);
+};
+
+var setup = () => {
+  createLayer();
+  addHooks();
 };
 
 setup.info = plugin_info; //add the script info data to the function as a property
