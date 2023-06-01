@@ -2,7 +2,7 @@
 // @author         screach
 // @name           IITC plugin: Links to moved portals
 // @category       Layer
-// @version        0.1.0.20230601.003636
+// @version        0.1.0.20230601.013639
 // @description    Show links to portals with different location data
 // @id             links-to-moved-portals
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-01-003636';
+plugin_info.dateTimeVersion = '2023-06-01-013639';
 plugin_info.pluginId = 'links-to-moved-portals';
 //END PLUGIN AUTHORS NOTE
 
@@ -54,7 +54,7 @@ var getOLatLng = (linkData) => {
 };
 
 var getPortalLatLng = (portal) => {
-  return toLatLng(portal.options.data.latE6, portal.options.data.lngE6);
+  return portal && toLatLng(portal.options.data.latE6, portal.options.data.lngE6);
 };
 
 var addLinks = (linkGuids) => {
@@ -82,7 +82,7 @@ plugin.addLink = (link) => {
     var linkData = link.options.data;
     var origin = getPortalLatLng(window.portals[linkData.oGuid]);
     var destination = getPortalLatLng(window.portals[linkData.dGuid]);
-    if (!origin.equals(getOLatLng(linkData)) || !destination.equals(getDLatLng(linkData))) {
+    if ((origin && !origin.equals(getOLatLng(linkData))) || (destination && !destination.equals(getDLatLng(linkData)))) {
       var poly = L.geodesicPolyline(link.getLatLngs(), Object.assign({}, plugin.styles, { guid: link.options.guid }));
       poly.addTo(plugin.linkLayer);
     }
