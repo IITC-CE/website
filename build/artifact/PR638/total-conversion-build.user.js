@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.0.20230605.204537
+// @version        0.35.0.20230605.205023
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-05-204537';
+plugin_info.dateTimeVersion = '2023-06-05-205023';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-06-05-204537';
+window.iitcBuildDate = '2023-06-05-205023';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2388,7 +2388,7 @@ window.TEAM_RES = 1;
 window.TEAM_ENL = 2;
 window.TEAM_MAC = 3;
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
-window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '_̶̱̍_̴̳͉̆̈́M̷͔̤͒Ą̷̍C̴̼̕ͅH̶̹͕̼̾Ḭ̵̇̾̓N̵̺͕͒̀̍Ä̴̞̰́_̴̦̀͆̓_̷̣̈́'];
+window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '__MACHINA__'];
 window.TEAM_CODES = ['N', 'R', 'E', 'M'];
 window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
 
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-06-05-204537');
+  log.log('loading done, booting. Built: '+'2023-06-05-205023');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
