@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.1.20230607.013952
+// @version        0.4.1.20230607.015441
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-07-013952';
+plugin_info.dateTimeVersion = '2023-06-07-015441';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -582,7 +582,7 @@ var setup =  function() {
 #portalslist .filters .filterNeu,\
 #portalslist .filters .filterEnl,\
 #portalslist .filters .filterRes,\
-#portalslist .filters .filterUnk {\
+#portalslist .filters .filterMac {\
   grid-row: 1;\
 }\
 \
@@ -601,14 +601,14 @@ var setup =  function() {
   #portalslist .filters .filterNeu.name,\
   #portalslist .filters .filterRes.name,\
   #portalslist .filters .filterEnl.name,\
-  #portalslist .filters .filterUnk.name {\
+  #portalslist .filters .filterMac.name {\
     grid-column: 1;\
   }\
 \
   #portalslist .filters .filterNeu.count,\
   #portalslist .filters .filterRes.count,\
   #portalslist .filters .filterEnl.count,\
-  #portalslist .filters .filterUnk.count {\
+  #portalslist .filters .filterMac.count {\
     grid-column: 2;\
   }\
 \
@@ -639,7 +639,7 @@ var setup =  function() {
     grid-row: 3;\
   }\
 \
-  #portalslist .filters .filterUnk {\
+  #portalslist .filters .filterMac {\
     grid-row: 4;\
   }\
 }\
@@ -688,7 +688,7 @@ var setup =  function() {
 }\
 \
 #portalslist table tr.mac td,\
-#portalslist .filters .filterUnk {\
+#portalslist .filters .filterMac {\
   background-color: #a00;\
 }\
 \
