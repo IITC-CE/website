@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.1.20230607.005741
+// @version        0.4.1.20230607.011345
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,29 +22,23 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-07-005741';
+plugin_info.dateTimeVersion = '2023-06-07-011345';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
+
+// use own namespace for plugin
+window.plugin.portalslist = function() {};
+
+window.plugin.portalslist.listPortals = [];
+window.plugin.portalslist.sortBy = 1; // second column: level
+window.plugin.portalslist.sortOrder = -1;
 
 function abbreviate(label) {
   return label
     .replaceAll(/[^a-z]/gi, '')
     .substring(0, 3)
-    .toLowerCase()
     .capitalize();
 }
-// use own namespace for plugin
-window.plugin.portalslist = function() {};
-
-window.plugin.portalslist.FACTION_FILTERS = window.TEAM_NAMES;
-window.plugin.portalslist.FACTION_ABBREVS = window.plugin.portalslist.FACTION_FILTERS.map(abbreviate);
-window.plugin.portalslist.ALL_FACTION_FILTERS = ['All', ...window.plugin.portalslist.FACTION_FILTERS];
-window.plugin.portalslist.HISTORY_FILTERS = ['Visited', 'Captured', 'Scout Controlled'];
-window.plugin.portalslist.FILTERS = [...window.plugin.portalslist.ALL_FACTION_FILTERS, ...window.plugin.portalslist.HISTORY_FILTERS];
-
-window.plugin.portalslist.listPortals = [];
-window.plugin.portalslist.sortBy = 1; // second column: level
-window.plugin.portalslist.sortOrder = -1;
 
 function zeroCounts() {
   return window.plugin.portalslist.FILTERS.reduce((prev, curr) => {
@@ -477,6 +471,12 @@ window.plugin.portalslist.onPaneChanged = function(pane) {
 };
 
 var setup =  function() {
+  window.plugin.portalslist.FACTION_FILTERS = window.TEAM_NAMES;
+  window.plugin.portalslist.FACTION_ABBREVS = window.plugin.portalslist.FACTION_FILTERS.map(abbreviate);
+  window.plugin.portalslist.ALL_FACTION_FILTERS = ['All', ...window.plugin.portalslist.FACTION_FILTERS];
+  window.plugin.portalslist.HISTORY_FILTERS = ['Visited', 'Captured', 'Scout Controlled'];
+  window.plugin.portalslist.FILTERS = [...window.plugin.portalslist.ALL_FACTION_FILTERS, ...window.plugin.portalslist.HISTORY_FILTERS];
+
   if (window.useAppPanes()) {
     app.addPane("plugin-portalslist", "Portals list", "ic_action_paste");
     addHook("paneChanged", window.plugin.portalslist.onPaneChanged);
