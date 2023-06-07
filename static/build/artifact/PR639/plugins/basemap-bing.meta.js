@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Bing maps
 // @category       Map Tiles
-// @version        0.3.1.20230607.005741
+// @version        0.3.1.20230607.011345
 // @description    Add the bing.com map layers.
 // @id             basemap-bing
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
