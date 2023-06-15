@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.1.20230615.045719
+// @version        0.35.2.20230615.220404
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,18 +22,24 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-15-045719';
+plugin_info.dateTimeVersion = '2023-06-15-220404';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
+window.script_info.changelog = [
+  {
+    version: '0.35.2',
+    changes: ['Ability to define and display changelog'],
+  },
+];
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-06-15-045719';
+window.iitcBuildDate = '2023-06-15-220404';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3158,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-06-15-045719');
+  log.log('loading done, booting. Built: '+'2023-06-15-220404');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20414,7 +20420,7 @@ function createDialogContent() {
     + '   </ul>'
     + '</div>'
     + '<hr>'
-    + '<div>Version: ' + getIITCVersion() + '</div>';
+    + '<div>Version: ' + getIITCVersion() + ' ' + createChangelog(window.script_info)+'</div>';
 
   if (isShortOnLocalStorage()) {
     html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
