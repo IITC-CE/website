@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.2.20230615.220404
+// @version        0.35.2.20230615.221147
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-15-220404';
+plugin_info.dateTimeVersion = '2023-06-15-221147';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -39,7 +39,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-06-15-220404';
+window.iitcBuildDate = '2023-06-15-221147';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3158,7 +3158,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-06-15-220404');
+  log.log('loading done, booting. Built: '+'2023-06-15-221147');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20404,23 +20404,22 @@ window.aboutIITC = function() {
 }
 
 function createDialogContent() {
-  var html = ''
-    + '<div><b>About IITC</b></div> '
-    + '<div>Ingress Intel Total Conversion</div> '
-    + '<hr>'
-    + '<div>'
-    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |'
-    + '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
-    + '   On the script’s homepage you can:'
-    + '   <ul>'
-    + '     <li>Find Updates</li>'
-    + '     <li>Get Plugins</li>'
-    + '     <li>Report Bugs</li>'
-    + '     <li>Contribute!</li>'
-    + '   </ul>'
-    + '</div>'
-    + '<hr>'
-    + '<div>Version: ' + getIITCVersion() + ' ' + createChangelog(window.script_info)+'</div>';
+  var html = `<div><b>About IITC</b></div>
+              <div>Ingress Intel Total Conversion</div>
+              <hr>
+              <div>
+               <a href="@url_homepage@" target="_blank">IITC Homepage</a> |
+               <a href="@url_tg@" target="_blank">Telegram channel</a><br />
+               On the script’s homepage you can:
+               <ul>
+                 <li>Find Updates</li>
+                 <li>Get Plugins</li>
+                 <li>Report Bugs</li>
+                 <li>Contribute!</li>
+               </ul>
+              </div>
+              <hr>
+              <div>Version: ${getIITCVersion()} ${createChangelog(window.script_info)}</div>`;
 
   if (isShortOnLocalStorage()) {
     html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
