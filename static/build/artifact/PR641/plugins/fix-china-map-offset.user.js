@@ -2,7 +2,7 @@
 // @author         modos189
 // @name           IITC plugin: Fix maps offsets in China
 // @category       Tweaks
-// @version        0.3.1.20230615.003937
+// @version        0.3.1.20230615.045719
 // @description    Show correct maps for China user by applying offset tweaks.
 // @id             fix-china-map-offset
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-15-003937';
+plugin_info.dateTimeVersion = '2023-06-15-045719';
 plugin_info.pluginId = 'fix-china-map-offset';
 //END PLUGIN AUTHORS NOTE
 
@@ -324,7 +324,7 @@ function setup () {
 setup.priority = 'boot';
 
 setup.info = plugin_info; //add the script info data to the function as a property
-if (changelog) setup.info.changelog = changelog;
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
