@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.1.20230630.041340
+// @version        0.35.1.20230630.204247
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-06-30-041340';
+plugin_info.dateTimeVersion = '2023-06-30-204247';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-06-30-041340';
+window.iitcBuildDate = '2023-06-30-204247';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-06-30-041340');
+  log.log('loading done, booting. Built: '+'2023-06-30-204247');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -24469,7 +24469,7 @@ window.getRangeText = function(d) {
     '<a onclick="window.rangeLinkClick()"' +
       (range.isLinkable ? '' : ' style="text-decoration:line-through;"') +
       '>' +
-      (range.range > 1000 ? Math.floor(range.range / 100) / 10 + ' km' : Math.floor(range.range) + ' m') +
+      window.formatDistance(range.range) +
       '</a>',
     title,
   ];
@@ -27814,6 +27814,9 @@ window.formatInterval = function(seconds,maxTerms) {
   return terms.join(' ');
 }
 
+window.formatDistance = function (distance) {
+  return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
+};
 
 window.rangeLinkClick = function() {
   if(window.portalRangeIndicator)
