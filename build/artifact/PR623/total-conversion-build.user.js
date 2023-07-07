@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.34.1.20230315.082315
+// @version        0.35.1.20230707.212716
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-03-15-082315';
+plugin_info.dateTimeVersion = '2023-07-07-212716';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-03-15-082315';
+window.iitcBuildDate = '2023-07-07-212716';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2388,7 +2388,7 @@ window.TEAM_RES = 1;
 window.TEAM_ENL = 2;
 window.TEAM_MAC = 3;
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
-window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
+window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '__MACHINA__'];
 window.TEAM_CODES = ['N', 'R', 'E', 'M'];
 window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
 
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-03-15-082315');
+  log.log('loading done, booting. Built: '+'2023-07-07-212716');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19371,7 +19371,7 @@ window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAsc
   }
 };
 
-window.chat.parseMsgData = function(data) {
+window.chat.parseMsgData = function (data) {
   var categories = data[2].plext.categories;
   var isPublic = (categories & 1) === 1;
   var isSecure = (categories & 2) === 2;
@@ -19380,7 +19380,7 @@ window.chat.parseMsgData = function(data) {
   var msgToPlayer = msgAlert && (isPublic || isSecure);
 
   var time = data[1];
-  var team = data[2].plext.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
+  var team = window.teamStringToId(data[2].plext.team);
   var auto = data[2].plext.plextType !== 'PLAYER_GENERATED';
   var systemNarrowcast = data[2].plext.plextType === 'SYSTEM_NARROWCAST';
 
@@ -19389,17 +19389,17 @@ window.chat.parseMsgData = function(data) {
   var nick = '';
   markup.forEach(function(ent) {
     switch (ent[0]) {
-    case 'SENDER': // user generated messages
-      nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
-      break;
+      case 'SENDER': // user generated messages
+        nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        break;
 
-    case 'PLAYER': // automatically generated messages
-      nick = ent[1].plain;
-      team = ent[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
-      break;
+      case 'PLAYER': // automatically generated messages
+        nick = ent[1].plain;
+        team = window.teamStringToId(ent[1].team);
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   });
 
@@ -19472,8 +19472,9 @@ window.chat.renderPortal = function (portal) {
 };
 
 window.chat.renderFactionEnt = function (faction) {
-  var name = faction.team === 'ENLIGHTENED' ? 'Enlightened' : 'Resistance';
-  var spanClass = faction.team === 'ENLIGHTENED' ? TEAM_TO_CSS[TEAM_ENL] : TEAM_TO_CSS[TEAM_RES];
+  var teamId = window.teamStringToId(faction.team);
+  var name = window.TEAM_NAMES[teamId];
+  var spanClass = window.TEAM_TO_CSS[teamId];
   return $('<div>').html($('<span>')
     .attr('class', spanClass)
     .text(name)).html();
@@ -19560,8 +19561,8 @@ window.chat.renderMsgRow = function(data) {
   var timeCell = chat.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (data.player.team === TEAM_ENL || data.player.team === TEAM_RES) {
-    nickClasses.push(TEAM_TO_CSS[data.player.team]);
+  if (window.TEAM_TO_CSS[data.player.team]) {
+    nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
   // highlight things said/done by the player in a unique colour
   // (similar to @player mentions from others in the chat text itself)
@@ -21788,7 +21789,7 @@ function createDefaultOverlays () {
     addLayers[window.TEAM_NAME_RES] = factionLayers[window.TEAM_RES];
   }
 
-  // and just put U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅ faction last
+  // and just put __MACHINA__ faction last
   delete addLayers[window.TEAM_NAME_MAC];
   addLayers[window.TEAM_NAME_MAC] = factionLayers[window.TEAM_MAC];
 
@@ -24842,32 +24843,21 @@ window.getCurrentPortalEnergy = function(d) {
 window.getPortalRange = function(d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
-
-  var resoMissing = false;
-  // currently we get a short resonator array when some are missing
-  if (d.resonators.length < 8) {
-    resoMissing = true;
-  }
-  // but in the past we used to always get an array of 8, but will 'null' objects for some entries. maybe that will return?
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso) {
-      resoMissing = true;
-      return;
-    }
-  });
-
   var range = {
-    base: d.team === 'M' ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(window.getPortalLevel(d), 4),
-    boost: getLinkAmpRangeBoost(d)
+    base: window.teamStringToId(d.team) === window.TEAM_MAC ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(window.getPortalLevel(d), 4),
+    boost: window.getLinkAmpRangeBoost(d),
   };
 
   range.range = range.boost * range.base;
-  range.isLinkable = !resoMissing;
+  range.isLinkable = d.resCount === 8;
 
   return range;
 }
 
 window.getLinkAmpRangeBoost = function(d) {
+  if (window.teamStringToId(d.team) === window.TEAM_MAC) {
+    return 1.0;
+  }
   // additional range boost calculation
 
   // link amps scale: first is full, second a quarter, the last two an eighth
@@ -24946,7 +24936,7 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
 window.potentialPortalLevel = function(d) {
   var current_level = getPortalLevel(d);
   var potential_level = current_level;
-  
+
   if(PLAYER.team === d.team) {
     var resonators_on_portal = d.resonators;
     var resonator_levels = new Array();
@@ -24959,13 +24949,13 @@ window.potentialPortalLevel = function(d) {
       if(reso !== null && reso.owner === window.PLAYER.nickname) {
         player_resontators[reso.level]--;
       }
-      resonator_levels.push(reso === null ? 0 : reso.level);  
+      resonator_levels.push(reso === null ? 0 : reso.level);
     });
-    
+
     resonator_levels.sort(function(a, b) {
       return(a - b);
     });
-    
+
     // Max out portal
     var install_index = 0;
     for(var i=MAX_PORTAL_LEVEL;i>=1; i--) {
