@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Remove extra layers
 // @category       Layer
-// @version        0.1.0.20230315.082315
+// @version        0.1.0.20230707.212716
 // @description    Remove 'Artifacts', 'Beacons' and 'Frackers' from layerChooser (still keeping them on map)
 // @id             remove-extra-layers
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-03-15-082315';
+plugin_info.dateTimeVersion = '2023-07-07-212716';
 plugin_info.pluginId = 'remove-extra-layers';
 //END PLUGIN AUTHORS NOTE
 

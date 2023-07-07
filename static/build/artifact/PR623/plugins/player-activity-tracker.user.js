@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.12.1.20230315.082315
+// @version        0.12.2.20230707.212716
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-03-15-082315';
+plugin_info.dateTimeVersion = '2023-07-07-212716';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -87,7 +87,7 @@ window.plugin.playerTracker.setup = function() {
     window.plugin.playerTracker.zoomListener();
   });
   window.plugin.playerTracker.zoomListener();
-  
+
   plugin.playerTracker.setupUserSearch();
 }
 
@@ -199,7 +199,9 @@ window.plugin.playerTracker.processNewData = function(data) {
     });
 
     // skip unusable events
-    if(!plrname || !lat || !lng || !id || skipThisMessage) return true;
+    if (!plrname || !lat || !lng || !id || skipThisMessage || ![window.TEAM_RES, window.TEAM_ENL].includes(window.teamStringToId(json[2].plext.team))) {
+      return true;
+    }
 
     var newEvent = {
       latlngs: [[lat, lng]],
