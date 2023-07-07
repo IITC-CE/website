@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.2.1.20230707.212716
+// @version        0.2.1.20230707.214123
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,9 +22,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-07-212716';
+plugin_info.dateTimeVersion = '2023-07-07-214123';
 plugin_info.pluginId = 'regions';
 //END PLUGIN AUTHORS NOTE
+
+/* global S2 */
 
 
 // use own namespace for plugin
@@ -496,6 +498,7 @@ window.plugin.regions.getSearchResult = function (match) {
 </svg>\
 ');
 
+    // eslint-disable-next-line no-unused-vars
     const [_, positions] = cell.getFaceAndQuads();
     positions.push(Math.floor(id2 / 4), id2 % 4);
     cell = S2.S2Cell.FromFacePosition(faceId, positions);
