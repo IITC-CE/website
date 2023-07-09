@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.1.20230703.132049
+// @version        0.35.1.20230709.090217
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-03-132049';
+plugin_info.dateTimeVersion = '2023-07-09-090217';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-03-132049';
+window.iitcBuildDate = '2023-07-09-090217';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3152,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-03-132049');
+  log.log('loading done, booting. Built: '+'2023-07-09-090217');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22486,15 +22486,19 @@ window.Render.prototype.createPlaceholderPortalEntity = function(guid,latE6,lngE
   // placeholder portals don't have a useful timestamp value - so the standard code that checks for updated
   // portal details doesn't apply
   // so, check that the basic details are valid and delete the existing portal if out of date
+  var portalMoved = false;
   if (guid in window.portals) {
     var p = window.portals[guid];
-    if (team != p.options.data.team || latE6 != p.options.data.latE6 || lngE6 != p.options.data.lngE6) {
-      // team or location have changed - delete existing portal
+    portalMoved = latE6 !== p.options.data.latE6 || lngE6 !== p.options.data.lngE6;
+    if (team !== p.options.data.team) {
+      // team - delete existing portal
       this.deletePortalEntity(guid);
     }
   }
 
-  this.createPortalEntity(ent, 'core'); // placeholder
+  if (!portalMoved) {
+    this.createPortalEntity(ent, 'core'); // placeholder
+  }
 
 }
 
@@ -24464,15 +24468,15 @@ window.getRangeText = function(d) {
 
   if(!range.isLinkable) title += '\nPortal is missing resonators,\nno new links can be made';
 
-  return ['range',
-      '<a onclick="window.rangeLinkClick()"'
-    + (range.isLinkable ? '' : ' style="text-decoration:line-through;"')
-    + '>'
-    + (range.range > 1000
-      ? Math.floor(range.range/1000) + ' km'
-      : Math.floor(range.range)      + ' m')
-    + '</a>',
-    title];
+  return [
+    'range',
+    '<a onclick="window.rangeLinkClick()"' +
+      (range.isLinkable ? '' : ' style="text-decoration:line-through;"') +
+      '>' +
+      window.formatDistance(range.range) +
+      '</a>',
+    title,
+  ];
 }
 
 
@@ -27814,6 +27818,9 @@ window.formatInterval = function(seconds,maxTerms) {
   return terms.join(' ');
 }
 
+window.formatDistance = function (distance) {
+  return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
+};
 
 window.rangeLinkClick = function() {
   if(window.portalRangeIndicator)
