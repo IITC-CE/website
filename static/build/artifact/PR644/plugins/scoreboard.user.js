@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.3.2.20230703.132049
+// @version        0.3.2.20230709.090217
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-03-132049';
+plugin_info.dateTimeVersion = '2023-07-09-090217';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 
