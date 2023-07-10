@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.0.0.20230710.024810
+// @version        1.0.0.20230710.142358
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,12 +22,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-10-024810';
+plugin_info.dateTimeVersion = '2023-07-10-142358';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
-/* exported setup --eslint */
+/* exported setup, changelog --eslint */
 /* global L */
+
+var changelog = [
+  {
+    version: '1.0.0',
+    changes: ['First version'],
+  },
+];
 
 // ensure plugin framework is there, even if iitc is not yet loaded
 if (typeof window.plugin !== 'function') window.plugin = function () {};
@@ -268,6 +275,7 @@ machinaTracker.handleData = function (data) {
 var setup = machinaTracker.setup;
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

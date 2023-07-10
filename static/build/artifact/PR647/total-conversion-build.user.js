@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.1.20230710.024810
+// @version        0.36.0.20230710.142358
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,18 +22,24 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-10-024810';
+plugin_info.dateTimeVersion = '2023-07-10-142358';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
+window.script_info.changelog = [
+  {
+    version: '0.36.0',
+    changes: ['Ability to define and display changelog'],
+  },
+];
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-10-024810';
+window.iitcBuildDate = '2023-07-10-142358';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -619,6 +625,9 @@ h2 sup, h2 sub {\
   cursor:help;\
   height: 21px;\
   line-height: 22px;\
+  padding: 0 3px;\
+  box-sizing: border-box;\
+  font-size: 1em;\
 }\
 \
 #gamestat .res {\
@@ -657,7 +666,7 @@ input[type="search"], input[type="url"] {\
 #buttongeolocation {\
   position: absolute;\
   right: 0;\
-  top: 0;\
+  bottom: 0;\
   margin: 0;\
   border: 0 none transparent;\
   padding: 0 2px 0 0;\
@@ -3151,7 +3160,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-10-024810');
+  log.log('loading done, booting. Built: '+'2023-07-10-142358');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20397,23 +20406,22 @@ window.aboutIITC = function() {
 }
 
 function createDialogContent() {
-  var html = ''
-    + '<div><b>About IITC</b></div> '
-    + '<div>Ingress Intel Total Conversion</div> '
-    + '<hr>'
-    + '<div>'
-    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |'
-    + '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
-    + '   On the script’s homepage you can:'
-    + '   <ul>'
-    + '     <li>Find Updates</li>'
-    + '     <li>Get Plugins</li>'
-    + '     <li>Report Bugs</li>'
-    + '     <li>Contribute!</li>'
-    + '   </ul>'
-    + '</div>'
-    + '<hr>'
-    + '<div>Version: ' + getIITCVersion() + '</div>';
+  var html = `<div><b>About IITC</b></div>
+              <div>Ingress Intel Total Conversion</div>
+              <hr>
+              <div>
+               <a href="@url_homepage@" target="_blank">IITC Homepage</a> |
+               <a href="@url_tg@" target="_blank">Telegram channel</a><br />
+               On the script’s homepage you can:
+               <ul>
+                 <li>Find Updates</li>
+                 <li>Get Plugins</li>
+                 <li>Report Bugs</li>
+                 <li>Contribute!</li>
+               </ul>
+              </div>
+              <hr>
+              <div>Version: ${getIITCVersion()} ${createChangelog(window.script_info)}</div>`;
 
   if (isShortOnLocalStorage()) {
     html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
@@ -20459,6 +20467,8 @@ function convertPluginInfo(info, index) {
   //   (atm: IITC-Mobile for iOS)
   var result = {
     build: info.buildName,
+    changelog: info.changelog,
+    id: info.pluginId,
     name: info.pluginId,
     date: info.dateTimeVersion,
     error: info.error,
@@ -20487,8 +20497,33 @@ function convertPluginInfo(info, index) {
   return result;
 }
 
+function createChangelog(plugin) {
+  var id = 'plugin-changelog-' + plugin.id;
+  return (
+    `<a onclick="$('#${id}').toggle()">changelog</a>` +
+    `<ul id="${id}" style="display: none;">` +
+    plugin.changelog
+      .map(function (logEntry) {
+        return (
+          '<li>' +
+          logEntry.version +
+          '<ul>' +
+          logEntry.changes
+            .map(function (change) {
+              return `<li>${change}</li>`;
+            })
+            .join('') +
+          '</ul></li>'
+        );
+      })
+      .join('') +
+    '</ul>'
+  );
+}
+
 function pluginInfoToString(p, extra) {
   var info = {
+    changelog: '',
     class: '',
     description: p.description || '',
     name: p.name,
@@ -20504,7 +20539,11 @@ function pluginInfoToString(p, extra) {
     info.description = p.error;
   }
 
-  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo}</li>', info);
+  if (p.changelog) {
+    info.changelog = createChangelog(p);
+  }
+
+  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo} {changelog}</li>', info);
 }
 
 
@@ -27092,11 +27131,6 @@ body {\
 #name #signout { /* no hover, always show signout button */\
   display: inline-block;\
   position: initial;\
-}\
-\
-#gamestat span {\
-  padding: 0 3px;\
-  box-sizing: border-box;\
 }\
 \
 #sidebar, #chatcontrols, #chat, #chatinput {\
