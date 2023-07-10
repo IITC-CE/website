@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.35.1.20230710.023027
+// @version        0.35.1.20230710.024810
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-10-023027';
+plugin_info.dateTimeVersion = '2023-07-10-024810';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,7 +33,7 @@ window.script_info = plugin_info;
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-10-023027';
+window.iitcBuildDate = '2023-07-10-024810';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3151,7 +3151,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-10-023027');
+  log.log('loading done, booting. Built: '+'2023-07-10-024810');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20926,15 +20926,14 @@ window.updateGameScore = function(data) {
     var teamId = window.teamStringToId(window.PLAYER.team);
     var rs = '<span class="res" style="width:' + rp + '%;text-align: ' + (teamId === window.TEAM_RES ? 'right' : 'left') + ';">' + Math.round(rp) + '%</span>';
     var es = '<span class="enl" style="width:' + ep + '%;text-align: ' + (teamId === window.TEAM_ENL ? 'right' : 'left') + ';">' + Math.round(ep) + '%</span>';
-    $('#gamestat')
-      .html(teamId === window.TEAM_RES ? rs + es : es + rs)
-      .one('click', function () {
-        window.updateGameScore();
-      });
+    var gamestatElement = $('#gamestat');
+    gamestatElement.html(teamId === window.TEAM_RES ? rs + es : es + rs).one('click', function () {
+      window.updateGameScore();
+    });
     // help cursor via “#gamestat span”
     var resMu = 'Resistance:\t' + r + ' MindUnits';
     var enlMu = 'Enlightened:\t' + e + ' MindUnits';
-    $('#gamestat').attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
+    gamestatElement.attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
   } else if (data && data.error) {
     log.warn('game score failed to load: '+data.error);
   } else {
