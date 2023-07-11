@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230711.133235
+// @version        0.36.0.20230711.142501
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-11-133235';
+plugin_info.dateTimeVersion = '2023-07-11-142501';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -39,7 +39,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-11-133235';
+window.iitcBuildDate = '2023-07-11-142501';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -582,7 +582,7 @@ h2 #name {\
 }\
 \
 h2 #name .playername {\
-  max-width: 50%;\
+  max-width: 70%;\
   display: inline-block;\
   overflow: hidden;\
   text-overflow: ellipsis;\
@@ -601,6 +601,9 @@ h2 #stats {\
   background-color: rgba(8, 48, 78, 0.5);\
   display: none; /* starts hidden */\
   vertical-align: text-top;\
+}\
+#name:hover .playername {\
+  max-width: 70%;\
 }\
 #name:hover #signout {\
   display: inline-block;\
@@ -3152,7 +3155,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-11-133235');
+  log.log('loading done, booting. Built: '+'2023-07-11-142501');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27116,7 +27119,8 @@ body {\
   width: initial;\
 }\
 \
-#playerstat h2 #name .playername {\
+#playerstat h2 #name .playername,\
+#playerstat h2 #name:hover .playername{\
   max-width: 60vw;\
 }\
 \
