@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230710.154249
+// @version        0.36.0.20230711.133235
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-10-154249';
+plugin_info.dateTimeVersion = '2023-07-11-133235';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ window.script_info = plugin_info;
 window.script_info.changelog = [
   {
     version: '0.36.0',
-    changes: ['Ability to define and display changelog'],
+    changes: ['Ability to define and display changelog', 'Improved info panel styling'],
   },
 ];
 
@@ -39,7 +39,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-10-154249';
+window.iitcBuildDate = '2023-07-11-133235';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -576,13 +576,16 @@ h2 {\
 \
 h2 #name {\
   font-weight: 300;\
+  display: inline;\
+  vertical-align: top;\
+  white-space: nowrap;\
+}\
+\
+h2 #name .playername {\
+  max-width: 50%;\
   display: inline-block;\
   overflow: hidden;\
   text-overflow: ellipsis;\
-  vertical-align: top;\
-  white-space: nowrap;\
-  width: 205px;\
-  position: relative;\
 }\
 \
 h2 #stats {\
@@ -594,13 +597,10 @@ h2 #stats {\
 #signout {\
   font-size: 12px;\
   font-weight: normal;\
-  line-height: 29px;\
   padding: 0 4px;\
-  position: absolute;\
-  top: 0;\
-  right: 0;\
   background-color: rgba(8, 48, 78, 0.5);\
   display: none; /* starts hidden */\
+  vertical-align: text-top;\
 }\
 #name:hover #signout {\
   display: inline-block;\
@@ -614,17 +614,10 @@ h2 sup, h2 sub {\
 \
 \
 /* gamestats */\
-#gamestat {\
-  height: 22px;\
-}\
-\
 #gamestat span {\
-  display: block;\
-  float: left;\
+  display: inline-block;\
   font-weight: bold;\
   cursor:help;\
-  height: 21px;\
-  line-height: 22px;\
   padding: 0 3px;\
   box-sizing: border-box;\
 }\
@@ -669,14 +662,14 @@ input[type="search"], input[type="url"] {\
   margin: 0;\
   border: 0 none transparent;\
   padding: 0 2px 0 0;\
-  height: 24px;\
+  height: 100%;\
   background-color: transparent;\
 }\
 #buttongeolocation:focus {\
   outline: 1px dotted #ffce00;\
 }\
 #buttongeolocation img {\
-  display: block;\
+  vertical-align: middle;\
 }\
 #searchwrapper h3 {\
   font-size: 1em;\
@@ -3159,7 +3152,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-10-154249');
+  log.log('loading done, booting. Built: '+'2023-07-11-133235');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26890,17 +26883,18 @@ window.setupPlayerStat = function () {
         + '\nInvites:\t'+PLAYER.available_invites
         + '\n\nNote: your player stats can only be updated by a full reload (F5)';
 
-  $('#playerstat').html(''
-    + '<h2 title="'+t+'">'+level+'&nbsp;'
-    + '<div id="name">'
-    + '<span class="'+cls+'">'+PLAYER.nickname+'</span>'
-    + '<a href="https://intel.ingress.com/logout" id="signout">sign out</a>'
-    + '</div>'
-    + '<div id="stats">'
-    + '<sup>XM: '+xmRatio+'%</sup>'
-    + '<sub>' + (nextLvlAp > 0 ? 'level: '+lvlApProg+'%' : 'max level') + '</sub>'
-    + '</div>'
-    + '</h2>'
+  $('#playerstat').html(
+    `<h2 title="${t}">
+      ${level}
+      <div id="name">
+        <span class="playername ${cls}">${window.PLAYER.nickname}</span>
+        <a href="https://intel.ingress.com/logout" id="signout">sign out</a>
+      </div>
+      <div id="stats">
+        <sup>XM: ${xmRatio}%</sup>
+        <sub>${nextLvlAp > 0 ? 'level: ' + lvlApProg + '%' : 'max level'}</sub>
+      </div>
+    </h2>`
   );
 };
 
@@ -27122,6 +27116,10 @@ body {\
   width: initial;\
 }\
 \
+#playerstat h2 #name .playername {\
+  max-width: 60vw;\
+}\
+\
 #playerstat h2 #stats {\
   white-space: nowrap;\
   overflow: initial;\
@@ -27141,9 +27139,6 @@ body {\
   margin-left: 5px !important;\
 }\
 \
-#searchwrapper {\
-  font-size: 1.2em;\
-}\
 #searchwrapper .ui-accordion-header {\
   padding: 0.3em 0;\
 }\
