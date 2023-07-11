@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230711.143908
+// @version        0.36.0.20230711.182440
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-11-143908';
+plugin_info.dateTimeVersion = '2023-07-11-182440';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -39,7 +39,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-11-143908';
+window.iitcBuildDate = '2023-07-11-182440';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3155,7 +3155,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-11-143908');
+  log.log('loading done, booting. Built: '+'2023-07-11-182440');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27113,10 +27113,12 @@ body {\
   display: flex;\
   justify-content: space-between;\
   flex-wrap: wrap;\
+  padding: 5px;\
 }\
 \
 #playerstat h2 #name {\
-  width: initial;\
+  display: flex;\
+  align-items: center;\
 }\
 \
 #playerstat h2 #name .playername,\
@@ -27132,6 +27134,7 @@ body {\
 #name #signout { /* no hover, always show signout button */\
   display: inline-block;\
   position: initial;\
+  margin-left: 4px;\
 }\
 \
 #sidebar, #chatcontrols, #chat, #chatinput {\
@@ -27220,10 +27223,6 @@ body {\
 \
 #sidebar > * {\
   width: 100%;\
-}\
-\
-#playerstat {\
-  margin-top: 5px;\
 }\
 \
 #portaldetails {\
