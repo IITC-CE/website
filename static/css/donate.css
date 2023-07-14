@@ -37,6 +37,15 @@
     margin-right: 0;
 }
 
+.section-donate .btn.paypal {
+    background: #114DA4;
+}
+
+.section-donate .btn.liberapay {
+    background: #F6C915;
+    color: #1A171B;
+}
+
 .section-donate .btn.telegram {
     background: #4a88e5;
 }
