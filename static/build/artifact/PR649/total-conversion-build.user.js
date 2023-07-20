@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230712.173756
+// @version        0.36.0.20230720.013845
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-12-173756';
+plugin_info.dateTimeVersion = '2023-07-20-013845';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -39,7 +39,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-12-173756';
+window.iitcBuildDate = '2023-07-20-013845';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3158,7 +3158,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-12-173756');
+  log.log('loading done, booting. Built: '+'2023-07-20-013845');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22500,19 +22500,17 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
 }
 
 
-window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
+window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team) {
   // intel no longer returns portals at anything but the closest zoom
   // stock intel creates 'placeholder' portals from the data in links/fields - IITC needs to do the same
   // we only have the portal guid, lat/lng coords, and the faction - no other data
   // having the guid, at least, allows the portal details to be loaded once it's selected. however,
   // no highlighters, portal level numbers, portal names, useful counts of portals, etc are possible
 
-  // zero will mean any other source of portal data will have a higher timestamp
-  timestamp = timestamp || 0;
 
   var ent = [
     guid, // ent[0] = guid
-    timestamp, // ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
+    0, // ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
     // ent[2] = an array with the entity data
     [
       'p', // 0 - a portal
@@ -22529,7 +22527,7 @@ window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, l
   if (guid in window.portals) {
     var p = window.portals[guid];
     portalMoved = latE6 !== p.options.data.latE6 || lngE6 !== p.options.data.lngE6;
-    if (team !== p.options.data.team && p.options.timestamp < timestamp) {
+    if (team !== p.options.data.team) {
       // team - delete existing portal
       this.deletePortalEntity(guid);
     }
@@ -22661,7 +22659,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   //create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
   for (var i=0; i<3; i++) {
     var p=data.points[i];
-    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, data.timestamp);
+    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team);
   }
 
   // check if entity already exists
@@ -22729,8 +22727,8 @@ window.Render.prototype.createLinkEntity = function (ent) {
   };
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
-  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team, data.timestamp);
-  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team, data.timestamp);
+  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team);
+  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team);
 
 
   // check if entity already exists
