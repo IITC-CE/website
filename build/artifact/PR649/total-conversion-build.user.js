@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230720.023059
+// @version        0.36.0.20230720.023645
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-20-023059';
+plugin_info.dateTimeVersion = '2023-07-20-023645';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -39,7 +39,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-20-023059';
+window.iitcBuildDate = '2023-07-20-023645';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3158,7 +3158,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-20-023059');
+  log.log('loading done, booting. Built: '+'2023-07-20-023645');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22730,7 +22730,6 @@ window.Render.prototype.createLinkEntity = function (ent) {
   // create placeholder entities for link start and end points (before checking if the link itself already exists
   this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team, data.timestamp);
   this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team, data.timestamp);
-
 
   // check if entity already exists
   if (ent[0] in window.links) {
