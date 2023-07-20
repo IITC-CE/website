@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight high level portals
 // @category       Highlighter
-// @version        0.2.0.20230720.020609
+// @version        0.2.0.20230720.023059
 // @description    Use the portal fill color to denote high level portals: Purple L8, Red L7, Orange L6
 // @id             highlight-high-level
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-20-020609';
+plugin_info.dateTimeVersion = '2023-07-20-023059';
 plugin_info.pluginId = 'highlight-high-level';
 //END PLUGIN AUTHORS NOTE
 
