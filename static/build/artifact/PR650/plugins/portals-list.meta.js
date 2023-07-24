@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.2.20230723.153604
+// @version        0.4.2.20230724.141850
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

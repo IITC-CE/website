@@ -2,7 +2,7 @@
 // @author         mcben
 // @name           IITC plugin: Cross links
 // @category       Draw
-// @version        1.3.1.20230723.153604
+// @version        1.3.1.20230724.141850
 // @description    Checks for existing links that cross planned links. Requires draw-tools plugin.
 // @id             cross-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
