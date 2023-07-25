@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Done links
 // @category       Draw
-// @version        0.1.1.20230725.012927
+// @version        0.1.1.20230725.101352
 // @description    A companion to the Cross Links plugin. Highlights any links that match existing draw-tools line/polygon edges
 // @id             done-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
