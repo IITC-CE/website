@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230725.011155
+// @version        0.36.0.20230725.105224
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-25-011155';
+plugin_info.dateTimeVersion = '2023-07-25-105224';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,12 @@ window.script_info = plugin_info;
 window.script_info.changelog = [
   {
     version: '0.36.0',
-    changes: ['Ability to define and display changelog', 'Added scanner link to info panel'],
+    changes: [
+      'Ability to define and display changelog',
+      'Improved info panel styling',
+      'Timestamp added to link and field data',
+      'Added scanner link to info panel',
+    ],
   },
 ];
 
@@ -39,7 +44,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-25-011155';
+window.iitcBuildDate = '2023-07-25-105224';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -576,13 +581,16 @@ h2 {\
 \
 h2 #name {\
   font-weight: 300;\
+  display: inline;\
+  vertical-align: top;\
+  white-space: nowrap;\
+}\
+\
+h2 #name .playername {\
+  max-width: 70%;\
   display: inline-block;\
   overflow: hidden;\
   text-overflow: ellipsis;\
-  vertical-align: top;\
-  white-space: nowrap;\
-  width: 205px;\
-  position: relative;\
 }\
 \
 h2 #stats {\
@@ -594,16 +602,16 @@ h2 #stats {\
 #signout {\
   font-size: 12px;\
   font-weight: normal;\
-  line-height: 29px;\
   padding: 0 4px;\
-  position: absolute;\
-  top: 0;\
-  right: 0;\
   background-color: rgba(8, 48, 78, 0.5);\
   display: none; /* starts hidden */\
+  vertical-align: text-top;\
+}\
+#name:hover .playername {\
+  max-width: 50%;\
 }\
 #name:hover #signout {\
-  display: block;\
+  display: inline-block;\
 }\
 \
 h2 sup, h2 sub {\
@@ -614,22 +622,16 @@ h2 sup, h2 sub {\
 \
 \
 /* gamestats */\
-#gamestat {\
-  height: 22px;\
-}\
-\
 #gamestat span {\
-  display: block;\
-  float: left;\
+  display: inline-block;\
   font-weight: bold;\
   cursor:help;\
-  height: 21px;\
-  line-height: 22px;\
+  padding: 0 3px;\
+  box-sizing: border-box;\
 }\
 \
 #gamestat .res {\
   background: #005684;\
-  text-align: right;\
 }\
 \
 #gamestat .enl {\
@@ -664,18 +666,18 @@ input[type="search"], input[type="url"] {\
 #buttongeolocation {\
   position: absolute;\
   right: 0;\
-  top: 0;\
+  bottom: 0;\
   margin: 0;\
   border: 0 none transparent;\
   padding: 0 2px 0 0;\
-  height: 24px;\
+  height: 100%;\
   background-color: transparent;\
 }\
 #buttongeolocation:focus {\
   outline: 1px dotted #ffce00;\
 }\
 #buttongeolocation img {\
-  display: block;\
+  vertical-align: middle;\
 }\
 #searchwrapper h3 {\
   font-size: 1em;\
@@ -3160,7 +3162,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-25-011155');
+  log.log('loading done, booting. Built: '+'2023-07-25-105224');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20962,11 +20964,17 @@ window.updateGameScore = function(data) {
     var s = r+e;
     var rp = r/s*100, ep = e/s*100;
     r = digits(r), e = digits(e);
-    var rs = '<span class="res" style="width:'+rp+'%;">'+Math.round(rp)+'%&nbsp;</span>';
-    var es = '<span class="enl" style="width:'+ep+'%;">&nbsp;'+Math.round(ep)+'%</span>';
-    $('#gamestat').html(rs+es).one('click', function() { window.updateGameScore() });
+    var teamId = window.teamStringToId(window.PLAYER.team);
+    var rs = '<span class="res" style="width:' + rp + '%;text-align: ' + (teamId === window.TEAM_RES ? 'right' : 'left') + ';">' + Math.round(rp) + '%</span>';
+    var es = '<span class="enl" style="width:' + ep + '%;text-align: ' + (teamId === window.TEAM_ENL ? 'right' : 'left') + ';">' + Math.round(ep) + '%</span>';
+    var gamestatElement = $('#gamestat');
+    gamestatElement.html(teamId === window.TEAM_RES ? rs + es : es + rs).one('click', function () {
+      window.updateGameScore();
+    });
     // help cursor via “#gamestat span”
-    $('#gamestat').attr('title', 'Resistance:\t'+r+' MindUnits\nEnlightened:\t'+e+' MindUnits');
+    var resMu = 'Resistance:\t' + r + ' MindUnits';
+    var enlMu = 'Enlightened:\t' + e + ' MindUnits';
+    gamestatElement.attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
   } else if (data && data.error) {
     log.warn('game score failed to load: '+data.error);
   } else {
@@ -22502,23 +22510,26 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
 }
 
 
-window.Render.prototype.createPlaceholderPortalEntity = function(guid,latE6,lngE6,team) {
+window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
   // intel no longer returns portals at anything but the closest zoom
   // stock intel creates 'placeholder' portals from the data in links/fields - IITC needs to do the same
   // we only have the portal guid, lat/lng coords, and the faction - no other data
   // having the guid, at least, allows the portal details to be loaded once it's selected. however,
   // no highlighters, portal level numbers, portal names, useful counts of portals, etc are possible
 
+  // zero will mean any other source of portal data will have a higher timestamp
+  timestamp = timestamp || 0;
 
   var ent = [
-    guid,       //ent[0] = guid
-    0,          //ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
-                //ent[2] = an array with the entity data
-    [ 'p',      //0 - a portal
-      team,     //1 - team
-      latE6,    //2 - lat
-      lngE6     //3 - lng
-    ]
+    guid, // ent[0] = guid
+    -1, // ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
+    // ent[2] = an array with the entity data
+    [
+      'p', // 0 - a portal
+      team, // 1 - team
+      latE6, // 2 - lat
+      lngE6, // 3 - lng
+    ],
   ];
 
   // placeholder portals don't have a useful timestamp value - so the standard code that checks for updated
@@ -22528,7 +22539,7 @@ window.Render.prototype.createPlaceholderPortalEntity = function(guid,latE6,lngE
   if (guid in window.portals) {
     var p = window.portals[guid];
     portalMoved = latE6 !== p.options.data.latE6 || lngE6 !== p.options.data.lngE6;
-    if (team !== p.options.data.team) {
+    if (team !== p.options.data.team && p.options.timestamp < timestamp) {
       // team - delete existing portal
       this.deletePortalEntity(guid);
     }
@@ -22652,6 +22663,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
 
   var data = {
 //    type: ent[2][0],
+    timestamp: ent[1],
     team: ent[2][1],
     points: ent[2][2].map(function(arr) { return {guid: arr[0], latE6: arr[1], lngE6: arr[2] }; })
   };
@@ -22659,7 +22671,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   //create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
   for (var i=0; i<3; i++) {
     var p=data.points[i];
-    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team);
+    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, data.timestamp);
   }
 
   // check if entity already exists
@@ -22692,7 +22704,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
     team: team,
     ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
     guid: ent[0],
-    timestamp: ent[1],
+    timestamp: data.timestamp,
     data: data,
   });
 
@@ -22716,6 +22728,7 @@ window.Render.prototype.createLinkEntity = function (ent) {
 
   var data = { // TODO add other properties and check correction direction
 //    type:   ent[2][0],
+    timestamp: ent[1],
     team:   ent[2][1],
     oGuid:  ent[2][2],
     oLatE6: ent[2][3],
@@ -22726,9 +22739,8 @@ window.Render.prototype.createLinkEntity = function (ent) {
   };
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
-  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team);
-  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team);
-
+  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team, data.timestamp);
+  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team, data.timestamp);
 
   // check if entity already exists
   if (ent[0] in window.links) {
@@ -26893,17 +26905,18 @@ window.setupPlayerStat = function () {
         + '\nInvites:\t'+PLAYER.available_invites
         + '\n\nNote: your player stats can only be updated by a full reload (F5)';
 
-  $('#playerstat').html(''
-    + '<h2 title="'+t+'">'+level+'&nbsp;'
-    + '<div id="name">'
-    + '<span class="'+cls+'">'+PLAYER.nickname+'</span>'
-    + '<a href="https://intel.ingress.com/logout" id="signout">sign out</a>'
-    + '</div>'
-    + '<div id="stats">'
-    + '<sup>XM: '+xmRatio+'%</sup>'
-    + '<sub>' + (nextLvlAp > 0 ? 'level: '+lvlApProg+'%' : 'max level') + '</sub>'
-    + '</div>'
-    + '</h2>'
+  $('#playerstat').html(
+    `<h2 title="${t}">
+      ${level}
+      <div id="name">
+        <span class="playername ${cls}">${window.PLAYER.nickname}</span>
+        <a href="https://intel.ingress.com/logout" id="signout">sign out</a>
+      </div>
+      <div id="stats">
+        <sup>XM: ${xmRatio}%</sup>
+        <sub>${nextLvlAp > 0 ? 'level: ' + lvlApProg + '%' : 'max level'}</sub>
+      </div>
+    </h2>`
   );
 };
 
@@ -27111,8 +27124,36 @@ body {\
   background-color: #ff0028 !important;\
 }\
 \
+#playerstat {\
+  height: initial;\
+}\
+\
+#playerstat h2 {\
+  display: flex;\
+  justify-content: space-between;\
+  flex-wrap: wrap;\
+  padding: 5px;\
+}\
+\
+#playerstat h2 #name {\
+  display: flex;\
+  align-items: center;\
+}\
+\
+#playerstat h2 #name .playername,\
+#playerstat h2 #name:hover .playername{\
+  max-width: 60vw;\
+}\
+\
+#playerstat h2 #stats {\
+  white-space: nowrap;\
+  overflow: initial;\
+}\
+\
 #name #signout { /* no hover, always show signout button */\
-  display: block;\
+  display: inline-block;\
+  position: initial;\
+  margin-left: 4px;\
 }\
 \
 #sidebar, #chatcontrols, #chat, #chatinput {\
@@ -27124,9 +27165,6 @@ body {\
   margin-left: 5px !important;\
 }\
 \
-#searchwrapper {\
-  font-size: 1.2em;\
-}\
 #searchwrapper .ui-accordion-header {\
   padding: 0.3em 0;\
 }\
@@ -27204,10 +27242,6 @@ body {\
 \
 #sidebar > * {\
   width: 100%;\
-}\
-\
-#playerstat {\
-  margin-top: 5px;\
 }\
 \
 #portaldetails {\
