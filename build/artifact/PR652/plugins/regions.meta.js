@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.2.1.20230725.105224
+// @version        0.2.1.20230726.105825
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
