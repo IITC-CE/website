@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230725.105224
+// @version        0.36.0.20230726.105825
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-07-25-105224';
+plugin_info.dateTimeVersion = '2023-07-26-105825';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -44,7 +44,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-07-25-105224';
+window.iitcBuildDate = '2023-07-26-105825';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3162,7 +3162,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-07-25-105224');
+  log.log('loading done, booting. Built: '+'2023-07-26-105825');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -24204,9 +24204,14 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
   var scannerLink = $('<a>')
     .attr({
       href: window.makePrimeLink(guid, lat, lng),
-      title: 'Link to this portal for Ingress Prime',
+      title: 'Copy link to this portal for Ingress Prime',
     })
-    .text('Scanner link');
+    .click(function (event) {
+      navigator.clipboard.writeText(event.target.href);
+      event.stopPropagation();
+      return false;
+    })
+    .text('Copy scanner link');
   linkDetails.append($('<aside>').append(scannerLink));
 
   // and a map link popup dialog
