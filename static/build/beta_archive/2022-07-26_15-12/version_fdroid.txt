@@ -1,2 +1,0 @@
-versionName=0.32.1
-versionCode=1658848324
