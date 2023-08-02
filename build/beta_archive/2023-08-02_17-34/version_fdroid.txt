@@ -1,0 +1,2 @@
+versionName=0.35.1
+versionCode=1690997627
