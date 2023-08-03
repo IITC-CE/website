@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230801.162352
+// @version        0.36.0.20230802.211021
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-01-162352';
+plugin_info.dateTimeVersion = '2023-08-02-211021';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -37,6 +37,7 @@ window.script_info.changelog = [
       'Timestamp added to link and field data',
       'Added scanner link to info panel',
       'Sorted sidebar links',
+      'Added window.formatDistance function for global use, which was previously in the bookmarks plugin',
     ],
   },
 ];
@@ -45,7 +46,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-08-01-162352';
+window.iitcBuildDate = '2023-08-02-211021';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3186,7 +3187,7 @@ function setupToolboxSort() {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-08-01-162352');
+  log.log('loading done, booting. Built: '+'2023-08-02-211021');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20438,8 +20439,8 @@ function createDialogContent() {
               <div>Ingress Intel Total Conversion</div>
               <hr>
               <div>
-               <a href="@url_homepage@" target="_blank">IITC Homepage</a> |
-               <a href="@url_tg@" target="_blank">Telegram channel</a><br />
+               <a href="${'https://iitc.app/'}" target="_blank">IITC Homepage</a> |
+               <a href="${'https://t.me/iitc_news'}" target="_blank">Telegram channel</a><br />
                On the script’s homepage you can:
                <ul>
                  <li>Find Updates</li>

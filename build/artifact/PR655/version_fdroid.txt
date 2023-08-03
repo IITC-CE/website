@@ -1,2 +1,2 @@
 versionName=0.36.0
-versionCode=1690907019
+versionCode=1691010591
