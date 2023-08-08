@@ -2,13 +2,16 @@
 // @author         fkloft
 // @name           IITC plugin: Layer count
 // @category       Info
-// @version        0.2.1.20220726.155822
+// @version        0.2.2.20230808.163339
 // @description    Allow users to count nested fields
 // @id             layer-count
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR505/plugins/layer-count.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR505/plugins/layer-count.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/layer-count.png
+// @icon64         https://iitc.app/extras/plugin-icons/layer-count-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-26-155822';
+plugin_info.dateTimeVersion = '2023-08-08-163339';
 plugin_info.pluginId = 'layer-count';
 //END PLUGIN AUTHORS NOTE
 
@@ -39,7 +42,13 @@ function calculate (ev) {
 
     // we don't need to check the field's bounds first. pnpoly is pretty simple math.
     // Checking the bounds is about 50 times slower than just using pnpoly
-    if (field._rings && window.pnpoly(field._rings[0], point)) {
+    var rings = field._rings ? field._rings[0] : [];
+    if (!rings.length) {
+      for (var i = 0, len = field._latlngs.length; i < len; i++) {
+        rings.push(window.map.latLngToLayerPoint(field._latlngs[i]));
+      }
+    }
+    if (window.pnpoly(rings, point)) {
       if (field.options.team === TEAM_ENL) {
         layersEnl++;
       } else if (field.options.team === TEAM_RES) {
@@ -159,6 +168,7 @@ function setup () {
 /* exported setup */
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

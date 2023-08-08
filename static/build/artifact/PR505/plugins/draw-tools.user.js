@@ -2,13 +2,16 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.10.0.20220726.155822
+// @version        0.10.0.20230808.163339
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR505/plugins/draw-tools.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR505/plugins/draw-tools.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/draw-tools.png
+// @icon64         https://iitc.app/extras/plugin-icons/draw-tools-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-26-155822';
+plugin_info.dateTimeVersion = '2023-08-08-163339';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -9211,6 +9214,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.\
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
