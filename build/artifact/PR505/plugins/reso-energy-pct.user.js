@@ -2,13 +2,16 @@
 // @author         xelio
 // @name           IITC plugin: Reso energy % in portal details
 // @category       Portal Info
-// @version        0.1.2.20220726.155822
+// @version        0.1.2.20230808.163339
 // @description    Show resonator energy percentage on resonator energy bar in portal details panel.
 // @id             reso-energy-pct
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR505/plugins/reso-energy-pct.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR505/plugins/reso-energy-pct.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/reso-energy-pct.png
+// @icon64         https://iitc.app/extras/plugin-icons/reso-energy-pct-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-26-155822';
+plugin_info.dateTimeVersion = '2023-08-08-163339';
 plugin_info.pluginId = 'reso-energy-pct';
 //END PLUGIN AUTHORS NOTE
 
@@ -49,6 +52,7 @@ var setup =  function() {
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.32.1.20220726.155822
+// @version        0.36.1.20230808.163339
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -9,6 +9,9 @@
 // @updateURL      https://iitc.app/build/artifact/PR505/total-conversion-build.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR505/total-conversion-build.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/total-conversion-build.png
+// @icon64         https://iitc.app/extras/plugin-icons/total-conversion-build-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,18 +22,35 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-26-155822';
+plugin_info.dateTimeVersion = '2023-08-08-163339';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
+window.script_info.changelog = [
+  {
+    version: '0.36.1',
+    changes: ['Revert sorted sidebar links'],
+  },
+  {
+    version: '0.36.0',
+    changes: [
+      'Ability to define and display changelog',
+      'Improved info panel styling',
+      'Timestamp added to link and field data',
+      'Added scanner link to info panel',
+      'Sorted sidebar links',
+      'Added window.formatDistance function for global use, which was previously in the bookmarks plugin',
+    ],
+  },
+];
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-07-26-155822';
+window.iitcBuildDate = '2023-08-08-163339';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -196,6 +216,10 @@ i.large { font-size: 6rem; }\
 \
 .res {\
   color: #00c5ff;\
+}\
+\
+.mac {\
+  color: #ff2020;\
 }\
 \
 .none {\
@@ -563,13 +587,16 @@ h2 {\
 \
 h2 #name {\
   font-weight: 300;\
+  display: inline;\
+  vertical-align: top;\
+  white-space: nowrap;\
+}\
+\
+h2 #name .playername {\
+  max-width: 70%;\
   display: inline-block;\
   overflow: hidden;\
   text-overflow: ellipsis;\
-  vertical-align: top;\
-  white-space: nowrap;\
-  width: 205px;\
-  position: relative;\
 }\
 \
 h2 #stats {\
@@ -581,16 +608,16 @@ h2 #stats {\
 #signout {\
   font-size: 12px;\
   font-weight: normal;\
-  line-height: 29px;\
   padding: 0 4px;\
-  position: absolute;\
-  top: 0;\
-  right: 0;\
   background-color: rgba(8, 48, 78, 0.5);\
   display: none; /* starts hidden */\
+  vertical-align: text-top;\
+}\
+#name:hover .playername {\
+  max-width: 50%;\
 }\
 #name:hover #signout {\
-  display: block;\
+  display: inline-block;\
 }\
 \
 h2 sup, h2 sub {\
@@ -601,22 +628,16 @@ h2 sup, h2 sub {\
 \
 \
 /* gamestats */\
-#gamestat {\
-  height: 22px;\
-}\
-\
 #gamestat span {\
-  display: block;\
-  float: left;\
+  display: inline-block;\
   font-weight: bold;\
   cursor:help;\
-  height: 21px;\
-  line-height: 22px;\
+  padding: 0 3px;\
+  box-sizing: border-box;\
 }\
 \
 #gamestat .res {\
   background: #005684;\
-  text-align: right;\
 }\
 \
 #gamestat .enl {\
@@ -651,18 +672,18 @@ input[type="search"], input[type="url"] {\
 #buttongeolocation {\
   position: absolute;\
   right: 0;\
-  top: 0;\
+  bottom: 0;\
   margin: 0;\
   border: 0 none transparent;\
   padding: 0 2px 0 0;\
-  height: 24px;\
+  height: 100%;\
   background-color: transparent;\
 }\
 #buttongeolocation:focus {\
   outline: 1px dotted #ffce00;\
 }\
 #buttongeolocation img {\
-  display: block;\
+  vertical-align: middle;\
 }\
 #searchwrapper h3 {\
   font-size: 1em;\
@@ -1531,6 +1552,14 @@ svg.icon-button {\
 .ui-dialog-aboutIITC .plugin-error {\
   text-decoration: line-through;\
 }\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child {\
+  display: none;\
+}\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2) {\
+  float: left;\
+}\
 '+'</style>'
   + '<style>'+'\
 /* required styles */\
@@ -2327,19 +2356,10 @@ window.SIDEBAR_WIDTH = 300;
 window.CHAT_REQUEST_SCROLL_TOP = 200;
 window.CHAT_SHRINKED = 60;
 
-// Minimum area to zoom ratio that field MU's will display
-window.FIELD_MU_DISPLAY_AREA_ZOOM_RATIO = 0.001;
-
-// Point tolerance for displaying MU's
-window.FIELD_MU_DISPLAY_POINT_TOLERANCE = 60;
-
 window.COLOR_SELECTED_PORTAL = '#f0f';
-window.COLORS = ['#FF6600', '#0088FF', '#03DC03']; // none, res, enl
+window.COLORS = ['#FF6600', '#0088FF', '#03DC03', '#FF0028']; // none, res, enl, mac
 window.COLORS_LVL = ['#000', '#FECE5A', '#FFA630', '#FF7315', '#E40000', '#FD2992', '#EB26CD', '#C124E0', '#9627F4'];
-window.COLORS_MOD = {VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf'};
-
-
-window.MOD_TYPE = {RES_SHIELD:'Shield', MULTIHACK:'Multi-hack', FORCE_AMP:'Force Amp', HEATSINK:'Heat Sink', TURRET:'Turret', LINK_AMPLIFIER: 'Link Amp'};
+window.COLORS_MOD = { VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf' };
 
 // circles around a selected portal that show from where you can hack
 // it and how far the portal reaches (i.e. how far links may be made
@@ -2361,6 +2381,7 @@ window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geo
 // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
+window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
@@ -2379,8 +2400,21 @@ window.BASE_HACK_COUNT = 4;
 window.TEAM_NONE = 0;
 window.TEAM_RES = 1;
 window.TEAM_ENL = 2;
-window.TEAM_TO_CSS = ['none', 'res', 'enl'];
-window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened'];
+window.TEAM_MAC = 3;
+window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
+window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '__MACHINA__'];
+window.TEAM_CODES = ['N', 'R', 'E', 'M'];
+window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
+
+window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
+window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
+window.TEAM_NAME_ENL = window.TEAM_NAMES[window.TEAM_ENL];
+window.TEAM_NAME_MAC = window.TEAM_NAMES[window.TEAM_MAC];
+
+window.TEAM_CODE_NONE = window.TEAM_CODES[window.TEAM_NONE];
+window.TEAM_CODE_RES = window.TEAM_CODES[window.TEAM_RES];
+window.TEAM_CODE_ENL = window.TEAM_CODES[window.TEAM_ENL];
+window.TEAM_CODE_MAC = window.TEAM_CODES[window.TEAM_MAC];
 
 // STORAGE ///////////////////////////////////////////////////////////
 // global variables used for storage. Most likely READ ONLY. Proper
@@ -2392,7 +2426,6 @@ window.urlPortalLL = null;
 window.selectedPortal = null;
 window.portalRangeIndicator = null;
 window.portalAccessIndicator = null;
-window.mapRunsUserAction = false;
 
 // var portalsLayers, linksLayer, fieldsLayer;
 var portalsFactionLayers, linksFactionLayers, fieldsFactionLayers;
@@ -2542,13 +2575,15 @@ window.runOnAppBeforeBoot = function () {
   }
 
   if (app.intentPosLink) {
-    window.renderPortalUrl = function (lat, lng, title) {
+    window.renderPortalUrl = function (lat, lng, title, guid) {
       // one share link option - and the app provides an interface to share the URL,
       // share as a geo: intent (navigation via google maps), etc
 
-      var shareLink = $('<a>').text('Share portal').click(function () {
-        app.intentPosLink(lat, lng, window.map.getZoom(), title, true);
-      });
+      var shareLink = $('<a>')
+        .text('Share portal')
+        .click(function () {
+          window.app.intentPosLink(lat, lng, window.map.getZoom(), title, true, guid);
+        });
       $('.linkdetails').append($('<aside>').append(shareLink));
     };
   }
@@ -2925,10 +2960,12 @@ window.artifact.showArtifactList = function() {
 // *** module: boot.js ***
 (function () {
 var log = ulog('boot');
-/// SETUP /////////////////////////////////////////////////////////////
+// SETUP /////////////////////////////////////////////////////////////
 // these functions set up specific areas after the boot function
 // created a basic framework. All of these functions should only ever
 // be run once.
+
+/* global L, dialog -- eslint */
 
 window.setupTooltips = function (element) {
   element = element || $(document);
@@ -2994,6 +3031,25 @@ function setupIngressMarkers () {
   L.divIcon.coloredSvg = function (color, options) {
     return new L.DivIcon.ColoredSvg(color, options);
   };
+}
+
+function checkingIntelURL() {
+  if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
+    dialog({
+      title: 'IITC Warning',
+      html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
+      dialogClass: 'ui-dialog-non-standard-intel',
+      buttons: {
+        "Don't remind me": function () {
+          $(this).dialog('close');
+          localStorage['pass-checking-intel-url'] = true;
+        },
+        Dismiss: function () {
+          $(this).dialog('close');
+        },
+      },
+    });
+  }
 }
 
 /*
@@ -3112,7 +3168,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-07-26-155822');
+  log.log('loading done, booting. Built: '+'2023-08-08-163339');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -3122,6 +3178,7 @@ function boot() {
   var loadPlugins = prepPluginsToLoad();
   loadPlugins('boot');
 
+  checkingIntelURL();
   setupIngressMarkers();
   window.extractFromStock();
   window.setupIdle();
@@ -19330,7 +19387,7 @@ window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAsc
   }
 };
 
-window.chat.parseMsgData = function(data) {
+window.chat.parseMsgData = function (data) {
   var categories = data[2].plext.categories;
   var isPublic = (categories & 1) === 1;
   var isSecure = (categories & 2) === 2;
@@ -19339,7 +19396,7 @@ window.chat.parseMsgData = function(data) {
   var msgToPlayer = msgAlert && (isPublic || isSecure);
 
   var time = data[1];
-  var team = data[2].plext.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
+  var team = window.teamStringToId(data[2].plext.team);
   var auto = data[2].plext.plextType !== 'PLAYER_GENERATED';
   var systemNarrowcast = data[2].plext.plextType === 'SYSTEM_NARROWCAST';
 
@@ -19348,17 +19405,17 @@ window.chat.parseMsgData = function(data) {
   var nick = '';
   markup.forEach(function(ent) {
     switch (ent[0]) {
-    case 'SENDER': // user generated messages
-      nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
-      break;
+      case 'SENDER': // user generated messages
+        nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        break;
 
-    case 'PLAYER': // automatically generated messages
-      nick = ent[1].plain;
-      team = ent[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
-      break;
+      case 'PLAYER': // automatically generated messages
+        nick = ent[1].plain;
+        team = window.teamStringToId(ent[1].team);
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   });
 
@@ -19431,8 +19488,9 @@ window.chat.renderPortal = function (portal) {
 };
 
 window.chat.renderFactionEnt = function (faction) {
-  var name = faction.team === 'ENLIGHTENED' ? 'Enlightened' : 'Resistance';
-  var spanClass = faction.team === 'ENLIGHTENED' ? TEAM_TO_CSS[TEAM_ENL] : TEAM_TO_CSS[TEAM_RES];
+  var teamId = window.teamStringToId(faction.team);
+  var name = window.TEAM_NAMES[teamId];
+  var spanClass = window.TEAM_TO_CSS[teamId];
   return $('<div>').html($('<span>')
     .attr('class', spanClass)
     .text(name)).html();
@@ -19519,8 +19577,8 @@ window.chat.renderMsgRow = function(data) {
   var timeCell = chat.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (data.player.team === TEAM_ENL || data.player.team === TEAM_RES) {
-    nickClasses.push(TEAM_TO_CSS[data.player.team]);
+  if (window.TEAM_TO_CSS[data.player.team]) {
+    nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
   // highlight things said/done by the player in a unique colour
   // (similar to @player mentions from others in the chat text itself)
@@ -19976,11 +20034,7 @@ window.DataCache = function() {
 
 }
 
-window.DataCache.prototype.store = function(qk,data,freshTime) {
-  // fixme? common behaviour for objects is that properties are kept in the order they're added
-  // this is handy, as it allows easy retrieval of the oldest entries for expiring
-  // however, this is not guaranteed by the standards, but all our supported browsers work this way
-
+window.DataCache.prototype.store = function (qk, data, freshTime) {
   this.remove(qk);
 
   var time = new Date().getTime();
@@ -20045,23 +20099,13 @@ window.DataCache.prototype.runExpire = function() {
 
   var cacheSize = Object.keys(this._cache).length;
 
-  for(var qk in this._cache) {
-
-    // fixme? our MAX_SIZE test here assumes we're processing the oldest first. this relies
-    // on looping over object properties in the order they were added. this is true in most browsers,
-    // but is not a requirement of the standards
+  for (var qk in this._cache) {
     if (cacheSize > this.REQUEST_CACHE_MAX_ITEMS || this._cacheCharSize > this.REQUEST_CACHE_MAX_CHARS || this._cache[qk].time < t) {
       this._cacheCharSize -= this._cache[qk].dataStr.length;
       delete this._cache[qk];
       cacheSize--;
     }
   }
-}
-
-
-window.DataCache.prototype.debug = function() {
-//NOTE: ECMAScript strings use 16 bit chars (it's in the standard), so convert for bytes/Kb
-  return 'Cache: '+Object.keys(this._cache).length+' items, '+(this._cacheCharSize*2).toLocaleString()+' bytes ('+Math.ceil(this._cacheCharSize/512).toLocaleString()+'K)';
 }
 
 
@@ -20370,23 +20414,22 @@ window.aboutIITC = function() {
 }
 
 function createDialogContent() {
-  var html = ''
-    + '<div><b>About IITC</b></div> '
-    + '<div>Ingress Intel Total Conversion</div> '
-    + '<hr>'
-    + '<div>'
-    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |'
-    + '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
-    + '   On the script’s homepage you can:'
-    + '   <ul>'
-    + '     <li>Find Updates</li>'
-    + '     <li>Get Plugins</li>'
-    + '     <li>Report Bugs</li>'
-    + '     <li>Contribute!</li>'
-    + '   </ul>'
-    + '</div>'
-    + '<hr>'
-    + '<div>Version: ' + getIITCVersion() + '</div>';
+  var html = `<div><b>About IITC</b></div>
+              <div>Ingress Intel Total Conversion</div>
+              <hr>
+              <div>
+               <a href="${'https://iitc.app/'}" target="_blank">IITC Homepage</a> |
+               <a href="${'https://t.me/iitc_news'}" target="_blank">Telegram channel</a><br />
+               On the script’s homepage you can:
+               <ul>
+                 <li>Find Updates</li>
+                 <li>Get Plugins</li>
+                 <li>Report Bugs</li>
+                 <li>Contribute!</li>
+               </ul>
+              </div>
+              <hr>
+              <div>Version: ${getIITCVersion()} ${createChangelog(window.script_info)}</div>`;
 
   if (isShortOnLocalStorage()) {
     html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
@@ -20432,6 +20475,8 @@ function convertPluginInfo(info, index) {
   //   (atm: IITC-Mobile for iOS)
   var result = {
     build: info.buildName,
+    changelog: info.changelog,
+    id: info.pluginId,
     name: info.pluginId,
     date: info.dateTimeVersion,
     error: info.error,
@@ -20460,8 +20505,33 @@ function convertPluginInfo(info, index) {
   return result;
 }
 
+function createChangelog(plugin) {
+  var id = 'plugin-changelog-' + plugin.id;
+  return (
+    `<a onclick="$('#${id}').toggle()">changelog</a>` +
+    `<ul id="${id}" style="display: none;">` +
+    plugin.changelog
+      .map(function (logEntry) {
+        return (
+          '<li>' +
+          logEntry.version +
+          '<ul>' +
+          logEntry.changes
+            .map(function (change) {
+              return `<li>${change}</li>`;
+            })
+            .join('') +
+          '</ul></li>'
+        );
+      })
+      .join('') +
+    '</ul>'
+  );
+}
+
 function pluginInfoToString(p, extra) {
   var info = {
+    changelog: '',
     class: '',
     description: p.description || '',
     name: p.name,
@@ -20477,7 +20547,11 @@ function pluginInfoToString(p, extra) {
     info.description = p.error;
   }
 
-  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo}</li>', info);
+  if (p.changelog) {
+    info.changelog = createChangelog(p);
+  }
+
+  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo} {changelog}</li>', info);
 }
 
 
@@ -20727,29 +20801,25 @@ window.decodeArray.portalDetail = function(a) { // deprecated!!
 // *** module: entity_info.js ***
 (function () {
 var log = ulog('entity_info');
-
+/* exported setup --eslint */
 
 // ENTITY DETAILS TOOLS //////////////////////////////////////////////
 // hand any of these functions the details-hash of an entity (i.e.
 // portal, link, field) and they will return useful data.
 
-
 // given the entity detail data, returns the team the entity belongs
 // to. Uses TEAM_* enum values.
-window.getTeam = function(details) {
-  return teamStringToId(details.team);
-}
+window.getTeam = function (details) {
+  return window.teamStringToId(details.team);
+};
 
-window.teamStringToId = function(teamStr) {
-  var team = TEAM_NONE;
-  if(teamStr === 'ENLIGHTENED') team = TEAM_ENL;
-  if(teamStr === 'RESISTANCE') team = TEAM_RES;
-  if(teamStr === 'E') team = TEAM_ENL;
-  if(teamStr === 'R') team = TEAM_RES;
-  return team;
-}
-
-
+window.teamStringToId = function (teamStr) {
+  var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
+  if (teamIndex >= 0) return teamIndex;
+  teamIndex = window.TEAM_CODES.indexOf(teamStr);
+  if (teamIndex >= 0) return teamIndex;
+  return window.TEAM_NONE;
+};
 
 
 })();
@@ -20900,11 +20970,17 @@ window.updateGameScore = function(data) {
     var s = r+e;
     var rp = r/s*100, ep = e/s*100;
     r = digits(r), e = digits(e);
-    var rs = '<span class="res" style="width:'+rp+'%;">'+Math.round(rp)+'%&nbsp;</span>';
-    var es = '<span class="enl" style="width:'+ep+'%;">&nbsp;'+Math.round(ep)+'%</span>';
-    $('#gamestat').html(rs+es).one('click', function() { window.updateGameScore() });
+    var teamId = window.teamStringToId(window.PLAYER.team);
+    var rs = '<span class="res" style="width:' + rp + '%;text-align: ' + (teamId === window.TEAM_RES ? 'right' : 'left') + ';">' + Math.round(rp) + '%</span>';
+    var es = '<span class="enl" style="width:' + ep + '%;text-align: ' + (teamId === window.TEAM_ENL ? 'right' : 'left') + ';">' + Math.round(ep) + '%</span>';
+    var gamestatElement = $('#gamestat');
+    gamestatElement.html(teamId === window.TEAM_RES ? rs + es : es + rs).one('click', function () {
+      window.updateGameScore();
+    });
     // help cursor via “#gamestat span”
-    $('#gamestat').attr('title', 'Resistance:\t'+r+' MindUnits\nEnlightened:\t'+e+' MindUnits');
+    var resMu = 'Resistance:\t' + r + ' MindUnits';
+    var enlMu = 'Enlightened:\t' + e + ' MindUnits';
+    gamestatElement.attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
   } else if (data && data.error) {
     log.warn('game score failed to load: '+data.error);
   } else {
@@ -21596,7 +21672,7 @@ window.removeLayerGroup = function (layerGroup) {
 // *** module: map.js ***
 (function () {
 var log = ulog('map');
-/* global log -- eslint */
+/* global log,L -- eslint */
 function setupCRS () {
 
   // use the earth radius value from s2 geometry library
@@ -21715,6 +21791,10 @@ function createDefaultBaseMapLayers () {
   return baseLayers;
 }
 
+function createFactionLayersArray() {
+  return window.TEAM_NAMES.map(() => L.layerGroup());
+}
+
 function createDefaultOverlays () {
   /* global portalsFactionLayers: true, linksFactionLayers: true, fieldsFactionLayers: true -- eslint*/
   /* eslint-disable dot-notation  */
@@ -21724,17 +21804,17 @@ function createDefaultOverlays () {
   portalsFactionLayers = [];
   var portalsLayers = [];
   for (var i = 0; i <= 8; i++) {
-    portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+    portalsFactionLayers[i] = createFactionLayersArray();
     portalsLayers[i] = L.layerGroup();
     var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
     addLayers[t] = portalsLayers[i];
   }
 
-  fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  fieldsFactionLayers = createFactionLayersArray();
   var fieldsLayer = L.layerGroup();
   addLayers['Fields'] = fieldsLayer;
 
-  linksFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  linksFactionLayers = createFactionLayersArray();
   var linksLayer = L.layerGroup();
   addLayers['Links'] = linksLayer;
 
@@ -21742,7 +21822,7 @@ function createDefaultOverlays () {
   // these layers don't actually contain any data. instead, every time they're added/removed from the map,
   // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
   // the below 'onoverlayadd/onoverlayremove' events
-  var factionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
+  var factionLayers = createFactionLayersArray();
   factionLayers.forEach(function (facLayer, facIdx) {
     facLayer.on('add remove', function (e) {
       var fn = e.type + 'Layer';
@@ -21757,9 +21837,13 @@ function createDefaultOverlays () {
 
   // to avoid any favouritism, we'll put the player's own faction layer first
   if (window.PLAYER.team !== 'RESISTANCE') {
-    delete addLayers['Resistance'];
-    addLayers['Resistance'] = factionLayers[window.TEAM_RES];
+    delete addLayers[window.TEAM_NAME_RES];
+    addLayers[window.TEAM_NAME_RES] = factionLayers[window.TEAM_RES];
   }
+
+  // and just put __MACHINA__ faction last
+  delete addLayers[window.TEAM_NAME_MAC];
+  addLayers[window.TEAM_NAME_MAC] = factionLayers[window.TEAM_MAC];
 
   return addLayers;
   /* eslint-enable dot-notation  */
@@ -21849,13 +21933,11 @@ window.setupMap = function () {
   // map update status handling & update map hooks
   // ensures order of calls
   map.on('movestart', function () {
-    window.mapRunsUserAction = true;
     window.requests.abort();
     window.startRefreshTimeout(-1);
   });
   map.on('moveend', function () {
-    window.mapRunsUserAction = false;
-    window.startRefreshTimeout(window.ON_MOVE_REFRESH*1000);
+    window.startRefreshTimeout(window.ON_MOVE_REFRESH * 1000);
   });
 
   // set a 'moveend' handler for the map to clear idle state. e.g. after mobile 'my location' is used.
@@ -21999,35 +22081,8 @@ window.setupDataTileParams = function() {
 }
 
 
-window.debugMapZoomParameters = function() {
-
-  //for debug purposes, log the tile params used for each zoom level
-  log.log('DEBUG: Map Zoom Parameters');
-  var doneZooms = {};
-  for (var z=MIN_ZOOM; z<=21; z++) {
-    var ourZoom = getDataZoomForMapZoom(z);
-    log.log('DEBUG: map zoom '+z+': IITC requests '+ourZoom+(ourZoom!=z?' instead':''));
-    if (!doneZooms[ourZoom]) {
-      var params = getMapZoomTileParameters(ourZoom);
-      var msg = 'DEBUG: data zoom '+ourZoom;
-      if (params.hasPortals) {
-        msg += ' has portals, L'+params.level+'+';
-      } else {
-        msg += ' NO portals (was L'+params.level+'+)';
-      }
-      msg += ', minLinkLength='+params.minLinkLength;
-      msg += ', tiles per edge='+params.tilesPerEdge;
-      log.log(msg);
-      doneZooms[ourZoom] = true;
-    }
-  }
-}
-
-
-
-window.getMapZoomTileParameters = function(zoom) {
-
-  var maxTilesPerEdge = window.TILE_PARAMS.TILES_PER_EDGE[window.TILE_PARAMS.TILES_PER_EDGE.length-1];
+window.getMapZoomTileParameters = function (zoom) {
+  var maxTilesPerEdge = window.TILE_PARAMS.TILES_PER_EDGE[window.TILE_PARAMS.TILES_PER_EDGE.length - 1];
 
   return {
     level: window.TILE_PARAMS.ZOOM_TO_LEVEL[zoom] || 0, // deprecated
@@ -22228,25 +22283,19 @@ window.RenderDebugTiles.prototype.runClearPass = function() {
 var log = ulog('map_data_render');
 // MAP DATA RENDER ////////////////////////////////////////////////
 // class to handle rendering into leaflet the JSON data from the servers
+/* global L */
 
-
-
-window.Render = function() {
+window.Render = function () {
   this.portalMarkerScale = undefined;
 }
 
 // start a render pass. called as we start to make the batch of data requests to the servers
-window.Render.prototype.startRenderPass = function(level,bounds) {
-  this.isRendering = true;
-
+window.Render.prototype.startRenderPass = function (bounds) {
   this.deletedGuid = {};  // object - represents the set of all deleted game entity GUIDs seen in a render pass
 
   this.seenPortalsGuid = {};
   this.seenLinksGuid = {};
   this.seenFieldsGuid = {};
-
-  this.bounds = bounds;
-  this.level = level;
 
   // we pad the bounds used for clearing a litle bit, as entities are sometimes returned outside of their specified tile boundaries
   // this will just avoid a few entity removals at start of render when they'll just be added again
@@ -22261,20 +22310,17 @@ window.Render.prototype.startRenderPass = function(level,bounds) {
   this.rescalePortalMarkers();
 }
 
-window.Render.prototype.clearPortalsOutsideBounds = function(bounds) {
-  var count = 0;
+window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
   for (var guid in window.portals) {
     var p = portals[guid];
     // clear portals outside visible bounds - unless it's the selected portal, or it's relevant to artifacts
     if (!bounds.contains(p.getLatLng()) && guid !== selectedPortal && !artifact.isInterestingPortal(guid)) {
       this.deletePortalEntity(guid);
-      count++;
     }
   }
 }
 
-window.Render.prototype.clearLinksOutsideBounds = function(bounds) {
-  var count = 0;
+window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
   for (var guid in window.links) {
     var l = links[guid];
 
@@ -22285,24 +22331,21 @@ window.Render.prototype.clearLinksOutsideBounds = function(bounds) {
 
     if (!bounds.intersects(linkBounds)) {
       this.deleteLinkEntity(guid);
-      count++;
     }
   }
 }
 
-window.Render.prototype.clearFieldsOutsideBounds = function(bounds) {
-  var count = 0;
+window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
   for (var guid in window.fields) {
     var f = fields[guid];
 
     // NOTE: our geodesic polys can have lots of intermediate points. the bounds calculation hasn't been optimised for this
     // so can be particularly slow. a simple bounds check based on corner points will be good enough for this check
     var lls = f.getLatLngs();
-    var fieldBounds = L.latLngBounds([lls[0],lls[1]]).extend(lls[2]);
+    var fieldBounds = L.latLngBounds([lls[0], lls[1]]).extend(lls[2]);
 
     if (!bounds.intersects(fieldBounds)) {
       this.deleteFieldEntity(guid);
-      count++;
     }
   }
 }
@@ -22397,8 +22440,6 @@ window.Render.prototype.endRenderPass = function() {
   // reorder portals to be after links/fields
   this.bringPortalsToFront();
 
-  this.isRendering = false;
-
   // re-select the selected portal, to re-render the side-bar. ensures that any data calculated from the map data is up to date
   if (selectedPortal) {
     renderPortalDetails (selectedPortal);
@@ -22467,7 +22508,6 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
 window.Render.prototype.deleteFieldEntity = function(guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
-    var fd = f.options.details;
 
     fieldsFactionLayers[f.options.team].removeLayer(f);
     delete window.fields[guid];
@@ -22476,37 +22516,44 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
 }
 
 
-window.Render.prototype.createPlaceholderPortalEntity = function(guid,latE6,lngE6,team) {
+window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
   // intel no longer returns portals at anything but the closest zoom
   // stock intel creates 'placeholder' portals from the data in links/fields - IITC needs to do the same
   // we only have the portal guid, lat/lng coords, and the faction - no other data
   // having the guid, at least, allows the portal details to be loaded once it's selected. however,
   // no highlighters, portal level numbers, portal names, useful counts of portals, etc are possible
 
+  // zero will mean any other source of portal data will have a higher timestamp
+  timestamp = timestamp || 0;
 
   var ent = [
-    guid,       //ent[0] = guid
-    0,          //ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
-                //ent[2] = an array with the entity data
-    [ 'p',      //0 - a portal
-      team,     //1 - team
-      latE6,    //2 - lat
-      lngE6     //3 - lng
-    ]
+    guid, // ent[0] = guid
+    -1, // ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
+    // ent[2] = an array with the entity data
+    [
+      'p', // 0 - a portal
+      team, // 1 - team
+      latE6, // 2 - lat
+      lngE6, // 3 - lng
+    ],
   ];
 
   // placeholder portals don't have a useful timestamp value - so the standard code that checks for updated
   // portal details doesn't apply
   // so, check that the basic details are valid and delete the existing portal if out of date
+  var portalMoved = false;
   if (guid in window.portals) {
     var p = window.portals[guid];
-    if (team != p.options.data.team || latE6 != p.options.data.latE6 || lngE6 != p.options.data.lngE6) {
-      // team or location have changed - delete existing portal
+    portalMoved = latE6 !== p.options.data.latE6 || lngE6 !== p.options.data.lngE6;
+    if (team !== p.options.data.team && p.options.timestamp < timestamp) {
+      // team - delete existing portal
       this.deletePortalEntity(guid);
     }
   }
 
-  this.createPortalEntity(ent, 'core'); // placeholder
+  if (!portalMoved) {
+    this.createPortalEntity(ent, 'core'); // placeholder
+  }
 
 }
 
@@ -22622,6 +22669,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
 
   var data = {
 //    type: ent[2][0],
+    timestamp: ent[1],
     team: ent[2][1],
     points: ent[2][2].map(function(arr) { return {guid: arr[0], latE6: arr[1], lngE6: arr[2] }; })
   };
@@ -22629,7 +22677,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   //create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
   for (var i=0; i<3; i++) {
     var p=data.points[i];
-    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team);
+    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, data.timestamp);
   }
 
   // check if entity already exists
@@ -22662,7 +22710,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
     team: team,
     ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
     guid: ent[0],
-    timestamp: ent[1],
+    timestamp: data.timestamp,
     data: data,
   });
 
@@ -22674,7 +22722,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   fieldsFactionLayers[poly.options.team].addLayer(poly);
 }
 
-window.Render.prototype.createLinkEntity = function(ent,faked) {
+window.Render.prototype.createLinkEntity = function (ent) {
   // Niantic have been faking link entities, based on data from fields
   // these faked links are sent along with the real portal links, causing duplicates
   // the faked ones all have longer GUIDs, based on the field GUID (with _ab, _ac, _bc appended)
@@ -22686,6 +22734,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
 
   var data = { // TODO add other properties and check correction direction
 //    type:   ent[2][0],
+    timestamp: ent[1],
     team:   ent[2][1],
     oGuid:  ent[2][2],
     oLatE6: ent[2][3],
@@ -22696,16 +22745,12 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
   };
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
-  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team);
-  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team);
-
+  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team, data.timestamp);
+  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team, data.timestamp);
 
   // check if entity already exists
   if (ent[0] in window.links) {
-    // yes. now, as sometimes links are 'faked', they have incomplete data. if the data we have is better, replace the data
     var l = window.links[ent[0]];
-
-    // the faked data will have older timestamps than real data (currently, faked set to zero)
     if (l.options.timestamp >= ent[1]) return; // this data is older or identical to the rendered data - abort processing
 
     // the data is newer/better - two options
@@ -22722,7 +22767,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
   var poly = L.geodesicPolyline(latlngs, {
     color: COLORS[team],
     opacity: 1,
-    weight: faked ? 1 : 2,
+    weight: 2,
     interactive: false,
 
     team: team,
@@ -22882,9 +22927,8 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
   this.pauseRenderQueue(true);
 }
 
-window.MapDataRequest.prototype.mapMoveEnd = function() {
+window.MapDataRequest.prototype.mapMoveEnd = function () {
   var bounds = clampLatLngBounds(map.getBounds());
-  var zoom = map.getZoom();
 
   if (this.fetchedDataParams) {
     // we have fetched (or are fetching) data...
@@ -23013,7 +23057,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
   window.runHooks ('mapDataRefreshStart', {bounds: bounds, mapZoom: mapZoom, dataZoom: dataZoom, minPortalLevel: tileParams.level, tileBounds: dataBounds});
 
-  this.render.startRenderPass(tileParams.level, dataBounds);
+  this.render.startRenderPass(dataBounds);
 
   window.runHooks ('mapDataEntityInject', {callback: this.render.processGameEntities.bind(this.render)});
 
@@ -23050,12 +23094,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
       this.debugTiles.create(tile_id,[[latSouth,lngWest],[latNorth,lngEast]]);
 
-//TODO: with recent backend changes there are now multiple zoom levels of data that is identical except perhaps for some
-// reduction of detail when zoomed out. to take good advantage of the cache, a check for cached data at a closer zoom
-// but otherwise the same parameters (min portal level, tiles per edge) will mean less downloads when zooming out
-// (however, the default code in getDataZoomForMapZoom currently reduces the need for this, as it forces the furthest 
-//  out zoom tiles for a detail level)
-      if (this.cache && this.cache.isFresh(tile_id) ) {
+      if (this.cache && this.cache.isFresh(tile_id)) {
         // data is fresh in the cache - just render it
         this.pushRenderQueue(tile_id,this.cache.get(tile_id),'cache-fresh');
         this.cachedTileCount += 1;
@@ -23104,26 +23143,27 @@ window.MapDataRequest.prototype.refresh = function() {
 
   if (Object.keys(this.queuedTiles).length > 0) {
     // queued requests - don't start processing the download queue immediately - start it after a short delay
-    this.delayProcessRequestQueue (this.DOWNLOAD_DELAY,true);
+    this.delayProcessRequestQueue(this.DOWNLOAD_DELAY);
   } else {
     // all data was from the cache, nothing queued - run the queue 'immediately' so it handles the end request processing
-    this.delayProcessRequestQueue (0,true);
+    this.delayProcessRequestQueue(0);
   }
 }
 
-
-window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFirst) {
+window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
   if (this.timer === undefined) {
     var _this = this;
-    this.timer = setTimeout ( function() {
-      _this.timer = setTimeout ( function() { _this.timer = undefined; _this.processRequestQueue(isFirst); }, seconds*1000 );
+    this.timer = setTimeout(function () {
+      _this.timer = setTimeout(function () {
+        _this.timer = undefined;
+        _this.processRequestQueue();
+      }, seconds * 1000);
     }, 0);
   }
 }
 
 
-window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
-
+window.MapDataRequest.prototype.processRequestQueue = function () {
   // if nothing left in the queue, finish
   if (Object.keys(this.queuedTiles).length == 0) {
     // we leave the renderQueue code to handle ending the render pass now
@@ -23341,10 +23381,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
     }
 
-    // TODO? check for any requested tiles in 'tiles' not being mentioned in the response - and handle as if it's a 'timeout'?
-
-
-    window.runHooks('requestFinished', {success: true});
+    window.runHooks('requestFinished', { success: true });
   }
 
   // set the queue delay based on any errors or timeouts
@@ -24078,6 +24115,10 @@ window.portalDetail.get = function(guid) {
   return cache.get(guid);
 }
 
+window.portalDetail.store = function (guid, dict, freshtime) {
+  return cache.store(guid, dict, freshtime);
+};
+
 window.portalDetail.isFresh = function(guid) {
   return cache.isFresh(guid);
 }
@@ -24156,7 +24197,7 @@ window.resetScrollOnNewPortal = function() {
 };
 
 // to be ovewritten in app.js
-window.renderPortalUrl = function (lat, lng, title) {
+window.renderPortalUrl = function (lat, lng, title, guid) {
   var linkDetails = $('.linkdetails');
 
   // a permalink for the portal
@@ -24165,6 +24206,19 @@ window.renderPortalUrl = function (lat, lng, title) {
     title: 'Create a URL link to this portal'}
   ).text('Portal link');
   linkDetails.append($('<aside>').append(permaHtml));
+
+  var scannerLink = $('<a>')
+    .attr({
+      href: window.makePrimeLink(guid, lat, lng),
+      title: 'Copy link to this portal for Ingress Prime',
+    })
+    .click(function (event) {
+      navigator.clipboard.writeText(event.target.href);
+      event.stopPropagation();
+      return false;
+    })
+    .text('Copy scanner link');
+  linkDetails.append($('<aside>').append(scannerLink));
 
   // and a map link popup dialog
   var mapHtml = $('<a>').attr({
@@ -24363,7 +24417,7 @@ window.getPortalMiscDetails = function(guid,d) {
 
     if (d.artifactBrief && d.artifactBrief.target && Object.keys(d.artifactBrief.target).length > 0) {
       var targets = Object.keys(d.artifactBrief.target);
-//currently (2015-07-10) we no longer know the team each target portal is for - so we'll just show the artifact type(s) 
+      // currently (2015-07-10) we no longer know the team each target portal is for - so we'll just show the artifact type(s)
        randDetails += '<div id="artifact_target">Target portal: '+targets.map(function(x) { return x.capitalize(); }).join(', ')+'</div>';
     }
 
@@ -24483,15 +24537,15 @@ window.getRangeText = function(d) {
 
   if(!range.isLinkable) title += '\nPortal is missing resonators,\nno new links can be made';
 
-  return ['range',
-      '<a onclick="window.rangeLinkClick()"'
-    + (range.isLinkable ? '' : ' style="text-decoration:line-through;"')
-    + '>'
-    + (range.range > 1000
-      ? Math.floor(range.range/1000) + ' km'
-      : Math.floor(range.range)      + ' m')
-    + '</a>',
-    title];
+  return [
+    'range',
+    '<a onclick="window.rangeLinkClick()"' +
+      (range.isLinkable ? '' : ' style="text-decoration:line-through;"') +
+      '>' +
+      window.formatDistance(range.range) +
+      '</a>',
+    title,
+  ];
 }
 
 
@@ -24862,33 +24916,21 @@ window.getCurrentPortalEnergy = function(d) {
 window.getPortalRange = function(d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
-
-  var lvl = 0;
-  var resoMissing = false;
-  // currently we get a short resonator array when some are missing
-  if (d.resonators.length < 8) {
-    resoMissing = true;
-  }
-  // but in the past we used to always get an array of 8, but will 'null' objects for some entries. maybe that will return?
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso) {
-      resoMissing = true;
-      return;
-    }
-  });
-
   var range = {
-    base: 160*Math.pow(getPortalLevel(d), 4),
-    boost: getLinkAmpRangeBoost(d)
+    base: window.teamStringToId(d.team) === window.TEAM_MAC ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(window.getPortalLevel(d), 4),
+    boost: window.getLinkAmpRangeBoost(d),
   };
 
   range.range = range.boost * range.base;
-  range.isLinkable = !resoMissing;
+  range.isLinkable = d.resCount === 8;
 
   return range;
 }
 
 window.getLinkAmpRangeBoost = function(d) {
+  if (window.teamStringToId(d.team) === window.TEAM_MAC) {
+    return 1.0;
+  }
   // additional range boost calculation
 
   // link amps scale: first is full, second a quarter, the last two an eighth
@@ -24967,7 +25009,7 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
 window.potentialPortalLevel = function(d) {
   var current_level = getPortalLevel(d);
   var potential_level = current_level;
-  
+
   if(PLAYER.team === d.team) {
     var resonators_on_portal = d.resonators;
     var resonator_levels = new Array();
@@ -24980,13 +25022,13 @@ window.potentialPortalLevel = function(d) {
       if(reso !== null && reso.owner === window.PLAYER.nickname) {
         player_resontators[reso.level]--;
       }
-      resonator_levels.push(reso === null ? 0 : reso.level);  
+      resonator_levels.push(reso === null ? 0 : reso.level);
     });
-    
+
     resonator_levels.sort(function(a, b) {
       return(a - b);
     });
-    
+
     // Max out portal
     var install_index = 0;
     for(var i=MAX_PORTAL_LEVEL;i>=1; i--) {
@@ -26153,6 +26195,7 @@ var HistoryChart = (function() {
 // *** module: request_handling.js ***
 (function () {
 var log = ulog('request_handling');
+/* global REFRESH MINIMUM_OVERRIDE_REFRESH */
 
 // REQUEST HANDLING //////////////////////////////////////////////////
 // note: only meant for portal/links/fields request, everything else
@@ -26166,32 +26209,30 @@ window.statusSuccessMapTiles = 0;
 window.statusStaleMapTiles = 0;
 window.statusErrorMapTiles = 0;
 
+window.requests = function () {};
 
-window.requests = function() {}
-
-//time of last refresh
+// time of last refresh
 window.requests._lastRefreshTime = 0;
-window.requests._quickRefreshPending = false;
 
-window.requests.add = function(ajax) {
+window.requests.add = function (ajax) {
   window.activeRequests.push(ajax);
   renderUpdateStatus();
 }
 
-window.requests.remove = function(ajax) {
+window.requests.remove = function (ajax) {
   window.activeRequests.splice(window.activeRequests.indexOf(ajax), 1);
   renderUpdateStatus();
 }
 
-window.requests.abort = function() {
-  $.each(window.activeRequests, function(ind, actReq) {
-    if(actReq) actReq.abort();
+window.requests.abort = function () {
+  $.each(window.activeRequests, function (ind, actReq) {
+    if (actReq) actReq.abort();
   });
 
   window.activeRequests = [];
   window.failedRequestCount = 0;
-  window.chat._requestPublicRunning  = false;
-  window.chat._requestFactionRunning  = false;
+  window.chat._requestPublicRunning = false;
+  window.chat._requestFactionRunning = false;
 
   renderUpdateStatus();
 }
@@ -26202,71 +26243,53 @@ window.requests.abort = function() {
 // is queued. May be given 'override' in milliseconds if time should
 // not be guessed automatically. Especially useful if a little delay
 // is required, for example when zooming.
-window.startRefreshTimeout = function(override) {
+window.startRefreshTimeout = function (override) {
   // may be required to remove 'paused during interaction' message in
   // status bar
   window.renderUpdateStatus();
-  if(refreshTimeout) clearTimeout(refreshTimeout);
-  if(override == -1) return;  //don't set a new timeout
+  if (window.refreshTimeout) clearTimeout(window.refreshTimeout);
+  if (override === -1) return; // don't set a new timeout
 
   var t = 0;
-  if(override) {
-    window.requests._quickRefreshPending = true;
+  if (override) {
     t = override;
     //ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
-    timeSinceLastRefresh = new Date().getTime()-window.requests._lastRefreshTime;
-    if(timeSinceLastRefresh < 0) timeSinceLastRefresh = 0;  //in case of clock adjustments
-    if(timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH*1000)
-      t = (MINIMUM_OVERRIDE_REFRESH*1000-timeSinceLastRefresh);
+    let timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
+    if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0; // in case of clock adjustments
+    if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000) {
+      t = MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh;
+    }
   } else {
-    window.requests._quickRefreshPending = false;
-    t = REFRESH*1000;
+    t = REFRESH * 1000;
 
     var adj = ZOOM_LEVEL_ADJ * (18 - map.getZoom());
-    if(adj > 0) t += adj*1000;
+    if (adj > 0) t += adj * 1000;
   }
-  var next = new Date(new Date().getTime() + t).toLocaleTimeString();
-//  log.log('planned refresh in ' + (t/1000) + ' seconds, at ' + next);
-  refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
+
+  window.refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
   renderUpdateStatus();
 }
 
 window.requests._onRefreshFunctions = [];
-window.requests._callOnRefreshFunctions = function() {
-//  log.log('running refresh at ' + new Date().toLocaleTimeString());
+window.requests._callOnRefreshFunctions = function () {
   startRefreshTimeout();
 
-  if(isIdle()) {
-//    log.log('user has been idle for ' + idleTime + ' seconds, or window hidden. Skipping refresh.');
+  if (window.isIdle()) {
     renderUpdateStatus();
     return;
   }
 
-//  log.log('refreshing');
-
-  //store the timestamp of this refresh
   window.requests._lastRefreshTime = new Date().getTime();
 
-  $.each(window.requests._onRefreshFunctions, function(ind, f) {
+  $.each(window.requests._onRefreshFunctions, function (ind, f) {
     f();
   });
 }
 
 
 // add method here to be notified of auto-refreshes
-window.requests.addRefreshFunction = function(f) {
+window.requests.addRefreshFunction = function (f) {
   window.requests._onRefreshFunctions.push(f);
-}
-
-window.requests.isLastRequest = function(action) {
-  var result = true;
-  $.each(window.activeRequests, function(ind, req) {
-    if(req.action === action) {
-      result = false;
-      return false;
-    }
-  });
-  return result;
 }
 
 
@@ -26583,11 +26606,13 @@ addHook('search', function(query) {
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
 addHook('search', function(query) {
-  var locations = query.term.match(/[+-]?\d+\.\d+,[+-]?\d+\.\d+/g);
+  var locations = query.term.match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
-    var pair = location.split(',').map(function(s) { return parseFloat(s).toFixed(6); });
+    var pair = location.split(',').map(function (s) {
+      return parseFloat(s.trim()).toFixed(6);
+    });
     var ll = pair.join(",");
     var latlng = L.latLng(pair.map(function(s) { return parseFloat(s); }));
     if(added[ll]) return;
@@ -26774,7 +26799,6 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
       req.setRequestHeader('X-CSRFToken', readCookie('csrftoken'));
     }
   });
-  result.action = action;
 
   requests.add(result);
 
@@ -26892,17 +26916,18 @@ window.setupPlayerStat = function () {
         + '\nInvites:\t'+PLAYER.available_invites
         + '\n\nNote: your player stats can only be updated by a full reload (F5)';
 
-  $('#playerstat').html(''
-    + '<h2 title="'+t+'">'+level+'&nbsp;'
-    + '<div id="name">'
-    + '<span class="'+cls+'">'+PLAYER.nickname+'</span>'
-    + '<a href="https://intel.ingress.com/logout" id="signout">sign out</a>'
-    + '</div>'
-    + '<div id="stats">'
-    + '<sup>XM: '+xmRatio+'%</sup>'
-    + '<sub>' + (nextLvlAp > 0 ? 'level: '+lvlApProg+'%' : 'max level') + '</sub>'
-    + '</div>'
-    + '</h2>'
+  $('#playerstat').html(
+    `<h2 title="${t}">
+      ${level}
+      <div id="name">
+        <span class="playername ${cls}">${window.PLAYER.nickname}</span>
+        <a href="https://intel.ingress.com/logout" id="signout">sign out</a>
+      </div>
+      <div id="stats">
+        <sup>XM: ${xmRatio}%</sup>
+        <sub>${nextLvlAp > 0 ? 'level: ' + lvlApProg + '%' : 'max level'}</sub>
+      </div>
+    </h2>`
   );
 };
 
@@ -27086,7 +27111,7 @@ body {\
   height: 6px;\
   width: 6px;\
   left: 50%;\
-  top: -3px; \
+  top: -3px;\
   margin-left: -3px;\
   position: absolute;\
   z-index: -1;\
@@ -27106,8 +27131,40 @@ body {\
   background-color: #00c5ff !important;\
 }\
 \
+#mobileinfo .mac .filllevel {\
+  background-color: #ff0028 !important;\
+}\
+\
+#playerstat {\
+  height: initial;\
+}\
+\
+#playerstat h2 {\
+  display: flex;\
+  justify-content: space-between;\
+  flex-wrap: wrap;\
+  padding: 5px;\
+}\
+\
+#playerstat h2 #name {\
+  display: flex;\
+  align-items: center;\
+}\
+\
+#playerstat h2 #name .playername,\
+#playerstat h2 #name:hover .playername{\
+  max-width: 60vw;\
+}\
+\
+#playerstat h2 #stats {\
+  white-space: nowrap;\
+  overflow: initial;\
+}\
+\
 #name #signout { /* no hover, always show signout button */\
-  display: block;\
+  display: inline-block;\
+  position: initial;\
+  margin-left: 4px;\
 }\
 \
 #sidebar, #chatcontrols, #chat, #chatinput {\
@@ -27119,9 +27176,6 @@ body {\
   margin-left: 5px !important;\
 }\
 \
-#searchwrapper {\
-  font-size: 1.2em;\
-}\
 #searchwrapper .ui-accordion-header {\
   padding: 0.3em 0;\
 }\
@@ -27199,10 +27253,6 @@ body {\
 \
 #sidebar > * {\
   width: 100%;\
-}\
-\
-#playerstat {\
-  margin-top: 5px;\
 }\
 \
 #portaldetails {\
@@ -27793,18 +27843,6 @@ window.eraseCookie = function(name) {
   document.cookie = name + '=; expires=Thu, 1 Jan 1970 00:00:00 GMT; path=/';
 }
 
-//certain values were stored in cookies, but we're better off using localStorage instead - make it easy to convert
-window.convertCookieToLocalStorage = function(name) {
-  var cookie=readCookie(name);
-  if(cookie !== undefined) {
-    log.log('converting cookie '+name+' to localStorage');
-    if(localStorage[name] === undefined) {
-      localStorage[name] = cookie;
-    }
-    eraseCookie(name);
-  }
-}
-
 // add thousand separators to given number.
 // http://stackoverflow.com/a/1990590/1684530 by Doug Neiner.
 window.digits = function(d) {
@@ -27871,6 +27909,9 @@ window.formatInterval = function(seconds,maxTerms) {
   return terms.join(' ');
 }
 
+window.formatDistance = function (distance) {
+  return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
+};
 
 window.rangeLinkClick = function() {
   if(window.portalRangeIndicator)
@@ -28014,14 +28055,9 @@ window.convertTextToTableMagic = function(text) {
   return table;
 }
 
-// Given 3 sets of points in an array[3]{lat, lng} returns the area of the triangle
-window.calcTriArea = function(p) {
-  return Math.abs((p[0].lat*(p[1].lng-p[2].lng)+p[1].lat*(p[2].lng-p[0].lng)+p[2].lat*(p[0].lng-p[1].lng))/2);
-}
-
-function clamp (n,max,min) {
-  if (n===0) { return 0; }
-  return n>0 ? Math.min(n,max) : Math.max(n,min);
+function clamp(n, max, min) {
+  if (n === 0) return 0;
+  return n > 0 ? Math.min(n, max) : Math.max(n, min);
 }
 
 var MAX_LATITUDE = 85.051128; // L.Projection.SphericalMercator.MAX_LATITUDE
@@ -28069,6 +28105,10 @@ window.pnpoly = function (polygon, point) {
   return !!inside;
 };
 
+window.makePrimeLink = function (guid, lat, lng) {
+  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
+};
+
 // @function makePermalink(latlng?: LatLng, options?: Object): String
 // Makes the permalink for the portal with specified latlng, possibly including current map view.
 // Portal latlng can be omitted to create mapview-only permalink.
@@ -28094,7 +28134,11 @@ window.makePermalink = function (latlng, options) {
     if ('lat' in latlng) { latlng = [latlng.lat, latlng.lng]; }
     args.push('pll='+latlng.join(','));
   }
-  var url = options.fullURL ? 'https://intel.ingress.com/' : '/';
+  var url = '';
+  if (options.fullURL) {
+    url += new URL(document.baseURI).origin;
+  }
+  url += '/';
   return url + '?' + args.join('&');
 };
 

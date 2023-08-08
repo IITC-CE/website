@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.3.0.20220726.155822
+// @version        0.3.2.20230808.163339
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -9,6 +9,9 @@
 // @updateURL      https://iitc.app/build/artifact/PR505/plugins/scoreboard.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR505/plugins/scoreboard.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/scoreboard.png
+// @icon64         https://iitc.app/extras/plugin-icons/scoreboard-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-07-26-155822';
+plugin_info.dateTimeVersion = '2023-08-08-163339';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 
@@ -41,7 +44,7 @@ function getPortalsInfo (portals,bounds) {
       health: 0
     };
   }
-  var score = [init(),init(),init()];
+  var score = window.TEAM_NAMES.map(() => init());
   portals = portals.filter(function (portal) { // only consider portals in view
     return bounds.contains(portal.getLatLng());
   });
@@ -84,12 +87,14 @@ function getEntitiesCount (entities,bounds) {
       return bounds.contains(point);
     });
   });
-  var enl = total.reduce(function (n, l) {
-    return (l.options.team === TEAM_ENL) ? n+1 : n;
-  },0);
+
+  var counts = total.reduce((n, l) => {
+    n[l.options.team] = (n[l.options.team] || 0) + 1;
+    return n;
+  }, []);
   return {
-    enl: enl,
-    res: total.length - enl
+    enl: counts[window.TEAM_ENL] || 0,
+    res: counts[window.TEAM_RES] || 0,
   };
 }
 
@@ -194,6 +199,7 @@ function setup () {
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
