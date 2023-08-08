@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.0.20230803.154036
+// @version        0.36.1.20230808.100907
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,13 +22,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-03-154036';
+plugin_info.dateTimeVersion = '2023-08-08-100907';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.36.1',
+    changes: ['Revert sorted sidebar links'],
+  },
   {
     version: '0.36.0',
     changes: [
@@ -46,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-08-03-154036';
+window.iitcBuildDate = '2023-08-08-100907';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3163,31 +3167,8 @@ function prepPluginsToLoad () {
   };
 }
 
-function setupToolboxSort() {
-  var toolboxElement = $('#toolbox')[0];
-
-  function sortToolbox() {
-    var children = Array.prototype.slice.call(toolboxElement.children);
-    var sortedChildren = children.slice().sort(function (x, y) {
-      return x.innerText.localeCompare(y.innerText);
-    });
-    if (
-      sortedChildren.some(function (item, index) {
-        return item !== children[index];
-      })
-    ) {
-      sortedChildren.forEach(function (child) {
-        toolboxElement.removeChild(child);
-        toolboxElement.appendChild(child);
-      });
-    }
-  }
-  sortToolbox();
-  window.observeDOMChildren(toolboxElement, sortToolbox);
-}
-
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-08-03-154036');
+  log.log('loading done, booting. Built: '+'2023-08-08-100907');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -3225,8 +3206,6 @@ function boot() {
 
   window.iitcLoaded = true;
   window.runHooks('iitcLoaded');
-
-  setupToolboxSort();
 }
 
 try {
@@ -28253,25 +28232,6 @@ if (!Element.prototype.closest) {
     return null;
   };
 }
-
-var MutObserver = window.MutationObserver || window.WebKitMutationObserver;
-window.observeDOMChildren = function (obj, callback) {
-  if (!obj || obj.nodeType !== 1) return;
-
-  if (MutObserver) {
-    // define a new observer
-    var mutationObserver = new MutObserver(callback);
-
-    // have the observer observe for changes in children
-    mutationObserver.observe(obj, { childList: true, subtree: true });
-    return mutationObserver;
-  }
-
-  // browser support fallback
-  else if (window.addEventListener) {
-    obj.addEventListener('DOMNodeInserted', callback, false);
-  }
-};
 
 
 })();
