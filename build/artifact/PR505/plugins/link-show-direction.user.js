@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Direction of links on map
 // @category       Tweaks
-// @version        0.2.2.20230808.200449
+// @version        0.2.2.20230808.213422
 // @description    Show the direction of links on the map by adding short dashes to the line at the origin portal.
 // @id             link-show-direction
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-200449';
+plugin_info.dateTimeVersion = '2023-08-08-213422';
 plugin_info.pluginId = 'link-show-direction';
 //END PLUGIN AUTHORS NOTE
 
@@ -32,14 +32,13 @@ plugin_info.pluginId = 'link-show-direction';
 // use own namespace for plugin
 var linkShowDirection = {};
 window.plugin.linkShowDirection = linkShowDirection;
-var styles = {};
-linkShowDirection.styles = styles;
+linkShowDirection.timer = 0;
 
 var ANIMATE_UPDATE_TIME = 1000; // 1000ms = 1s
 
 // Hack:
 // 100000 - a large enough number to be the equivalent of 100%, which is not supported Leaflet when displaying with canvas
-styles = {
+linkShowDirection.styles = {
   'Disabled': [null],
   'Static *': [
     '30,5,15,5,15,5,2,5,2,5,2,5,2,5,30,0',
@@ -69,7 +68,7 @@ var activeStyle = '';
 
 
 function animateLinks () {
-  var frames = styles[activeStyle];
+  var frames = linkShowDirection.styles[activeStyle];
   if (!frames) frames = [null];
 
   if (!moving) {
@@ -89,10 +88,10 @@ function animateLinks () {
   // this would mean the user has no chance to interact with IITC
   // to prevent this, create a short timer that then sets the timer for the next frame. if the browser is slow to render,
   // the short timer should fire later, at which point the desired ANIMATE_UPDATE_TIME timer is started
-  clearTimeout(timer);
-  var timer = setTimeout(function() {
-    clearTimeout(timer);
-    timer = setTimeout(
+  clearTimeout(linkShowDirection.timer);
+  linkShowDirection.timer = setTimeout(function() {
+    clearTimeout(linkShowDirection.timer);
+    linkShowDirection.timer = setTimeout(
       animateLinks,
       ANIMATE_UPDATE_TIME);
   }, 10);
