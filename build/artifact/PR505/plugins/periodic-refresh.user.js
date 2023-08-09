@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Periodic refresh
 // @category       Tweaks
-// @version        0.1.1.20230809.073155
+// @version        0.1.1.20230809.073658
 // @description    For use for unattended display screens only, this plugin causes idle mode to be left once per hour.
 // @id             periodic-refresh
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-09-073155';
+plugin_info.dateTimeVersion = '2023-08-09-073658';
 plugin_info.pluginId = 'periodic-refresh';
 //END PLUGIN AUTHORS NOTE
 
@@ -40,7 +40,7 @@ function wakeup() {
 }
 
 function setup() {
-  setInterval(wakeup, periodicRefresh.refreshMinutes*60*1000 );
+  setInterval(wakeup, periodicRefresh.refreshMinutes * 60 * 1000);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
