@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Direction of links on map
 // @category       Tweaks
-// @version        0.2.2.20230808.213422
+// @version        0.2.2.20230809.072751
 // @description    Show the direction of links on the map by adding short dashes to the line at the origin portal.
 // @id             link-show-direction
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,22 +22,21 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-213422';
+plugin_info.dateTimeVersion = '2023-08-09-072751';
 plugin_info.pluginId = 'link-show-direction';
 //END PLUGIN AUTHORS NOTE
-
 
 /* exported setup --eslint */
 /* global L, dialog, addHook, map, links */
 // use own namespace for plugin
 var linkShowDirection = {};
 window.plugin.linkShowDirection = linkShowDirection;
-linkShowDirection.timer = 0;
 
 var ANIMATE_UPDATE_TIME = 1000; // 1000ms = 1s
 
 // Hack:
 // 100000 - a large enough number to be the equivalent of 100%, which is not supported Leaflet when displaying with canvas
+// prettier-ignore
 linkShowDirection.styles = {
   'Disabled': [null],
   'Static *': [
@@ -64,10 +63,10 @@ linkShowDirection.styles = {
 var dashArray = null;
 var activeFrame = 0;
 var moving = false;
+var timer = 0;
 var activeStyle = '';
 
-
-function animateLinks () {
+function animateLinks() {
   var frames = linkShowDirection.styles[activeStyle];
   if (!frames) frames = [null];
 
@@ -88,20 +87,20 @@ function animateLinks () {
   // this would mean the user has no chance to interact with IITC
   // to prevent this, create a short timer that then sets the timer for the next frame. if the browser is slow to render,
   // the short timer should fire later, at which point the desired ANIMATE_UPDATE_TIME timer is started
-  clearTimeout(linkShowDirection.timer);
-  linkShowDirection.timer = setTimeout(function() {
-    clearTimeout(linkShowDirection.timer);
-    linkShowDirection.timer = setTimeout(
-      animateLinks,
-      ANIMATE_UPDATE_TIME);
+  clearTimeout(timer);
+  linkShowDirection.timer = setTimeout(function () {
+    clearTimeout(timer);
+    timer = setTimeout(animateLinks, ANIMATE_UPDATE_TIME);
   }, 10);
 }
 
-function addAllLinkStyles () {
-  $.each(links,function(guid,link) { addLinkStyle(link); });
+function addAllLinkStyles() {
+  $.each(links, function (guid, link) {
+    addLinkStyle(link);
+  });
 
   if (window.plugin.drawTools && localStorage['plugin-linkshowdirection-drawtools'] === 'true') {
-    window.plugin.drawTools.drawnItems.eachLayer(function(layer) {
+    window.plugin.drawTools.drawnItems.eachLayer(function (layer) {
       if (layer instanceof L.GeodesicPolyline) {
         addLinkStyle(layer);
       }
@@ -109,16 +108,18 @@ function addAllLinkStyles () {
   }
 }
 
-function addLinkStyle (link) {
-  link.setStyle({dashArray: dashArray});
+function addLinkStyle(link) {
+  link.setStyle({ dashArray: dashArray });
 }
 
-function removeDrawToolsStyle () {
+function removeDrawToolsStyle() {
   if (!window.plugin.drawTools) return;
 
-  window.plugin.drawTools.drawnItems.eachLayer(function(layer) {
+  window.plugin.drawTools.drawnItems.eachLayer(function (layer) {
     if (layer instanceof L.GeodesicPolyline) {
-      layer.setStyle({dashArray: null});
+      layer.setStyle({
+        dashArray: null,
+      });
     }
   });
 }
@@ -126,7 +127,7 @@ function removeDrawToolsStyle () {
 linkShowDirection.showDialog = function () {
   var div = document.createElement('div');
 
-  $.each(styles, function(style) {
+  $.each(linkShowDirection.styles, function (style) {
     var label = div.appendChild(document.createElement('label'));
     var input = label.appendChild(document.createElement('input'));
     input.type = 'radio';
@@ -136,20 +137,27 @@ linkShowDirection.showDialog = function () {
       input.checked = true;
     }
 
-    input.addEventListener('click', function() {
-      activeStyle = style;
-      localStorage['plugin-linkshowdirection-mode'] = style;
-      animateLinks();
-    }, false);
+    input.addEventListener(
+      'click',
+      function () {
+        activeStyle = style;
+        localStorage['plugin-linkshowdirection-mode'] = style;
+        animateLinks();
+      },
+      false
+    );
 
     label.appendChild(document.createTextNode(' ' + style));
 
     div.appendChild(document.createElement('br'));
   });
 
-  div.appendChild(document.createTextNode(
-    ' * Static: six segments will indicate each link\'s direction. ' +
-    'Two long segments are on the origin\'s side, follow by four short segments on the destination\'s side.'));
+  div.appendChild(
+    document.createTextNode(
+      " * Static: six segments will indicate each link's direction. " +
+        "Two long segments are on the origin's side, follow by four short segments on the destination's side."
+    )
+  );
 
   if (window.plugin.drawTools) {
     div.appendChild(document.createElement('br'));
@@ -159,15 +167,18 @@ linkShowDirection.showDialog = function () {
     input.type = 'checkbox';
     input.checked = localStorage['plugin-linkshowdirection-drawtools'] === 'true';
 
-    input.addEventListener('click', function() {
-      localStorage['plugin-linkshowdirection-drawtools'] = input.checked.toString();
-
-      if (input.checked) {
-        animateLinks();
-      } else {
-        removeDrawToolsStyle();
-      }
-    }, false);
+    input.addEventListener(
+      'click',
+      function () {
+        localStorage['plugin-linkshowdirection-drawtools'] = input.checked.toString();
+        if (input.checked) {
+          animateLinks();
+        } else {
+          removeDrawToolsStyle();
+        }
+      },
+      false
+    );
 
     label.appendChild(document.createTextNode(' Apply to DrawTools'));
   }
@@ -179,10 +190,12 @@ linkShowDirection.showDialog = function () {
   });
 };
 
-function setup () {
+function setup() {
   $('#toolbox').append('<a onclick="window.plugin.linkShowDirection.showDialog();return false;" title="Change LinkDirection settings">LinkDirection Opt</a>');
 
-  addHook('linkAdded', function(data) { addLinkStyle(data.link); });
+  addHook('linkAdded', function (data) {
+    addLinkStyle(data.link);
+  });
 
   try {
     activeStyle = localStorage['plugin-linkshowdirection-mode'];
@@ -192,11 +205,15 @@ function setup () {
   }
 
   animateLinks();
-
   // set up move start/end handlers to pause animations while moving
-  map.on('movestart', function() { moving = true; });
-  map.on('moveend', function() { moving = false; });
+  map.on('movestart', function () {
+    moving = true;
+  });
+  map.on('moveend', function () {
+    moving = false;
+  });
 }
+
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
