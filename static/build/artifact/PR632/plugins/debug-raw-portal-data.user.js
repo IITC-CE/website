@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Debug: Raw portal JSON data
 // @category       Portal Info
-// @version        0.2.4.20230521.204139
+// @version        0.2.5.20230810.104750
 // @description    Developer debugging aid: Add a link to the portal details to show the raw data of a portal.
 // @id             debug-raw-portal-data
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,10 +22,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-21-204139';
+plugin_info.dateTimeVersion = '2023-08-10-104750';
 plugin_info.pluginId = 'debug-raw-portal-data';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.2.5',
+    changes: ['Added human readable timestamp for portal links and fields'],
+  },
+];
 
 // use own namespace for plugin
 window.plugin.rawdata = function() {};
@@ -50,10 +58,9 @@ window.plugin.rawdata.showPortalData = function(guid) {
 
   var title = 'Raw portal data: ' + (data.title || '<no title>');
 
-  var body =
-    '<b>Portal GUID</b>: <code>'+guid+'</code><br />' +
-    '<b>Entity timestamp</b>: <code>'+ts+'</code> - '+window.unixTimeToDateTimeString(ts,true)+'<br />' + 
-    '<b>Portal map data:</b><pre>'+JSON.stringify(data,null,2)+'</pre>';
+  var body = `<b>Portal GUID</b>: <code>${guid}</code><br />
+              <b>Entity timestamp</b>: <code>${ts}</code> - ${window.unixTimeToDateTimeString(ts, true)}<br />
+              <b>Portal map data</b>: <pre>${JSON.stringify(data, null, 2)}</pre>`;
 
   var details = portalDetail.get(guid);
   if (details) {
@@ -67,7 +74,9 @@ window.plugin.rawdata.showPortalData = function(guid) {
   $.each(linkGuids.in.concat(linkGuids.out), function(i,lguid) {
     var l = window.links[lguid];
     var ld = l.options.data;
-    body += '<b>Link GUID</b>: <code>'+l.options.guid+'</code><br /><pre>'+JSON.stringify(ld,null,2)+'</pre>';
+    body += `<b>Link GUID</b>: <code>${l.options.guid}</code><br />
+             <b>Entity timestamp</b>: <code>${ld.timestamp}</code> - ${window.unixTimeToDateTimeString(ld.timestamp, true)}<br />
+             <pre>${JSON.stringify(ld, null, 2)}</pre>`;
     haslinks = true;
   });
 
@@ -79,7 +88,9 @@ window.plugin.rawdata.showPortalData = function(guid) {
   $.each(fieldGuids, function(i,fguid) {
     var f = window.fields[fguid];
     var fd = f.options.data;
-    body += '<b>Field guid</b>: <code>'+f.options.guid+'</code><br /><pre>'+JSON.stringify(fd,null,2)+'</pre>';
+    body += `<b>Field guid</b>: <code>${f.options.guid}</code><br />
+             <b>Entity timestamp</b>: <code>${fd.timestamp}</code> - ${window.unixTimeToDateTimeString(fd.timestamp, true)}<br />
+             <pre>${JSON.stringify(fd, null, 2)}</pre>`;
     hasfields = true;
   });
   if (!hasfields) body += '<p>No fields linked to this portal</p>';
@@ -98,6 +109,7 @@ var setup = function () {
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

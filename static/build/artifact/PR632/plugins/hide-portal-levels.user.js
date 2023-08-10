@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Hide portal levels
 // @category       Layer
-// @version        0.1.0.20230521.204139
+// @version        0.1.1.20230810.104750
 // @description    Replace all levels with single layerChooser's entry; reverting on longclick
 // @id             hide-portal-levels
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,16 +22,29 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-05-21-204139';
+plugin_info.dateTimeVersion = '2023-08-10-104750';
 plugin_info.pluginId = 'hide-portal-levels';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
 
 // use own namespace for plugin
 var hideLevels = {};
 window.plugin.hideLevels = hideLevels;
 
+hideLevels.layerFilterRegexp = new RegExp(/Level \d* Portals/);
 hideLevels.initCollapsed = true;
+
+var changelog = [
+  {
+    version: '0.1.1',
+    changes: ['FIX: Hide only portal layers'],
+  },
+  {
+    version: '0.1.0',
+    changes: ['Initial version'],
+  },
+];
 
 function setup () {
   var ctrl = window.layerChooser;
@@ -39,7 +52,7 @@ function setup () {
   hideLevels.portals = L.layerGroup();
 
   var levels = ctrl._layers.filter(function (data) {
-    return data.overlay && data.name.endsWith(' Portals');
+    return data.overlay && (data.name === 'Unclaimed/Placeholder Portals' || data.name.match(hideLevels.layerFilterRegexp));
   });
   hideLevels.collapse = function (set) {
     var allDisabled = true;
@@ -93,6 +106,7 @@ function setup () {
 /* exported setup */
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
