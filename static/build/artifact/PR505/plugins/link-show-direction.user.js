@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Direction of links on map
 // @category       Tweaks
-// @version        0.2.2.20230809.083408
+// @version        0.2.2.20230811.143630
 // @description    Show the direction of links on the map by adding short dashes to the line at the origin portal.
 // @id             link-show-direction
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-09-083408';
+plugin_info.dateTimeVersion = '2023-08-11-143630';
 plugin_info.pluginId = 'link-show-direction';
 //END PLUGIN AUTHORS NOTE
 
@@ -124,7 +124,7 @@ function removeDrawToolsStyle() {
   });
 }
 
-linkShowDirection.showDialog = function () {
+function showDialog() {
   var div = document.createElement('div');
 
   $.each(linkShowDirection.styles, function (style) {
@@ -191,8 +191,11 @@ linkShowDirection.showDialog = function () {
 };
 
 function setup() {
-  $('#toolbox').append('<a onclick="window.plugin.linkShowDirection.showDialog();return false;" title="Change LinkDirection settings">LinkDirection Opt</a>');
-
+  $('<a>', {
+    title: 'Change LinkDirection settings',
+    click: showDialog,
+    html: 'LinkDirection Opt',
+  }).appendTo('#toolbox');
   addHook('linkAdded', function (data) {
     addLinkStyle(data.link);
   });
