@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.2.20230901.174845
+// @version        0.1.2.20230906.080601
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-09-01-174845';
+plugin_info.dateTimeVersion = '2023-09-06-080601';
 plugin_info.pluginId = 'basemap-openstreetmap';
 //END PLUGIN AUTHORS NOTE
 
@@ -53,17 +53,17 @@ mapOpenStreetMap.LAYERS = [
   {
     name: 'OpenStreetMap',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    options: osmOpt,
+    options: Object.assign({}, osmOpt),
   },
   {
     name: 'Humanitarian',
     url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-    options: osmOpt,
+    options: Object.assign({}, osmOpt),
   },
   {
     name: 'CyclOSM',
     url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-    options: osmOpt,
+    options: Object.assign({}, osmOpt),
   },
 ];
 
