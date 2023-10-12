@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.12.2.20231012.073752
+// @version        0.12.2.20231012.074817
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-12-073752';
+plugin_info.dateTimeVersion = '2023-10-12-074817';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -173,7 +173,13 @@ window.plugin.playerTracker.processNewData = function(data) {
     if(json[1] < limit) return true;
 
     // find player and portal information
-    var plrname, plrteam, lat, lng, id=null, name, address;
+    var plrname,
+      plrteam,
+      lat,
+      lng,
+      id=null,
+      name,
+      address;
     var skipThisMessage = false;
     $.each(json[2].plext.markup, function(ind, markup) {
       switch(markup[0]) {
@@ -183,8 +189,8 @@ window.plugin.playerTracker.processNewData = function(data) {
         // portal the player is at, so ignore it.
         if(markup[1].plain.indexOf('destroyed the Link') !== -1
           || markup[1].plain.indexOf('destroyed a Control Field') !== -1
-          // COMM messages changed a bit, keep old rules ↑ in case of rollback 
-          || markup[1].plain.indexOf('destroyed the') !== -1 
+          // COMM messages changed a bit, keep old rules ↑ in case of rollback
+          || markup[1].plain.indexOf('destroyed the') !== -1
           || markup[1].plain.indexOf('Your Link') !== -1) {
           skipThisMessage = true;
           return false;
