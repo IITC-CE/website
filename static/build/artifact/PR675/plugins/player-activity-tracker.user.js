@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.12.2.20231012.074817
+// @version        0.12.2.20231012.075042
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-12-074817';
+plugin_info.dateTimeVersion = '2023-10-12-075042';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -198,7 +198,7 @@ window.plugin.playerTracker.processNewData = function(data) {
         break;
       case 'PLAYER':
         plrname = markup[1].plain;
-        plrteam = markup[1].team
+        plrteam = markup[1].team;
         break;
       case 'PORTAL':
         // link messages are “player linked X to Y” and the player is at
