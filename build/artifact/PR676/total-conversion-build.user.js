@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231012.190521
+// @version        0.36.1.20231012.190900
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-12-190521';
+plugin_info.dateTimeVersion = '2023-10-12-190900';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-12-190521';
+window.iitcBuildDate = '2023-10-12-190900';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3168,7 +3168,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-12-190521');
+  log.log('loading done, booting. Built: '+'2023-10-12-190900');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19573,14 +19573,14 @@ function transformMessage(markup) {
     }
   }
 
-  // skip "<faction> agent <player>" at beginning
+  // skip "Agent <player>"  at beginning
   if (markup.length > 1) {
     if (markup[0][0] === 'TEXT' && markup[0][1].plain === 'Agent ' && markup[1][0] === 'PLAYER') {
       markup.splice(0, 2);
     }
   }
 
-  // skip "agent <player>"  at beginning
+  // skip "<faction> agent <player>" at beginning
   if (markup.length > 2) {
     if (markup[0][0] === 'FACTION' && markup[1][0] === 'TEXT' && markup[1][1].plain === ' agent ' && markup[2][0] === 'PLAYER') {
       markup.splice(0, 3);
