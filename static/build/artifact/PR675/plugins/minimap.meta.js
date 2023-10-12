@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.4.1.20231012.142642
+// @version        0.4.1.20231012.143003
 // @description    Show a mini map on the corner of the map.
 // @id             minimap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
