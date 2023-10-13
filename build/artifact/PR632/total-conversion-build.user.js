@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20230810.104750
+// @version        0.36.1.20231013.101022
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-10-104750';
+plugin_info.dateTimeVersion = '2023-10-13-101022';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-08-10-104750';
+window.iitcBuildDate = '2023-10-13-101022';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3168,7 +3168,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-08-10-104750');
+  log.log('loading done, booting. Built: '+'2023-10-13-101022');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19031,21 +19031,6 @@ if (document.readyState === 'complete') { // IITCm
 var log = ulog('chat');
 window.chat = function() {};
 
-//WORK IN PROGRESS - NOT YET USED!!
-window.chat.commTabs = [
-// channel: the COMM channel ('tab' parameter in server requests)
-// name: visible name
-// inputPrompt: string for the input prompt
-// inputColor: (optional) color for input
-// sendMessage: (optional) function to send the message (to override the default of sendPlext)
-// globalBounds: (optional) if true, always use global latLng bounds
-  {channel:'all', name:'All', inputPrompt: 'broadcast:', inputColor:'#f66'},
-  {channel:'faction', name:'Aaction', inputPrompt: 'tell faction:'},
-  {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputColor: '#666', globalBounds: true, sendMessage: function() {
-    alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
-  }},
-];
-
 
 window.chat.handleTabCompletion = function() {
   var el = $('#chatinput input');
@@ -19216,7 +19201,7 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   $('#chatfaction').data('needsClearing', null);
 
   var old = chat._faction.oldestGUID;
-  chat.writeDataToHash(data, chat._faction, false, olderMsgs, ascendingTimestampOrder);
+  chat.writeDataToHash(data, chat._faction, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._faction.oldestGUID;
 
   runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
@@ -19269,7 +19254,7 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   $('#chatall').data('needsClearing', null);
 
   var old = chat._public.oldestGUID;
-  chat.writeDataToHash(data, chat._public, undefined, olderMsgs, ascendingTimestampOrder);   //NOTE: isPublic passed as undefined - this is the 'all' channel, so not really public or private
+  chat.writeDataToHash(data, chat._public, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._public.oldestGUID;
 
   runHooks('publicChatDataAvailable', {raw: data, result: data.result, processed: chat._public.data});
@@ -19319,7 +19304,7 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   if(data.result.length === 0) return;
 
   var old = chat._alerts.oldestTimestamp;
-  chat.writeDataToHash(data, chat._alerts, undefined, olderMsgs, ascendingTimestampOrder); //NOTE: isPublic passed as undefined - it's nether public or private!
+  chat.writeDataToHash(data, chat._alerts, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._alerts.oldestTimestamp;
 
   // hook for alerts - API change planned here for next refactor
@@ -19437,7 +19422,7 @@ window.chat.parseMsgData = function (data) {
   };
 };
 
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
+window.chat.writeDataToHash = function(newData, storageHash, isOlderMsgs, isAscendingOrder) {
   window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function(json) {
@@ -19818,9 +19803,6 @@ window.chat.chooseTab = function(tab) {
 
       chat.renderAlerts(false);
       break;
-
-    default:
-      throw new Error('chat.chooser was asked to handle unknown button: ' + tt);
   }
 }
 
@@ -19953,7 +19935,6 @@ window.chat.setupPosting = function() {
         }
       } catch (e) {
         log.error(e);
-        //if (e.stack) { console.error(e.stack); }
       }
     });
   }
