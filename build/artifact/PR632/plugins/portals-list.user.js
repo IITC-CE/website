@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.2.20231013.165126
+// @version        0.4.2.20231013.165727
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-165126';
+plugin_info.dateTimeVersion = '2023-10-13-165727';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -732,13 +732,12 @@ var setup =  function() {
     .appendTo("head");
 };
 
-
 // given counts of resonators, links and fields, calculate the available AP
 // doesn't take account AP for resonator upgrades or AP for adding mods
 window.plugin.portalslist.portalApGainMaths = function (resCount, linkCount, fieldCount) {
   var deployAp = (8 - resCount) * DEPLOY_RESONATOR;
-  if (resCount == 0) deployAp += CAPTURE_PORTAL;
-  if (resCount != 8) deployAp += COMPLETION_BONUS;
+  if (resCount === 0) deployAp += CAPTURE_PORTAL;
+  if (resCount !== 8) deployAp += COMPLETION_BONUS;
   // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
   var friendlyAp = deployAp;
 
@@ -754,9 +753,9 @@ window.plugin.portalslist.portalApGainMaths = function (resCount, linkCount, fie
     enemyAp: enemyAp,
     destroyAp: destroyAp,
     destroyResoAp: destroyResoAp,
-    captureAp: captureAp
-  }
-}
+    captureAp: captureAp,
+  };
+};
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
