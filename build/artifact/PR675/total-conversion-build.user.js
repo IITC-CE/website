@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231012.143003
+// @version        0.36.1.20231013.093224
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-12-143003';
+plugin_info.dateTimeVersion = '2023-10-13-093224';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-12-143003';
+window.iitcBuildDate = '2023-10-13-093224';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3168,7 +3168,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-12-143003');
+  log.log('loading done, booting. Built: '+'2023-10-13-093224');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19402,16 +19402,19 @@ window.chat.parseMsgData = function (data) {
 
   var markup = data[2].plext.markup;
 
-  var nick = '';
+  var player = {
+    name: '',
+    team: team,
+  };
   markup.forEach(function(ent) {
     switch (ent[0]) {
       case 'SENDER': // user generated messages
-        nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        player.name = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
         break;
 
       case 'PLAYER': // automatically generated messages
-        nick = ent[1].plain;
-        team = window.teamStringToId(ent[1].team);
+        player.name = ent[1].plain;
+        player.team = window.teamStringToId(ent[1].team);
         break;
 
       default:
@@ -19429,10 +19432,8 @@ window.chat.parseMsgData = function (data) {
     type: data[2].plext.plextType,
     narrowcast: systemNarrowcast,
     auto: auto,
-    player: {
-      name: nick,
-      team: team,
-    },
+    team: team,
+    player: player,
     markup: markup,
   };
 };
