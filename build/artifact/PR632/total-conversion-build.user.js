@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231013.101022
+// @version        0.36.1.20231013.162109
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-101022';
+plugin_info.dateTimeVersion = '2023-10-13-162109';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-13-101022';
+window.iitcBuildDate = '2023-10-13-162109';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3168,7 +3168,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-13-101022');
+  log.log('loading done, booting. Built: '+'2023-10-13-162109');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19029,7 +19029,8 @@ if (document.readyState === 'complete') { // IITCm
 // *** module: chat.js ***
 (function () {
 var log = ulog('chat');
-window.chat = function() {};
+window.chat = function () { };
+var chat = window.chat;
 
 
 window.chat.handleTabCompletion = function() {
@@ -19422,7 +19423,7 @@ window.chat.parseMsgData = function (data) {
   };
 };
 
-window.chat.writeDataToHash = function(newData, storageHash, isOlderMsgs, isAscendingOrder) {
+window.chat.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
   window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function(json) {
@@ -23928,11 +23929,11 @@ window.getPortalFieldsCount = function(guid) {
 };
 
 
-  (function () {
-    var cache = {};
-    var cache_level = 0;
-    var GC_LIMIT = 15000; // run garbage collector when cache has more that 5000 items
-    var GC_KEEP = 10000; // keep the 4000 most recent items
+(function () {
+  var cache = {};
+  var cache_level = 0;
+  var GC_LIMIT = 15000; // run garbage collector when cache has more that 5000 items
+  var GC_KEEP = 10000; // keep the 4000 most recent items
 
   window.findPortalGuidByPositionE6 = function(latE6, lngE6) {
     var item = cache[latE6+","+lngE6];

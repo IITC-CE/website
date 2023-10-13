@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Pan control
 // @category       Controls
-// @version        0.2.2.20231013.101022
+// @version        0.2.2.20231013.162109
 // @description    Show a panning control on the map.
 // @id             pan-control
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-101022';
+plugin_info.dateTimeVersion = '2023-10-13-162109';
 plugin_info.pluginId = 'pan-control';
 //END PLUGIN AUTHORS NOTE
 
