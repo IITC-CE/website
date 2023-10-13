@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.12.2.20231013.163609
+// @version        0.12.2.20231013.163932
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-163609';
+plugin_info.dateTimeVersion = '2023-10-13-163932';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -396,7 +396,7 @@ window.plugin.playerTracker.drawData = function() {
     var icon = playerData.team === 'RESISTANCE' ?  new plugin.playerTracker.iconRes() :  new plugin.playerTracker.iconEnl();
     // as per OverlappingMarkerSpiderfier docs, click events (popups, etc) must be handled via it rather than the standard
     // marker click events. so store the popup text in the options, then display it in the oms click handler
-    var m = L.marker(gllfe(last), {icon: icon, opacity: absOpacity, desc: popup[0], title: tooltip});
+    var m = L.marker(gllfe(last), { icon: icon, opacity: absOpacity, desc: popup[0], title: tooltip });
     m.addEventListener('spiderfiedclick', plugin.playerTracker.onClickListener);
 
     // m.bindPopup(title);
