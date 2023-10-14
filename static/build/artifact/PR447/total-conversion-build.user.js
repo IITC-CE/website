@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231014.172413
+// @version        0.36.1.20231014.173624
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-14-172413';
+plugin_info.dateTimeVersion = '2023-10-14-173624';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-14-172413';
+window.iitcBuildDate = '2023-10-14-173624';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3175,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-14-172413');
+  log.log('loading done, booting. Built: '+'2023-10-14-173624');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19134,7 +19134,7 @@ chat.needMoreMessages = function () {
   var activeChat = $('#chat > :visible');
   if (activeChat.length === 0) return;
 
-  var hasScrollbar = window.Bottom(activeChat) !== 0 || activeChat.scrollTop() !== 0;
+  var hasScrollbar = window.scrollBottom(activeChat) !== 0 || activeChat.scrollTop() !== 0;
   var nearTop = activeChat.scrollTop() <= window.CHAT_REQUEST_SCROLL_TOP;
   if (hasScrollbar && !nearTop) return;
 
