@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.3.1.20220807.212618
+// @version        0.3.2.20231014.171050
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -9,5 +9,8 @@
 // @updateURL      https://iitc.app/build/artifact/PR447/plugins/scoreboard.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR447/plugins/scoreboard.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/scoreboard.png
+// @icon64         https://iitc.app/extras/plugin-icons/scoreboard-64.png
 // @grant          none
 // ==/UserScript==

@@ -2,13 +2,16 @@
 // @author         johnd0e
 // @name           IITC plugin: Bing maps
 // @category       Map Tiles
-// @version        0.3.0.20220807.212618
+// @version        0.3.1.20231014.171050
 // @description    Add the bing.com map layers.
 // @id             basemap-bing
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR447/plugins/basemap-bing.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR447/plugins/basemap-bing.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/basemap-bing.png
+// @icon64         https://iitc.app/extras/plugin-icons/basemap-bing-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,13 +22,14 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-212618';
+plugin_info.dateTimeVersion = '2023-10-14-171050';
 plugin_info.pluginId = 'basemap-bing';
 //END PLUGIN AUTHORS NOTE
 
-
+/* exported setup --eslint */
+/* global L, layerChooser */
+// use own namespace for plugin
 var mapBing = {};
-window.plugin.mapBing = mapBing;
 
 mapBing.sets = {
   Road: {
@@ -43,9 +47,9 @@ mapBing.sets = {
 };
 
 mapBing.options = {
-  //set this to your API key
+  // set this to your API key
   key: 'ArR2hTa2C9cRQZT-RmgrDkfvh3PwEVRl0gB34OO4wJI7vQNElg3DDWvbo5lfUs3p'
-}
+};
 
 function setup () {
   setupBingLeaflet();
@@ -54,7 +58,7 @@ function setup () {
     var options = L.extend({}, mapBing.options, mapBing.sets[name]);
     layerChooser.addBaseLayer(L.bingLayer(options), 'Bing ' + name);
   }
-};
+}
 
 function setupBingLeaflet () {
   try {
@@ -250,7 +254,8 @@ L.bingLayer = function (key, options) {
 };
 
 
-;
+; // eslint-disable-line
+
 
     // https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.addon.applyMaxNativeZoom.js
     // *** included: external/Bing.addon.applyMaxNativeZoom.js ***
@@ -344,15 +349,16 @@ L.BingLayer.include({
 });
 
 
-;
+; // eslint-disable-line
 
-    } catch (e) {
-      console.error('Bing.js loading failed');
-      throw e;
-    }
+  } catch (e) {
+    console.error('Bing.js loading failed');
+    throw e;
+  }
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

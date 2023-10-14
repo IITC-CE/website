@@ -2,13 +2,16 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.1.0.20220807.212618
+// @version        0.1.0.20231014.171050
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR447/plugins/debug-console.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR447/plugins/debug-console.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/debug-console.png
+// @icon64         https://iitc.app/extras/plugin-icons/debug-console-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-212618';
+plugin_info.dateTimeVersion = '2023-10-14-171050';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -161,6 +164,7 @@ setup.priority = 'boot';
 /* global L */
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
