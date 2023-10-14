@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231014.171050
+// @version        0.36.1.20231014.171651
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-14-171050';
+plugin_info.dateTimeVersion = '2023-10-14-171651';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-14-171050';
+window.iitcBuildDate = '2023-10-14-171651';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3175,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-14-171050');
+  log.log('loading done, booting. Built: '+'2023-10-14-171651');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19690,11 +19690,11 @@ comm.requestChannel = function (channel, getOlderMsgs, isRetry) {
     },
     isRetry
       ? function () {
-        comm._requestRunning[channel] = false;
-      }
+          comm._requestRunning[channel] = false;
+        }
       : function () {
-        comm.requestChannel(channel, getOlderMsgs, true);
-      }
+          comm.requestChannel(channel, getOlderMsgs, true);
+        }
   );
 };
 
@@ -19752,23 +19752,18 @@ comm.getChatPortalName = function (markup) {
 };
 
 comm.renderPortal = function (portal) {
-  var lat = portal.latE6 / 1E6, lng = portal.lngE6 / 1E6;
+  var lat = portal.latE6 / 1e6,
+    lng = portal.lngE6 / 1e6;
   var perma = window.makePermalink([lat, lng]);
   var js = 'window.selectPortalByLatLng(' + lat + ', ' + lng + ');return false';
-  return '<a onclick="' + js + '"'
-    + ' title="' + portal.address + '"'
-    + ' href="' + perma + '" class="help">'
-    + comm.getChatPortalName(portal)
-    + '</a>';
+  return '<a onclick="' + js + '"' + ' title="' + portal.address + '"' + ' href="' + perma + '" class="help">' + comm.getChatPortalName(portal) + '</a>';
 };
 
 comm.renderFactionEnt = function (faction) {
   var teamId = window.teamStringToId(faction.team);
   var name = window.TEAM_NAMES[teamId];
   var spanClass = window.TEAM_TO_CSS[teamId];
-  return $('<div>').html($('<span>')
-    .attr('class', spanClass)
-    .text(name)).html();
+  return $('<div>').html($('<span>').attr('class', spanClass).text(name)).html();
 };
 
 comm.renderPlayer = function (player, at, sender) {
@@ -19805,7 +19800,9 @@ comm.renderMarkupEntity = function (ent) {
       return comm.renderPlayer(ent[1], true);
     default:
   }
-  return $('<div>').text(ent[0] + ':<' + ent[1].plain + '>').html();
+  return $('<div>')
+    .text(ent[0] + ':<' + ent[1].plain + '>')
+    .html();
 };
 
 comm.renderMarkup = function (markup) {
@@ -19834,10 +19831,7 @@ comm.renderTimeCell = function (time, classNames) {
   var ta = unixTimeToHHmm(time);
   var tb = unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
 };
 
@@ -19883,10 +19877,7 @@ comm.renderMsg = function (msg, nick, time, team, msgToPlayer, systemNarrowcast)
   var ta = unixTimeToHHmm(time);
   var tb = unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   // help cursor via “#chat time”
   var t = '<time title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time>';
@@ -19923,9 +19914,15 @@ comm.renderData = function (data, element, likelyWereOldMsgs, sortedGuids) {
   // (disregarding server order)
   var vals = sortedGuids;
   if (vals === undefined) {
-    vals = $.map(data, function (v, k) { return [[v[0], k]]; });
-    vals = vals.sort(function (a, b) { return a[0] - b[0]; });
-    vals = vals.map(function (v) { return v[1]; });
+    vals = $.map(data, function (v, k) {
+      return [[v[0], k]];
+    });
+    vals = vals.sort(function (a, b) {
+      return a[0] - b[0];
+    });
+    vals = vals.map(function (v) {
+      return v[1];
+    });
   }
 
   // render to string with date separators inserted
