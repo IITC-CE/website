@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231014.171651
+// @version        0.36.1.20231014.172413
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-14-171651';
+plugin_info.dateTimeVersion = '2023-10-14-172413';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-14-171651';
+window.iitcBuildDate = '2023-10-14-172413';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3175,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-14-171651');
+  log.log('loading done, booting. Built: '+'2023-10-14-172413');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19828,8 +19828,8 @@ comm.renderMarkup = function (markup) {
 };
 
 comm.renderTimeCell = function (time, classNames) {
-  var ta = unixTimeToHHmm(time);
-  var tb = unixTimeToDateTimeString(time, true);
+  var ta = window.unixTimeToHHmm(time);
+  var tb = window.unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
   tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
@@ -19870,31 +19870,6 @@ comm.renderMsgRow = function (data) {
     className = 'faction';
   }
   return '<tr data-guid="' + data.guid + '" class="' + className + '">' + timeCell + nickCell + msgCell + '</tr>';
-};
-
-// legacy rendering, not used internaly, but left there for backward compatibilty in case a plugin uses it directly
-comm.renderMsg = function (msg, nick, time, team, msgToPlayer, systemNarrowcast) {
-  var ta = unixTimeToHHmm(time);
-  var tb = unixTimeToDateTimeString(time, true);
-  // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-  // help cursor via “#chat time”
-  var t = '<time title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time>';
-  if (msgToPlayer) {
-    t = '<div class="pl_nudge_date">' + t + '</div><div class="pl_nudge_pointy_spacer"></div>';
-  }
-  if (systemNarrowcast) {
-    msg = '<div class="system_narrowcast">' + msg + '</div>';
-  }
-  var color = window.COLORS[team];
-  // highlight things said/done by the player in a unique colour (similar to @player mentions from others in the comm text itself)
-  if (nick === window.PLAYER.nickname) {
-    color = '#fd6';
-  }
-  var s = 'style="cursor:pointer; color:' + color + '"';
-  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<tr><td>' + t + '</td><td>' + i[0] + '<mark class="nickname" ' + s + '>' + nick + '</mark>' + i[1] + '</td><td>' + msg + '</td></tr>';
 };
 
 comm.renderDivider = function (text) {
