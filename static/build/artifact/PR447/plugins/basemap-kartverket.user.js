@@ -2,13 +2,16 @@
 // @author         johnd0e
 // @name           IITC plugin: Kartverket.no maps (Norway)
 // @category       Map Tiles
-// @version        0.2.1.20220807.212618
+// @version        0.2.2.20231014.171050
 // @description    Add Kartverket.no map layers.
 // @id             basemap-kartverket
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR447/plugins/basemap-kartverket.meta.js
 // @downloadURL    https://iitc.app/build/artifact/PR447/plugins/basemap-kartverket.user.js
 // @match          https://intel.ingress.com/*
+// @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/basemap-kartverket.png
+// @icon64         https://iitc.app/extras/plugin-icons/basemap-kartverket-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -19,12 +22,16 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-08-07-212618';
+plugin_info.dateTimeVersion = '2023-10-14-171050';
 plugin_info.pluginId = 'basemap-kartverket';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup --eslint */
+/* global L, layerChooser */
+// use own namespace for plugin
+var mapKartverket = {};
 
-function setup () {
+mapKartverket.setup = function () {
 
   L.TileLayer.Kartverket = L.TileLayer.extend({
 
@@ -91,9 +98,14 @@ function setup () {
     l = L.tileLayer.kartverket(layer);
     layerChooser.addBaseLayer(l, l._name);
   }
+};
+
+function setup() {
+  mapKartverket.setup();
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
