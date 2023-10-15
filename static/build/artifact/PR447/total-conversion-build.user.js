@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231014.173624
+// @version        0.36.1.20231015.092240
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-14-173624';
+plugin_info.dateTimeVersion = '2023-10-15-092240';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-14-173624';
+window.iitcBuildDate = '2023-10-15-092240';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3175,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-14-173624');
+  log.log('loading done, booting. Built: '+'2023-10-15-092240');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19550,7 +19550,7 @@ comm.parseMsgData = function (data) {
   };
 };
 
-comm.writeDataToHash = function (newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
+comm.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
   comm.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function (json) {
@@ -19715,7 +19715,7 @@ comm.handleChannel = function (channel, data, olderMsgs, ascendingTimestampOrder
   $('#chat' + channel).data('needsClearing', null);
 
   var old = comm._channels[channel].oldestGUID;
-  comm.writeDataToHash(data, comm._channels[channel], false, olderMsgs, ascendingTimestampOrder);
+  comm.writeDataToHash(data, comm._channels[channel], olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== comm._channels[channel].oldestGUID;
 
   var hook = channel + 'ChatDataAvailable';
@@ -19849,7 +19849,7 @@ comm.renderMsgRow = function (data) {
   var timeCell = comm.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (data.player.team === window.TEAM_ENL || data.player.team === window.TEAM_RES) {
+  if (window.TEAM_TO_CSS[data.player.team]) {
     nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
   // highlight things said/done by the player in a unique colour
@@ -21005,7 +21005,7 @@ var log = ulog('hooks');
 // portalDetailsUpdated: fired after the details in the sidebar have
 //              been (re-)rendered Provides data about the portal that
 //              has been selected.
-// chatDataAvailable: this hook runs after data for any of the chats
+// commDataAvailable: this hook runs after data for any of the chats
 //              has been received and processed, but not yet been
 //              displayed. The data hash contains both the unprocessed
 //              raw ajax response as well as the processed chat data
