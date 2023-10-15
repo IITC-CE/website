@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231015.092240
+// @version        0.36.1.20231015.093438
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-15-092240';
+plugin_info.dateTimeVersion = '2023-10-15-093438';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-15-092240';
+window.iitcBuildDate = '2023-10-15-093438';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3175,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-15-092240');
+  log.log('loading done, booting. Built: '+'2023-10-15-093438');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19600,7 +19600,7 @@ comm.sendChatMessage = function (tab, msg) {
 };
 
 comm._oldBBox = null;
-comm.genPostData = function (channel, _, getOlderMsgs) {
+comm.genPostData = function (channel, getOlderMsgs) {
   if (typeof channel !== 'string') {
     throw new Error('API changed: isFaction flag now a channel string - all, faction, alerts');
   }
@@ -19681,7 +19681,7 @@ comm.requestChannel = function (channel, getOlderMsgs, isRetry) {
   comm._requestRunning[channel] = true;
   $("#chatcontrols a[data-channel='" + channel + "']").addClass('loading');
 
-  var d = comm.genPostData(channel, comm._channels[channel], getOlderMsgs);
+  var d = comm.genPostData(channel, getOlderMsgs);
   window.postAjax(
     'getPlexts',
     d,
@@ -19849,7 +19849,7 @@ comm.renderMsgRow = function (data) {
   var timeCell = comm.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (window.TEAM_TO_CSS[data.player.team]) {
+  if (data.player.team === window.TEAM_ENL || data.player.team === window.TEAM_RES) {
     nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
   // highlight things said/done by the player in a unique colour
