@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231016.113839
+// @version        0.36.1.20231016.114114
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-16-113839';
+plugin_info.dateTimeVersion = '2023-10-16-114114';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-16-113839';
+window.iitcBuildDate = '2023-10-16-114114';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3175,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-16-113839');
+  log.log('loading done, booting. Built: '+'2023-10-16-114114');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19519,7 +19519,7 @@ comm.parseMsgData = function (data) {
     name: '',
     team: team,
   };
-  markup.forEach(function(ent) {
+  markup.forEach(function (ent) {
     switch (ent[0]) {
       case 'SENDER': // user generated messages
         player.name = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
