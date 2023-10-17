@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.1.20231017.131646
+// @version        0.4.1.20231017.132329
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,11 +22,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-17-131646';
+plugin_info.dateTimeVersion = '2023-10-17-132329';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
+/* global plugin */
 
 var changelog = [
   {
@@ -168,9 +169,7 @@ window.plugin.keys.storeLocal = function(mapping) {
 window.plugin.keys.loadLocal = function(mapping) {
   var objectJSON = localStorage[mapping.key];
   if(!objectJSON) return;
-  plugin.keys[mapping.field] = mapping.convertFunc
-                          ? mapping.convertFunc(JSON.parse(objectJSON))
-                          : JSON.parse(objectJSON);
+  plugin.keys[mapping.field] = mapping.convertFunc ? mapping.convertFunc(JSON.parse(objectJSON)) : JSON.parse(objectJSON);
 }
 
 // For backward compatibility, will change to use loadLocal after a few version
