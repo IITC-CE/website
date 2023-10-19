@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.12.2.20231013.170207
+// @version        0.12.3.20231019.140210
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-170207';
+plugin_info.dateTimeVersion = '2023-10-19-140210';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,6 +30,10 @@ plugin_info.pluginId = 'player-activity-tracker';
 /* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.12.3',
+    changes: ['Update for new COMM messages'],
+  },
   {
     version: '0.12.2',
     changes: ['🐛 - Exclude __MACHINA__ actions'],
@@ -174,24 +178,34 @@ window.plugin.playerTracker.processNewData = function(data) {
     if(json[1] < limit) return true;
 
     // find player and portal information
-    var plrname, lat, lng, name, address;
+    var plrname,
+      plrteam,
+      lat,
+      lng,
+      name,
+      address;
     var skipThisMessage = false;
     $.each(json[2].plext.markup, function(ind, markup) {
       switch(markup[0]) {
-      case 'TEXT':
-        // Destroy link and field messages depend on where the link or
-        // field was originally created. Therefore it’s not clear which
-        // portal the player is at, so ignore it.
-        if(markup[1].plain.indexOf('destroyed the Link') !== -1
-          || markup[1].plain.indexOf('destroyed a Control Field') !== -1
-          || markup[1].plain.indexOf('Your Link') !== -1) {
-          skipThisMessage = true;
-          return false;
-        }
-        break;
-      case 'PLAYER':
-        plrname = markup[1].plain;
-        break;
+        case 'TEXT':
+          // Destroy link and field messages depend on where the link or
+          // field was originally created. Therefore it’s not clear which
+          // portal the player is at, so ignore it.
+          if (
+            markup[1].plain.indexOf('destroyed the Link') !== -1 ||
+            markup[1].plain.indexOf('destroyed a Control Field') !== -1 ||
+            // COMM messages changed a bit, keep old rules ↑ in case of rollback
+            markup[1].plain.indexOf('destroyed the') !== -1 ||
+            markup[1].plain.indexOf('Your Link') !== -1
+          ) {
+            skipThisMessage = true;
+            return false;
+          }
+          break;
+        case 'PLAYER':
+          plrname = markup[1].plain;
+          plrteam = markup[1].team;
+          break;
       case 'PORTAL':
         // link messages are “player linked X to Y” and the player is at
         // X.
@@ -205,7 +219,7 @@ window.plugin.playerTracker.processNewData = function(data) {
     });
 
     // skip unusable events
-    if (!plrname || !lat || !lng || skipThisMessage || ![window.TEAM_RES, window.TEAM_ENL].includes(window.teamStringToId(json[2].plext.team))) {
+    if (!plrname || !lat || !lng || skipThisMessage || ![window.TEAM_RES, window.TEAM_ENL].includes(window.teamStringToId(plrteam))) {
       return true;
     }
 
@@ -221,7 +235,7 @@ window.plugin.playerTracker.processNewData = function(data) {
     // short-path if this is a new player
     if(!playerData || playerData.events.length === 0) {
       plugin.playerTracker.stored[plrname] = {
-        team: json[2].plext.team,
+        team: plrteam,
         events: [newEvent]
       };
       return true;
