@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Hide portal ownership
 // @category       Highlighter
-// @version        0.2.0.20231013.170207
+// @version        0.2.1.20231019.140210
 // @description    Show all portals as neutral, as if uncaptured. Great for creating plans.
 // @id             highlight-hide-team
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,12 +22,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-170207';
+plugin_info.dateTimeVersion = '2023-10-19-140210';
 plugin_info.pluginId = 'highlight-hide-team';
 //END PLUGIN AUTHORS NOTE
 
-/* exported setup --eslint */
+/* exported setup, changelog --eslint */
 /* global TEAM_NONE, getMarkerStyleOptions*/
+
+var changelog = [
+  {
+    version: '0.2.1',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 function hideOwnership (data) {
   var params = getMarkerStyleOptions({team: TEAM_NONE, level: 0});

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20231013.170207
+// @version        0.37.0.20231019.140210
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,13 +22,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-170207';
+plugin_info.dateTimeVersion = '2023-10-19-140210';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.37.0',
+    changes: ['Keep COMM message team in parsed data as player.team may differ from team'],
+  },
   {
     version: '0.36.1',
     changes: ['Revert sorted sidebar links'],
@@ -42,6 +46,7 @@ window.script_info.changelog = [
       'Added scanner link to info panel',
       'Sorted sidebar links',
       'Added window.formatDistance function for global use, which was previously in the bookmarks plugin',
+      'Function marked deprecated: portalApGainMaths, getPortalApGain, potentialPortalLevel, findPortalLatLng',
     ],
   },
 ];
@@ -50,7 +55,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-13-170207';
+window.iitcBuildDate = '2023-10-19-140210';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2449,6 +2454,156 @@ var ulog = (function (module) {
 }({})).exports;
 
 
+// *** module: _deprecated.js ***
+(function () {
+var log = ulog('_deprecated');
+/**
+ * functions that are not use by IITC itself
+ * and won't most likely not receive any updated
+ */
+/* global L,PLAYER -- eslint */
+
+/**
+ * @deprecated
+ *  given counts of resonators, links and fields, calculate the available AP
+ *  doesn't take account AP for resonator upgrades or AP for adding mods
+ */
+window.portalApGainMaths = function (resCount, linkCount, fieldCount) {
+  var deployAp = (8 - resCount) * window.DEPLOY_RESONATOR;
+  if (resCount === 0) deployAp += window.CAPTURE_PORTAL;
+  if (resCount !== 8) deployAp += window.COMPLETION_BONUS;
+  // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
+  var friendlyAp = deployAp;
+
+  var destroyResoAp = resCount * window.DESTROY_RESONATOR;
+  var destroyLinkAp = linkCount * window.DESTROY_LINK;
+  var destroyFieldAp = fieldCount * window.DESTROY_FIELD;
+  var captureAp = window.CAPTURE_PORTAL + 8 * window.DEPLOY_RESONATOR + window.COMPLETION_BONUS;
+  var destroyAp = destroyResoAp + destroyLinkAp + destroyFieldAp;
+  var enemyAp = destroyAp + captureAp;
+
+  return {
+    friendlyAp: friendlyAp,
+    enemyAp: enemyAp,
+    destroyAp: destroyAp,
+    destroyResoAp: destroyResoAp,
+    captureAp: captureAp,
+  };
+};
+
+/**
+ * @deprecated
+ * get the AP gains from a portal, based only on the brief summary data from portals, links and fields
+ * not entirely accurate - but available for all portals on the screen
+ */
+window.getPortalApGain = function (guid) {
+  var p = window.portals[guid];
+  if (p) {
+    var data = p.options.data;
+
+    var linkCount = window.getPortalLinksCount(guid);
+    var fieldCount = window.getPortalFieldsCount(guid);
+
+    var result = window.portalApGainMaths(data.resCount, linkCount, fieldCount);
+    return result;
+  }
+
+  return undefined;
+};
+
+/**
+ * @deprecated
+ * This function will return the potential level a player can upgrade it to
+ */
+window.potentialPortalLevel = function (d) {
+  var current_level = window.getPortalLevel(d);
+  var potential_level = current_level;
+
+  if (PLAYER.team === d.team) {
+    var resonators_on_portal = d.resonators;
+    var resonator_levels = new Array();
+
+    // figure out how many of each of these resonators can be placed by the player
+    var player_resontators = new Array();
+    for (var i = 1; i <= window.MAX_PORTAL_LEVEL; i++) {
+      player_resontators[i] = i > PLAYER.level ? 0 : window.MAX_RESO_PER_PLAYER[i];
+    }
+    $.each(resonators_on_portal, function (ind, reso) {
+      if (reso !== null && reso.owner === window.PLAYER.nickname) {
+        player_resontators[reso.level]--;
+      }
+      resonator_levels.push(reso === null ? 0 : reso.level);
+    });
+
+    resonator_levels.sort(function (a, b) {
+      return a - b;
+    });
+
+    // Max out portal
+    var install_index = 0;
+    for (var j = window.MAX_PORTAL_LEVEL; j >= 1; j--) {
+      for (var install = player_resontators[j]; install > 0; install--) {
+        if (resonator_levels[install_index] < j) {
+          resonator_levels[install_index] = j;
+          install_index++;
+        }
+      }
+    }
+
+    potential_level =
+      resonator_levels.reduce(function (a, b) {
+        return a + b;
+      }) / 8;
+  }
+  return potential_level;
+};
+
+/**
+ * @deprecated
+ * find the lat/lon for a portal, using any and all available data
+ * (we have the list of portals, the cached portal details, plus links and fields as sources of portal locations)
+ */
+window.findPortalLatLng = function (guid) {
+  if (window.portals[guid]) {
+    return window.portals[guid].getLatLng();
+  }
+
+  // not found in portals - try the cached (and possibly stale) details - good enough for location
+  var details = window.portalDetail.get(guid);
+  if (details) {
+    return L.latLng(details.latE6 / 1e6, details.lngE6 / 1e6);
+  }
+
+  // now try searching through fields
+  for (var fguid in window.fields) {
+    var f = window.fields[fguid].options.data;
+
+    for (var i in f.points) {
+      if (f.points[i].guid === guid) {
+        return L.latLng(f.points[i].latE6 / 1e6, f.points[i].lngE6 / 1e6);
+      }
+    }
+  }
+
+  // and finally search through links
+  for (var lguid in window.links) {
+    var l = window.links[lguid].options.data;
+    if (l.oGuid === guid) {
+      return L.latLng(l.oLatE6 / 1e6, l.oLngE6 / 1e6);
+    }
+    if (l.dGuid === guid) {
+      return L.latLng(l.dLatE6 / 1e6, l.dLngE6 / 1e6);
+    }
+  }
+
+  // no luck finding portal lat/lng
+  return undefined;
+};
+
+
+})();
+
+
 // *** module: app.js ***
 (function () {
 var log = ulog('app');
@@ -3168,7 +3323,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-13-170207');
+  log.log('loading done, booting. Built: '+'2023-10-19-140210');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19388,16 +19543,19 @@ window.chat.parseMsgData = function (data) {
 
   var markup = data[2].plext.markup;
 
-  var nick = '';
+  var player = {
+    name: '',
+    team: team,
+  };
   markup.forEach(function(ent) {
     switch (ent[0]) {
       case 'SENDER': // user generated messages
-        nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        player.name = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
         break;
 
       case 'PLAYER': // automatically generated messages
-        nick = ent[1].plain;
-        team = window.teamStringToId(ent[1].team);
+        player.name = ent[1].plain;
+        player.team = window.teamStringToId(ent[1].team);
         break;
 
       default:
@@ -19415,10 +19573,8 @@ window.chat.parseMsgData = function (data) {
     type: data[2].plext.plextType,
     narrowcast: systemNarrowcast,
     auto: auto,
-    player: {
-      name: nick,
-      team: team,
-    },
+    team: team,
+    player: player,
     markup: markup,
   };
 };

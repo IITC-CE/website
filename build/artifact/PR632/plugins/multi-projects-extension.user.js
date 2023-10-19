@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.1.20231013.170207
+// @version        0.1.2.20231019.140210
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,9 +22,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-13-170207';
+plugin_info.dateTimeVersion = '2023-10-19-140210';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
+
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.1.2',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 //
 // How to implement MPE in your plugin: https://github.com/IITC-CE/ingress-intel-total-conversion/wiki/Multi-Projects-Extension
