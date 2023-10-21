@@ -2,7 +2,7 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.2.20221118.204128
+// @version        0.2.3.20231021.203626
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/portal-counts.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/portal-counts.png
+// @icon64         https://iitc.app/extras/plugin-icons/portal-counts-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-204128';
+plugin_info.dateTimeVersion = '2023-10-21-203626';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
@@ -264,7 +266,13 @@ window.plugin.portalcounts.makeBar = function(portals, text, color, shift) {
   }
 
   $('<text>')
-    .html(text.substring(0, 3))
+    .html(
+      text
+        .replaceAll(/[^a-z]/gi, '')
+        .substring(0, 3)
+        .toLowerCase()
+        .capitalize()
+    )
     .attr({
       x: self.BAR_WIDTH * 0.5,
       y: self.BAR_TOP * 0.75,
@@ -403,6 +411,7 @@ var setup =  function() {
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

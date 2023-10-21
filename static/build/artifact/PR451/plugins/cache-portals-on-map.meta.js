@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Cache viewed portals on map
 // @category       Cache
-// @version        0.1.0.20221118.204128
+// @version        0.1.1.20231021.203626
 // @description    Cache the details of recently viewed portals and use this to populate the map when possible
 // @id             cache-portals-on-map
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,5 +10,7 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/cache-portals-on-map.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/cache-portals-on-map.png
+// @icon64         https://iitc.app/extras/plugin-icons/cache-portals-on-map-64.png
 // @grant          none
 // ==/UserScript==

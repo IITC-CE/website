@@ -2,7 +2,7 @@
 // @author         Fly33
 // @name           IITC plugin: Fly Links
 // @category       Draw
-// @version        0.5.0.20221118.204128
+// @version        0.5.1.20231021.203626
 // @description    Calculate how to link the portals to create the largest tidy set of nested fields. Enable from the layer chooser.
 // @id             fly-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/fly-links.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/fly-links.png
+// @icon64         https://iitc.app/extras/plugin-icons/fly-links-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,10 +22,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-204128';
+plugin_info.dateTimeVersion = '2023-10-21-203626';
 plugin_info.pluginId = 'fly-links';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.5.1',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 // use own namespace for plugin
 var flyLinks = {};
@@ -400,6 +410,7 @@ function setup () {
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.2.20221118.204128
+// @version        0.4.3.20231021.203626
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/bookmarks.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/bookmarks.png
+// @icon64         https://iitc.app/extras/plugin-icons/bookmarks-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,9 +22,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-204128';
+plugin_info.dateTimeVersion = '2023-10-21-203626';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
+
+/* global L -- eslint */
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.4.3',
+    changes: ['Extracted "formatDistance" function for global use'],
+  },
+];
 
 /* **********************************************************************
 
@@ -885,22 +897,20 @@ window.plugin.bookmarks.loadStorageBox = function() {
     var text = "You must select 2 or 3 portals!";
     var color = "red";
 
-    function formatDistance(distance) {
-      var text = digits(distance > 10000 ? (distance/1000).toFixed(2) + "km" : (Math.round(distance) + "m"));
-      return distance >= 200000
-        ? '<em title="Long distance link" class="help longdistance">'+text+'</em>'
-        : text;
-    }
+  function distanceElement(distance) {
+    var text = window.formatDistance(distance);
+    return distance >= 200000 ? '<em title="Long distance link" class="help longdistance">' + text + '</em>' : text;
+  }
 
     if(latlngs.length == 2) {
       var distance = L.latLng(latlngs[0]).distanceTo(latlngs[1]);
-      text = 'Distance between portals: ' + formatDistance(distance);
+    text = 'Distance between portals: ' + distanceElement(distance);
       color = "";
     } else if(latlngs.length == 3) {
       var longdistance = false;
       var distances = latlngs.map(function(ll1, i, latlngs) {
         var ll2 = latlngs[(i+1)%3];
-        return formatDistance(L.latLng(ll1).distanceTo(ll2));
+      return distanceElement(L.latLng(ll1).distanceTo(ll2));
       });
       text = 'Distances: ' + distances.join(", ");
       color = "";
@@ -2116,6 +2126,7 @@ window.plugin.bookmarks.initMPE = function(){
   }
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
