@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.34.0.20221118.204128
+// @version        0.37.0.20231021.203626
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/total-conversion-build.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/total-conversion-build.png
+// @icon64         https://iitc.app/extras/plugin-icons/total-conversion-build-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-204128';
+plugin_info.dateTimeVersion = '2023-10-21-203626';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,12 +31,33 @@ var IITC = {};
 window.IITC = IITC;
 
 window.script_info = plugin_info;
+window.script_info.changelog = [
+  {
+    version: '0.37.0',
+    changes: ['Keep COMM message team in parsed data as player.team may differ from team'],
+  },
+  {
+    version: '0.36.1',
+    changes: ['Revert sorted sidebar links'],
+  },
+  {
+    version: '0.36.0',
+    changes: [
+      'Ability to define and display changelog',
+      'Improved info panel styling',
+      'Timestamp added to link and field data',
+      'Added scanner link to info panel',
+      'Sorted sidebar links',
+      'Added window.formatDistance function for global use, which was previously in the bookmarks plugin',
+    ],
+  },
+];
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2022-11-18-204128';
+window.iitcBuildDate = '2023-10-21-203626';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -571,13 +594,16 @@ h2 {\
 \
 h2 #name {\
   font-weight: 300;\
+  display: inline;\
+  vertical-align: top;\
+  white-space: nowrap;\
+}\
+\
+h2 #name .playername {\
+  max-width: 70%;\
   display: inline-block;\
   overflow: hidden;\
   text-overflow: ellipsis;\
-  vertical-align: top;\
-  white-space: nowrap;\
-  width: 205px;\
-  position: relative;\
 }\
 \
 h2 #stats {\
@@ -589,16 +615,16 @@ h2 #stats {\
 #signout {\
   font-size: 12px;\
   font-weight: normal;\
-  line-height: 29px;\
   padding: 0 4px;\
-  position: absolute;\
-  top: 0;\
-  right: 0;\
   background-color: rgba(8, 48, 78, 0.5);\
   display: none; /* starts hidden */\
+  vertical-align: text-top;\
+}\
+#name:hover .playername {\
+  max-width: 50%;\
 }\
 #name:hover #signout {\
-  display: block;\
+  display: inline-block;\
 }\
 \
 h2 sup, h2 sub {\
@@ -609,22 +635,16 @@ h2 sup, h2 sub {\
 \
 \
 /* gamestats */\
-#gamestat {\
-  height: 22px;\
-}\
-\
 #gamestat span {\
-  display: block;\
-  float: left;\
+  display: inline-block;\
   font-weight: bold;\
   cursor:help;\
-  height: 21px;\
-  line-height: 22px;\
+  padding: 0 3px;\
+  box-sizing: border-box;\
 }\
 \
 #gamestat .res {\
   background: #005684;\
-  text-align: right;\
 }\
 \
 #gamestat .enl {\
@@ -659,18 +679,18 @@ input[type="search"], input[type="url"] {\
 #buttongeolocation {\
   position: absolute;\
   right: 0;\
-  top: 0;\
+  bottom: 0;\
   margin: 0;\
   border: 0 none transparent;\
   padding: 0 2px 0 0;\
-  height: 24px;\
+  height: 100%;\
   background-color: transparent;\
 }\
 #buttongeolocation:focus {\
   outline: 1px dotted #ffce00;\
 }\
 #buttongeolocation img {\
-  display: block;\
+  vertical-align: middle;\
 }\
 #searchwrapper h3 {\
   font-size: 1em;\
@@ -1539,6 +1559,14 @@ svg.icon-button {\
 .ui-dialog-aboutIITC .plugin-error {\
   text-decoration: line-through;\
 }\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child {\
+  display: none;\
+}\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2) {\
+  float: left;\
+}\
 '+'</style>'
   + '<style>'+'\
 /* required styles */\
@@ -2360,6 +2388,7 @@ window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geo
 // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
+window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
@@ -2380,8 +2409,9 @@ window.TEAM_RES = 1;
 window.TEAM_ENL = 2;
 window.TEAM_MAC = 3;
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
-window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', 'U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅'];
+window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '__MACHINA__'];
 window.TEAM_CODES = ['N', 'R', 'E', 'M'];
+window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
 
 window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
 window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
@@ -2552,13 +2582,15 @@ window.runOnAppBeforeBoot = function () {
   }
 
   if (app.intentPosLink) {
-    window.renderPortalUrl = function (lat, lng, title) {
+    window.renderPortalUrl = function (lat, lng, title, guid) {
       // one share link option - and the app provides an interface to share the URL,
       // share as a geo: intent (navigation via google maps), etc
 
-      var shareLink = $('<a>').text('Share portal').click(function () {
-        app.intentPosLink(lat, lng, window.map.getZoom(), title, true);
-      });
+      var shareLink = $('<a>')
+        .text('Share portal')
+        .click(function () {
+          window.app.intentPosLink(lat, lng, window.map.getZoom(), title, true, guid);
+        });
       $('.linkdetails').append($('<aside>').append(shareLink));
     };
   }
@@ -2935,10 +2967,12 @@ window.artifact.showArtifactList = function() {
 // *** module: boot.js ***
 (function () {
 var log = ulog('boot');
-/// SETUP /////////////////////////////////////////////////////////////
+// SETUP /////////////////////////////////////////////////////////////
 // these functions set up specific areas after the boot function
 // created a basic framework. All of these functions should only ever
 // be run once.
+
+/* global L, dialog -- eslint */
 
 window.setupTooltips = function (element) {
   element = element || $(document);
@@ -3004,6 +3038,25 @@ function setupIngressMarkers () {
   L.divIcon.coloredSvg = function (color, options) {
     return new L.DivIcon.ColoredSvg(color, options);
   };
+}
+
+function checkingIntelURL() {
+  if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
+    dialog({
+      title: 'IITC Warning',
+      html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
+      dialogClass: 'ui-dialog-non-standard-intel',
+      buttons: {
+        "Don't remind me": function () {
+          $(this).dialog('close');
+          localStorage['pass-checking-intel-url'] = true;
+        },
+        Dismiss: function () {
+          $(this).dialog('close');
+        },
+      },
+    });
+  }
 }
 
 /*
@@ -3122,7 +3175,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2022-11-18-204128');
+  log.log('loading done, booting. Built: '+'2023-10-21-203626');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -3132,6 +3185,7 @@ function boot() {
   var loadPlugins = prepPluginsToLoad();
   loadPlugins('boot');
 
+  checkingIntelURL();
   setupIngressMarkers();
   window.extractFromStock();
   window.setupIdle();
@@ -19340,7 +19394,7 @@ window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAsc
   }
 };
 
-window.chat.parseMsgData = function(data) {
+window.chat.parseMsgData = function (data) {
   var categories = data[2].plext.categories;
   var isPublic = (categories & 1) === 1;
   var isSecure = (categories & 2) === 2;
@@ -19349,26 +19403,29 @@ window.chat.parseMsgData = function(data) {
   var msgToPlayer = msgAlert && (isPublic || isSecure);
 
   var time = data[1];
-  var team = data[2].plext.team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
+  var team = window.teamStringToId(data[2].plext.team);
   var auto = data[2].plext.plextType !== 'PLAYER_GENERATED';
   var systemNarrowcast = data[2].plext.plextType === 'SYSTEM_NARROWCAST';
 
   var markup = data[2].plext.markup;
 
-  var nick = '';
+  var player = {
+    name: '',
+    team: team,
+  };
   markup.forEach(function(ent) {
     switch (ent[0]) {
-    case 'SENDER': // user generated messages
-      nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
-      break;
+      case 'SENDER': // user generated messages
+        player.name = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        break;
 
-    case 'PLAYER': // automatically generated messages
-      nick = ent[1].plain;
-      team = ent[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
-      break;
+      case 'PLAYER': // automatically generated messages
+        player.name = ent[1].plain;
+        player.team = window.teamStringToId(ent[1].team);
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   });
 
@@ -19382,10 +19439,8 @@ window.chat.parseMsgData = function(data) {
     type: data[2].plext.plextType,
     narrowcast: systemNarrowcast,
     auto: auto,
-    player: {
-      name: nick,
-      team: team,
-    },
+    team: team,
+    player: player,
     markup: markup,
   };
 };
@@ -19441,8 +19496,9 @@ window.chat.renderPortal = function (portal) {
 };
 
 window.chat.renderFactionEnt = function (faction) {
-  var name = faction.team === 'ENLIGHTENED' ? 'Enlightened' : 'Resistance';
-  var spanClass = faction.team === 'ENLIGHTENED' ? TEAM_TO_CSS[TEAM_ENL] : TEAM_TO_CSS[TEAM_RES];
+  var teamId = window.teamStringToId(faction.team);
+  var name = window.TEAM_NAMES[teamId];
+  var spanClass = window.TEAM_TO_CSS[teamId];
   return $('<div>').html($('<span>')
     .attr('class', spanClass)
     .text(name)).html();
@@ -19529,8 +19585,8 @@ window.chat.renderMsgRow = function(data) {
   var timeCell = chat.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (data.player.team === TEAM_ENL || data.player.team === TEAM_RES) {
-    nickClasses.push(TEAM_TO_CSS[data.player.team]);
+  if (window.TEAM_TO_CSS[data.player.team]) {
+    nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
   // highlight things said/done by the player in a unique colour
   // (similar to @player mentions from others in the chat text itself)
@@ -20366,23 +20422,22 @@ window.aboutIITC = function() {
 }
 
 function createDialogContent() {
-  var html = ''
-    + '<div><b>About IITC</b></div> '
-    + '<div>Ingress Intel Total Conversion</div> '
-    + '<hr>'
-    + '<div>'
-    + '  <a href="'+'https://iitc.app/'+'" target="_blank">IITC Homepage</a> |'
-    + '  <a href="'+'https://t.me/iitc_news'+'" target="_blank">Telegram channel</a><br />'
-    + '   On the script’s homepage you can:'
-    + '   <ul>'
-    + '     <li>Find Updates</li>'
-    + '     <li>Get Plugins</li>'
-    + '     <li>Report Bugs</li>'
-    + '     <li>Contribute!</li>'
-    + '   </ul>'
-    + '</div>'
-    + '<hr>'
-    + '<div>Version: ' + getIITCVersion() + '</div>';
+  var html = `<div><b>About IITC</b></div>
+              <div>Ingress Intel Total Conversion</div>
+              <hr>
+              <div>
+               <a href="${'https://iitc.app/'}" target="_blank">IITC Homepage</a> |
+               <a href="${'https://t.me/iitc_news'}" target="_blank">Telegram channel</a><br />
+               On the script’s homepage you can:
+               <ul>
+                 <li>Find Updates</li>
+                 <li>Get Plugins</li>
+                 <li>Report Bugs</li>
+                 <li>Contribute!</li>
+               </ul>
+              </div>
+              <hr>
+              <div>Version: ${getIITCVersion()} ${createChangelog(window.script_info)}</div>`;
 
   if (isShortOnLocalStorage()) {
     html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
@@ -20428,6 +20483,8 @@ function convertPluginInfo(info, index) {
   //   (atm: IITC-Mobile for iOS)
   var result = {
     build: info.buildName,
+    changelog: info.changelog,
+    id: info.pluginId,
     name: info.pluginId,
     date: info.dateTimeVersion,
     error: info.error,
@@ -20456,8 +20513,33 @@ function convertPluginInfo(info, index) {
   return result;
 }
 
+function createChangelog(plugin) {
+  var id = 'plugin-changelog-' + plugin.id;
+  return (
+    `<a onclick="$('#${id}').toggle()">changelog</a>` +
+    `<ul id="${id}" style="display: none;">` +
+    plugin.changelog
+      .map(function (logEntry) {
+        return (
+          '<li>' +
+          logEntry.version +
+          '<ul>' +
+          logEntry.changes
+            .map(function (change) {
+              return `<li>${change}</li>`;
+            })
+            .join('') +
+          '</ul></li>'
+        );
+      })
+      .join('') +
+    '</ul>'
+  );
+}
+
 function pluginInfoToString(p, extra) {
   var info = {
+    changelog: '',
     class: '',
     description: p.description || '',
     name: p.name,
@@ -20473,7 +20555,11 @@ function pluginInfoToString(p, extra) {
     info.description = p.error;
   }
 
-  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo}</li>', info);
+  if (p.changelog) {
+    info.changelog = createChangelog(p);
+  }
+
+  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo} {changelog}</li>', info);
 }
 
 
@@ -20736,7 +20822,7 @@ window.getTeam = function (details) {
 };
 
 window.teamStringToId = function (teamStr) {
-  var teamIndex = window.TEAM_NAMES.indexOf(teamStr);
+  var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
   if (teamIndex >= 0) return teamIndex;
   teamIndex = window.TEAM_CODES.indexOf(teamStr);
   if (teamIndex >= 0) return teamIndex;
@@ -21197,11 +21283,17 @@ window.updateGameScore = function(data) {
     var s = r+e;
     var rp = r/s*100, ep = e/s*100;
     r = digits(r), e = digits(e);
-    var rs = '<span class="res" style="width:'+rp+'%;">'+Math.round(rp)+'%&nbsp;</span>';
-    var es = '<span class="enl" style="width:'+ep+'%;">&nbsp;'+Math.round(ep)+'%</span>';
-    $('#gamestat').html(rs+es).one('click', function() { window.updateGameScore() });
+    var teamId = window.teamStringToId(window.PLAYER.team);
+    var rs = '<span class="res" style="width:' + rp + '%;text-align: ' + (teamId === window.TEAM_RES ? 'right' : 'left') + ';">' + Math.round(rp) + '%</span>';
+    var es = '<span class="enl" style="width:' + ep + '%;text-align: ' + (teamId === window.TEAM_ENL ? 'right' : 'left') + ';">' + Math.round(ep) + '%</span>';
+    var gamestatElement = $('#gamestat');
+    gamestatElement.html(teamId === window.TEAM_RES ? rs + es : es + rs).one('click', function () {
+      window.updateGameScore();
+    });
     // help cursor via “#gamestat span”
-    $('#gamestat').attr('title', 'Resistance:\t'+r+' MindUnits\nEnlightened:\t'+e+' MindUnits');
+    var resMu = 'Resistance:\t' + r + ' MindUnits';
+    var enlMu = 'Enlightened:\t' + e + ' MindUnits';
+    gamestatElement.attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
   } else if (data && data.error) {
     log.warn('game score failed to load: '+data.error);
   } else {
@@ -22072,7 +22164,7 @@ function createDefaultOverlays() {
     addLayers[resistanceLayer.options.name] = resistanceLayer;
   }
 
-  // and just put U̶͚̓̍N̴̖̈K̠͔̍͑̂͜N̞̥͋̀̉Ȯ̶̹͕̀W̶̢͚͑̚͝Ṉ̨̟̒̅ faction last
+  // and just put __MACHINA__ faction last
   addLayers[window.TEAM_NAME_MAC] = machinaLayer;
 
   return addLayers;
@@ -22726,37 +22818,44 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
 }
 
 
-window.Render.prototype.createPlaceholderPortalEntity = function(guid,latE6,lngE6,team) {
+window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
   // intel no longer returns portals at anything but the closest zoom
   // stock intel creates 'placeholder' portals from the data in links/fields - IITC needs to do the same
   // we only have the portal guid, lat/lng coords, and the faction - no other data
   // having the guid, at least, allows the portal details to be loaded once it's selected. however,
   // no highlighters, portal level numbers, portal names, useful counts of portals, etc are possible
 
+  // zero will mean any other source of portal data will have a higher timestamp
+  timestamp = timestamp || 0;
 
   var ent = [
-    guid,       //ent[0] = guid
-    0,          //ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
-                //ent[2] = an array with the entity data
-    [ 'p',      //0 - a portal
-      team,     //1 - team
-      latE6,    //2 - lat
-      lngE6     //3 - lng
-    ]
+    guid, // ent[0] = guid
+    -1, // ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
+    // ent[2] = an array with the entity data
+    [
+      'p', // 0 - a portal
+      team, // 1 - team
+      latE6, // 2 - lat
+      lngE6, // 3 - lng
+    ],
   ];
 
   // placeholder portals don't have a useful timestamp value - so the standard code that checks for updated
   // portal details doesn't apply
   // so, check that the basic details are valid and delete the existing portal if out of date
+  var portalMoved = false;
   if (guid in window.portals) {
     var p = window.portals[guid];
-    if (team != p.options.data.team || latE6 != p.options.data.latE6 || lngE6 != p.options.data.lngE6) {
-      // team or location have changed - delete existing portal
+    portalMoved = latE6 !== p.options.data.latE6 || lngE6 !== p.options.data.lngE6;
+    if (team !== p.options.data.team && p.options.timestamp < timestamp) {
+      // team - delete existing portal
       this.deletePortalEntity(guid);
     }
   }
 
-  this.createPortalEntity(ent, 'core'); // placeholder
+  if (!portalMoved) {
+    this.createPortalEntity(ent, 'core'); // placeholder
+  }
 
 }
 
@@ -22872,6 +22971,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
 
   var data = {
 //    type: ent[2][0],
+    timestamp: ent[1],
     team: ent[2][1],
     points: ent[2][2].map(function(arr) { return {guid: arr[0], latE6: arr[1], lngE6: arr[2] }; })
   };
@@ -22879,7 +22979,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   //create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
   for (var i=0; i<3; i++) {
     var p=data.points[i];
-    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team);
+    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, data.timestamp);
   }
 
   // check if entity already exists
@@ -22912,7 +23012,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
     team: team,
     ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
     guid: ent[0],
-    timestamp: ent[1],
+    timestamp: data.timestamp,
     data: data,
   });
 
@@ -22936,6 +23036,7 @@ window.Render.prototype.createLinkEntity = function (ent) {
 
   var data = { // TODO add other properties and check correction direction
 //    type:   ent[2][0],
+    timestamp: ent[1],
     team:   ent[2][1],
     oGuid:  ent[2][2],
     oLatE6: ent[2][3],
@@ -22946,9 +23047,8 @@ window.Render.prototype.createLinkEntity = function (ent) {
   };
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
-  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team);
-  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team);
-
+  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team, data.timestamp);
+  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team, data.timestamp);
 
   // check if entity already exists
   if (ent[0] in window.links) {
@@ -24319,6 +24419,10 @@ window.portalDetail.get = function(guid) {
   return cache.get(guid);
 }
 
+window.portalDetail.store = function (guid, dict, freshtime) {
+  return cache.store(guid, dict, freshtime);
+};
+
 window.portalDetail.isFresh = function(guid) {
   return cache.isFresh(guid);
 }
@@ -24397,7 +24501,7 @@ window.resetScrollOnNewPortal = function() {
 };
 
 // to be ovewritten in app.js
-window.renderPortalUrl = function (lat, lng, title) {
+window.renderPortalUrl = function (lat, lng, title, guid) {
   var linkDetails = $('.linkdetails');
 
   // a permalink for the portal
@@ -24406,6 +24510,19 @@ window.renderPortalUrl = function (lat, lng, title) {
     title: 'Create a URL link to this portal'}
   ).text('Portal link');
   linkDetails.append($('<aside>').append(permaHtml));
+
+  var scannerLink = $('<a>')
+    .attr({
+      href: window.makePrimeLink(guid, lat, lng),
+      title: 'Copy link to this portal for Ingress Prime',
+    })
+    .click(function (event) {
+      navigator.clipboard.writeText(event.target.href);
+      event.stopPropagation();
+      return false;
+    })
+    .text('Copy scanner link');
+  linkDetails.append($('<aside>').append(scannerLink));
 
   // and a map link popup dialog
   var mapHtml = $('<a>').attr({
@@ -24604,7 +24721,7 @@ window.getPortalMiscDetails = function(guid,d) {
 
     if (d.artifactBrief && d.artifactBrief.target && Object.keys(d.artifactBrief.target).length > 0) {
       var targets = Object.keys(d.artifactBrief.target);
-//currently (2015-07-10) we no longer know the team each target portal is for - so we'll just show the artifact type(s) 
+      // currently (2015-07-10) we no longer know the team each target portal is for - so we'll just show the artifact type(s)
        randDetails += '<div id="artifact_target">Target portal: '+targets.map(function(x) { return x.capitalize(); }).join(', ')+'</div>';
     }
 
@@ -24724,15 +24841,15 @@ window.getRangeText = function(d) {
 
   if(!range.isLinkable) title += '\nPortal is missing resonators,\nno new links can be made';
 
-  return ['range',
-      '<a onclick="window.rangeLinkClick()"'
-    + (range.isLinkable ? '' : ' style="text-decoration:line-through;"')
-    + '>'
-    + (range.range > 1000
-      ? Math.floor(range.range/1000) + ' km'
-      : Math.floor(range.range)      + ' m')
-    + '</a>',
-    title];
+  return [
+    'range',
+    '<a onclick="window.rangeLinkClick()"' +
+      (range.isLinkable ? '' : ' style="text-decoration:line-through;"') +
+      '>' +
+      window.formatDistance(range.range) +
+      '</a>',
+    title,
+  ];
 }
 
 
@@ -25103,32 +25220,21 @@ window.getCurrentPortalEnergy = function(d) {
 window.getPortalRange = function(d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
-
-  var resoMissing = false;
-  // currently we get a short resonator array when some are missing
-  if (d.resonators.length < 8) {
-    resoMissing = true;
-  }
-  // but in the past we used to always get an array of 8, but will 'null' objects for some entries. maybe that will return?
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso) {
-      resoMissing = true;
-      return;
-    }
-  });
-
   var range = {
-    base: 160*Math.pow(getPortalLevel(d), 4),
-    boost: getLinkAmpRangeBoost(d)
+    base: window.teamStringToId(d.team) === window.TEAM_MAC ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(window.getPortalLevel(d), 4),
+    boost: window.getLinkAmpRangeBoost(d),
   };
 
   range.range = range.boost * range.base;
-  range.isLinkable = !resoMissing;
+  range.isLinkable = d.resCount === 8;
 
   return range;
 }
 
 window.getLinkAmpRangeBoost = function(d) {
+  if (window.teamStringToId(d.team) === window.TEAM_MAC) {
+    return 1.0;
+  }
   // additional range boost calculation
 
   // link amps scale: first is full, second a quarter, the last two an eighth
@@ -25207,7 +25313,7 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
 window.potentialPortalLevel = function(d) {
   var current_level = getPortalLevel(d);
   var potential_level = current_level;
-  
+
   if(PLAYER.team === d.team) {
     var resonators_on_portal = d.resonators;
     var resonator_levels = new Array();
@@ -25220,13 +25326,13 @@ window.potentialPortalLevel = function(d) {
       if(reso !== null && reso.owner === window.PLAYER.nickname) {
         player_resontators[reso.level]--;
       }
-      resonator_levels.push(reso === null ? 0 : reso.level);  
+      resonator_levels.push(reso === null ? 0 : reso.level);
     });
-    
+
     resonator_levels.sort(function(a, b) {
       return(a - b);
     });
-    
+
     // Max out portal
     var install_index = 0;
     for(var i=MAX_PORTAL_LEVEL;i>=1; i--) {
@@ -27114,17 +27220,18 @@ window.setupPlayerStat = function () {
         + '\nInvites:\t'+PLAYER.available_invites
         + '\n\nNote: your player stats can only be updated by a full reload (F5)';
 
-  $('#playerstat').html(''
-    + '<h2 title="'+t+'">'+level+'&nbsp;'
-    + '<div id="name">'
-    + '<span class="'+cls+'">'+PLAYER.nickname+'</span>'
-    + '<a href="https://intel.ingress.com/logout" id="signout">sign out</a>'
-    + '</div>'
-    + '<div id="stats">'
-    + '<sup>XM: '+xmRatio+'%</sup>'
-    + '<sub>' + (nextLvlAp > 0 ? 'level: '+lvlApProg+'%' : 'max level') + '</sub>'
-    + '</div>'
-    + '</h2>'
+  $('#playerstat').html(
+    `<h2 title="${t}">
+      ${level}
+      <div id="name">
+        <span class="playername ${cls}">${window.PLAYER.nickname}</span>
+        <a href="https://intel.ingress.com/logout" id="signout">sign out</a>
+      </div>
+      <div id="stats">
+        <sup>XM: ${xmRatio}%</sup>
+        <sub>${nextLvlAp > 0 ? 'level: ' + lvlApProg + '%' : 'max level'}</sub>
+      </div>
+    </h2>`
   );
 };
 
@@ -27332,8 +27439,36 @@ body {\
   background-color: #ff0028 !important;\
 }\
 \
+#playerstat {\
+  height: initial;\
+}\
+\
+#playerstat h2 {\
+  display: flex;\
+  justify-content: space-between;\
+  flex-wrap: wrap;\
+  padding: 5px;\
+}\
+\
+#playerstat h2 #name {\
+  display: flex;\
+  align-items: center;\
+}\
+\
+#playerstat h2 #name .playername,\
+#playerstat h2 #name:hover .playername{\
+  max-width: 60vw;\
+}\
+\
+#playerstat h2 #stats {\
+  white-space: nowrap;\
+  overflow: initial;\
+}\
+\
 #name #signout { /* no hover, always show signout button */\
-  display: block;\
+  display: inline-block;\
+  position: initial;\
+  margin-left: 4px;\
 }\
 \
 #sidebar, #chatcontrols, #chat, #chatinput {\
@@ -27345,9 +27480,6 @@ body {\
   margin-left: 5px !important;\
 }\
 \
-#searchwrapper {\
-  font-size: 1.2em;\
-}\
 #searchwrapper .ui-accordion-header {\
   padding: 0.3em 0;\
 }\
@@ -27425,10 +27557,6 @@ body {\
 \
 #sidebar > * {\
   width: 100%;\
-}\
-\
-#playerstat {\
-  margin-top: 5px;\
 }\
 \
 #portaldetails {\
@@ -28085,6 +28213,9 @@ window.formatInterval = function(seconds,maxTerms) {
   return terms.join(' ');
 }
 
+window.formatDistance = function (distance) {
+  return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
+};
 
 window.rangeLinkClick = function() {
   if(window.portalRangeIndicator)
@@ -28276,6 +28407,10 @@ window.pnpoly = function (polygon, point) {
   }
   // Let's make js as magical as C. Yay.
   return !!inside;
+};
+
+window.makePrimeLink = function (guid, lat, lng) {
+  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
 };
 
 // @function makePermalink(latlng?: LatLng, options?: Object): String

@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Periodic refresh
 // @category       Tweaks
-// @version        0.1.0.20221118.204128
+// @version        0.1.1.20231021.203626
 // @description    For use for unattended display screens only, this plugin causes idle mode to be left once per hour.
 // @id             periodic-refresh
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/periodic-refresh.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/periodic-refresh.png
+// @icon64         https://iitc.app/extras/plugin-icons/periodic-refresh-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,10 +22,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-204128';
+plugin_info.dateTimeVersion = '2023-10-21-203626';
 plugin_info.pluginId = 'periodic-refresh';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.1.1',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 window.plugin.periodicRefresh = function() {};
 
@@ -44,6 +54,7 @@ window.plugin.periodicRefresh.setup = function() {
 var setup = window.plugin.periodicRefresh.setup;
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function

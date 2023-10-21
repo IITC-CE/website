@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.2.1.20221118.204128
+// @version        0.3.0.20231021.203626
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -10,6 +10,8 @@
 // @downloadURL    https://iitc.app/build/artifact/PR451/plugins/regions.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
+// @icon           https://iitc.app/extras/plugin-icons/regions.png
+// @icon64         https://iitc.app/extras/plugin-icons/regions-64.png
 // @grant          none
 // ==/UserScript==
 
@@ -20,10 +22,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2022-11-18-204128';
+plugin_info.dateTimeVersion = '2023-10-21-203626';
 plugin_info.pluginId = 'regions';
 //END PLUGIN AUTHORS NOTE
 
+/* global S2 */
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.3.0',
+    changes: ['a fix in the hilbercurve calculation', 'fix region-search by enhance the cell-id'],
+  },
+];
 
 // use own namespace for plugin
 window.plugin.regions = function() {};
@@ -198,7 +209,7 @@ var IJToST = function(ij,order,offsets) {
 // note: rather then calculating the final integer hilbert position, we just return the list of quads
 // this ensures no precision issues whth large orders (S3 cell IDs use up to 30), and is more
 // convenient for pulling out the individual bits as needed later
-var pointToHilbertQuadList = function(x,y,order) {
+var pointToHilbertQuadList = function(face, x,y,order) {
   var hilbertMap = {
     'a': [ [0,'d'], [1,'a'], [3,'b'], [2,'a'] ],
     'b': [ [2,'b'], [1,'b'], [3,'a'], [0,'c'] ],
@@ -206,7 +217,7 @@ var pointToHilbertQuadList = function(x,y,order) {
     'd': [ [0,'a'], [3,'c'], [1,'d'], [2,'d'] ]  
   };
 
-  var currentSquare='a';
+  var currentSquare = face & 1 ? 'd' : 'a';
   var positions = [];
 
   for (var i=order-1; i>=0; i--) {
@@ -226,7 +237,34 @@ var pointToHilbertQuadList = function(x,y,order) {
   return positions;
 };
 
+  /**
+   * reverse of @see pointToHilbertQuadList
+   */
+  var hilbertQuadListToPoint = function (face, positions) {
+    const hilbertMapReverse = {
+      'a': [[0, 'd'], [1, 'a'], [3, 'a'], [2, 'b']],
+      'b': [[3, 'c'], [1, 'b'], [0, 'b'], [2, 'a']],
+      'c': [[3, 'b'], [2, 'c'], [0, 'c'], [1, 'd']],
+      'd': [[0, 'a'], [2, 'd'], [3, 'd'], [1, 'c']]
+    };
 
+    let currentSquare = face & 1 ? 'd' : 'a';
+    const level = positions.length;
+
+    let i = 0;
+    let j = 0;
+
+    positions.forEach(v => {
+      const t = hilbertMapReverse[currentSquare][v]
+      i <<= 1;
+      j <<= 1;
+      if (t[0] & 2) i |= 1;
+      if (t[0] & 1) j |= 1;
+      currentSquare = t[1];
+    });
+
+    return [i, j];
+  };
 
 
 // S2Cell class
@@ -255,6 +293,14 @@ S2.S2Cell.FromFaceIJ = function(face,ij,level) {
   return cell;
 };
 
+  /**
+     * Create cell by face and hilbertcurve position
+     * (this is like the original CellID construction)
+     */
+  S2.S2Cell.FromFacePosition = function (face, position) {
+    const ij = hilbertQuadListToPoint(face, position)
+    return S2.S2Cell.FromFaceIJ(face, ij, position.length);
+  };
 
 S2.S2Cell.prototype.toString = function() {
   return 'F'+this.face+'ij['+this.ij[0]+','+this.ij[1]+']@'+this.level;
@@ -289,7 +335,7 @@ S2.S2Cell.prototype.getCornerLatLngs = function() {
 
 
 S2.S2Cell.prototype.getFaceAndQuads = function() {
-  var quads = pointToHilbertQuadList(this.ij[0], this.ij[1], this.level);
+  var quads = pointToHilbertQuadList(this.face, this.ij[0], this.ij[1], this.level);
 
   return [this.face,quads];
 };
@@ -378,14 +424,7 @@ window.plugin.regions.CODE_WORDS = [
 window.plugin.regions.REGEXP = new RegExp('^(?:(?:(' + plugin.regions.FACE_NAMES.join('|') + ')-?)?((?:1[0-6])|(?:0?[1-9]))-?)?(' +
   plugin.regions.CODE_WORDS.join('|') + ')(?:-?((?:1[0-5])|(?:0?\\d)))?$', 'i');
 
-window.plugin.regions.regionName = function(cell) {
-  // ingress does some odd things with the naming. for some faces, the i and j coords are flipped when converting
-  // (and not only the names - but the full quad coords too!). easiest fix is to create a temporary cell with the coords
-  // swapped
-  if (cell.face == 1 || cell.face == 3 || cell.face == 5) {
-    cell = S2.S2Cell.FromFaceIJ ( cell.face, [cell.ij[1], cell.ij[0]], cell.level );
-  }
-
+window.plugin.regions.regionName = function (cell) {
   // first component of the name is the face
   var name = window.plugin.regions.FACE_NAMES[cell.face];
 
@@ -415,51 +454,26 @@ window.plugin.regions.search = function(query) {
     return string.match(window.plugin.regions.REGEXP);
   });
   if(!matches.every(function(match) { return match !== null; })) return;
-  
+
   var currentCell = window.plugin.regions.regionName(S2.S2Cell.FromLatLng(map.getCenter(), 6));
-  
+
   matches.forEach(function(match) {
     if(!match[1])
       match[1] = currentCell.substr(0, 2);
     else
       match[1] = match[1].toUpperCase();
-    
+
     if(!match[2])
       match[2] = currentCell.substr(2,2);
-    
+
     match[3] = match[3].toUpperCase();
-    
+
     var result = window.plugin.regions.getSearchResult(match);
     if(result) query.addResult(result);
   });
 }
 
-// rot and d2xy from Wikipedia
-window.plugin.regions.rot = function(n, x, y, rx, ry) {
-  if(ry == 0) {
-    if(rx == 1) {
-      x = n-1 - x;
-      y = n-1 - y;
-    }
-
-    return [y, x];
-  }
-  return [x, y];
-}
-window.plugin.regions.d2xy = function(n, d) {
-  var rx, ry, s, t = d, xy = [0, 0];
-  for(s=1; s<n; s*=2) {
-    rx = 1 & (t/2);
-    ry = 1 & (t ^ rx);
-    xy = window.plugin.regions.rot(s, xy[0], xy[1], rx, ry);
-    xy[0] += s * rx;
-    xy[1] += s * ry;
-    t /= 4;
-  }
-  return xy;
-}
-
-window.plugin.regions.getSearchResult = function(match) {
+window.plugin.regions.getSearchResult = function (match) {
   var faceId = window.plugin.regions.FACE_NAMES.indexOf(match[1]);
   var id1 = parseInt(match[2]);
   var codeWordId = window.plugin.regions.CODE_WORDS.indexOf(match[3]);
@@ -472,37 +486,30 @@ window.plugin.regions.getSearchResult = function(match) {
   // face is used as-is
 
   // id1 is the region 'i' value (first 4 bits), codeword is the 'j' value (first 4 bits)
-  var regionI = id1-1;
-  var regionJ = codeWordId;
+  var cell = S2.S2Cell.FromFaceIJ(faceId, [id1 - 1, codeWordId], 4);
 
-  var result = {}, level;
+  var result = {};
 
-  if(id2 === undefined) {
+  if (id2 === undefined) {
     result.description = 'Regional score cells (cluster of 16 cells)';
-    result.icon = 'data:image/svg+xml;base64,'+btoa('\
+    result.icon = 'data:image/svg+xml;base64,' + btoa('\
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\
 	<path style="fill:orange;stroke:none" d="M 1,3.5 9,0 11,8.5 3,12 z"/>\
 </svg>\
 '.replace(/orange/, 'gold'));
-    level = 4;
   } else {
     result.description = 'Regional score cell';
-    result.icon = 'data:image/svg+xml;base64,'+btoa('\
+    result.icon = 'data:image/svg+xml;base64,' + btoa('\
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\
 	<path style="fill:orange;stroke:none" d="M 1,3.5 9,0 11,8.5 3,12 z"/>\
 </svg>\
 ');
-    level = 6;
 
-    var xy = window.plugin.regions.d2xy(4, id2);
-    regionI = (regionI << 2) + xy[0];
-    regionJ = (regionJ << 2) + xy[1];
+    // eslint-disable-next-line no-unused-vars
+    const [_, positions] = cell.getFaceAndQuads();
+    positions.push(Math.floor(id2 / 4), id2 % 4);
+    cell = S2.S2Cell.FromFacePosition(faceId, positions);
   }
-
-  // as in the name-construction above, for odd numbered faces, the I and J need swapping
-  var cell = (faceId % 2 == 1)
-    ? S2.S2Cell.FromFaceIJ(faceId, [regionJ,regionI], level)
-    : S2.S2Cell.FromFaceIJ(faceId, [regionI,regionJ], level);
 
   var corners = cell.getCornerLatLngs();
 
@@ -636,6 +643,7 @@ window.plugin.regions.drawCell = function(cell) {
 var setup =  window.plugin.regions.setup;
 
 setup.info = plugin_info; //add the script info data to the function as a property
+if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];
 window.bootPlugins.push(setup);
 // if IITC has already booted, immediately run the 'setup' function
