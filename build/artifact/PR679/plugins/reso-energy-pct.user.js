@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Reso energy % in portal details
 // @category       Portal Info
-// @version        0.1.3.20231029.220249
+// @version        0.1.3.20231029.224149
 // @description    Show resonator energy percentage on resonator energy bar in portal details panel.
 // @id             reso-energy-pct
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-29-220249';
+plugin_info.dateTimeVersion = '2023-10-29-224149';
 plugin_info.pluginId = 'reso-energy-pct';
 //END PLUGIN AUTHORS NOTE
 

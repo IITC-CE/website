@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.0.20231029.220249
+// @version        0.37.0.20231029.224149
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,13 +22,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-29-220249';
+plugin_info.dateTimeVersion = '2023-10-29-224149';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.37.1',
+    changes: ['New machina ranges according to latest research - https://linktr.ee/machina.research'],
+  },
   {
     version: '0.37.0',
     changes: ['Keep COMM message team in parsed data as player.team may differ from team'],
@@ -54,7 +58,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-29-220249';
+window.iitcBuildDate = '2023-10-29-224149';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3172,7 +3176,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-29-220249');
+  log.log('loading done, booting. Built: '+'2023-10-29-224149');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
