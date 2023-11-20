@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.1.20231120.030525
+// @version        0.8.1.20231120.032612
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-11-20-030525';
+plugin_info.dateTimeVersion = '2023-11-20-032612';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -677,10 +677,10 @@ function createClustersInfoDialog() {
       }
     })
     .filter((v) => !!v);
-  html.append(machinaTools.linkMaxLengthsHtml(linkLengths));
-  html.append(htmlLines);
-
-  if (!html.children().length) {
+  if (htmlLines.length && linkLengths.length) {
+    html.append(machinaTools.linkMaxLengthsHtml(linkLengths));
+    html.append(htmlLines);
+  } else {
     html.append('No Clusters found.');
   }
   return html;
@@ -868,8 +868,8 @@ div[aria-describedby="dialog-machina-conflict-area-info"] button:first-of-type {
 \
 .machina-link-length {\
     border: 1px solid;\
-    padding: 2px 10px;\
-    margin: 10px 0;\
+    padding: 2px 5px;\
+    margin: 5px 0;\
 }\
 \
 .machina-link-length.exceeded {\
