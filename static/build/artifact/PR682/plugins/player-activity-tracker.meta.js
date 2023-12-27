@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.12.3.20231126.040535
+// @version        0.12.3.20231227.220237
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

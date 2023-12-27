@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.1.20231126.040535
+// @version        0.8.1.20231227.220237
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-11-26-040535';
+plugin_info.dateTimeVersion = '2023-12-27-220237';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -732,7 +732,7 @@ machinaTools.refreshLinkLengths = function () {
       .filter((l) => l.options.team === window.TEAM_MAC && map.getBounds().contains(L.latLng(l.options.data.oLatE6 / 1e6, l.options.data.oLngE6 / 1e6)))
       .reduce((previousValue, link) => {
         var origin = window.portals[link.options.data.oGuid];
-        if (origin) {
+        if (origin && origin.options.data.resCount === 8) {
           var level = origin.options.level;
           var points = link.getLatLngs();
           var linkLength = points[0].distanceTo(points[1]);
