@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Scale bar
 // @category       Controls
-// @version        0.1.2.20240113.150852
+// @version        0.1.2.20240114.152710
 // @description    Show scale bar on the map.
 // @id             scale-bar
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
