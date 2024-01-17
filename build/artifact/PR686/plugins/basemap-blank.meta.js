@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Blank map
 // @category       Map Tiles
-// @version        0.1.4.20240113.103229
+// @version        0.1.4.20240117.075458
 // @description    Add a blank map layer - no roads or other features.
 // @id             basemap-blank
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
