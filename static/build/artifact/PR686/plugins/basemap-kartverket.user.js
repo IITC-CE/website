@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Kartverket.no maps (Norway)
 // @category       Map Tiles
-// @version        0.2.3.20240113.103229
+// @version        0.2.3.20240117.075458
 // @description    Add Kartverket.no map layers.
 // @id             basemap-kartverket
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-13-103229';
+plugin_info.dateTimeVersion = '2024-01-17-075458';
 plugin_info.pluginId = 'basemap-kartverket';
 //END PLUGIN AUTHORS NOTE
 
