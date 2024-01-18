@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240117.095305
+// @version        0.37.1.20240118.102745
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,13 +22,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-17-095305';
+plugin_info.dateTimeVersion = '2024-01-18-102745';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.38.0',
+    changes: ['Function marked deprecated: portalApGainMaths, getPortalApGain, potentialPortalLevel, findPortalLatLng'],
+  },
   {
     version: '0.37.1',
     changes: ['New machina ranges according to latest research - https://linktr.ee/machina.research'],
@@ -88,7 +92,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-17-095305';
+window.iitcBuildDate = '2024-01-18-102745';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2564,7 +2568,7 @@ window.HACK_RANGE = 40;
  * @const
  * @memberof ingress_constants
  */
-window.LINK_RANGE_MAC = [0, 0, 250, 350, 400, 500, 600, 700, 1000, 1000]; // in meters
+window.LINK_RANGE_MAC = [0, 200, 250, 350, 400, 500, 600, 700, 1000, 1000]; // in meters
 
 /**
  * Resonator octant cardinal directions
@@ -2885,6 +2889,178 @@ var ulog = (function (module) {
 ;
   return module;
 }({})).exports;
+
+
+// *** module: _deprecated.js ***
+(function () {
+var log = ulog('_deprecated');
+/* global L -- eslint */
+
+/**
+ * @file This file contains functions that are not use by IITC itself
+ * and won't most likely not receive any updated
+ * @module _deprecated
+ */
+
+/**
+ * Calculates the potential AP gain for capturing or destroying a portal, based on the number of resonators,
+ * links, and fields. It does not account for AP gained from resonator upgrades or mod deployment.
+ *
+ * @deprecated
+ * @function portalApGainMaths
+ * @param {number} resCount - The number of resonators on the portal.
+ * @param {number} linkCount - The number of links connected to the portal.
+ * @param {number} fieldCount - The number of fields using the portal as a vertex.
+ * @returns {Object} An object containing detailed AP gain values for various actions such as deploying resonators,
+ *                   destroying resonators, creating fields, destroying links, capturing the portal, and total
+ *                   AP for destroying and capturing.
+ */
+window.portalApGainMaths = function (resCount, linkCount, fieldCount) {
+  var deployAp = (8 - resCount) * window.DEPLOY_RESONATOR;
+  if (resCount === 0) deployAp += window.CAPTURE_PORTAL;
+  if (resCount !== 8) deployAp += window.COMPLETION_BONUS;
+  // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
+  var friendlyAp = deployAp;
+
+  var destroyResoAp = resCount * window.DESTROY_RESONATOR;
+  var destroyLinkAp = linkCount * window.DESTROY_LINK;
+  var destroyFieldAp = fieldCount * window.DESTROY_FIELD;
+  var captureAp = window.CAPTURE_PORTAL + 8 * window.DEPLOY_RESONATOR + window.COMPLETION_BONUS;
+  var destroyAp = destroyResoAp + destroyLinkAp + destroyFieldAp;
+  var enemyAp = destroyAp + captureAp;
+
+  return {
+    friendlyAp: friendlyAp,
+    enemyAp: enemyAp,
+    destroyAp: destroyAp,
+    destroyResoAp: destroyResoAp,
+    captureAp: captureAp,
+  };
+};
+
+/**
+ * Estimates the AP gain from a portal, based only on summary data from portals, links, and fields.
+ * Not entirely accurate - but available for all portals on the screen
+ *
+ * @deprecated
+ * @function getPortalApGain
+ * @param {string} guid - The GUID of the portal.
+ * @returns {Object|undefined} An object containing various AP gain values, or undefined if the portal is not found.
+ */
+window.getPortalApGain = function (guid) {
+  var p = window.portals[guid];
+  if (p) {
+    var data = p.options.data;
+
+    var linkCount = window.getPortalLinksCount(guid);
+    var fieldCount = window.getPortalFieldsCount(guid);
+
+    var result = window.portalApGainMaths(data.resCount, linkCount, fieldCount);
+    return result;
+  }
+
+  return undefined;
+};
+
+/**
+ * Calculates the potential level a player can upgrade a portal to.
+ *
+ * @deprecated
+ * @function potentialPortalLevel
+ * @param {Object} d - The portal detail object containing resonator and ownership information.
+ * @returns {number} The potential level to which the player can upgrade the portal.
+ */
+window.potentialPortalLevel = function (d) {
+  var current_level = window.getPortalLevel(d);
+  var potential_level = current_level;
+
+  if (window.PLAYER.team === d.team) {
+    var resonators_on_portal = d.resonators;
+    var resonator_levels = new Array();
+
+    // figure out how many of each of these resonators can be placed by the player
+    var player_resontators = new Array();
+    for (var i = 1; i <= window.MAX_PORTAL_LEVEL; i++) {
+      player_resontators[i] = i > window.PLAYER.level ? 0 : window.MAX_RESO_PER_PLAYER[i];
+    }
+    $.each(resonators_on_portal, function (ind, reso) {
+      if (reso !== null && reso.owner === window.PLAYER.nickname) {
+        player_resontators[reso.level]--;
+      }
+      resonator_levels.push(reso === null ? 0 : reso.level);
+    });
+
+    resonator_levels.sort(function (a, b) {
+      return a - b;
+    });
+
+    // Max out portal
+    var install_index = 0;
+    for (var j = window.MAX_PORTAL_LEVEL; j >= 1; j--) {
+      for (var install = player_resontators[j]; install > 0; install--) {
+        if (resonator_levels[install_index] < j) {
+          resonator_levels[install_index] = j;
+          install_index++;
+        }
+      }
+    }
+
+    potential_level =
+      resonator_levels.reduce(function (a, b) {
+        return a + b;
+      }) / 8;
+  }
+  return potential_level;
+};
+
+/**
+ * Finds the latitude and longitude for a portal using all available data sources.
+ * This includes the list of portals, cached portal details, and information from links and fields.
+ *
+ * @deprecated
+ * @function findPortalLatLng
+ * @param {string} guid - The GUID of the portal.
+ * @returns {L.LatLng|undefined} The LatLng location of the portal, or undefined if not found.
+ */
+window.findPortalLatLng = function (guid) {
+  if (window.portals[guid]) {
+    return window.portals[guid].getLatLng();
+  }
+
+  // not found in portals - try the cached (and possibly stale) details - good enough for location
+  var details = window.portalDetail.get(guid);
+  if (details) {
+    return L.latLng(details.latE6 / 1e6, details.lngE6 / 1e6);
+  }
+
+  // now try searching through fields
+  for (var fguid in window.fields) {
+    var f = window.fields[fguid].options.data;
+
+    for (var i in f.points) {
+      if (f.points[i].guid === guid) {
+        return L.latLng(f.points[i].latE6 / 1e6, f.points[i].lngE6 / 1e6);
+      }
+    }
+  }
+
+  // and finally search through links
+  for (var lguid in window.links) {
+    var l = window.links[lguid].options.data;
+    if (l.oGuid === guid) {
+      return L.latLng(l.oLatE6 / 1e6, l.oLngE6 / 1e6);
+    }
+    if (l.dGuid === guid) {
+      return L.latLng(l.dLatE6 / 1e6, l.dLngE6 / 1e6);
+    }
+  }
+
+  // no luck finding portal lat/lng
+  return undefined;
+};
+
+
+})();
 
 
 // *** module: app.js ***
@@ -3747,7 +3923,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-17-095305');
+  log.log('loading done, booting. Built: '+'2024-01-18-102745');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19613,25 +19789,12 @@ var log = ulog('chat');
  * @namespace window.chat
  */
 
-window.chat = function() {};
-
-//WORK IN PROGRESS - NOT YET USED!!
-window.chat.commTabs = [
-// channel: the COMM channel ('tab' parameter in server requests)
-// name: visible name
-// inputPrompt: string for the input prompt
-// inputColor: (optional) color for input
-// sendMessage: (optional) function to send the message (to override the default of sendPlext)
-// globalBounds: (optional) if true, always use global latLng bounds
-  {channel:'all', name:'All', inputPrompt: 'broadcast:', inputColor:'#f66'},
-  {channel:'faction', name:'Aaction', inputPrompt: 'tell faction:'},
-  {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputColor: '#666', globalBounds: true, sendMessage: function() {
-    alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
-  }},
-];
+window.chat = function () {};
+var chat = window.chat;
 
 /**
  * Handles tab completion in chat input.
+ *
  * @function window.chat.handleTabCompletion
  */
 window.chat.handleTabCompletion = function() {
@@ -19674,6 +19837,7 @@ window.chat._oldBBox = null;
 
 /**
  * Generates post data for chat requests.
+ *
  * @function window.chat.genPostData
  * @param {string} channel - The chat channel.
  * @param {Object} storageHash - Storage hash for the chat.
@@ -19779,6 +19943,7 @@ window.chat._requestFactionRunning = false;
 
 /**
  * Requests faction chat messages.
+ *
  * @function window.chat.requestFaction
  * @param {boolean} getOlderMsgs - Flag to determine if older messages are being requested.
  * @param {boolean} [isRetry=false] - Flag to indicate if this is a retry attempt.
@@ -19802,6 +19967,7 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
 
 /**
  * Holds data related to faction chat.
+ *
  * @memberof window.chat
  * @type {Object}
  */
@@ -19809,6 +19975,7 @@ window.chat._faction = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:
 
 /**
  * Handles faction chat response.
+ *
  * @function window.chat.handleFaction
  * @param {Object} data - Response data from server.
  * @param {boolean} olderMsgs - Indicates if older messages were requested.
@@ -19831,7 +19998,7 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   $('#chatfaction').data('needsClearing', null);
 
   var old = chat._faction.oldestGUID;
-  chat.writeDataToHash(data, chat._faction, false, olderMsgs, ascendingTimestampOrder);
+  chat.writeDataToHash(data, chat._faction, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._faction.oldestGUID;
 
   runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
@@ -19841,6 +20008,7 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
 
 /**
  * Renders faction chat.
+ *
  * @function window.chat.renderFaction
  * @param {boolean} oldMsgsWereAdded - Indicates if old messages were added in the current rendering.
  */
@@ -19857,6 +20025,7 @@ window.chat._requestPublicRunning = false;
 
 /**
  * Initiates a request for public chat data.
+ *
  * @function window.chat.requestPublic
  * @param {boolean} getOlderMsgs - Whether to retrieve older messages.
  * @param {boolean} [isRetry=false] - Whether the request is a retry.
@@ -19880,6 +20049,7 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
 
 /**
  * Holds data related to public chat.
+ *
  * @memberof window.chat
  * @type {Object}
  */
@@ -19887,6 +20057,7 @@ window.chat._public = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-
 
 /**
  * Handles the public chat data received from the server.
+ *
  * @function window.chat.handlePublic
  * @param {Object} data - The public chat data.
  * @param {boolean} olderMsgs - Whether the received messages are older.
@@ -19909,7 +20080,7 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   $('#chatall').data('needsClearing', null);
 
   var old = chat._public.oldestGUID;
-  chat.writeDataToHash(data, chat._public, undefined, olderMsgs, ascendingTimestampOrder);   //NOTE: isPublic passed as undefined - this is the 'all' channel, so not really public or private
+  chat.writeDataToHash(data, chat._public, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._public.oldestGUID;
 
   runHooks('publicChatDataAvailable', {raw: data, result: data.result, processed: chat._public.data});
@@ -19920,6 +20091,7 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
 
 /**
  * Renders public chat in the UI.
+ *
  * @function window.chat.renderPublic
  * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
  */
@@ -19936,6 +20108,7 @@ window.chat._requestAlertsRunning = false;
 
 /**
  * Initiates a request for alerts chat data.
+ *
  * @function window.chat.requestAlerts
  * @param {boolean} getOlderMsgs - Whether to retrieve older messages.
  * @param {boolean} [isRetry=false] - Whether the request is a retry.
@@ -19959,6 +20132,7 @@ window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
 
 /**
  * Holds data related to alerts chat.
+ *
  * @memberof window.chat
  * @type {Object}
  */
@@ -19966,6 +20140,7 @@ window.chat._alerts = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-
 
 /**
  * Handles the alerts chat data received from the server.
+ *
  * @function window.chat.handleAlerts
  * @param {Object} data - The alerts chat data.
  * @param {boolean} olderMsgs - Whether the received messages are older.
@@ -19983,7 +20158,7 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   if(data.result.length === 0) return;
 
   var old = chat._alerts.oldestTimestamp;
-  chat.writeDataToHash(data, chat._alerts, undefined, olderMsgs, ascendingTimestampOrder); //NOTE: isPublic passed as undefined - it's nether public or private!
+  chat.writeDataToHash(data, chat._alerts, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._alerts.oldestTimestamp;
 
   // hook for alerts - API change planned here for next refactor
@@ -19994,6 +20169,7 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
 
 /**
  * Renders alerts chat in the UI.
+ *
  * @function window.chat.renderAlerts
  * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
  */
@@ -20009,6 +20185,7 @@ window.chat.renderAlerts = function(oldMsgsWereAdded) {
 
 /**
  * Adds a nickname to the chat input.
+ *
  * @function window.chat.addNickname
  * @param {string} nick - The nickname to add.
  */
@@ -20020,6 +20197,7 @@ window.chat.addNickname= function(nick) {
 
 /**
  * Handles click events on nicknames in the chat.
+ *
  * @function window.chat.nicknameClicked
  * @param {Event} event - The click event.
  * @param {string} nickname - The clicked nickname.
@@ -20039,6 +20217,7 @@ window.chat.nicknameClicked = function(event, nickname) {
 
 /**
  * Updates the oldest and newest message timestamps and GUIDs in the chat storage.
+ *
  * @function window.chat.updateOldNewHash
  * @param {Object} newData - The new chat data received.
  * @param {Object} storageHash - The chat storage object.
@@ -20078,6 +20257,7 @@ window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAsc
 
 /**
  * Parses chat message data into a more convenient format.
+ *
  * @function window.chat.parseMsgData
  * @param {Object} data - The raw chat message data.
  * @returns {Object} The parsed chat message data.
@@ -20135,14 +20315,14 @@ window.chat.parseMsgData = function (data) {
 
 /**
  * Writes new chat data to the chat storage and manages the order of messages.
+ *
  * @function window.chat.writeDataToHash
  * @param {Object} newData - The new chat data received.
  * @param {Object} storageHash - The chat storage object.
- * @param {boolean} [isPublicChannel=false] - Indicates if the channel is public.
  * @param {boolean} isOlderMsgs - Whether the new data contains older messages.
  * @param {boolean} isAscendingOrder - Whether the new data is in ascending order.
  */
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
+window.chat.writeDataToHash = function(newData, storageHash, isOlderMsgs, isAscendingOrder) {
   window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function(json) {
@@ -20169,6 +20349,7 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
 
 /**
  * Renders text for the chat, converting plain text to HTML and adding links.
+ *
  * @function window.chat.renderText
  * @param {Object} text - An object containing the plain text to render.
  * @returns {string} The rendered HTML string.
@@ -20179,6 +20360,7 @@ window.chat.renderText = function (text) {
 
 /**
  * Overrides portal names used repeatedly in chat, such as 'US Post Office', with more specific names.
+ *
  * @function window.chat.getChatPortalName
  * @param {Object} markup - An object containing portal markup, including the name and address.
  * @returns {string} The processed portal name.
@@ -20194,6 +20376,7 @@ window.chat.getChatPortalName = function(markup) {
 
 /**
  * Renders a portal link for use in the chat.
+ *
  * @function window.chat.renderPortal
  * @param {Object} portal - The portal data.
  * @returns {string} HTML string of the portal link.
@@ -20211,6 +20394,7 @@ window.chat.renderPortal = function (portal) {
 
 /**
  * Renders a faction entity for use in the chat.
+ *
  * @function window.chat.renderFactionEnt
  * @param {Object} faction - The faction data.
  * @returns {string} HTML string representing the faction.
@@ -20226,6 +20410,7 @@ window.chat.renderFactionEnt = function (faction) {
 
 /**
  * Renders a player's nickname in chat.
+ *
  * @function window.chat.renderPlayer
  * @param {Object} player - The player object containing nickname and team.
  * @param {boolean} at - Whether to prepend '@' to the nickname.
@@ -20249,6 +20434,7 @@ window.chat.renderPlayer = function (player, at, sender) {
 
 /**
  * Renders a chat message entity based on its type.
+ *
  * @function window.chat.renderMarkupEntity
  * @param {Array} ent - The entity array, where the first element is the type and the second element is the data.
  * @returns {string} The HTML string representing the chat message entity.
@@ -20274,6 +20460,7 @@ window.chat.renderMarkupEntity = function (ent) {
 
 /**
  * Renders the markup of a chat message, converting special entities like player names, portals, etc., into HTML.
+ *
  * @function window.chat.renderMarkup
  * @param {Array} markup - The markup array of a chat message.
  * @returns {string} The HTML string representing the complete rendered chat message.
@@ -20303,6 +20490,7 @@ window.chat.renderMarkup = function (markup) {
 /**
  * Renders a cell in the chat table to display the time a message was sent.
  * Formats the time and adds it to a <time> HTML element with a tooltip showing the full date and time.
+ *
  * @function window.chat.renderTimeCell
  * @param {number} time - The timestamp of the message.
  * @param {string} classNames - Additional class names to be added to the time cell.
@@ -20322,6 +20510,7 @@ window.chat.renderTimeCell = function(time, classNames) {
 /**
  * Renders a cell in the chat table for a player's nickname.
  * Wraps the nickname in <mark> HTML element for highlighting.
+ *
  * @function window.chat.renderNickCell
  * @param {string} nick - The nickname of the player.
  * @param {string} classNames - Additional class names to be added to the nickname cell.
@@ -20335,6 +20524,7 @@ window.chat.renderNickCell = function(nick, classNames) {
 /**
  * Renders a cell in the chat table for a chat message.
  * The message is inserted as inner HTML of the table cell.
+ *
  * @function window.chat.renderMsgCell
  * @param {string} msg - The chat message to be displayed.
  * @param {string} classNames - Additional class names to be added to the message cell.
@@ -20346,6 +20536,7 @@ window.chat.renderMsgCell = function(msg, classNames) {
 
 /**
  * Renders a row for a chat message including time, nickname, and message cells.
+ *
  * @function window.chat.renderMsgRow
  * @param {Object} data - The data for the message, including time, player, and message content.
  * @returns {string} The HTML string representing a row in the chat table.
@@ -20380,6 +20571,7 @@ window.chat.renderMsgRow = function(data) {
 
 /**
  * Legacy function for rendering chat messages. Used for backward compatibility with plugins.
+ *
  * @function window.chat.renderMsg
  * @param {string} msg - The chat message.
  * @param {string} nick - The nickname of the player who sent the message.
@@ -20418,6 +20610,7 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
 
 /**
  * Renders a divider row in the chat table.
+ *
  * @function window.chat.renderDivider
  * @param {string} text - Text to display within the divider row.
  * @returns {string} The HTML string representing a divider row in the chat table.
@@ -20428,6 +20621,7 @@ window.chat.renderDivider = function(text) {
 
 /**
  * Renders data from the data-hash to the element defined by the given ID.
+ *
  * @function window.chat.renderData
  * @param {Object} data - Chat data to be rendered.
  * @param {string} element - ID of the DOM element to render the chat into.
@@ -20481,6 +20675,7 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs, sortedGuids)
 
 /**
  * Gets the name of the active chat tab.
+ *
  * @function window.chat.getActive
  * @returns {string} The name of the active chat tab.
  */
@@ -20490,6 +20685,7 @@ window.chat.getActive = function() {
 
 /**
  * Converts a chat tab name to its corresponding COMM channel name.
+ *
  * @function window.chat.tabToChannel
  * @param {string} tab - The name of the chat tab.
  * @returns {string} The corresponding channel name ('faction', 'alerts', or 'all').
@@ -20504,6 +20700,7 @@ window.chat.tabToChannel = function(tab) {
  * Toggles the chat window between expanded and collapsed states.
  * When expanded, the chat window covers a larger area of the screen.
  * This function also ensures that the chat is scrolled to the bottom when collapsed.
+ *
  * @function window.chat.toggle
  */
 window.chat.toggle = function() {
@@ -20525,6 +20722,7 @@ window.chat.toggle = function() {
  * Allows plugins to request and monitor COMM data streams in the background. This is useful for plugins
  * that need to process COMM data even when the user is not actively viewing the COMM channels.
  * It tracks the requested channels for each plugin instance and updates the global state accordingly.
+ *
  * @function window.chat.backgroundChannelData
  * @param {string} instance - A unique identifier for the plugin or instance requesting background COMM data.
  * @param {string} channel - The name of the COMM channel ('all', 'faction', or 'alerts').
@@ -20553,6 +20751,7 @@ window.chat.backgroundChannelData = function(instance,channel,flag) {
 /**
  * Requests chat messages for the currently active chat tab and background channels.
  * It calls the appropriate request function based on the active tab or background channels.
+ *
  * @function window.chat.request
  */
 window.chat.request = function() {
@@ -20571,6 +20770,7 @@ window.chat.request = function() {
 /**
  * Checks if the currently selected chat tab needs more messages.
  * This function is triggered by scroll events and loads older messages when the user scrolls to the top.
+ *
  * @function window.chat.needMoreMessages
  */
 window.chat.needMoreMessages = function() {
@@ -20596,6 +20796,7 @@ window.chat.needMoreMessages = function() {
 /**
  * Chooses and activates a specified chat tab.
  * Also triggers an early refresh of the chat data when switching tabs.
+ *
  * @function window.chat.chooseTab
  * @param {string} tab - The name of the chat tab to activate ('all', 'faction', or 'alerts').
  */
@@ -20646,14 +20847,12 @@ window.chat.chooseTab = function(tab) {
 
       chat.renderAlerts(false);
       break;
-
-    default:
-      throw new Error('chat.chooser was asked to handle unknown button: ' + tt);
   }
 }
 
 /**
  * Displays the chat interface and activates a specified chat tab.
+ *
  * @function window.chat.show
  * @param {string} name - The name of the chat tab to show and activate.
  */
@@ -20670,6 +20869,7 @@ window.chat.show = function(name) {
  * Chat tab chooser handler.
  * This function is triggered by a click event on the chat tab. It reads the tab name from the event target
  * and activates the corresponding chat tab.
+ *
  * @function window.chat.chooser
  * @param {Event} event - The event triggered by clicking a chat tab.
  */
@@ -20683,6 +20883,7 @@ window.chat.chooser = function(event) {
  * Maintains the scroll position of a chat box when new messages are added.
  * This function is designed to keep the scroll position fixed when old messages are loaded, and to automatically scroll
  * to the bottom when new messages are added if the user is already at the bottom of the chat.
+ *
  * @function window.chat.keepScrollPosition
  * @param {jQuery} box - The jQuery object of the chat box.
  * @param {number} scrollBefore - The scroll position before new messages were added.
@@ -20715,6 +20916,7 @@ window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
 
 /**
  * Sets up the chat interface.
+ *
  * @function window.chat.setup
  */
 window.chat.setup = function() {
@@ -20772,6 +20974,7 @@ window.chat.setup = function() {
 /**
  * Sets up the time display in the chat input box.
  * This function updates the time displayed next to the chat input field every minute to reflect the current time.
+ *
  * @function window.chat.setupTime
  */
 window.chat.setupTime = function() {
@@ -20796,6 +20999,7 @@ window.chat.setupTime = function() {
 
 /**
  * Sets up the chat message posting functionality.
+ *
  * @function window.chat.setupPosting
  */
 window.chat.setupPosting = function() {
@@ -20812,7 +21016,6 @@ window.chat.setupPosting = function() {
         }
       } catch (e) {
         log.error(e);
-        //if (e.stack) { console.error(e.stack); }
       }
     });
   }
@@ -20825,6 +21028,7 @@ window.chat.setupPosting = function() {
 
 /**
  * Posts a chat message to the currently active chat tab.
+ *
  * @function window.chat.postMsg
  */
 window.chat.postMsg = function() {
@@ -20903,20 +21107,17 @@ window.DataCache = function() {
  * Stores data in the cache.
  * If an entry for the given key already exists, it's removed before the new data is stored.
  * The data is stored along with its timestamp and expiration time.
+ *
  * @function
  * @memberof DataCache
  * @param {string} qk - The key under which to store the data.
  * @param {object} data - The data to be stored in the cache.
- * @param {number} [freshTime] - The time in milliseconds after which the data is considered no longer fresh.
- *                               Defaults to `REQUEST_CACHE_FRESH_AGE` * 1000.
  */
-window.DataCache.prototype.store = function (qk, data, freshTime) {
+window.DataCache.prototype.store = function (qk, data) {
   this.remove(qk);
 
   var time = new Date().getTime();
-
-  if (freshTime===undefined) freshTime = this.REQUEST_CACHE_FRESH_AGE*1000;
-  var expire = time + freshTime;
+  var expire = time + this.REQUEST_CACHE_FRESH_AGE * 1000;
 
   var dataStr = JSON.stringify(data);
 
@@ -20926,6 +21127,7 @@ window.DataCache.prototype.store = function (qk, data, freshTime) {
 
 /**
  * Removes a specific entry from the cache based on its key.
+ *
  * @function
  * @memberof DataCache
  * @param {string} qk - The key of the data to remove from the cache.
@@ -20939,6 +21141,7 @@ window.DataCache.prototype.remove = function(qk) {
 
 /**
  * Retrieves the data for a given key from the cache.
+ *
  * @function
  * @memberof DataCache
  * @param {string} qk - The key of the data to retrieve.
@@ -20951,6 +21154,7 @@ window.DataCache.prototype.get = function(qk) {
 
 /**
  * Retrieves the timestamp for the given key from the cache.
+ *
  * @function
  * @memberof DataCache
  * @param {string} qk - The key of the data to check.
@@ -20963,6 +21167,7 @@ window.DataCache.prototype.getTime = function(qk) {
 
 /**
  * Checks if the data for the given key is fresh.
+ *
  * @function
  * @memberof DataCache
  * @param {string} qk - The key of the data to check.
@@ -20981,6 +21186,7 @@ window.DataCache.prototype.isFresh = function(qk) {
 
 /**
  * Starts the interval to periodically run the cache expiration.
+ *
  * @function
  * @memberof DataCache
  * @param {number} period - The period in seconds between each expiration run.
@@ -20996,6 +21202,7 @@ window.DataCache.prototype.startExpireInterval = function(period) {
  * Stops the interval that checks for cache expiration.
  * This function clears the interval set for running the cache expiration check,
  * effectively stopping automatic cache cleanup.
+ *
  * @function
  * @memberof DataCache.prototype
  */
@@ -21010,6 +21217,7 @@ window.DataCache.prototype.stopExpireInterval = function() {
  * Runs the cache expiration process.
  * This function checks and removes expired cache entries based on the maximum age, item count,
  * and character size limits.
+ *
  * @function
  * @memberof DataCache.prototype
  */
@@ -25689,59 +25897,14 @@ window.getPortalFields = function(guid) {
 window.getPortalFieldsCount = function(guid) {
   var fields = getPortalFields(guid);
   return fields.length;
-}
-
-/**
- * Finds the latitude and longitude for a portal using all available data sources.
- * This includes the list of portals, cached portal details, and information from links and fields.
- *
- * @function findPortalLatLng
- * @param {string} guid - The GUID of the portal.
- * @returns {L.LatLng|undefined} The LatLng location of the portal, or undefined if not found.
- */
-window.findPortalLatLng = function(guid) {
-  if (window.portals[guid]) {
-    return window.portals[guid].getLatLng();
-  }
-
-  // not found in portals - try the cached (and possibly stale) details - good enough for location
-  var details = portalDetail.get(guid);
-  if (details) {
-    return L.latLng (details.latE6/1E6, details.lngE6/1E6);
-  }
-
-  // now try searching through fields
-  for (var fguid in window.fields) {
-    var f = window.fields[fguid].options.data;
-
-    for (var i in f.points) {
-      if (f.points[i].guid == guid) {
-        return L.latLng (f.points[i].latE6/1E6, f.points[i].lngE6/1E6);
-      }
-    }
-  }
-
-  // and finally search through links
-  for (var lguid in window.links) {
-    var l = window.links[lguid].options.data;
-    if (l.oGuid == guid) {
-      return L.latLng (l.oLatE6/1E6, l.oLngE6/1E6);
-    }
-    if (l.dGuid == guid) {
-      return L.latLng (l.dLatE6/1E6, l.dLngE6/1E6);
-    }
-  }
-
-  // no luck finding portal lat/lng
-  return undefined;
 };
 
 
-(function() {
+(function () {
   var cache = {};
   var cache_level = 0;
   var GC_LIMIT = 15000; // run garbage collector when cache has more that 5000 items
-  var GC_KEEP  = 10000; // keep the 4000 most recent items
+  var GC_KEEP = 10000; // keep the 4000 most recent items
 
   /**
    * Finds a portal GUID by its position. Searches through currently rendered portals, fields, and links.
@@ -25807,65 +25970,7 @@ window.findPortalLatLng = function(guid) {
   }
 })();
 
-/**
- * Estimates the AP gain from a portal, based only on summary data from portals, links, and fields.
- * Not entirely accurate - but available for all portals on the screen
- *
- * @function getPortalApGain
- * @param {string} guid - The GUID of the portal.
- * @returns {Object|undefined} An object containing various AP gain values, or undefined if the portal is not found.
- */
-window.getPortalApGain = function(guid) {
 
-  var p = window.portals[guid];
-  if (p) {
-    var data = p.options.data;
-
-    var linkCount = getPortalLinksCount(guid);
-    var fieldCount = getPortalFieldsCount(guid);
-
-    var result = portalApGainMaths(data.resCount, linkCount, fieldCount);
-    return result;
-  }
-
-  return undefined;
-}
-
-/**
- * Calculates the potential AP gain for capturing or destroying a portal, based on the number of resonators,
- * links, and fields. It does not account for AP gained from resonator upgrades or mod deployment.
- *
- * @function portalApGainMaths
- * @param {number} resCount - The number of resonators on the portal.
- * @param {number} linkCount - The number of links connected to the portal.
- * @param {number} fieldCount - The number of fields using the portal as a vertex.
- * @returns {Object} An object containing detailed AP gain values for various actions such as deploying resonators,
- *                   destroying resonators, creating fields, destroying links, capturing the portal, and total
- *                   AP for destroying and capturing.
- */
-window.portalApGainMaths = function(resCount, linkCount, fieldCount) {
-
-  var deployAp = (8-resCount)*DEPLOY_RESONATOR;
-  if (resCount == 0) deployAp += CAPTURE_PORTAL;
-  if (resCount != 8) deployAp += COMPLETION_BONUS;
-  // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
-  var friendlyAp = deployAp;
-
-  var destroyResoAp = resCount*DESTROY_RESONATOR;
-  var destroyLinkAp = linkCount*DESTROY_LINK;
-  var destroyFieldAp = fieldCount*DESTROY_FIELD;
-  var captureAp = CAPTURE_PORTAL + 8 * DEPLOY_RESONATOR + COMPLETION_BONUS;
-  var destroyAp = destroyResoAp+destroyLinkAp+destroyFieldAp;
-  var enemyAp = destroyAp+captureAp;
-
-  return {
-    friendlyAp: friendlyAp,
-    enemyAp: enemyAp,
-    destroyAp: destroyAp,
-    destroyResoAp: destroyResoAp,
-    captureAp: captureAp
-  }
-}
 
 
 })();
@@ -26181,7 +26286,7 @@ window.renderPortalDetails = function(guid) {
       historyDetails
     );
 
-  window.renderPortalUrl(lat, lng, title, guid);
+  window.renderPortalUrl(lat, lng, title);
 
   // only run the hooks when we have a portalDetails object - most plugins rely on the extended data
   // TODO? another hook to call always, for any plugins that can work with less data?
@@ -26996,59 +27101,13 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
 }
 
 /**
- * Calculates the potential level a player can upgrade a portal to.
- *
- * @function potentialPortalLevel
- * @param {Object} d - The portal detail object containing resonator and ownership information.
- * @returns {number} The potential level to which the player can upgrade the portal.
- */
-window.potentialPortalLevel = function(d) {
-  var current_level = getPortalLevel(d);
-  var potential_level = current_level;
-
-  if(PLAYER.team === d.team) {
-    var resonators_on_portal = d.resonators;
-    var resonator_levels = new Array();
-    // figure out how many of each of these resonators can be placed by the player
-    var player_resontators = new Array();
-    for(var i=1;i<=MAX_PORTAL_LEVEL; i++) {
-      player_resontators[i] = i > PLAYER.level ? 0 : MAX_RESO_PER_PLAYER[i];
-    }
-    $.each(resonators_on_portal, function(ind, reso) {
-      if(reso !== null && reso.owner === window.PLAYER.nickname) {
-        player_resontators[reso.level]--;
-      }
-      resonator_levels.push(reso === null ? 0 : reso.level);
-    });
-
-    resonator_levels.sort(function(a, b) {
-      return(a - b);
-    });
-
-    // Max out portal
-    var install_index = 0;
-    for(var i=MAX_PORTAL_LEVEL;i>=1; i--) {
-      for(var install = player_resontators[i]; install>0; install--) {
-        if(resonator_levels[install_index] < i) {
-          resonator_levels[install_index] = i;
-          install_index++;
-        }
-      }
-    }
-    //log.log(resonator_levels);
-    potential_level = resonator_levels.reduce(function(a, b) {return a + b;}) / 8;
-  }
-  return(potential_level);
-}
-
-/**
  * Corrects the portal image URL to match the current protocol (http/https).
  *
  * @function fixPortalImageUrl
  * @param {string} url - The original image URL.
  * @returns {string} The corrected image URL.
  */
-window.fixPortalImageUrl = function(url) {
+window.fixPortalImageUrl = function (url) {
   if (url) {
     if (window.location.protocol === 'https:') {
       url = url.replace(/^http:\/\//, '//');
