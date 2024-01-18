@@ -1,2 +1,2 @@
 versionName=0.37.1
-versionCode=1705566462
+versionCode=1705568920

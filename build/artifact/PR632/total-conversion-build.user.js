@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240118.082804
+// @version        0.37.1.20240118.090904
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-18-082804';
+plugin_info.dateTimeVersion = '2024-01-18-090904';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ plugin_info.pluginId = 'total-conversion-build';
 window.script_info = plugin_info;
 window.script_info.changelog = [
   {
-    version: '0.38.8',
+    version: '0.38.0',
     changes: ['Function marked deprecated: portalApGainMaths, getPortalApGain, potentialPortalLevel, findPortalLatLng'],
   },
   {
@@ -62,7 +62,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-18-082804';
+window.iitcBuildDate = '2024-01-18-090904';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3330,7 +3330,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-18-082804');
+  log.log('loading done, booting. Built: '+'2024-01-18-090904');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
