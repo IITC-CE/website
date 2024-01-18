@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.0.20231019.140210
+// @version        0.37.1.20240118.081608
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,13 +22,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-19-140210';
+plugin_info.dateTimeVersion = '2024-01-18-081608';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.37.1',
+    changes: ['New machina ranges according to latest research - https://linktr.ee/machina.research'],
+  },
   {
     version: '0.37.0',
     changes: ['Keep COMM message team in parsed data as player.team may differ from team'],
@@ -55,7 +59,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-10-19-140210';
+window.iitcBuildDate = '2024-01-18-081608';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2386,7 +2390,7 @@ window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geo
 // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
-window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters
+window.LINK_RANGE_MAC = [0, 200, 250, 350, 400, 500, 600, 700, 1000, 1000]; // in meters
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
@@ -2461,7 +2465,7 @@ var log = ulog('_deprecated');
  * functions that are not use by IITC itself
  * and won't most likely not receive any updated
  */
-/* global L,PLAYER -- eslint */
+/* global L -- eslint */
 
 /**
  * @deprecated
@@ -2519,14 +2523,14 @@ window.potentialPortalLevel = function (d) {
   var current_level = window.getPortalLevel(d);
   var potential_level = current_level;
 
-  if (PLAYER.team === d.team) {
+  if (window.PLAYER.team === d.team) {
     var resonators_on_portal = d.resonators;
     var resonator_levels = new Array();
 
     // figure out how many of each of these resonators can be placed by the player
     var player_resontators = new Array();
     for (var i = 1; i <= window.MAX_PORTAL_LEVEL; i++) {
-      player_resontators[i] = i > PLAYER.level ? 0 : window.MAX_RESO_PER_PLAYER[i];
+      player_resontators[i] = i > window.PLAYER.level ? 0 : window.MAX_RESO_PER_PLAYER[i];
     }
     $.each(resonators_on_portal, function (ind, reso) {
       if (reso !== null && reso.owner === window.PLAYER.nickname) {
@@ -3323,7 +3327,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-10-19-140210');
+  log.log('loading done, booting. Built: '+'2024-01-18-081608');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21920,6 +21924,9 @@ function createDefaultBaseMapLayers () {
   var trafficMutant = L.gridLayer.googleMutant({type: 'roadmap'});
   trafficMutant.addGoogleLayer('TrafficLayer');
   baseLayers['Google Roads + Traffic'] = trafficMutant;
+  var transitMutant = L.gridLayer.googleMutant({ type: 'roadmap' });
+  transitMutant.addGoogleLayer('TransitLayer');
+  baseLayers['Google Roads + Transit'] = transitMutant;
   baseLayers['Google Satellite'] = L.gridLayer.googleMutant({type: 'satellite'});
   baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({type: 'hybrid'});
   baseLayers['Google Terrain'] = L.gridLayer.googleMutant({type: 'terrain'});
