@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240118.102745
+// @version        0.37.1.20240118.103547
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-18-102745';
+plugin_info.dateTimeVersion = '2024-01-18-103547';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -92,7 +92,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-18-102745';
+window.iitcBuildDate = '2024-01-18-103547';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3923,7 +3923,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-18-102745');
+  log.log('loading done, booting. Built: '+'2024-01-18-103547');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20322,7 +20322,7 @@ window.chat.parseMsgData = function (data) {
  * @param {boolean} isOlderMsgs - Whether the new data contains older messages.
  * @param {boolean} isAscendingOrder - Whether the new data is in ascending order.
  */
-window.chat.writeDataToHash = function(newData, storageHash, isOlderMsgs, isAscendingOrder) {
+window.chat.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
   window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function(json) {
@@ -24987,7 +24987,9 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
   var savedThis = this;
 
   // NOTE: don't add the request with window.request.add, as we don't want the abort handling to apply to map data any more
-  window.postAjax('getEntities', data,
+  window.postAjax(
+    'getEntities',
+    data,
     function(data, textStatus, jqXHR) { savedThis.handleResponse (data, tiles, true); },  // request successful callback
     function() { savedThis.handleResponse (undefined, tiles, false); }  // request failed callback
   );
@@ -26857,7 +26859,7 @@ window.updatePortalHighlighterControl = function() {
     $("#portal_highlight_select").append($("<option>").attr('value',_no_highlighter).text(_no_highlighter));
     var h_names = Object.keys(_highlighters).sort();
 
-    $.each(h_names, function(i, name) {
+    $.each(h_names, function (i, name) {
       $("#portal_highlight_select").append($("<option>").attr('value',name).text(name));
     });
 
@@ -26899,7 +26901,6 @@ window.changePortalHighlights = function(name) {
  * @param {Object} p - The portal object to be highlighted.
  */
 window.highlightPortal = function(p) {
-
   if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
     _highlighters[_current_highlighter].highlight({portal: p});
   }
@@ -28699,7 +28700,6 @@ window.search.Query.prototype.addResult = function(result) {
       .append($('<em>')
         .append(result.description));
   }
-
 };
 
 /**
