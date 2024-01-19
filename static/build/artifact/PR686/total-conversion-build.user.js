@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240118.103547
+// @version        0.37.1.20240119.080507
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,10 +22,13 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-18-103547';
+plugin_info.dateTimeVersion = '2024-01-19-080507';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
+// create IITC scope
+var IITC = {};
+window.IITC = IITC;
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
@@ -92,7 +95,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-18-103547';
+window.iitcBuildDate = '2024-01-19-080507';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3923,7 +3926,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-18-103547');
+  log.log('loading done, booting. Built: '+'2024-01-19-080507');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22257,6 +22260,289 @@ window.extractFromStock = function() {
 })();
 
 
+// *** module: filters.js ***
+(function () {
+var log = ulog('filters');
+/* global IITC, L */
+
+/** # Filters API
+
+  @memberof IITC
+  @namespace filters
+*/
+
+IITC.filters = {};
+/**
+ * @type {Object.<string, IITC.filters.FilterDesc>}
+ */
+IITC.filters._filters = {};
+
+/**
+ * @memberof IITC.filters
+ * @callback FilterPredicate
+ * @param {Object} ent - IITC entity
+ * @returns {boolean}
+ */
+
+/**
+ * @memberof IITC.filters
+ * @typedef FilterDesc
+ * @type {object}
+ * @property {boolean} filterDesc.portal         apply to portal
+ * @property {boolean} filterDesc.link           apply to link
+ * @property {boolean} filterDesc.field          apply to field
+ * @property {object} [filterDesc.data]          entity data properties that must match
+ * @property {object} [filterDesc.options]       entity options that must match
+ * @property {IITC.filters.FilterPredicate} [filterDesc.pred] predicate on the entity
+ */
+
+/**
+ * Sets or updates a filter with a given name. If a filter with the same name already exists, it is overwritten.
+ *
+ * @param {string} name                              filter name
+ * @param {IITC.filters.FilterDesc | IITC.filters.FilterDesc[]} filterDesc     filter description (OR)
+ */
+IITC.filters.set = function (name, filterDesc) {
+  IITC.filters._filters[name] = filterDesc;
+};
+
+/**
+ * Checks if a filter with the specified name exists.
+ *
+ * @param {string} name - The name of the filter to check.
+ * @returns {boolean} True if the filter exists, false otherwise.
+ */
+IITC.filters.has = function (name) {
+  return name in IITC.filters._filters;
+};
+
+/**
+ * Removes a filter with the specified name.
+ *
+ * @param {string} name - The name of the filter to be removed.
+ * @returns {boolean} True if the filter was successfully deleted, false otherwise.
+ */
+IITC.filters.remove = function (name) {
+  return delete IITC.filters._filters[name];
+};
+
+function compareValue(constraint, value) {
+  if (constraint instanceof Array) return false;
+  // array must be handled by "some" or "every"
+  if (value instanceof Array) return false;
+  if (constraint instanceof Object) {
+    if (!(value instanceof Object)) return false;
+    // implicit AND on object properties
+    for (const prop in constraint) {
+      if (!genericCompare(constraint[prop], value[prop])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return constraint === value;
+}
+
+function compareNumber(constraint, value) {
+  if (typeof value !== 'number') return false;
+  if (typeof constraint[1] !== 'number') return false;
+  const v = constraint[1];
+  switch (constraint[0]) {
+    case '==':
+      return value === v;
+    case '<':
+      return value < v;
+    case '<=':
+      return value <= v;
+    case '>':
+      return value > v;
+    case '>=':
+      return value >= v;
+  }
+  return false;
+}
+
+function genericCompare(constraint, object) {
+  if (constraint instanceof Array) {
+    if (constraint.length !== 2) return false;
+    const [op, args] = constraint;
+    switch (op) {
+      case 'eq':
+        return compareValue(args, object);
+      case 'or':
+        if (args instanceof Array) {
+          for (const arg of args) {
+            if (genericCompare(arg, object)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      case 'and':
+        if (args instanceof Array) {
+          for (const arg of args) {
+            if (!genericCompare(arg, object)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      case 'some':
+        if (object instanceof Array) {
+          for (const obj of object) {
+            if (genericCompare(args, obj)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      case 'every':
+        if (object instanceof Array) {
+          for (const obj of object) {
+            if (!genericCompare(args, obj)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      case 'not':
+        return !genericCompare(args, object);
+      case '==':
+      case '<':
+      case '<=':
+      case '>':
+      case '>=':
+        return compareNumber(constraint, object);
+      default:
+      // unknown op
+    }
+    return false;
+  }
+  return compareValue(constraint, object);
+}
+
+/**
+ * Tests whether a given entity matches a specified filter.
+ *
+ * @param {"portal"|"link"|"field"} type Type of the entity
+ * @param {object} entity Portal/link/field to test
+ * @param {IITC.filters.FilterDesc} filter Filter
+ * @returns {boolean} `true` if the the `entity` of type `type` matches the `filter`
+ */
+IITC.filters.testFilter = function (type, entity, filter) {
+  // type must match
+  if (!filter[type]) return false;
+  // use predicate if available
+  if (typeof filter.pred === 'function') return filter.pred(entity);
+  // if doesn't match data constraint
+  if (filter.data && !genericCompare(filter.data, entity.options.data)) return false;
+  // if doesn't match options
+  if (filter.options && !genericCompare(filter.options, entity.options)) {
+    return false;
+  }
+  // else it matches
+  return true;
+};
+
+function arrayFilter(type, entity, filters) {
+  if (!Array.isArray(filters)) filters = [filters];
+  filters = filters.flat();
+  for (let i = 0; i < filters.length; i++) {
+    if (IITC.filters.testFilter(type, entity, filters[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Tests whether a given portal matches any of the currently active filters.
+ *
+ * @param {object} portal Portal to test
+ * @returns {boolean} `true` if the the portal matches one of the filters
+ */
+IITC.filters.filterPortal = function (portal) {
+  return arrayFilter('portal', portal, Object.values(IITC.filters._filters));
+};
+
+/**
+ * Tests whether a given link matches any of the currently active filters.
+ *
+ * @param {object} link Link to test
+ * @returns {boolean} `true` if the the link matches one of the filters
+ */
+IITC.filters.filterLink = function (link) {
+  return arrayFilter('link', link, Object.values(IITC.filters._filters));
+};
+
+/**
+ * Tests whether a given field matches any of the currently active filters.
+ *
+ * @param {object} field Field to test
+ * @returns {boolean} `true` if the the field matches one of the filters
+ */
+IITC.filters.filterField = function (field) {
+  return arrayFilter('field', field, Object.values(IITC.filters._filters));
+};
+
+/**
+ * Applies all existing filters to the entities (portals, links, and fields) on the map.
+ * Entities that match any of the active filters are removed from the map; others are added or remain on the map.
+ */
+IITC.filters.filterEntities = function () {
+  for (const guid in window.portals) {
+    const p = window.portals[guid];
+    if (IITC.filters.filterPortal(p)) p.remove();
+    else p.addTo(window.map);
+  }
+  for (const guid in window.links) {
+    const link = window.links[guid];
+    if (IITC.filters.filterLink(link)) link.remove();
+    else link.addTo(window.map);
+  }
+  for (const guid in window.fields) {
+    const field = window.fields[guid];
+    if (IITC.filters.filterField(field)) field.remove();
+    else field.addTo(window.map);
+  }
+};
+
+/**
+ * @memberof IITC.filters
+ * @class FilterLayer
+ * @description Layer abstraction to control with the layer chooser a filter.
+ *              The filter is disabled on layer add, and enabled on layer remove.
+ * @extends L.Layer
+ * @param {Object} options - Configuration options for the filter layer
+ * @param {string} options.name - The name of the filter
+ * @param {IITC.filters.FilterDesc} options.filter - The filter description
+ */
+IITC.filters.FilterLayer = L.Layer.extend({
+  options: {
+    name: null,
+    filter: {},
+  },
+
+  initialize: function (options) {
+    L.setOptions(this, options);
+    IITC.filters.set(this.options.name, this.options.filter);
+  },
+
+  onAdd: function () {
+    IITC.filters.remove(this.options.name);
+    IITC.filters.filterEntities();
+  },
+
+  onRemove: function () {
+    IITC.filters.set(this.options.name, this.options.filter);
+    IITC.filters.filterEntities();
+  },
+});
+
+
+})();
+
+
 // *** module: game_status.js ***
 (function () {
 var log = ulog('game_status');
@@ -23085,7 +23371,7 @@ window.removeLayerGroup = function (layerGroup) {
 // *** module: map.js ***
 (function () {
 var log = ulog('map');
-/* global log,L -- eslint */
+/* global log, L, IITC, PLAYER -- eslint */
 
 /**
  * @file This file provides functions for working with maps.
@@ -23237,10 +23523,6 @@ function createDefaultBaseMapLayers () {
   return baseLayers;
 }
 
-function createFactionLayersArray() {
-  return window.TEAM_NAMES.map(() => L.layerGroup());
-}
-
 /**
  * Creates and returns the default overlay layers for the map.
  * Sets up various overlay layers including portals, links, fields, and faction-specific layers.
@@ -23248,55 +23530,68 @@ function createFactionLayersArray() {
  * @function createDefaultOverlays
  * @returns {Object.<String, L.LayerGroup>} An object containing overlay layers for portals, links, fields, and factions
  */
-function createDefaultOverlays () {
-  /* global portalsFactionLayers: true, linksFactionLayers: true, fieldsFactionLayers: true -- eslint*/
+function createDefaultOverlays() {
   /* eslint-disable dot-notation  */
 
   var addLayers = {};
 
-  portalsFactionLayers = [];
-  var portalsLayers = [];
-  for (var i = 0; i <= 8; i++) {
-    portalsFactionLayers[i] = createFactionLayersArray();
-    portalsLayers[i] = L.layerGroup();
-    var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
-    addLayers[t] = portalsLayers[i];
+  var l0Layer = new IITC.filters.FilterLayer({
+    name: 'Unclaimed/Placeholder Portals',
+    filter: [
+      { portal: true, data: { team: 'N' } },
+      { portal: true, data: { level: undefined } },
+    ],
+  });
+  addLayers[l0Layer.options.name] = l0Layer;
+  for (var i = 1; i <= 8; i++) {
+    var t = 'Level ' + i + ' Portals';
+    var portalsLayer = new IITC.filters.FilterLayer({
+      name: t,
+      filter: [
+        { portal: true, data: { level: i, team: 'R' } },
+        { portal: true, data: { level: i, team: 'E' } },
+      ],
+    });
+    addLayers[t] = portalsLayer;
   }
 
-  fieldsFactionLayers = createFactionLayersArray();
-  var fieldsLayer = L.layerGroup();
-  addLayers['Fields'] = fieldsLayer;
+  var fieldsLayer = new IITC.filters.FilterLayer({
+    name: 'Fields',
+    filter: { field: true },
+  });
+  addLayers[fieldsLayer.options.name] = fieldsLayer;
 
-  linksFactionLayers = createFactionLayersArray();
-  var linksLayer = L.layerGroup();
-  addLayers['Links'] = linksLayer;
+  var linksLayer = new IITC.filters.FilterLayer({
+    name: 'Links',
+    filter: { link: true },
+  });
+  addLayers[linksLayer.options.name] = linksLayer;
 
   // faction-specific layers
-  // these layers don't actually contain any data. instead, every time they're added/removed from the map,
-  // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
-  // the below 'onoverlayadd/onoverlayremove' events
-  var factionLayers = createFactionLayersArray();
-  factionLayers.forEach(function (facLayer, facIdx) {
-    facLayer.on('add remove', function (e) {
-      var fn = e.type + 'Layer';
-      fieldsLayer[fn](fieldsFactionLayers[facIdx]);
-      linksLayer[fn](linksFactionLayers[facIdx]);
-      portalsLayers.forEach(function (portals, lvl) {
-        portals[fn](portalsFactionLayers[lvl][facIdx]);
-      });
-    });
-    addLayers[window.TEAM_NAMES[facIdx]] = facLayer;
+  var resistanceLayer = new IITC.filters.FilterLayer({
+    name: window.TEAM_NAME_RES,
+    filter: { portal: true, link: true, field: true, data: { team: 'R' } },
+  });
+  var enlightenedLayer = new IITC.filters.FilterLayer({
+    name: window.TEAM_NAME_ENL,
+    filter: { portal: true, link: true, field: true, data: { team: 'E' } },
+  });
+  var machinaLayer = new IITC.filters.FilterLayer({
+    name: window.TEAM_NAME_MAC,
+    filter: { portal: true, link: true, field: true, data: { team: 'M' } },
   });
 
   // to avoid any favouritism, we'll put the player's own faction layer first
-  if (window.PLAYER.team !== 'RESISTANCE') {
-    delete addLayers[window.TEAM_NAME_RES];
-    addLayers[window.TEAM_NAME_RES] = factionLayers[window.TEAM_RES];
+  if (PLAYER.team === 'RESISTANCE') {
+    addLayers[resistanceLayer.options.name] = resistanceLayer;
+    addLayers[enlightenedLayer.options.name] = enlightenedLayer;
+  } else {
+    addLayers[enlightenedLayer.options.name] = enlightenedLayer;
+    addLayers[resistanceLayer.options.name] = resistanceLayer;
   }
 
   // and just put __MACHINA__ faction last
-  delete addLayers[window.TEAM_NAME_MAC];
-  addLayers[window.TEAM_NAME_MAC] = factionLayers[window.TEAM_MAC];
+  addLayers[window.TEAM_NAME_MAC] = machinaLayer;
 
   return addLayers;
   /* eslint-enable dot-notation  */
@@ -23362,8 +23657,6 @@ window.setupMap = function () {
   }
   var baseLayers = createDefaultBaseMapLayers();
   var overlays = createDefaultOverlays();
-  map.addLayer(overlays.Neutral);
-  delete overlays.Neutral;
 
   var layerChooser = window.layerChooser = new window.LayerChooser(baseLayers, overlays, {map: map})
     .addTo(map);
@@ -24035,26 +24328,8 @@ window.Render.prototype.endRenderPass = function() {
  * @memberof Render
  */
 window.Render.prototype.bringPortalsToFront = function() {
-  for (var lvl in portalsFactionLayers) {
-    // portals are stored in separate layers per faction
-    // to avoid giving weight to one faction or another, we'll push portals to front based on GUID order
-    var lvlPortals = {};
-    for (var fac in portalsFactionLayers[lvl]) {
-      var layer = portalsFactionLayers[lvl][fac];
-      if (layer._map) {
-        layer.eachLayer (function(p) {
-          lvlPortals[p.options.guid] = p;
-        });
-      }
-    }
-
-    var guids = Object.keys(lvlPortals);
-    guids.sort();
-
-    for (var j in guids) {
-      var guid = guids[j];
-      lvlPortals[guid].bringToFront();
-    }
+  for (var guid in window.portals) {
+    window.portals[guid].bringToFront();
   }
 
   // artifact portals are always brought to the front, above all others
@@ -24063,7 +24338,6 @@ window.Render.prototype.bringPortalsToFront = function() {
       portals[guid].bringToFront();
     }
   });
-
 }
 
 /**
@@ -24106,7 +24380,7 @@ window.Render.prototype.deletePortalEntity = function(guid) {
 window.Render.prototype.deleteLinkEntity = function(guid) {
   if (guid in window.links) {
     var l = window.links[guid];
-    linksFactionLayers[l.options.team].removeLayer(l);
+    l.remove();
     delete window.links[guid];
     window.runHooks('linkRemoved', {link: l, data: l.options.data });
   }
@@ -24122,8 +24396,7 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
 window.Render.prototype.deleteFieldEntity = function(guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
-
-    fieldsFactionLayers[f.options.team].removeLayer(f);
+    f.remove();
     delete window.fields[guid];
     window.runHooks('fieldRemoved', {field: f, data: f.options.data });
   }
@@ -24358,7 +24631,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   window.fields[ent[0]] = poly;
 
   // TODO? postpone adding to the layer??
-  fieldsFactionLayers[poly.options.team].addLayer(poly);
+  if (!IITC.filters.filterField(poly)) poly.addTo(window.map);
 }
 
 /**
@@ -24427,7 +24700,7 @@ window.Render.prototype.createLinkEntity = function (ent) {
 
   window.links[ent[0]] = poly;
 
-  linksFactionLayers[poly.options.team].addLayer(poly);
+  if (!IITC.filters.filterLink(poly)) poly.addTo(window.map);
 }
 
 /**
@@ -24456,7 +24729,7 @@ window.Render.prototype.rescalePortalMarkers = function() {
  * @param {Object} portal - The portal object to add to the map layer.
  */
 window.Render.prototype.addPortalToMapLayer = function(portal) {
-  portalsFactionLayers[parseInt(portal.options.level)||0][portal.options.team].addLayer(portal);
+  if (!IITC.filters.filterPortal(portal)) portal.addTo(window.map);
 }
 
 /**
@@ -24468,8 +24741,10 @@ window.Render.prototype.addPortalToMapLayer = function(portal) {
  */
 window.Render.prototype.removePortalFromMapLayer = function(portal) {
   //remove it from the portalsLevels layer
-  portalsFactionLayers[parseInt(portal.options.level)||0][portal.options.team].removeLayer(portal);
+  portal.remove();
 }
+
+/* global IITC */
 
 
 })();
