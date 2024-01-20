@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.081933
+// @version        0.37.1.20240120.082701
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-081933';
+plugin_info.dateTimeVersion = '2024-01-20-082701';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-081933';
+window.iitcBuildDate = '2024-01-20-082701';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-081933');
+  log.log('loading done, booting. Built: '+'2024-01-20-082701');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19630,7 +19630,7 @@ window.chat.renderText = function (text) {
 };
 
 // Override portal names that are used over and over, such as 'US Post Office'
-window.chat.getChatPortalName = function(markup) {
+window.chat.getChatPortalName = function (markup) {
   var name = markup.name;
   if (name === 'US Post Office') {
     var address = markup.address.split(',');
@@ -19698,19 +19698,19 @@ window.chat.renderMarkup = function (markup) {
 
   markup.forEach(function (ent, ind) {
     switch (ent[0]) {
-    case 'SENDER':
-    case 'SECURE':
-      // skip as already handled
-      break;
+      case 'SENDER':
+      case 'SECURE':
+        // skip as already handled
+        break;
 
-    case 'PLAYER': // automatically generated messages
-      if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
-      break;
+      case 'PLAYER': // automatically generated messages
+        if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
+        break;
 
-    default:
-      // add other enitities whatever the type
-      msg += chat.renderMarkupEntity(ent);
-      break;
+      default:
+        // add other enitities whatever the type
+        msg += chat.renderMarkupEntity(ent);
+        break;
     }
   });
   return msg;
@@ -19746,19 +19746,16 @@ function transformMessage(markup) {
 }
 
 window.chat.renderTimeCell = function (time, classNames) {
-  var ta = unixTimeToHHmm(time);
-  var tb = unixTimeToDateTimeString(time, true);
+  const ta = window.unixTimeToHHmm(time);
+  let tb = window.unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-  return '<td><time class="' + classNames + '" title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time></td>';
+  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
 };
 
-window.chat.renderNickCell = function(nick, classNames) {
-  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<td>'+i[0]+'<mark class="' + classNames + '">'+ nick+'</mark>'+i[1]+'</td>';
+window.chat.renderNickCell = function (nick, classNames) {
+  const i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
+  return '<td>' + i[0] + '<mark class="' + classNames + '">' + nick + '</mark>' + i[1] + '</td>';
 };
 
 window.chat.renderMsgCell = function(msg, classNames) {
