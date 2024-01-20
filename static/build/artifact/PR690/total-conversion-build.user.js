@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.174426
+// @version        0.37.1.20240120.180054
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-174426';
+plugin_info.dateTimeVersion = '2024-01-20-180054';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-174426';
+window.iitcBuildDate = '2024-01-20-180054';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-174426');
+  log.log('loading done, booting. Built: '+'2024-01-20-180054');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26739,7 +26739,7 @@ window.search.Query.prototype.addResult = function(result) {
       .append($('<em>')
         .append(result.description));
   }
-  
+
 };
 
 window.search.Query.prototype.resultLayer = function(result) {
@@ -26928,7 +26928,7 @@ addHook('search', function(query) {
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
 addHook('search', function(query) {
-  var locations = query.term.replaceAll('%2C', ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
+var locations = query.term.replaceAll(/%2[cC]/, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
@@ -26990,7 +26990,7 @@ addHook('search', function(query) {
     data.forEach(function(item) {
       if(resultMap[item.place_id]) { return; } // duplicate
       resultMap[item.place_id] = true;
-      
+
       var result = {
         title: item.display_name,
         description: 'Type: ' + item.type,
@@ -27024,11 +27024,11 @@ addHook('search', function(query) {
       query.addResult(result);
     });
   }
-  
+
   // Bounded search allows amenity-only searches (e.g. "amenity=toilet") via special phrases
   // http://wiki.openstreetmap.org/wiki/Nominatim/Special_Phrases/EN
   var bounded = '&bounded=1';
-  
+
   $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
@@ -27069,16 +27069,17 @@ addHook('search', function (query) {
   const res = query.term.match(guid_re);
   if (res) {
     const guid = res[0];
-    const data = portalDetail.get(guid);
+    const data = window.portalDetail.get(guid);
     if (data) window.search.addResult(query, data);
     else {
-      portalDetail.request(guid).then(function (data) {
-        addResult(query, data);
+      window.portalDetail.request(guid).then(function (data) {
+        window.search.addResult(query, data);
       });
     }
   }
 
 });
+
 
 })();
 
