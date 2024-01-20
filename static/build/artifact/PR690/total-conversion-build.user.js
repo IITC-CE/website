@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.205143
+// @version        0.37.1.20240120.214449
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-205143';
+plugin_info.dateTimeVersion = '2024-01-20-214449';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-205143';
+window.iitcBuildDate = '2024-01-20-214449';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-205143');
+  log.log('loading done, booting. Built: '+'2024-01-20-214449');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27033,8 +27033,7 @@ addHook('search', function(query) {
 });
 
 // search for guid
-window.search.addResult = function (query, data) {
-  const guid = data.guid;
+window.search.addGuidResult = function (query, data, guid) {
   const teams = ['NEU', 'RES', 'ENL'];
   const team = window.teamStringToId(data.team);
   query.addResult({
@@ -27053,8 +27052,8 @@ window.search.addResult = function (query, data) {
       if (event.type === 'dblclick') {
         window.zoomToAndShowPortal(guid, result.position);
       } else if (window.portals[guid]) {
-        if (!window.map.getBounds().contains(result.position))
-          window.map.setView(result.position);
+        if (!map.getBounds().contains(result.position))
+          map.setView(result.position);
         window.renderPortalDetails(guid);
       } else {
         window.selectPortalByLatLng(result.position);
@@ -27070,10 +27069,10 @@ addHook('search', function (query) {
   if (res) {
     const guid = res[0];
     const data = window.portalDetail.get(guid);
-    if (data) window.search.addResult(query, data);
+    if (data) window.search.addGuidResult(query, data, guid);
     else {
       window.portalDetail.request(guid).then(function (data) {
-        window.search.addResult(query, data);
+        window.search.addGuidResult(query, data, guid);
       });
     }
   }
