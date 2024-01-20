@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.180054
+// @version        0.37.1.20240120.205143
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-180054';
+plugin_info.dateTimeVersion = '2024-01-20-205143';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-180054';
+window.iitcBuildDate = '2024-01-20-205143';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-180054');
+  log.log('loading done, booting. Built: '+'2024-01-20-205143');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26909,11 +26909,11 @@ addHook('search', function(query) {
 </svg>\
 '.replace(/%COLOR%/g, color)),
         onSelected: function(result, event) {
-          if(event.type == 'dblclick') {
-            zoomToAndShowPortal(guid, portal.getLatLng());
+          if (event.type === 'dblclick') {
+            window.zoomToAndShowPortal(guid, portal.getLatLng());
           } else if(window.portals[guid]) {
             if(!map.getBounds().contains(result.position)) map.setView(result.position);
-            renderPortalDetails(guid);
+            window.renderPortalDetails(guid);
           } else {
             window.selectPortalByLatLng(portal.getLatLng());
           }
@@ -26928,7 +26928,7 @@ addHook('search', function(query) {
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
 addHook('search', function(query) {
-var locations = query.term.replaceAll(/%2[cC]/, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
+var locations = query.term.replaceAll(/%2C/gi, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
