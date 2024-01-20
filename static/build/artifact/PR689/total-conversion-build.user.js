@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.080517
+// @version        0.37.1.20240120.081933
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-080517';
+plugin_info.dateTimeVersion = '2024-01-20-081933';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-080517';
+window.iitcBuildDate = '2024-01-20-081933';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-080517');
+  log.log('loading done, booting. Built: '+'2024-01-20-081933');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19698,19 +19698,19 @@ window.chat.renderMarkup = function (markup) {
 
   markup.forEach(function (ent, ind) {
     switch (ent[0]) {
-      case 'SENDER':
-      case 'SECURE':
-        // skip as already handled
-        break;
+    case 'SENDER':
+    case 'SECURE':
+      // skip as already handled
+      break;
 
-      case 'PLAYER': // automatically generated messages
-        if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
-        break;
+    case 'PLAYER': // automatically generated messages
+      if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
+      break;
 
-      default:
-        // add other enitities whatever the type
-        msg += chat.renderMarkupEntity(ent);
-        break;
+    default:
+      // add other enitities whatever the type
+      msg += chat.renderMarkupEntity(ent);
+      break;
     }
   });
   return msg;
@@ -19746,24 +19746,27 @@ function transformMessage(markup) {
 }
 
 window.chat.renderTimeCell = function (time, classNames) {
-  const ta = window.unixTimeToHHmm(time);
-  let tb = window.unixTimeToDateTimeString(time, true);
+  var ta = unixTimeToHHmm(time);
+  var tb = unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+  return '<td><time class="' + classNames + '" title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time></td>';
 };
 
-window.chat.renderNickCell = function (nick, classNames) {
-  const i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<td>' + i[0] + '<mark class="' + classNames + '">' + nick + '</mark>' + i[1] + '</td>';
+window.chat.renderNickCell = function(nick, classNames) {
+  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
+  return '<td>'+i[0]+'<mark class="' + classNames + '">'+ nick+'</mark>'+i[1]+'</td>';
 };
 
-window.chat.renderMsgCell = function (msg, classNames) {
-  return '<td class="' + classNames + '">' + msg + '</td>';
+window.chat.renderMsgCell = function(msg, classNames) {
+  return '<td class="' + classNames + '">'+msg+'</td>';
 };
 
-window.chat.renderMsgRow = function (data) {
-  var timeClass = data.msgToPlayer ? 'pl_nudge_date' : '';
+window.chat.renderMsgRow = function(data) {
+  var timeClass = (data.msgToPlayer) ? 'pl_nudge_date' : '';
   var timeCell = chat.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
@@ -19792,29 +19795,32 @@ window.chat.renderMsgRow = function (data) {
 };
 
 // legacy rendering, not used internaly, but left there for backward compatibilty in case a plugin uses it directly
-window.chat.renderMsg = function (msg, nick, time, team, msgToPlayer, systemNarrowcast) {
-  const ta = window.unixTimeToHHmm(time);
-  let tb = window.unixTimeToDateTimeString(time, true);
+window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
+  var ta = unixTimeToHHmm(time);
+  var tb = unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 
   // help cursor via “#chat time”
-  var t = '<time title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time>';
+  var t = '<time title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time>';
   if (msgToPlayer) {
     t = '<div class="pl_nudge_date">' + t + '</div><div class="pl_nudge_pointy_spacer"></div>';
   }
   if (systemNarrowcast) {
     msg = '<div class="system_narrowcast">' + msg + '</div>';
   }
-  var color = window.COLORS[team];
+  var color = COLORS[team];
   // highlight things said/done by the player in a unique colour (similar to @player mentions from others in the chat text itself)
   if (nick === window.PLAYER.nickname) {
     color = '#fd6';
   }
-  const s = 'style="cursor:pointer; color:' + color + '"';
-  const i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<tr><td>' + t + '</td><td>' + i[0] + '<mark class="nickname" ' + s + '>' + nick + '</mark>' + i[1] + '</td><td>' + msg + '</td></tr>';
-};
+  var s = 'style="cursor:pointer; color:'+color+'"';
+  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
+  return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
+}
 
 window.chat.renderDivider = function(text) {
   return '<tr class="divider"><td><hr></td><td>' + text + '</td><td><hr></td></tr>';
