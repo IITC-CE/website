@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.082701
+// @version        0.37.1.20240120.083041
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-082701';
+plugin_info.dateTimeVersion = '2024-01-20-083041';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-082701';
+window.iitcBuildDate = '2024-01-20-083041';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-082701');
+  log.log('loading done, booting. Built: '+'2024-01-20-083041');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19643,11 +19643,7 @@ window.chat.renderPortal = function (portal) {
   var lat = portal.latE6/1E6, lng = portal.lngE6/1E6;
   var perma = window.makePermalink([lat,lng]);
   var js = 'window.selectPortalByLatLng('+lat+', '+lng+');return false';
-  return '<a onclick="'+js+'"'
-    + ' title="'+portal.address+'"'
-    + ' href="'+perma+'" class="help">'
-    + window.chat.getChatPortalName(portal)
-    + '</a>';
+  return '<a onclick="' + js + '"' + ' title="' + portal.address + '"' + ' href="' + perma + '" class="help">' + window.chat.getChatPortalName(portal) + '</a>';
 };
 
 window.chat.renderFactionEnt = function (faction) {
@@ -19758,12 +19754,12 @@ window.chat.renderNickCell = function (nick, classNames) {
   return '<td>' + i[0] + '<mark class="' + classNames + '">' + nick + '</mark>' + i[1] + '</td>';
 };
 
-window.chat.renderMsgCell = function(msg, classNames) {
-  return '<td class="' + classNames + '">'+msg+'</td>';
+window.chat.renderMsgCell = function (msg, classNames) {
+  return '<td class="' + classNames + '">' + msg + '</td>';
 };
 
-window.chat.renderMsgRow = function(data) {
-  var timeClass = (data.msgToPlayer) ? 'pl_nudge_date' : '';
+window.chat.renderMsgRow = function (data) {
+  var timeClass = data.msgToPlayer ? 'pl_nudge_date' : '';
   var timeCell = chat.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
