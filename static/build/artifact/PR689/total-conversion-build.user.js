@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.074305
+// @version        0.37.1.20240120.075323
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-074305';
+plugin_info.dateTimeVersion = '2024-01-20-075323';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-074305';
+window.iitcBuildDate = '2024-01-20-075323';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-074305');
+  log.log('loading done, booting. Built: '+'2024-01-20-075323');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19746,14 +19746,14 @@ function transformMessage(markup) {
 }
 
 window.chat.renderTimeCell = function (time, classNames) {
-  var ta = unixTimeToHHmm(time);
-  var tb = unixTimeToDateTimeString(time, true);
+  const ta = window.unixTimeToHHmm(time);
+  let tb = window.unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
   tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;');
-  return '<td><time class="' + classNames + '" title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time></td>';
+  return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
 };
 
 window.chat.renderNickCell = function(nick, classNames) {
