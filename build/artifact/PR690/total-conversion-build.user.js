@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.165621
+// @version        0.37.1.20240120.174153
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-165621';
+plugin_info.dateTimeVersion = '2024-01-20-174153';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-165621';
+window.iitcBuildDate = '2024-01-20-174153';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3333,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-165621');
+  log.log('loading done, booting. Built: '+'2024-01-20-174153');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27032,7 +27032,53 @@ addHook('search', function(query) {
   $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
+// search for guid
+window.search.addResult = function (query, data) {
+  const guid = data.guid;
+  const teams = ['NEU', 'RES', 'ENL'];
+  const team = window.teamStringToId(data.team);
+  query.addResult({
+    title: data.title,
+    description:
+      teams[team] +
+      ", L" +
+      data.level +
+      ", " +
+      data.health +
+      "%, " +
+      data.resCount +
+      " Resonators",
+    position: L.latLng(data.latE6 * 1e-6, data.lngE6 * 1e-6),
+    onSelected: function (result, event) {
+      if (event.type === 'dblclick') {
+        window.zoomToAndShowPortal(guid, result.position);
+      } else if (window.portals[guid]) {
+        if (!window.map.getBounds().contains(result.position))
+          window.map.setView(result.position);
+        window.renderPortalDetails(guid);
+      } else {
+        window.selectPortalByLatLng(result.position);
+      }
+      return true; // prevent default behavior
+    },
+  });
+};
 
+addHook('search', function (query) {
+  const guid_re = /[0-9a-f]{32}\.[0-9a-f]{2}/;
+  const res = query.term.match(guid_re);
+  if (res) {
+    const guid = res[0];
+    const data = portalDetail.get(guid);
+    if (data) window.search.addResult(query, data);
+    else {
+      portalDetail.request(guid).then(function (data) {
+        addResult(query, data);
+      });
+    }
+  }
+
+});
 
 })();
 
