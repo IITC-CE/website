@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240121.161139
+// @version        0.37.1.20240121.161444
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-21-161139';
+plugin_info.dateTimeVersion = '2024-01-21-161444';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-21-161139';
+window.iitcBuildDate = '2024-01-21-161444';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3334,7 +3334,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-21-161139');
+  log.log('loading done, booting. Built: '+'2024-01-21-161444');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26918,7 +26918,7 @@ window.search.addSearchResult = function (query, data, guid) {
 };
 
 // search for portals
-window.addHook('search', function(query) {
+window.addHook('search', function (query) {
   var term = query.term.toLowerCase();
 
   $.each(portals, function(guid, portal) {
@@ -26934,7 +26934,7 @@ window.addHook('search', function(query) {
 
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
-window.addHook('search', function(query) {
+window.addHook('search', function (query) {
   var locations = query.term.replaceAll(/%2C/gi, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
@@ -26968,7 +26968,7 @@ window.addHook('search', function(query) {
 
 
 // search on OpenStreetMap
-window.addHook('search', function(query) {
+window.addHook('search', function (query) {
   if(!query.confirmed) return;
 
   // Viewbox search orders results so they're closer to the viewbox
