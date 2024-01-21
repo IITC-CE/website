@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240121.090622
+// @version        0.37.1.20240121.090833
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-21-090622';
+plugin_info.dateTimeVersion = '2024-01-21-090833';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-21-090622';
+window.iitcBuildDate = '2024-01-21-090833';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3334,7 +3334,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-21-090622');
+  log.log('loading done, booting. Built: '+'2024-01-21-090833');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26884,8 +26884,7 @@ window.search.setup = function() {
   });
 };
 
-
-window.search.addSearchResult = function(query, data, guid) {
+window.search.addSearchResult = function (query, data, guid) {
   var team = window.teamStringToId(data.team);
   var color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
   var latLng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
@@ -26916,7 +26915,7 @@ window.search.addSearchResult = function(query, data, guid) {
       return true; // prevent default behavior
     },
   });
-}
+};
 
 // search for portals
 addHook('search', function(query) {
