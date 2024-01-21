@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240121.085227
+// @version        0.37.1.20240121.090622
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-21-085227';
+plugin_info.dateTimeVersion = '2024-01-21-090622';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-21-085227';
+window.iitcBuildDate = '2024-01-21-090622';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3334,7 +3334,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-21-085227');
+  log.log('loading done, booting. Built: '+'2024-01-21-090622');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26885,7 +26885,7 @@ window.search.setup = function() {
 };
 
 
-function addSearchResult(query, data, guid) {
+window.search.addSearchResult = function(query, data, guid) {
   var team = window.teamStringToId(data.team);
   var color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
   var latLng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
@@ -26927,7 +26927,7 @@ addHook('search', function(query) {
     if(!data.title) return;
 
     if(data.title.toLowerCase().indexOf(term) !== -1) {
-      addSearchResult(query, data, guid);
+      window.search.addSearchResult(query, data, guid);
     }
   });
 });
@@ -27047,10 +27047,10 @@ addHook('search', function (query) {
   if (res) {
     const guid = res[0];
     const data = window.portalDetail.get(guid);
-    if (data) addSearchResult(query, data, guid);
+    if (data) window.search.addSearchResult(query, data, guid);
     else {
       window.portalDetail.request(guid).then(function (data) {
-        addSearchResult(query, data, guid);
+        window.search.addSearchResult(query, data, guid);
       });
     }
   }
