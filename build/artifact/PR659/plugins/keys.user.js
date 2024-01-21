@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.0.20230808.135651
+// @version        0.4.1.20240121.164237
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,10 +22,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-135651';
+plugin_info.dateTimeVersion = '2024-01-21-164237';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+/* global plugin */
+
+var changelog = [
+  {
+    version: '0.4.1',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 // use own namespace for plugin
 window.plugin.keys = function() {};
@@ -117,7 +126,7 @@ window.plugin.keys.registerFieldForSyncing = function() {
 window.plugin.keys.syncCallback = function(pluginName, fieldName, e, fullUpdated) {
   if(fieldName === 'keys') {
     plugin.keys.storeLocal(plugin.keys.KEY);
-    // All data is replaced if other client update the data during this client offline, 
+    // All data is replaced if other client update the data during this client offline,
     // fire 'pluginKeysRefreshAll' to notify a full update
     if(fullUpdated) {
       plugin.keys.updateDisplayCount();
@@ -160,9 +169,7 @@ window.plugin.keys.storeLocal = function(mapping) {
 window.plugin.keys.loadLocal = function(mapping) {
   var objectJSON = localStorage[mapping.key];
   if(!objectJSON) return;
-  plugin.keys[mapping.field] = mapping.convertFunc 
-                          ? mapping.convertFunc(JSON.parse(objectJSON))
-                          : JSON.parse(objectJSON);
+  plugin.keys[mapping.field] = mapping.convertFunc ? mapping.convertFunc(JSON.parse(objectJSON)) : JSON.parse(objectJSON);
 }
 
 // For backward compatibility, will change to use loadLocal after a few version
