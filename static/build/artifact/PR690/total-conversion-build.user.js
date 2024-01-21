@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240121.090833
+// @version        0.37.1.20240121.161139
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-21-090833';
+plugin_info.dateTimeVersion = '2024-01-21-161139';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-21-090833';
+window.iitcBuildDate = '2024-01-21-161139';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3334,7 +3334,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-21-090833');
+  log.log('loading done, booting. Built: '+'2024-01-21-161139');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26627,7 +26627,7 @@ var log = ulog('search');
 
 /*
 you can implement your own result provider by listing to the search hook:
-addHook('search', function(query) {});
+window.addHook('search', function(query) {});
 
 `query` is an object with the following members:
 - `term` is the term for which the user has searched
@@ -26649,7 +26649,7 @@ addHook('search', function(query) {});
   selected or the search was cancelled by the user).
 */
 
-/* global L, addHook -- eslint */
+/* global L -- eslint */
 
 window.search = {
   lastSearch: null,
@@ -26918,7 +26918,7 @@ window.search.addSearchResult = function (query, data, guid) {
 };
 
 // search for portals
-addHook('search', function(query) {
+window.addHook('search', function(query) {
   var term = query.term.toLowerCase();
 
   $.each(portals, function(guid, portal) {
@@ -26934,7 +26934,7 @@ addHook('search', function(query) {
 
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
-addHook('search', function(query) {
+window.addHook('search', function(query) {
   var locations = query.term.replaceAll(/%2C/gi, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
@@ -26968,7 +26968,7 @@ addHook('search', function(query) {
 
 
 // search on OpenStreetMap
-addHook('search', function(query) {
+window.addHook('search', function(query) {
   if(!query.confirmed) return;
 
   // Viewbox search orders results so they're closer to the viewbox
@@ -27040,7 +27040,7 @@ addHook('search', function(query) {
 });
 
 // search on guid
-addHook('search', function (query) {
+window.addHook('search', function (query) {
   const guid_re = /[0-9a-f]{32}\.[0-9a-f]{2}/;
   const res = query.term.match(guid_re);
   if (res) {
