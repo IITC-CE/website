@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player level guess
 // @category       Info
-// @version        0.5.7.20230808.135651
+// @version        0.5.8.20240121.164237
 // @description    Try to determine player levels from the data available in the current view.
 // @id             player-level-guess
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,10 +22,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-135651';
+plugin_info.dateTimeVersion = '2024-01-21-164237';
 plugin_info.pluginId = 'player-level-guess';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.5.8',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 // use own namespace for plugin
 window.plugin.guessPlayerLevels = function() {};

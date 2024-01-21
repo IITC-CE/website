@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.36.1.20230808.135651
+// @version        0.37.1.20240121.164237
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,13 +22,28 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-135651';
+plugin_info.dateTimeVersion = '2024-01-21-164237';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
+// create IITC scope
+var IITC = {};
+window.IITC = IITC;
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.38.0',
+    changes: ['Function marked deprecated: portalApGainMaths, getPortalApGain, potentialPortalLevel, findPortalLatLng'],
+  },
+  {
+    version: '0.37.1',
+    changes: ['New machina ranges according to latest research - https://linktr.ee/machina.research'],
+  },
+  {
+    version: '0.37.0',
+    changes: ['Keep COMM message team in parsed data as player.team may differ from team'],
+  },
   {
     version: '0.36.1',
     changes: ['Revert sorted sidebar links'],
@@ -50,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2023-08-08-135651';
+window.iitcBuildDate = '2024-01-21-164237';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2381,7 +2396,7 @@ window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geo
 // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
 window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
-window.LINK_RANGE_MAC = [0, 0, 500, 750, 1000, 1500, 2000, 3000, 5000, 5000]; // in meters
+window.LINK_RANGE_MAC = [0, 200, 250, 350, 400, 500, 600, 700, 1000, 1000]; // in meters
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
 window.DESTROY_RESONATOR = 75; //AP for destroying portal
@@ -2447,6 +2462,156 @@ var ulog = (function (module) {
 ;
   return module;
 }({})).exports;
+
+
+// *** module: _deprecated.js ***
+(function () {
+var log = ulog('_deprecated');
+/**
+ * functions that are not use by IITC itself
+ * and won't most likely not receive any updated
+ */
+/* global L -- eslint */
+
+/**
+ * @deprecated
+ *  given counts of resonators, links and fields, calculate the available AP
+ *  doesn't take account AP for resonator upgrades or AP for adding mods
+ */
+window.portalApGainMaths = function (resCount, linkCount, fieldCount) {
+  var deployAp = (8 - resCount) * window.DEPLOY_RESONATOR;
+  if (resCount === 0) deployAp += window.CAPTURE_PORTAL;
+  if (resCount !== 8) deployAp += window.COMPLETION_BONUS;
+  // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
+  var friendlyAp = deployAp;
+
+  var destroyResoAp = resCount * window.DESTROY_RESONATOR;
+  var destroyLinkAp = linkCount * window.DESTROY_LINK;
+  var destroyFieldAp = fieldCount * window.DESTROY_FIELD;
+  var captureAp = window.CAPTURE_PORTAL + 8 * window.DEPLOY_RESONATOR + window.COMPLETION_BONUS;
+  var destroyAp = destroyResoAp + destroyLinkAp + destroyFieldAp;
+  var enemyAp = destroyAp + captureAp;
+
+  return {
+    friendlyAp: friendlyAp,
+    enemyAp: enemyAp,
+    destroyAp: destroyAp,
+    destroyResoAp: destroyResoAp,
+    captureAp: captureAp,
+  };
+};
+
+/**
+ * @deprecated
+ * get the AP gains from a portal, based only on the brief summary data from portals, links and fields
+ * not entirely accurate - but available for all portals on the screen
+ */
+window.getPortalApGain = function (guid) {
+  var p = window.portals[guid];
+  if (p) {
+    var data = p.options.data;
+
+    var linkCount = window.getPortalLinksCount(guid);
+    var fieldCount = window.getPortalFieldsCount(guid);
+
+    var result = window.portalApGainMaths(data.resCount, linkCount, fieldCount);
+    return result;
+  }
+
+  return undefined;
+};
+
+/**
+ * @deprecated
+ * This function will return the potential level a player can upgrade it to
+ */
+window.potentialPortalLevel = function (d) {
+  var current_level = window.getPortalLevel(d);
+  var potential_level = current_level;
+
+  if (window.PLAYER.team === d.team) {
+    var resonators_on_portal = d.resonators;
+    var resonator_levels = new Array();
+
+    // figure out how many of each of these resonators can be placed by the player
+    var player_resontators = new Array();
+    for (var i = 1; i <= window.MAX_PORTAL_LEVEL; i++) {
+      player_resontators[i] = i > window.PLAYER.level ? 0 : window.MAX_RESO_PER_PLAYER[i];
+    }
+    $.each(resonators_on_portal, function (ind, reso) {
+      if (reso !== null && reso.owner === window.PLAYER.nickname) {
+        player_resontators[reso.level]--;
+      }
+      resonator_levels.push(reso === null ? 0 : reso.level);
+    });
+
+    resonator_levels.sort(function (a, b) {
+      return a - b;
+    });
+
+    // Max out portal
+    var install_index = 0;
+    for (var j = window.MAX_PORTAL_LEVEL; j >= 1; j--) {
+      for (var install = player_resontators[j]; install > 0; install--) {
+        if (resonator_levels[install_index] < j) {
+          resonator_levels[install_index] = j;
+          install_index++;
+        }
+      }
+    }
+
+    potential_level =
+      resonator_levels.reduce(function (a, b) {
+        return a + b;
+      }) / 8;
+  }
+  return potential_level;
+};
+
+/**
+ * @deprecated
+ * find the lat/lon for a portal, using any and all available data
+ * (we have the list of portals, the cached portal details, plus links and fields as sources of portal locations)
+ */
+window.findPortalLatLng = function (guid) {
+  if (window.portals[guid]) {
+    return window.portals[guid].getLatLng();
+  }
+
+  // not found in portals - try the cached (and possibly stale) details - good enough for location
+  var details = window.portalDetail.get(guid);
+  if (details) {
+    return L.latLng(details.latE6 / 1e6, details.lngE6 / 1e6);
+  }
+
+  // now try searching through fields
+  for (var fguid in window.fields) {
+    var f = window.fields[fguid].options.data;
+
+    for (var i in f.points) {
+      if (f.points[i].guid === guid) {
+        return L.latLng(f.points[i].latE6 / 1e6, f.points[i].lngE6 / 1e6);
+      }
+    }
+  }
+
+  // and finally search through links
+  for (var lguid in window.links) {
+    var l = window.links[lguid].options.data;
+    if (l.oGuid === guid) {
+      return L.latLng(l.oLatE6 / 1e6, l.oLngE6 / 1e6);
+    }
+    if (l.dGuid === guid) {
+      return L.latLng(l.dLatE6 / 1e6, l.dLngE6 / 1e6);
+    }
+  }
+
+  // no luck finding portal lat/lng
+  return undefined;
+};
+
+
+})();
 
 
 // *** module: app.js ***
@@ -3168,7 +3333,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2023-08-08-135651');
+  log.log('loading done, booting. Built: '+'2024-01-21-164237');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19029,22 +19194,8 @@ if (document.readyState === 'complete') { // IITCm
 // *** module: chat.js ***
 (function () {
 var log = ulog('chat');
-window.chat = function() {};
-
-//WORK IN PROGRESS - NOT YET USED!!
-window.chat.commTabs = [
-// channel: the COMM channel ('tab' parameter in server requests)
-// name: visible name
-// inputPrompt: string for the input prompt
-// inputColor: (optional) color for input
-// sendMessage: (optional) function to send the message (to override the default of sendPlext)
-// globalBounds: (optional) if true, always use global latLng bounds
-  {channel:'all', name:'All', inputPrompt: 'broadcast:', inputColor:'#f66'},
-  {channel:'faction', name:'Aaction', inputPrompt: 'tell faction:'},
-  {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputColor: '#666', globalBounds: true, sendMessage: function() {
-    alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
-  }},
-];
+window.chat = function () {};
+var chat = window.chat;
 
 
 window.chat.handleTabCompletion = function() {
@@ -19216,7 +19367,7 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   $('#chatfaction').data('needsClearing', null);
 
   var old = chat._faction.oldestGUID;
-  chat.writeDataToHash(data, chat._faction, false, olderMsgs, ascendingTimestampOrder);
+  chat.writeDataToHash(data, chat._faction, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._faction.oldestGUID;
 
   runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
@@ -19269,7 +19420,7 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   $('#chatall').data('needsClearing', null);
 
   var old = chat._public.oldestGUID;
-  chat.writeDataToHash(data, chat._public, undefined, olderMsgs, ascendingTimestampOrder);   //NOTE: isPublic passed as undefined - this is the 'all' channel, so not really public or private
+  chat.writeDataToHash(data, chat._public, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._public.oldestGUID;
 
   runHooks('publicChatDataAvailable', {raw: data, result: data.result, processed: chat._public.data});
@@ -19319,7 +19470,7 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   if(data.result.length === 0) return;
 
   var old = chat._alerts.oldestTimestamp;
-  chat.writeDataToHash(data, chat._alerts, undefined, olderMsgs, ascendingTimestampOrder); //NOTE: isPublic passed as undefined - it's nether public or private!
+  chat.writeDataToHash(data, chat._alerts, olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== chat._alerts.oldestTimestamp;
 
   // hook for alerts - API change planned here for next refactor
@@ -19402,16 +19553,19 @@ window.chat.parseMsgData = function (data) {
 
   var markup = data[2].plext.markup;
 
-  var nick = '';
+  var player = {
+    name: '',
+    team: team,
+  };
   markup.forEach(function(ent) {
     switch (ent[0]) {
       case 'SENDER': // user generated messages
-        nick = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
+        player.name = ent[1].plain.replace(/: $/, ''); // cut “: ” at end
         break;
 
       case 'PLAYER': // automatically generated messages
-        nick = ent[1].plain;
-        team = window.teamStringToId(ent[1].team);
+        player.name = ent[1].plain;
+        player.team = window.teamStringToId(ent[1].team);
         break;
 
       default:
@@ -19429,15 +19583,13 @@ window.chat.parseMsgData = function (data) {
     type: data[2].plext.plextType,
     narrowcast: systemNarrowcast,
     auto: auto,
-    player: {
-      name: nick,
-      team: team,
-    },
+    team: team,
+    player: player,
     markup: markup,
   };
 };
 
-window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs, isAscendingOrder) {
+window.chat.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
   window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function(json) {
@@ -19818,9 +19970,6 @@ window.chat.chooseTab = function(tab) {
 
       chat.renderAlerts(false);
       break;
-
-    default:
-      throw new Error('chat.chooser was asked to handle unknown button: ' + tt);
   }
 }
 
@@ -19953,7 +20102,6 @@ window.chat.setupPosting = function() {
         }
       } catch (e) {
         log.error(e);
-        //if (e.stack) { console.error(e.stack); }
       }
     });
   }
@@ -20034,13 +20182,11 @@ window.DataCache = function() {
 
 }
 
-window.DataCache.prototype.store = function (qk, data, freshTime) {
+window.DataCache.prototype.store = function (qk, data) {
   this.remove(qk);
 
   var time = new Date().getTime();
-
-  if (freshTime===undefined) freshTime = this.REQUEST_CACHE_FRESH_AGE*1000;
-  var expire = time + freshTime;
+  var expire = time + this.REQUEST_CACHE_FRESH_AGE * 1000;
 
   var dataStr = JSON.stringify(data);
 
@@ -20948,6 +21094,311 @@ window.extractFromStock = function() {
 })();
 
 
+// *** module: filters.js ***
+(function () {
+var log = ulog('filters');
+/* Filters API
+
+Filters API is a mechanism to hide intel entities using their properties (faction,
+health, timestamp...). It provides two level APIs: a set of named filters that
+apply globally (any entity matching one of the filters will be hidden), and low
+level API to test an entity against a filter for generic purpose.
+This comes with a Leaflet layer system following the old layer system, the filter
+is disabled when the layer is added to the map and is enabled when removed.
+
+A filter applies to a combinaison of portal/link/field and is described by
+ - data properties that must (all) match
+ - or a predicate for complex filter
+
+  { portal: true, link: true, data: { team: 'E' }}
+      filters any ENL portal/link
+
+  [{ link: true, data: { oGuid: "some guid" }}, { link: true, data: { dGuid: "some guid" }}]
+      filters any links on portal with guid "some guid"
+
+  { field: true, pred: function (f) { return f.options.timestamp < Date.parse('2021-10-31'); } }
+      filters any fields made before Halloween 2021
+
+Data properties can be specified as value, or as a complex expression (required
+for array data properties). A complex expression is a 2-array, first element is
+an operator, second is the argument of the operator for the property.
+The operators are:
+ - ['eq', value] : this is equivalent to type directly `value`
+ - ['not', ]
+ - ['or', [exp1, exp2,...]]: the expression matches if one of the exp1.. matches
+ - ['and', [exp1, exp2...]]: matches if all exp1 matches (useful for array
+  properties)
+ - ['some', exp]: when the property is an array, matches if one of the element
+  matches `exp`
+ - ['every', exp]: all elements must match `exp`
+ - ['<', number]: for number comparison (and <= > >=)
+
+Examples:
+  { portal: true, data:  ['not', { history: { scoutControlled: false }, ornaments:
+  ['some', 'sc5_p'] }] }
+      filters all portals but the one never scout controlled that have a scout
+      volatile ornament
+
+  { portal: true, data: ['not', { resonators: ['every', { owner: 'some agent' } ] } ] }
+      filters all portals that have resonators not owned from 'some agent'
+      (note: that would need to load portal details)
+
+  { portal: true, data: { level: ['or', [1,4,5]], health: ['>', 85] } }
+      filters all portals with level 1,4 or 5 and health over 85
+
+  { portal: true, link: true, field: true, options: { timestamp: ['<',
+  Date.now() - 3600000] } }
+      filters all entities with no change since 1 hour (from the creation of
+      the filter)
+*/
+
+IITC.filters = {};
+/**
+ * @type {Object.<string, FilterDesc>}
+ */
+IITC.filters._filters = {};
+
+/**
+ * @callback FilterPredicate
+ * @param {Object} ent - IITC entity
+ * @returns {boolean}
+ */
+
+/**
+ * @typedef FilterDesc
+ * @type {object}
+ * @property {boolean} filterDesc.portal         apply to portal
+ * @property {boolean} filterDesc.link           apply to link
+ * @property {boolean} filterDesc.field          apply to field
+ * @property {object} [filterDesc.data]          entity data properties that must match
+ * @property {object} [filterDesc.options]       entity options that must match
+ * @property {FilterPredicate} [filterDesc.pred] predicate on the entity
+ */
+
+/**
+ * @param {string} name                              filter name
+ * @param {FilterDesc | FilterDesc[]} filterDesc     filter description (OR)
+ */
+IITC.filters.set = function (name, filterDesc) {
+  IITC.filters._filters[name] = filterDesc;
+};
+
+IITC.filters.has = function (name) {
+  return name in IITC.filters._filters;
+};
+
+IITC.filters.remove = function (name) {
+  return delete IITC.filters._filters[name];
+};
+
+function compareValue(constraint, value) {
+  if (constraint instanceof Array) return false;
+  // array must be handled by "some" or "every"
+  if (value instanceof Array) return false;
+  if (constraint instanceof Object) {
+    if (!(value instanceof Object)) return false;
+    // implicit AND on object properties
+    for (const prop in constraint) {
+      if (!genericCompare(constraint[prop], value[prop])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return constraint === value;
+}
+
+function compareNumber(constraint, value) {
+  if (typeof value !== 'number') return false;
+  if (typeof constraint[1] !== 'number') return false;
+  const v = constraint[1];
+  switch (constraint[0]) {
+    case '==':
+      return value === v;
+    case '<':
+      return value < v;
+    case '<=':
+      return value <= v;
+    case '>':
+      return value > v;
+    case '>=':
+      return value >= v;
+  }
+  return false;
+}
+
+function genericCompare(constraint, object) {
+  if (constraint instanceof Array) {
+    if (constraint.length !== 2) return false;
+    const [op, args] = constraint;
+    switch (op) {
+      case 'eq':
+        return compareValue(args, object);
+      case 'or':
+        if (args instanceof Array) {
+          for (const arg of args) {
+            if (genericCompare(arg, object)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      case 'and':
+        if (args instanceof Array) {
+          for (const arg of args) {
+            if (!genericCompare(arg, object)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      case 'some':
+        if (object instanceof Array) {
+          for (const obj of object) {
+            if (genericCompare(args, obj)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      case 'every':
+        if (object instanceof Array) {
+          for (const obj of object) {
+            if (!genericCompare(args, obj)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      case 'not':
+        return !genericCompare(args, object);
+      case '==':
+      case '<':
+      case '<=':
+      case '>':
+      case '>=':
+        return compareNumber(constraint, object);
+      default:
+      // unknown op
+    }
+    return false;
+  }
+  return compareValue(constraint, object);
+}
+
+/**
+ *
+ * @param {"portal"|"link"|"field"} type Type of the entity
+ * @param {object} entity Portal/link/field to test
+ * @param {FilterDesc} filter Filter
+ * @returns {boolean} `true` if the the `entity` of type `type` matches the `filter`
+ */
+IITC.filters.testFilter = function (type, entity, filter) {
+  // type must match
+  if (!filter[type]) return false;
+  // use predicate if available
+  if (typeof filter.pred === 'function') return filter.pred(entity);
+  // if doesn't match data constraint
+  if (filter.data && !genericCompare(filter.data, entity.options.data)) return false;
+  // if doesn't match options
+  if (filter.options && !genericCompare(filter.options, entity.options)) {
+    return false;
+  }
+  // else it matches
+  return true;
+};
+
+function arrayFilter(type, entity, filters) {
+  if (!Array.isArray(filters)) filters = [filters];
+  filters = filters.flat();
+  for (let i = 0; i < filters.length; i++) {
+    if (IITC.filters.testFilter(type, entity, filters[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ *
+ * @param {object} portal Portal to test
+ * @returns {boolean} `true` if the the portal matches one of the filters
+ */
+IITC.filters.filterPortal = function (portal) {
+  return arrayFilter('portal', portal, Object.values(IITC.filters._filters));
+};
+
+/**
+ *
+ * @param {object} link Link to test
+ * @returns {boolean} `true` if the the link matches one of the filters
+ */
+IITC.filters.filterLink = function (link) {
+  return arrayFilter('link', link, Object.values(IITC.filters._filters));
+};
+
+/**
+ *
+ * @param {object} field Field to test
+ * @returns {boolean} `true` if the the field matches one of the filters
+ */
+IITC.filters.filterField = function (field) {
+  return arrayFilter('field', field, Object.values(IITC.filters._filters));
+};
+
+IITC.filters.filterEntities = function () {
+  for (const guid in window.portals) {
+    const p = window.portals[guid];
+    if (IITC.filters.filterPortal(p)) p.remove();
+    else p.addTo(window.map);
+  }
+  for (const guid in window.links) {
+    const link = window.links[guid];
+    if (IITC.filters.filterLink(link)) link.remove();
+    else link.addTo(window.map);
+  }
+  for (const guid in window.fields) {
+    const field = window.fields[guid];
+    if (IITC.filters.filterField(field)) field.remove();
+    else field.addTo(window.map);
+  }
+};
+
+/**
+ * @class FilterLayer
+ * @description Layer abstraction to control with the layer chooser a filter.
+ *              The filter is disabled on layer add, and enabled on layer remove.
+ * @extends L.Layer
+ * @param {{name: string, filter: FilterDesc}} options
+ */
+IITC.filters.FilterLayer = L.Layer.extend({
+  options: {
+    name: null,
+    filter: {},
+  },
+
+  initialize: function (options) {
+    L.setOptions(this, options);
+    IITC.filters.set(this.options.name, this.options.filter);
+  },
+
+  onAdd: function () {
+    IITC.filters.remove(this.options.name);
+    IITC.filters.filterEntities();
+  },
+
+  onRemove: function () {
+    IITC.filters.set(this.options.name, this.options.filter);
+    IITC.filters.filterEntities();
+  },
+});
+
+/* global IITC, L */
+
+
+})();
+
+
 // *** module: game_status.js ***
 (function () {
 var log = ulog('game_status');
@@ -21784,6 +22235,9 @@ function createDefaultBaseMapLayers () {
   var trafficMutant = L.gridLayer.googleMutant({type: 'roadmap'});
   trafficMutant.addGoogleLayer('TrafficLayer');
   baseLayers['Google Roads + Traffic'] = trafficMutant;
+  var transitMutant = L.gridLayer.googleMutant({ type: 'roadmap' });
+  transitMutant.addGoogleLayer('TransitLayer');
+  baseLayers['Google Roads + Transit'] = transitMutant;
   baseLayers['Google Satellite'] = L.gridLayer.googleMutant({type: 'satellite'});
   baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({type: 'hybrid'});
   baseLayers['Google Terrain'] = L.gridLayer.googleMutant({type: 'terrain'});
@@ -21791,59 +22245,68 @@ function createDefaultBaseMapLayers () {
   return baseLayers;
 }
 
-function createFactionLayersArray() {
-  return window.TEAM_NAMES.map(() => L.layerGroup());
-}
-
-function createDefaultOverlays () {
-  /* global portalsFactionLayers: true, linksFactionLayers: true, fieldsFactionLayers: true -- eslint*/
+function createDefaultOverlays() {
   /* eslint-disable dot-notation  */
 
   var addLayers = {};
 
-  portalsFactionLayers = [];
-  var portalsLayers = [];
-  for (var i = 0; i <= 8; i++) {
-    portalsFactionLayers[i] = createFactionLayersArray();
-    portalsLayers[i] = L.layerGroup();
-    var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
-    addLayers[t] = portalsLayers[i];
+  var l0Layer = new IITC.filters.FilterLayer({
+    name: 'Unclaimed/Placeholder Portals',
+    filter: [
+      { portal: true, data: { team: 'N' } },
+      { portal: true, data: { level: undefined } },
+    ],
+  });
+  addLayers[l0Layer.options.name] = l0Layer;
+  for (var i = 1; i <= 8; i++) {
+    var t = 'Level ' + i + ' Portals';
+    var portalsLayer = new IITC.filters.FilterLayer({
+      name: t,
+      filter: [
+        { portal: true, data: { level: i, team: 'R' } },
+        { portal: true, data: { level: i, team: 'E' } },
+      ],
+    });
+    addLayers[t] = portalsLayer;
   }
 
-  fieldsFactionLayers = createFactionLayersArray();
-  var fieldsLayer = L.layerGroup();
-  addLayers['Fields'] = fieldsLayer;
+  var fieldsLayer = new IITC.filters.FilterLayer({
+    name: 'Fields',
+    filter: { field: true },
+  });
+  addLayers[fieldsLayer.options.name] = fieldsLayer;
 
-  linksFactionLayers = createFactionLayersArray();
-  var linksLayer = L.layerGroup();
-  addLayers['Links'] = linksLayer;
+  var linksLayer = new IITC.filters.FilterLayer({
+    name: 'Links',
+    filter: { link: true },
+  });
+  addLayers[linksLayer.options.name] = linksLayer;
 
   // faction-specific layers
-  // these layers don't actually contain any data. instead, every time they're added/removed from the map,
-  // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
-  // the below 'onoverlayadd/onoverlayremove' events
-  var factionLayers = createFactionLayersArray();
-  factionLayers.forEach(function (facLayer, facIdx) {
-    facLayer.on('add remove', function (e) {
-      var fn = e.type + 'Layer';
-      fieldsLayer[fn](fieldsFactionLayers[facIdx]);
-      linksLayer[fn](linksFactionLayers[facIdx]);
-      portalsLayers.forEach(function (portals, lvl) {
-        portals[fn](portalsFactionLayers[lvl][facIdx]);
-      });
-    });
-    addLayers[window.TEAM_NAMES[facIdx]] = facLayer;
+  var resistanceLayer = new IITC.filters.FilterLayer({
+    name: window.TEAM_NAME_RES,
+    filter: { portal: true, link: true, field: true, data: { team: 'R' } },
+  });
+  var enlightenedLayer = new IITC.filters.FilterLayer({
+    name: window.TEAM_NAME_ENL,
+    filter: { portal: true, link: true, field: true, data: { team: 'E' } },
+  });
+  var machinaLayer = new IITC.filters.FilterLayer({
+    name: window.TEAM_NAME_MAC,
+    filter: { portal: true, link: true, field: true, data: { team: 'M' } },
   });
 
   // to avoid any favouritism, we'll put the player's own faction layer first
-  if (window.PLAYER.team !== 'RESISTANCE') {
-    delete addLayers[window.TEAM_NAME_RES];
-    addLayers[window.TEAM_NAME_RES] = factionLayers[window.TEAM_RES];
+  if (PLAYER.team === 'RESISTANCE') {
+    addLayers[resistanceLayer.options.name] = resistanceLayer;
+    addLayers[enlightenedLayer.options.name] = enlightenedLayer;
+  } else {
+    addLayers[enlightenedLayer.options.name] = enlightenedLayer;
+    addLayers[resistanceLayer.options.name] = resistanceLayer;
   }
 
   // and just put __MACHINA__ faction last
-  delete addLayers[window.TEAM_NAME_MAC];
-  addLayers[window.TEAM_NAME_MAC] = factionLayers[window.TEAM_MAC];
+  addLayers[window.TEAM_NAME_MAC] = machinaLayer;
 
   return addLayers;
   /* eslint-enable dot-notation  */
@@ -21893,8 +22356,6 @@ window.setupMap = function () {
   }
   var baseLayers = createDefaultBaseMapLayers();
   var overlays = createDefaultOverlays();
-  map.addLayer(overlays.Neutral);
-  delete overlays.Neutral;
 
   var layerChooser = window.layerChooser = new window.LayerChooser(baseLayers, overlays, {map: map})
     .addTo(map);
@@ -22012,6 +22473,8 @@ window.setupMap = function () {
   };
   */
 };
+
+/* global IITC, PLAYER */
 
 
 })();
@@ -22447,26 +22910,8 @@ window.Render.prototype.endRenderPass = function() {
 }
 
 window.Render.prototype.bringPortalsToFront = function() {
-  for (var lvl in portalsFactionLayers) {
-    // portals are stored in separate layers per faction
-    // to avoid giving weight to one faction or another, we'll push portals to front based on GUID order
-    var lvlPortals = {};
-    for (var fac in portalsFactionLayers[lvl]) {
-      var layer = portalsFactionLayers[lvl][fac];
-      if (layer._map) {
-        layer.eachLayer (function(p) {
-          lvlPortals[p.options.guid] = p;
-        });
-      }
-    }
-
-    var guids = Object.keys(lvlPortals);
-    guids.sort();
-
-    for (var j in guids) {
-      var guid = guids[j];
-      lvlPortals[guid].bringToFront();
-    }
+  for (var guid in window.portals) {
+    window.portals[guid].bringToFront();
   }
 
   // artifact portals are always brought to the front, above all others
@@ -22475,7 +22920,6 @@ window.Render.prototype.bringPortalsToFront = function() {
       portals[guid].bringToFront();
     }
   });
-
 }
 
 
@@ -22498,7 +22942,7 @@ window.Render.prototype.deletePortalEntity = function(guid) {
 window.Render.prototype.deleteLinkEntity = function(guid) {
   if (guid in window.links) {
     var l = window.links[guid];
-    linksFactionLayers[l.options.team].removeLayer(l);
+    l.remove();
     delete window.links[guid];
     window.runHooks('linkRemoved', {link: l, data: l.options.data });
   }
@@ -22508,8 +22952,7 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
 window.Render.prototype.deleteFieldEntity = function(guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
-
-    fieldsFactionLayers[f.options.team].removeLayer(f);
+    f.remove();
     delete window.fields[guid];
     window.runHooks('fieldRemoved', {field: f, data: f.options.data });
   }
@@ -22719,7 +23162,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   window.fields[ent[0]] = poly;
 
   // TODO? postpone adding to the layer??
-  fieldsFactionLayers[poly.options.team].addLayer(poly);
+  if (!IITC.filters.filterField(poly)) poly.addTo(window.map);
 }
 
 window.Render.prototype.createLinkEntity = function (ent) {
@@ -22781,7 +23224,7 @@ window.Render.prototype.createLinkEntity = function (ent) {
 
   window.links[ent[0]] = poly;
 
-  linksFactionLayers[poly.options.team].addLayer(poly);
+  if (!IITC.filters.filterLink(poly)) poly.addTo(window.map);
 }
 
 
@@ -22802,13 +23245,15 @@ window.Render.prototype.rescalePortalMarkers = function() {
 
 // add the portal to the visible map layer
 window.Render.prototype.addPortalToMapLayer = function(portal) {
-  portalsFactionLayers[parseInt(portal.options.level)||0][portal.options.team].addLayer(portal);
+  if (!IITC.filters.filterPortal(portal)) portal.addTo(window.map);
 }
 
 window.Render.prototype.removePortalFromMapLayer = function(portal) {
   //remove it from the portalsLevels layer
-  portalsFactionLayers[parseInt(portal.options.level)||0][portal.options.team].removeLayer(portal);
+  portal.remove();
 }
+
+/* global IITC */
 
 
 })();
@@ -23946,54 +24391,14 @@ window.getPortalFields = function(guid) {
 window.getPortalFieldsCount = function(guid) {
   var fields = getPortalFields(guid);
   return fields.length;
-}
-
-
-// find the lat/lon for a portal, using any and all available data
-// (we have the list of portals, the cached portal details, plus links and fields as sources of portal locations)
-window.findPortalLatLng = function(guid) {
-  if (window.portals[guid]) {
-    return window.portals[guid].getLatLng();
-  }
-
-  // not found in portals - try the cached (and possibly stale) details - good enough for location
-  var details = portalDetail.get(guid);
-  if (details) {
-    return L.latLng (details.latE6/1E6, details.lngE6/1E6);
-  }
-
-  // now try searching through fields
-  for (var fguid in window.fields) {
-    var f = window.fields[fguid].options.data;
-
-    for (var i in f.points) {
-      if (f.points[i].guid == guid) {
-        return L.latLng (f.points[i].latE6/1E6, f.points[i].lngE6/1E6);
-      }
-    }
-  }
-
-  // and finally search through links
-  for (var lguid in window.links) {
-    var l = window.links[lguid].options.data;
-    if (l.oGuid == guid) {
-      return L.latLng (l.oLatE6/1E6, l.oLngE6/1E6);
-    }
-    if (l.dGuid == guid) {
-      return L.latLng (l.dLatE6/1E6, l.dLngE6/1E6);
-    }
-  }
-
-  // no luck finding portal lat/lng
-  return undefined;
 };
 
 
-(function() {
+(function () {
   var cache = {};
   var cache_level = 0;
   var GC_LIMIT = 15000; // run garbage collector when cache has more that 5000 items
-  var GC_KEEP  = 10000; // keep the 4000 most recent items
+  var GC_KEEP = 10000; // keep the 4000 most recent items
 
   window.findPortalGuidByPositionE6 = function(latE6, lngE6) {
     var item = cache[latE6+","+lngE6];
@@ -24041,49 +24446,6 @@ window.findPortalLatLng = function(guid) {
 })();
 
 
-// get the AP gains from a portal, based only on the brief summary data from portals, links and fields
-// not entirely accurate - but available for all portals on the screen
-window.getPortalApGain = function(guid) {
-
-  var p = window.portals[guid];
-  if (p) {
-    var data = p.options.data;
-
-    var linkCount = getPortalLinksCount(guid);
-    var fieldCount = getPortalFieldsCount(guid);
-
-    var result = portalApGainMaths(data.resCount, linkCount, fieldCount);
-    return result;
-  }
-
-  return undefined;
-}
-
-// given counts of resonators, links and fields, calculate the available AP
-// doesn't take account AP for resonator upgrades or AP for adding mods
-window.portalApGainMaths = function(resCount, linkCount, fieldCount) {
-
-  var deployAp = (8-resCount)*DEPLOY_RESONATOR;
-  if (resCount == 0) deployAp += CAPTURE_PORTAL;
-  if (resCount != 8) deployAp += COMPLETION_BONUS;
-  // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
-  var friendlyAp = deployAp;
-
-  var destroyResoAp = resCount*DESTROY_RESONATOR;
-  var destroyLinkAp = linkCount*DESTROY_LINK;
-  var destroyFieldAp = fieldCount*DESTROY_FIELD;
-  var captureAp = CAPTURE_PORTAL + 8 * DEPLOY_RESONATOR + COMPLETION_BONUS;
-  var destroyAp = destroyResoAp+destroyLinkAp+destroyFieldAp;
-  var enemyAp = destroyAp+captureAp;
-
-  return {
-    friendlyAp: friendlyAp,
-    enemyAp: enemyAp,
-    destroyAp: destroyAp,
-    destroyResoAp: destroyResoAp,
-    captureAp: captureAp
-  }
-}
 
 
 })();
@@ -24343,7 +24705,7 @@ window.renderPortalDetails = function(guid) {
       historyDetails
     );
 
-  window.renderPortalUrl(lat, lng, title, guid);
+  window.renderPortalUrl(lat, lng, title);
 
   // only run the hooks when we have a portalDetails object - most plugins rely on the extended data
   // TODO? another hook to call always, for any plugins that can work with less data?
@@ -25005,48 +25367,8 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
   };
 }
 
-//This function will return the potential level a player can upgrade it to
-window.potentialPortalLevel = function(d) {
-  var current_level = getPortalLevel(d);
-  var potential_level = current_level;
 
-  if(PLAYER.team === d.team) {
-    var resonators_on_portal = d.resonators;
-    var resonator_levels = new Array();
-    // figure out how many of each of these resonators can be placed by the player
-    var player_resontators = new Array();
-    for(var i=1;i<=MAX_PORTAL_LEVEL; i++) {
-      player_resontators[i] = i > PLAYER.level ? 0 : MAX_RESO_PER_PLAYER[i];
-    }
-    $.each(resonators_on_portal, function(ind, reso) {
-      if(reso !== null && reso.owner === window.PLAYER.nickname) {
-        player_resontators[reso.level]--;
-      }
-      resonator_levels.push(reso === null ? 0 : reso.level);
-    });
-
-    resonator_levels.sort(function(a, b) {
-      return(a - b);
-    });
-
-    // Max out portal
-    var install_index = 0;
-    for(var i=MAX_PORTAL_LEVEL;i>=1; i--) {
-      for(var install = player_resontators[i]; install>0; install--) {
-        if(resonator_levels[install_index] < i) {
-          resonator_levels[install_index] = i;
-          install_index++;
-        }
-      }
-    }
-    //log.log(resonator_levels);
-    potential_level = resonator_levels.reduce(function(a, b) {return a + b;}) / 8;
-  }
-  return(potential_level);
-}
-
-
-window.fixPortalImageUrl = function(url) {
+window.fixPortalImageUrl = function (url) {
   if (url) {
     if (window.location.protocol === 'https:') {
       url = url.replace(/^http:\/\//, '//');

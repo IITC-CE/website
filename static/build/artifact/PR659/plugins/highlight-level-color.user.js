@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals by level color
 // @category       Highlighter
-// @version        0.2.0.20230808.135651
+// @version        0.2.1.20240121.164237
 // @description    Use the portal fill color to denote the portal level by using the game level colors.
 // @id             highlight-level-color
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,12 +22,19 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-135651';
+plugin_info.dateTimeVersion = '2024-01-21-164237';
 plugin_info.pluginId = 'highlight-level-color';
 //END PLUGIN AUTHORS NOTE
 
-/* exported setup --eslint */
-/* global COLORS_LVL*/
+/* exported setup, changelog --eslint */
+/* global COLORS_LVL */
+
+var changelog = [
+  {
+    version: '0.2.1',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 function highlightLevelColor (data) {
   var portal_level = data.portal.options.data.level;

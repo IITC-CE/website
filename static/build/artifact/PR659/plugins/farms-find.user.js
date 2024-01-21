@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.1.20230808.135651
+// @version        1.4.2.20240121.164237
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,35 +22,46 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-08-08-135651';
+plugin_info.dateTimeVersion = '2024-01-21-164237';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
 
-//CHANGELOG
-/*
-v1.3.0
-Added mobile support
-
-v1.2.1
-Fixed dropdown location overlap
-
-v1.2.0
-Circle is sent to back on mouseover
-Clicking on circle displays portal counts for farm (including portals of level lower than farm)
-
-v1.1.2
-Fixed the portal counts (shown in console)
-
-v1.1.1
-Changed circle stroke weight and opacity, making it easier to see when zoomed out.
-
-v1.1.0
-Changed radius function and center function - 
-Center is now the midpoint of the max and min long and lat coords
-Radius is distance from center to furthest portal (i.e., now the circle will be limited to portals in the farm)
-
-*/
+var changelog = [
+  {
+    version: '1.4.2',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+  {
+    version: '1.3.0',
+    changes: ['Added mobile support'],
+  },
+  {
+    version: '1.2.1',
+    changes: ['Fixed dropdown location overlap'],
+  },
+  {
+    version: '1.2.0',
+    changes: ['Circle is sent to back on mouseover', 'Clicking on circle displays portal counts for farm (including portals of level lower than farm)'],
+  },
+  {
+    version: '1.1.2',
+    changes: ['Fixed the portal counts (shown in console)'],
+  },
+  {
+    version: '1.1.1',
+    changes: ['Changed circle stroke weight and opacity, making it easier to see when zoomed out.'],
+  },
+  {
+    version: '1.1.0',
+    changes: [
+      'Changed radius function and center function -\n' +
+        'Center is now the midpoint of the max and min long and lat coords\n' +
+        'Radius is distance from center to furthest portal (i.e., now the circle will be limited to portals in the farm)',
+    ],
+  },
+];
 
 
 // use own namespace for plugin
