@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240120.214703
+// @version        0.37.1.20240121.084010
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-20-214703';
+plugin_info.dateTimeVersion = '2024-01-21-084010';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-20-214703';
+window.iitcBuildDate = '2024-01-21-084010';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2420,6 +2420,7 @@ window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
 window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '__MACHINA__'];
 window.TEAM_CODES = ['N', 'R', 'E', 'M'];
 window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
+window.TEAM_SHORTNAMES = ['NEU', 'RES', 'ENL', 'MAC'];
 
 window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
 window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
@@ -3333,7 +3334,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-20-214703');
+  log.log('loading done, booting. Built: '+'2024-01-21-084010');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26648,6 +26649,8 @@ addHook('search', function(query) {});
   selected or the search was cancelled by the user).
 */
 
+/* global L -- eslint */
+
 window.search = {
   lastSearch: null,
 };
@@ -26883,23 +26886,15 @@ window.search.setup = function() {
 };
 
 
-// search for portals
-addHook('search', function(query) {
-  var term = query.term.toLowerCase();
-  var teams = ['NEU','RES','ENL'];
-
-  $.each(portals, function(guid, portal) {
-    var data = portal.options.data;
-    if(!data.title) return;
-
-    if(data.title.toLowerCase().indexOf(term) !== -1) {
-      var team = portal.options.team;
-      var color = team==TEAM_NONE ? '#CCC' : COLORS[team];
-      query.addResult({
-        title: data.title,
-        description: teams[team] + ', L' + data.level + ', ' + data.health + '%, ' + data.resCount + ' Resonators',
-        position: portal.getLatLng(),
-        icon: 'data:image/svg+xml;base64,'+btoa('\
+function addSearchResult(query, data, guid) {
+  var team = window.teamStringToId(data.team);
+  var color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
+  var latLng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
+  query.addResult({
+    title: data.title,
+    description: window.TEAM_SHORTNAMES[team] + ', L' + data.level + ', ' + data.health + '%, ' + data.resCount + ' Resonators',
+    position: latLng,
+    icon: 'data:image/svg+xml;base64,' + btoa('\
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\
 	<g style="fill:%COLOR%;stroke:none">\
 		<path d="m 6,12 -2,-12  4,0 z" />\
@@ -26908,18 +26903,32 @@ addHook('search', function(query) {
 	</g>\
 </svg>\
 '.replace(/%COLOR%/g, color)),
-        onSelected: function(result, event) {
-          if (event.type === 'dblclick') {
-            window.zoomToAndShowPortal(guid, portal.getLatLng());
-          } else if(window.portals[guid]) {
-            if(!map.getBounds().contains(result.position)) map.setView(result.position);
-            window.renderPortalDetails(guid);
-          } else {
-            window.selectPortalByLatLng(portal.getLatLng());
-          }
-          return true; // prevent default behavior
-        },
-      });
+    onSelected: function (result, event) {
+      if (event.type === 'dblclick') {
+        window.zoomToAndShowPortal(guid, latLng);
+      } else if (window.portals[guid]) {
+        if (!window.map.getBounds().contains(result.position)) {
+          window.map.setView(result.position);
+        }
+        window.renderPortalDetails(guid);
+      } else {
+        window.selectPortalByLatLng(latLng);
+      }
+      return true; // prevent default behavior
+    },
+  });
+}
+
+// search for portals
+addHook('search', function(query) {
+  var term = query.term.toLowerCase();
+
+  $.each(portals, function(guid, portal) {
+    var data = portal.options.data;
+    if(!data.title) return;
+
+    if(data.title.toLowerCase().indexOf(term) !== -1) {
+      addSearchResult(query, data, guid);
     }
   });
 });
@@ -27032,51 +27041,19 @@ addHook('search', function(query) {
   $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
-// search for guid
-window.search.addGuidResult = function (query, data, guid) {
-  const teams = ['NEU', 'RES', 'ENL'];
-  const team = window.teamStringToId(data.team);
-  query.addResult({
-    title: data.title,
-    description:
-      teams[team] +
-      ", L" +
-      data.level +
-      ", " +
-      data.health +
-      "%, " +
-      data.resCount +
-      " Resonators",
-    position: L.latLng(data.latE6 * 1e-6, data.lngE6 * 1e-6),
-    onSelected: function (result, event) {
-      if (event.type === 'dblclick') {
-        window.zoomToAndShowPortal(guid, result.position);
-      } else if (window.portals[guid]) {
-        if (!map.getBounds().contains(result.position))
-          map.setView(result.position);
-        window.renderPortalDetails(guid);
-      } else {
-        window.selectPortalByLatLng(result.position);
-      }
-      return true; // prevent default behavior
-    },
-  });
-};
-
 addHook('search', function (query) {
   const guid_re = /[0-9a-f]{32}\.[0-9a-f]{2}/;
   const res = query.term.match(guid_re);
   if (res) {
     const guid = res[0];
     const data = window.portalDetail.get(guid);
-    if (data) window.search.addGuidResult(query, data, guid);
+    if (data) addSearchResult(query, data, guid);
     else {
       window.portalDetail.request(guid).then(function (data) {
-        window.search.addGuidResult(query, data, guid);
+        addSearchResult(query, data, guid);
       });
     }
   }
-
 });
 
 
