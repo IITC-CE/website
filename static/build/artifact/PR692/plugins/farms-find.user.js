@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.2.20240122.065714
+// @version        1.4.2.20240122.070001
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-22-065714';
+plugin_info.dateTimeVersion = '2024-01-22-070001';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 
@@ -69,12 +69,10 @@ var changelog = [
 window.plugin.farmFind = function() {};
 
 window.plugin.farmFind.getNearbyPortalCount = function(portal){
-
     var circle = new google.maps.Circle();
     var center = new google.maps.LatLng(portal.getLatLng().lat, portal.getLatLng().lng);
     circle.setCenter(center);
     circle.setRadius(window.plugin.farmFind.Radius);
-
 
     var nearby8Portals = 0;
 
@@ -83,7 +81,7 @@ window.plugin.farmFind.getNearbyPortalCount = function(portal){
       	 if (circle.getBounds().contains(thisPortal))
              if (otherPortal.options.level >= window.plugin.farmFind.minLevel) nearby8Portals++;
     });
-    //console.log(nearby8Portals);
+  //console.log(nearby8Portals);
     return nearby8Portals;
 };
 
@@ -92,7 +90,6 @@ window.plugin.farmFind.checkPortals = function(){
     window.plugin.farmFind.levelLayerGroup.clearLayers();
     //console.log(window.portals.length);
 	$.each(window.portals, function(i, portal) {
-
 		if (window.plugin.farmFind.getNearbyPortalCount(portal) > window.plugin.farmFind.minNearby)
         {
          	//console.log("Farm identified");
@@ -143,8 +140,6 @@ window.plugin.farmFind.checkPortals = function(){
                         		farmIndex = x;
                         	}
                         }
-
-
         			}
 
                     //console.log("Already in another farm: " + alreadyInAnotherFarm);
@@ -185,10 +180,7 @@ window.plugin.farmFind.checkPortals = function(){
     }
     //console.log(farms);
 
-
-
     window.plugin.farmFind.drawnItems = new L.FeatureGroup();
-
 
     for (farm = 0; farm < farms.length; farm++)
     {
@@ -266,7 +258,6 @@ window.plugin.farmFind.drawCircle = function(farm)
     var circle = new L.Circle(latlng, radius, optCircle);
     circle.bindPopup(popupMsg);
 
-
     circle.on('mouseover', function(e) {
    		circle.bringToBack();
 	});
@@ -278,7 +269,6 @@ window.plugin.farmFind.drawCircle = function(farm)
 };
 
     google.maps.LatLng.prototype.distanceFrom = function(newLatLng) {
-
    // setup our variables
    var lat1 = this.lat();
    var radianLat1 = lat1 * ( Math.PI  / 180 );
@@ -300,7 +290,7 @@ window.plugin.farmFind.drawCircle = function(farm)
    var diffLng =  ( radianLng1 - radianLng2 );
    // put on a wave (hey the earth is round after all)
    var sinLat = Math.sin( diffLat / 2  );
-   var sinLng = Math.sin( diffLng / 2  );
+  var sinLng = Math.sin(diffLng / 2);
 
    // maths - borrowed from http://www.opensourceconnections.com/wp-content/uploads/2009/02/clientsidehaversinecalculation.html
    var a = Math.pow(sinLat, 2.0) + Math.cos(radianLat1) * Math.cos(radianLat2) * Math.pow(sinLng, 2.0);
