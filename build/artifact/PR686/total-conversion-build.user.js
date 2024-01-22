@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240119.080507
+// @version        0.37.1.20240122.083204
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-19-080507';
+plugin_info.dateTimeVersion = '2024-01-22-083204';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -95,7 +95,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-19-080507';
+window.iitcBuildDate = '2024-01-22-083204';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2739,6 +2739,7 @@ window.TEAM_CODES = ['N', 'R', 'E', 'M'];
  * @memberof other_constants
  */
 window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
+window.TEAM_SHORTNAMES = ['NEU', 'RES', 'ENL', 'MAC'];
 
 /**
  * @type {string}
@@ -3926,7 +3927,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-19-080507');
+  log.log('loading done, booting. Built: '+'2024-01-22-083204');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -28824,11 +28825,13 @@ window.requests.addRefreshFunction = function (f) {
 // *** module: search.js ***
 (function () {
 var log = ulog('search');
+/* global L -- eslint */
+
 /**
  * Provides functionality for the search system within the application.
  *
  * You can implement your own result provider by listening to the search hook:
- * ```addHook('search', function(query) {})```.
+ * ```window.addHook('search', function(query) {});```.
  *
  * The `query` object has the following members:
  * - `term`: The term for which the user has searched.
@@ -29168,24 +29171,23 @@ window.search.setup = function() {
   });
 };
 
-
-// search for portals
-addHook('search', function(query) {
-  var term = query.term.toLowerCase();
-  var teams = ['NEU','RES','ENL'];
-
-  $.each(portals, function(guid, portal) {
-    var data = portal.options.data;
-    if(!data.title) return;
-
-    if(data.title.toLowerCase().indexOf(term) !== -1) {
-      var team = portal.options.team;
-      var color = team==TEAM_NONE ? '#CCC' : COLORS[team];
-      query.addResult({
-        title: data.title,
-        description: teams[team] + ', L' + data.level + ', ' + data.health + '%, ' + data.resCount + ' Resonators',
-        position: portal.getLatLng(),
-        icon: 'data:image/svg+xml;base64,'+btoa('\
+/**
+ * Adds a search result for a portal to the search query results.
+ *
+ * @function window.search.addSearchResult
+ * @param {Object} query - The search query object to which the result will be added.
+ * @param {Object} data - The data for the search result. This includes information such as title, team, level, health, etc.
+ * @param {string} guid - GUID if the portal.
+ */
+window.search.addSearchResult = function (query, data, guid) {
+  var team = window.teamStringToId(data.team);
+  var color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
+  var latLng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
+  query.addResult({
+    title: data.title,
+    description: window.TEAM_SHORTNAMES[team] + ', L' + data.level + ', ' + data.health + '%, ' + data.resCount + ' Resonators',
+    position: latLng,
+    icon: 'data:image/svg+xml;base64,' + btoa('\
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\
 	<g style="fill:%COLOR%;stroke:none">\
 		<path d="m 6,12 -2,-12  4,0 z" />\
@@ -29194,18 +29196,32 @@ addHook('search', function(query) {
 	</g>\
 </svg>\
 '.replace(/%COLOR%/g, color)),
-        onSelected: function(result, event) {
-          if(event.type == 'dblclick') {
-            zoomToAndShowPortal(guid, portal.getLatLng());
-          } else if(window.portals[guid]) {
-            if(!map.getBounds().contains(result.position)) map.setView(result.position);
-            renderPortalDetails(guid);
-          } else {
-            window.selectPortalByLatLng(portal.getLatLng());
-          }
-          return true; // prevent default behavior
-        },
-      });
+    onSelected: function (result, event) {
+      if (event.type === 'dblclick') {
+        window.zoomToAndShowPortal(guid, latLng);
+      } else if (window.portals[guid]) {
+        if (!window.map.getBounds().contains(result.position)) {
+          window.map.setView(result.position);
+        }
+        window.renderPortalDetails(guid);
+      } else {
+        window.selectPortalByLatLng(latLng);
+      }
+      return true; // prevent default behavior
+    },
+  });
+};
+
+// search for portals
+window.addHook('search', function (query) {
+  var term = query.term.toLowerCase();
+
+  $.each(portals, function(guid, portal) {
+    var data = portal.options.data;
+    if(!data.title) return;
+
+    if(data.title.toLowerCase().indexOf(term) !== -1) {
+      window.search.addSearchResult(query, data, guid);
     }
   });
 });
@@ -29213,8 +29229,8 @@ addHook('search', function(query) {
 
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
-addHook('search', function(query) {
-  var locations = query.term.match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
+window.addHook('search', function (query) {
+  var locations = query.term.replaceAll(/%2C/gi, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
   if(!locations) return;
   locations.forEach(function(location) {
@@ -29247,7 +29263,7 @@ addHook('search', function(query) {
 
 
 // search on OpenStreetMap
-addHook('search', function(query) {
+window.addHook('search', function (query) {
   if(!query.confirmed) return;
 
   // Viewbox search orders results so they're closer to the viewbox
@@ -29318,6 +29334,21 @@ addHook('search', function(query) {
   $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
+// search on guid
+window.addHook('search', function (query) {
+  const guid_re = /[0-9a-f]{32}\.[0-9a-f]{2}/;
+  const res = query.term.match(guid_re);
+  if (res) {
+    const guid = res[0];
+    const data = window.portalDetail.get(guid);
+    if (data) window.search.addSearchResult(query, data, guid);
+    else {
+      window.portalDetail.request(guid).then(function (data) {
+        window.search.addSearchResult(query, data, guid);
+      });
+    }
+  }
+});
 
 
 })();
