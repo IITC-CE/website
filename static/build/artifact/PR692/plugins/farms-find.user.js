@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.2.20240122.070001
+// @version        1.4.2.20240122.070416
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-22-070001';
+plugin_info.dateTimeVersion = '2024-01-22-070416';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 
@@ -81,7 +81,7 @@ window.plugin.farmFind.getNearbyPortalCount = function(portal){
       	 if (circle.getBounds().contains(thisPortal))
              if (otherPortal.options.level >= window.plugin.farmFind.minLevel) nearby8Portals++;
     });
-  //console.log(nearby8Portals);
+  // console.log(nearby8Portals);
     return nearby8Portals;
 };
 
@@ -141,7 +141,6 @@ window.plugin.farmFind.checkPortals = function(){
                         	}
                         }
         			}
-
                     //console.log("Already in another farm: " + alreadyInAnotherFarm);
 
                     if (alreadyInAnotherFarm == false)
@@ -172,12 +171,10 @@ window.plugin.farmFind.checkPortals = function(){
     }
 
     //console.log(farms.length);
-    for (i = 0; i < farms.length; i++)
-    {
-        farms[i] = findUnique(farms[i]);
-        console.log("Farm " + (i+1) + ": " + farms[i].length + " portals");
-
-    }
+  for (let i = 0; i < farms.length; i++) {
+    farms[i] = findUnique(farms[i]);
+    console.log('Farm ' + (i + 1) + ': ' + farms[i].length + ' portals');
+  }
     //console.log(farms);
 
     window.plugin.farmFind.drawnItems = new L.FeatureGroup();
@@ -186,8 +183,6 @@ window.plugin.farmFind.checkPortals = function(){
     {
     	window.plugin.farmFind.drawCircle(farms[farm]);
     }
-
-
 };
 
     findUnique = function(farm) {
