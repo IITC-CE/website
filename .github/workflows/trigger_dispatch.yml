@@ -94,10 +94,10 @@ jobs:
         if: ${{ env.BUILD_TYPE != 'PR' }}
         uses: addnab/docker-run-action@v3
         with:
-          image: medzik/fdroidserver:latest
+          image: registry.gitlab.com/fdroid/docker-executable-fdroidserver:master
           options: -v ${{ github.workspace }}/website/static/fdroid/:/repo
           run: |
-            fdroid update
+            /home/vagrant/fdroidserver/fdroid update
 
       - name: Save changes
         run: |
