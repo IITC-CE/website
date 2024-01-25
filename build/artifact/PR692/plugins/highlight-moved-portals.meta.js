@@ -2,7 +2,7 @@
 // @author         screach
 // @name           IITC plugin: Highlight moved portals
 // @category       Highlighter
-// @version        0.1.0.20240123.062025
+// @version        0.1.0.20240125.143241
 // @description    Highlights portals with links with different location data
 // @id             highlight-moved-portals
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

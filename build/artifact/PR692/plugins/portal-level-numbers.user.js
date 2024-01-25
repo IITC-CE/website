@@ -2,7 +2,7 @@
 // @author         rongou
 // @name           IITC plugin: Portal Level Numbers
 // @category       Layer
-// @version        0.2.2.20240123.062025
+// @version        0.2.2.20240125.143241
 // @description    Show portal level numbers on map.
 // @id             portal-level-numbers
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-23-062025';
+plugin_info.dateTimeVersion = '2024-01-25-143241';
 plugin_info.pluginId = 'portal-level-numbers';
 //END PLUGIN AUTHORS NOTE
 

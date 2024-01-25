@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.1.1.20240123.062025
+// @version        0.1.1.20240125.143241
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
