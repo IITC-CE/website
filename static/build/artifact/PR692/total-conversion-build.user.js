@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240123.062025
+// @version        0.37.1.20240125.143241
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-23-062025';
+plugin_info.dateTimeVersion = '2024-01-25-143241';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,7 +65,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-23-062025';
+window.iitcBuildDate = '2024-01-25-143241';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3345,7 +3345,7 @@ function prepPluginsToLoad () {
 }
 
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-23-062025');
+  log.log('loading done, booting. Built: '+'2024-01-25-143241');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27918,8 +27918,6 @@ IITC.toolbox = {
    * Adds a button to the toolbox.
    *
    * @param {ButtonArgs} buttonArgs - The arguments for the button.
-   * @param {Object} options - Optional. An object containing additional options.
-   * @param {boolean} [options.legacy=false] - If true, prepend 'legacy-' to the id.
    * @returns {string|null} The ID of the added button or null if required parameters are missing.
    *
    * @example
@@ -27934,7 +27932,7 @@ IITC.toolbox = {
    *   action: () => alert('Clicked!')
    * });
    */
-  addButton(buttonArgs, options = { legacy: false }) {
+  addButton(buttonArgs) {
     if (!buttonArgs.label) {
       console.warn('Required parameter "label" are missing.');
       return null;
@@ -27946,10 +27944,6 @@ IITC.toolbox = {
     }
 
     let id = buttonArgs.id || `toolbox-btn-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-    if (options.legacy) {
-      id = 'legacy-' + id;
-    }
-
     this.buttons[id] = buttonArgs;
 
     this._renderButton(id);
@@ -27963,18 +27957,12 @@ IITC.toolbox = {
    *
    * @param {string} buttonId - The ID of the button to update.
    * @param {ButtonArgs} newButtonArgs - The new arguments for the button.
-   * @param {Object} options - Optional. An object containing additional options.
-   * @param {boolean} [options.legacy=false] - If true, prepend 'legacy-' to the id.
    * @returns {boolean} True if the button is successfully updated, false otherwise.
    *
    * @example
    * const isUpdated = IITC.toolbox.updateButton(buttonId, { label: 'Updated Button', action: () => console.log('New Action') });
    */
-  updateButton(buttonId, newButtonArgs, options = { legacy: false }) {
-    if (options.legacy) {
-      buttonId = 'legacy-' + buttonId;
-    }
-
+  updateButton(buttonId, newButtonArgs) {
     if (this.buttons[buttonId]) {
       Object.assign(this.buttons[buttonId], newButtonArgs);
       this._renderButton(buttonId);
@@ -28109,10 +28097,11 @@ IITC.toolbox = {
         };
 
         // Update an existing button or add a new one
+        buttonArgs['id'] = `legacy-toolbox-btn-${buttonArgs.id || buttonArgs.label}`;
         if (this.buttons[buttonArgs.id]) {
-          this.updateButton(buttonArgs.id, buttonArgs, { legacy: true });
+          this.updateButton(buttonArgs.id, buttonArgs);
         } else {
-          this.addButton(buttonArgs, { legacy: true });
+          this.addButton(buttonArgs);
         }
       }
     };
