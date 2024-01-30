@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240125.143711
+// @version        0.37.1.20240130.074630
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-25-143711';
+plugin_info.dateTimeVersion = '2024-01-30-074630';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -61,11 +61,41 @@ window.script_info.changelog = [
   },
 ];
 
+/**
+ * PLAYER
+ * @namespace player
+ */
+
+/**
+ * window.PLAYER
+ * Represents the current player's status in the game. This object is defined by stock and is static,
+ * meaning it requires a page reload to update. The PLAYER object stores various pieces of information
+ * about the player, which are detailed below.
+ *
+ * Additional properties (`nickMatcher` and `level`) added by IITC in {@link sidebar.setupPlayerStat}
+ *
+ * @property {string} ap - The amount of AP (Access Points) the player currently has.
+ * @property {number} available_invites - The number of invitations the player can send.
+ * @property {number} energy - The amount of XM (Exotic Matter) the player currently holds.
+ * @property {number} min_ap_for_current_level - The AP required for the player's current level, used for tracking level progress.
+ * @property {number} min_ap_for_next_level - The AP required for the next level, used for tracking level progress.
+ * @property {string} nickname - The agent name of the player.
+ * @property {string} team - The faction of the player, which can be either "ENLIGHTENED" or "RESISTANCE".
+ * @property {number} verified_level - Current player level.
+ *
+ * Additional properties
+ * @property {RegExp} nickMatcher - A regular expression used to match the player's agent name in chat. Added by IITC.
+ * @property {number} level - Backwards compatibility property, equivalent to `verified_level`. Added by IITC.
+ *
+ * @typedef {Object} PLAYER
+ * @memberof player
+ */
+
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-25-143711';
+window.iitcBuildDate = '2024-01-30-074630';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -2368,100 +2398,500 @@ document.body.innerHTML =
   '<div id="play_button"></div>' +
   '<div id="header"><div id="nav"></div></div>';
 
-// CONFIG OPTIONS ////////////////////////////////////////////////////
-window.REFRESH = 30; // refresh view every 30s (base time)
-window.ZOOM_LEVEL_ADJ = 5; // add 5 seconds per zoom level
-window.ON_MOVE_REFRESH = 2.5;  //refresh time to use after a movement event
-window.MINIMUM_OVERRIDE_REFRESH = 10; //limit on refresh time since previous refresh, limiting repeated move refresh rate
-window.REFRESH_GAME_SCORE = 15*60; // refresh game score every 15 minutes
-window.MAX_IDLE_TIME = 15*60; // stop updating map after 15min idling
+/* ****************************************************************************************************************** */
+
+/**
+ * CONFIG OPTIONS
+ * @namespace config_options
+ */
+
+/**
+ * Controls how often the map should refresh, in seconds, default 30.
+ * @type {number}
+ * @memberof config_options
+ */
+window.REFRESH = 30;
+
+/**
+ * Controls the extra refresh delay per zoom level, in seconds, default 5.
+ * @type {number}
+ * @memberof config_options
+ */
+window.ZOOM_LEVEL_ADJ = 5;
+
+/**
+ * Wait this long before refreshing the view after the map has been moved, in seconds, default 2.5
+ * @type {number}
+ * @memberof config_options
+ */
+window.ON_MOVE_REFRESH = 2.5;
+
+/**
+ * Limit on refresh time since previous refresh, limiting repeated move refresh rate, in seconds, default 10
+ * @type {number}
+ * @memberof config_options
+ */
+window.MINIMUM_OVERRIDE_REFRESH = 10;
+
+/**
+ * Controls how long to wait between refreshing the global score, in seconds, default 15*60 (15 mins)
+ * @type {number}
+ * @memberof config_options
+ */
+window.REFRESH_GAME_SCORE = 15 * 60;
+
+/**
+ * The maximum idle time in seconds before the map stops updating, in seconds, default 15*60 (15 mins)
+ * @type {number}
+ * @memberof config_options
+ */
+window.MAX_IDLE_TIME = 15 * 60;
+
+/**
+ * How much space to leave for scrollbars, in pixels, default 20.
+ * @type {number}
+ * @memberof config_options
+ */
 window.HIDDEN_SCROLLBAR_ASSUMED_WIDTH = 20;
+
+/**
+ * How wide should the sidebar be, in pixels, default 300.
+ * @type {number}
+ * @memberof config_options
+ */
 window.SIDEBAR_WIDTH = 300;
 
-// how many pixels to the top before requesting new data
+/**
+ * Controls requesting chat data based on the pixel distance from the line currently in view
+ * and the top of history, in pixels, default 200
+ * @type {number}
+ * @memberof config_options
+ */
 window.CHAT_REQUEST_SCROLL_TOP = 200;
+
+/**
+ * Controls height of chat when chat is collapsed, in pixels, default 60
+ * @type {number}
+ * @memberof config_options
+ */
 window.CHAT_SHRINKED = 60;
 
+/**
+ * What colour should the selected portal be, string(css hex code), default ‘#f0f’ (hot pink)
+ * @type {string}
+ * @memberof config_options
+ */
 window.COLOR_SELECTED_PORTAL = '#f0f';
-window.COLORS = ['#FF6600', '#0088FF', '#03DC03', '#FF0028']; // none, res, enl, mac
+
+/**
+ * Defines the color values associated with different teams, used in various elements such as portals, player names, etc.
+ * The colors are represented in a CSS hex code format.
+ * The array format represents: [none, res, enl, mac].
+ * @type {string[]}
+ * @memberof config_options
+ */
+window.COLORS = ['#FF6600', '#0088FF', '#03DC03', '#FF0028'];
+
+/**
+ * Colour values for levels, consistent with Ingress, with index 0 being white for neutral portals.
+ * @type {string[]}
+ * @memberof config_options
+ */
 window.COLORS_LVL = ['#000', '#FECE5A', '#FFA630', '#FF7315', '#E40000', '#FD2992', '#EB26CD', '#C124E0', '#9627F4'];
+
+/**
+ * Colour values for displaying mods, consistent with Ingress. Very Rare also used for AXA shields and Ultra Links.
+ * @type {object}
+ * @property {string} VERY_RARE=#b08cff
+ * @property {string} RARE=#73a8ff
+ * @property {string} COMMON=#8cffbf
+ * @memberof config_options
+ */
 window.COLORS_MOD = { VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf' };
 
-// circles around a selected portal that show from where you can hack
-// it and how far the portal reaches (i.e. how far links may be made
-// from this portal)
+/**
+ * What colour should the hacking range circle be (the small circle that appears around a selected portal,
+ * marking a ~40 metre radius), string(css colour value), default ‘orange’
+ * @type {string}
+ * @memberof config_options
+ */
 window.ACCESS_INDICATOR_COLOR = 'orange';
+
+/**
+ * What colour should the linkable range circle be, string(css colour value), default ‘red’
+ * @type {string}
+ * @memberof config_options
+ */
 window.RANGE_INDICATOR_COLOR = 'red';
 
-// min zoom for intel map - should match that used by stock intel
+/**
+ * Min zoom for intel map - should match that used by stock intel, default 3
+ * @type {number}
+ * @memberof config_options
+ */
 window.MIN_ZOOM = 3;
 
-// used when zoom level is not specified explicitly (must contain all the portals)
+/**
+ * Used when zoom level is not specified explicitly (must contain all the portals)
+ * @type {number}
+ * @memberof config_options
+ */
 window.DEFAULT_ZOOM = 15;
 
+/**
+ * URL of the default image for the portal
+ * @type {string}
+ * @memberof config_options
+ */
 window.DEFAULT_PORTAL_IMG = '//commondatastorage.googleapis.com/ingress.com/img/default-portal-image.png';
-// window.NOMINATIM = '//open.mapquestapi.com/nominatim/v1/search.php?format=json&polygon_geojson=1&q=';
+
+/**
+ * URL to call the Nominatim geocoder service, string.
+ * @type {string}
+ * @memberof config_options
+ */
 window.NOMINATIM = '//nominatim.openstreetmap.org/search?format=json&polygon_geojson=1&q=';
 
-// INGRESS CONSTANTS /////////////////////////////////////////////////
-// http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
+/* ****************************************************************************************************************** */
+
+/**
+ * INGRESS CONSTANTS
+ * http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
+ * @namespace ingress_constants
+ */
+
+/**
+ * Resonator energy per level, 1-based array, XM
+ * @type {number[]}
+ * @const
+ * @memberof ingress_constants
+ */
 window.RESO_NRG = [0, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000];
-window.HACK_RANGE = 40; // in meters, max. distance from portal to be able to access it
+
+/**
+ * Maximum radius around a portal from which the portal is hackable, metres.
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.HACK_RANGE = 40;
+
+/**
+ * The maximum radius around the portal from which the Machine can link
+ * @type {number[]}
+ * @const
+ * @memberof ingress_constants
+ */
 window.LINK_RANGE_MAC = [0, 200, 250, 350, 400, 500, 600, 700, 1000, 1000]; // in meters
+
+/**
+ * Resonator octant cardinal directions
+ * @type {string[]}
+ * @const
+ * @memberof ingress_constants
+ */
 window.OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
+
+/**
+ * Resonator octant arrows
+ * @type {string[]}
+ * @const
+ * @memberof ingress_constants
+ */
 window.OCTANTS_ARROW = ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'];
-window.DESTROY_RESONATOR = 75; //AP for destroying portal
-window.DESTROY_LINK = 187; //AP for destroying link
-window.DESTROY_FIELD = 750; //AP for destroying field
-window.CAPTURE_PORTAL = 500; //AP for capturing a portal
-window.DEPLOY_RESONATOR = 125; //AP for deploying a resonator
-window.COMPLETION_BONUS = 250; //AP for deploying all resonators on portal
-window.UPGRADE_ANOTHERS_RESONATOR = 65; //AP for upgrading another's resonator
+
+/**
+ * AP for destroying portal
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.DESTROY_RESONATOR = 75;
+
+/**
+ * AP for destroying link
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.DESTROY_LINK = 187;
+
+/**
+ * AP for destroying field
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.DESTROY_FIELD = 750;
+
+/**
+ * AP for capturing a portal
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.CAPTURE_PORTAL = 500;
+
+/**
+ * AP for deploying a resonator
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.DEPLOY_RESONATOR = 125;
+
+/**
+ * AP for deploying all resonators on portal
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.COMPLETION_BONUS = 250;
+
+/**
+ * AP for upgrading another's resonator
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.UPGRADE_ANOTHERS_RESONATOR = 65;
+
+/**
+ * Maximum portal level.
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
 window.MAX_PORTAL_LEVEL = 8;
+
+/**
+ * How many resonators of a given level can one deploy; 1-based array where the index is the resonator level.
+ * @type {number[]}
+ * @const
+ * @memberof ingress_constants
+ */
 window.MAX_RESO_PER_PLAYER = [0, 8, 4, 4, 4, 2, 2, 1, 1];
+
+/**
+ * The base value of how long you need to wait between portal hacks, in seconds.
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
 window.BASE_HACK_COOLDOWN = 300; // 5 mins - 300 seconds
+
+/**
+ * Base value, how many times at most you can hack the portal.
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
 window.BASE_HACK_COUNT = 4;
 
-// OTHER MORE-OR-LESS CONSTANTS //////////////////////////////////////
+/* ****************************************************************************************************************** */
+
+/**
+ * OTHER MORE-OR-LESS CONSTANTS
+ * @namespace other_constants
+ */
+
+/**
+ * @type {number}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_NONE = 0;
+
+/**
+ * @type {number}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_RES = 1;
+
+/**
+ * @type {number}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_ENL = 2;
+
+/**
+ * @type {number}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_MAC = 3;
+
+/**
+ * @type {string[]}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_TO_CSS = ['none', 'res', 'enl', 'mac'];
+
+/**
+ * @type {string[]}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened', '__MACHINA__'];
+
+/**
+ * @type {string[]}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_CODES = ['N', 'R', 'E', 'M'];
+
+/**
+ * @type {string[]}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_CODENAMES = ['NEUTRAL', 'RESISTANCE', 'ENLIGHTENED', 'MACHINA'];
 window.TEAM_SHORTNAMES = ['NEU', 'RES', 'ENL', 'MAC'];
 
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_NAME_NONE = window.TEAM_NAMES[window.TEAM_NONE];
+
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_NAME_RES = window.TEAM_NAMES[window.TEAM_RES];
+
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_NAME_ENL = window.TEAM_NAMES[window.TEAM_ENL];
+
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_NAME_MAC = window.TEAM_NAMES[window.TEAM_MAC];
 
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_CODE_NONE = window.TEAM_CODES[window.TEAM_NONE];
+
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_CODE_RES = window.TEAM_CODES[window.TEAM_RES];
+
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_CODE_ENL = window.TEAM_CODES[window.TEAM_ENL];
+
+/**
+ * @type {string}
+ * @const
+ * @memberof other_constants
+ */
 window.TEAM_CODE_MAC = window.TEAM_CODES[window.TEAM_MAC];
 
-// STORAGE ///////////////////////////////////////////////////////////
-// global variables used for storage. Most likely READ ONLY. Proper
-// way would be to encapsulate them in an anonymous function and write
-// getters/setters, but if you are careful enough, this works.
+/* ****************************************************************************************************************** */
+
+/**
+ * Global variables used for storage. Most likely READ ONLY. Proper ay would be to encapsulate them in an anonymous
+ * function and write getters/setters, but if you are careful enough, this works.
+ * @namespace storage_variables
+ */
+
+/**
+ * Stores the id of the timeout that kicks off the next refresh (ie value returned by ``setTimeout()``)
+ * @type {number|undefined}
+ * @memberof storage_variables
+ */
 window.refreshTimeout = undefined;
+
+/**
+ * Portal GUID if the original URL had it.
+ * @type {string|null}
+ * @memberof storage_variables
+ */
 window.urlPortal = null;
+
+/**
+ * Portal lng/lat if the orignial URL had it.
+ * @type {object|null}
+ * @memberof storage_variables
+ */
 window.urlPortalLL = null;
+
+/**
+ * Stores the GUID of the selected portal, or is `null` if there is none.
+ * @type {string|null}
+ * @memberof storage_variables
+ */
 window.selectedPortal = null;
+
+/**
+ * Reference to the linking range indicator of the selected portal. This is a Leaflet layer.
+ * @type {object|null}
+ * @memberof storage_variables
+ */
 window.portalRangeIndicator = null;
+
+/**
+ * Reference to the hacking range indicator of the selected portal. This is a Leaflet layer.
+ * @type {object|null}
+ * @memberof storage_variables
+ */
 window.portalAccessIndicator = null;
 
 // var portalsLayers, linksLayer, fieldsLayer;
 var portalsFactionLayers, linksFactionLayers, fieldsFactionLayers;
 
-// contain references to all entities loaded from the server. If render limits are hit,
-// not all may be added to the leaflet layers
+/**
+ * References to Leaflet objects representing portals, indexed by entity ID.
+ * This object stores the mapping in the format `{ id1: feature1, ... }`.
+ * Note: While these are Leaflet objects, not all may be added to the map due to render limits.
+ * @type {Object.<string, object>}
+ * @memberof storage_variables
+ */
 window.portals = {};
+
+/**
+ * References to Leaflet objects representing links, indexed by entity ID.
+ * This object stores the mapping in the format `{ id1: feature1, ... }`.
+ * Note: While these are Leaflet objects, not all may be added to the map due to render limits.
+ * @type {Object.<string, object>}
+ * @memberof storage_variables
+ */
 window.links = {};
+
+/**
+ * References to Leaflet objects representing fields, indexed by entity ID.
+ * This object stores the mapping in the format `{ id1: feature1, ... }`.
+ * Note: While these are Leaflet objects, not all may be added to the map due to render limits.
+ * @type {Object.<string, object>}
+ * @memberof storage_variables
+ */
 window.fields = {};
+
+/**
+ * @class L
+ * @description Root class for all Leaflet-related functionalities, extended with custom methods and properties.
+ */
 
 // plugin framework. Plugins may load earlier than iitc, so don’t
 // overwrite data
@@ -2479,16 +2909,26 @@ var ulog = (function (module) {
 // *** module: _deprecated.js ***
 (function () {
 var log = ulog('_deprecated');
-/**
- * functions that are not use by IITC itself
- * and won't most likely not receive any updated
- */
 /* global L -- eslint */
 
 /**
+ * @file This file contains functions that are not use by IITC itself
+ * and won't most likely not receive any updated
+ * @module _deprecated
+ */
+
+/**
+ * Calculates the potential AP gain for capturing or destroying a portal, based on the number of resonators,
+ * links, and fields. It does not account for AP gained from resonator upgrades or mod deployment.
+ *
  * @deprecated
- *  given counts of resonators, links and fields, calculate the available AP
- *  doesn't take account AP for resonator upgrades or AP for adding mods
+ * @function portalApGainMaths
+ * @param {number} resCount - The number of resonators on the portal.
+ * @param {number} linkCount - The number of links connected to the portal.
+ * @param {number} fieldCount - The number of fields using the portal as a vertex.
+ * @returns {Object} An object containing detailed AP gain values for various actions such as deploying resonators,
+ *                   destroying resonators, creating fields, destroying links, capturing the portal, and total
+ *                   AP for destroying and capturing.
  */
 window.portalApGainMaths = function (resCount, linkCount, fieldCount) {
   var deployAp = (8 - resCount) * window.DEPLOY_RESONATOR;
@@ -2514,9 +2954,13 @@ window.portalApGainMaths = function (resCount, linkCount, fieldCount) {
 };
 
 /**
+ * Estimates the AP gain from a portal, based only on summary data from portals, links, and fields.
+ * Not entirely accurate - but available for all portals on the screen
+ *
  * @deprecated
- * get the AP gains from a portal, based only on the brief summary data from portals, links and fields
- * not entirely accurate - but available for all portals on the screen
+ * @function getPortalApGain
+ * @param {string} guid - The GUID of the portal.
+ * @returns {Object|undefined} An object containing various AP gain values, or undefined if the portal is not found.
  */
 window.getPortalApGain = function (guid) {
   var p = window.portals[guid];
@@ -2534,8 +2978,12 @@ window.getPortalApGain = function (guid) {
 };
 
 /**
+ * Calculates the potential level a player can upgrade a portal to.
+ *
  * @deprecated
- * This function will return the potential level a player can upgrade it to
+ * @function potentialPortalLevel
+ * @param {Object} d - The portal detail object containing resonator and ownership information.
+ * @returns {number} The potential level to which the player can upgrade the portal.
  */
 window.potentialPortalLevel = function (d) {
   var current_level = window.getPortalLevel(d);
@@ -2581,9 +3029,13 @@ window.potentialPortalLevel = function (d) {
 };
 
 /**
+ * Finds the latitude and longitude for a portal using all available data sources.
+ * This includes the list of portals, cached portal details, and information from links and fields.
+ *
  * @deprecated
- * find the lat/lon for a portal, using any and all available data
- * (we have the list of portals, the cached portal details, plus links and fields as sources of portal locations)
+ * @function findPortalLatLng
+ * @param {string} guid - The GUID of the portal.
+ * @returns {L.LatLng|undefined} The LatLng location of the portal, or undefined if not found.
  */
 window.findPortalLatLng = function (guid) {
   if (window.portals[guid]) {
@@ -2631,9 +3083,26 @@ window.findPortalLatLng = function (guid) {
 var log = ulog('app');
 /* global android, app -- eslint */
 
+/**
+ * @file This file contains the main JavaScript code for the app, including utility functions,
+ *       app-specific behaviors, and integration with the Android environment.
+ * @module app
+ */
+
+/**
+ * Global flag indicating whether the app is running as a standalone app or within a browser.
+ * @type {boolean}
+ * @memberof module:app
+ */
 var isApp = typeof app !== 'undefined' || typeof android !== 'undefined';
 window.isApp = isApp;
 
+/**
+ * Determines whether to use the interface for mobile devices depending on the application environment and device type.
+ *
+ * @function useAppPanes
+ * @returns {boolean} Returns true if app panes should be used, false otherwise.
+ */
 window.useAppPanes = function () {
   // isSmartphone is important to disable panes in desktop mode
   return isApp && app.addPane && window.isSmartphone();
@@ -2655,7 +3124,17 @@ if (isApp) {
   };
 }
 
-function debounce (callback, time) { // https://gist.github.com/nmsdvid/8807205#gistcomment-2641356
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not be triggered.
+ * The function will be called after it stops being called for N milliseconds.
+ * source: https://gist.github.com/nmsdvid/8807205#gistcomment-2641356
+ *
+ * @function debounce
+ * @param {Function} callback - The function to debounce.
+ * @param {number} time - The debounce time in milliseconds.
+ * @returns {Function} Returns a debounced version of the given function.
+ */
+function debounce(callback, time) {
   var timeout;
   return function () {
     var context = this;
@@ -2816,19 +3295,27 @@ window.runOnAppAfterBoot = function () {
 var log = ulog('artifact');
 /* global IITC -- eslint */
 
-// ARTIFACT ///////////////////////////////////////////////////////
-
-// added as part of the ingress #13magnus in november 2013, artifacts
-// are additional game elements overlayed on the intel map
-// currently there are only jarvis-related entities
-// - shards: move between portals (along links) each hour. more than one can be at a portal
-// - targets: specific portals - one per team
-// the artifact data includes details for the specific portals, so can be useful
-// 2014-02-06: intel site updates hint at new 'amar artifacts', likely following the same system as above
-
+/**
+ * @file Provides functions related to Ingress artifacts, including setup, data request, and processing functions.
+ * Added as part of the ingress #13magnus in november 2013, artifacts
+ * are additional game elements overlayed on the intel map
+ *
+ * currently there are only jarvis-related entities
+ * - `shards`: move between portals (along links) each hour. more than one can be at a portal.
+ * - `targets`: specific portals - one per team.
+ *
+ * The artifact data includes details for the specific portals, so can be useful.
+ * 2014-02-06: intel site updates hint at new 'amar artifacts', likely following the same system as above
+ *
+ * @namespace window.artifact
+ */
 
 window.artifact = function() {}
 
+/**
+ * Sets up artifact data fetching, layer creation, and UI elements.
+ * @function window.artifact.setup
+ */
 window.artifact.setup = function() {
   artifact.REFRESH_JITTER = 2*60;  // 2 minute random period so not all users refresh at once
   artifact.REFRESH_SUCCESS = 60*60;  // 60 minutes on success
@@ -2853,6 +3340,10 @@ window.artifact.setup = function() {
   });
 }
 
+/**
+ * Requests artifact data from the server. If the map is in idle mode, sets a flag instead of sending a request.
+ * @function window.artifact.requestData
+ */
 window.artifact.requestData = function() {
   if (isIdle()) {
     artifact.idle = true;
@@ -2861,6 +3352,10 @@ window.artifact.requestData = function() {
   }
 }
 
+/**
+ * Resumes artifact data requests when coming out of idle mode.
+ * @function window.artifact.idleResume
+ */
 window.artifact.idleResume = function() {
   if (artifact.idle) {
     artifact.idle = false;
@@ -2868,6 +3363,11 @@ window.artifact.idleResume = function() {
   }
 }
 
+/**
+ * Handles successful artifact data response from the server.
+ * @function window.artifact.handleSuccess
+ * @param {Object} data - Artifact data received from the server.
+ */
 window.artifact.handleSuccess = function(data) {
   artifact.processData (data);
 
@@ -2878,13 +3378,22 @@ window.artifact.handleSuccess = function(data) {
   setTimeout (artifact.requestData, nextTime - now);
 }
 
+/**
+ * Handles failure in artifact data request. Schedules a new request after a short delay.
+ * @function window.artifact.handleFailure
+ * @param {Object} data - Response data from the failed request.
+ */
 window.artifact.handleFailure = function(data) {
   // no useful data on failure - do nothing
 
   setTimeout (artifact.requestData, artifact.REFRESH_FAILURE*1000);
 }
 
-
+/**
+ * Processes artifact data. Clears previous data, processes new results, runs hooks, and updates the artifact layer.
+ * @function window.artifact.processData
+ * @param {Object} data - Artifact data to process.
+ */
 window.artifact.processData = function(data) {
 
   if (data.error || !data.result) {
@@ -2903,7 +3412,10 @@ window.artifact.processData = function(data) {
 
 }
 
-
+/**
+ * Clears all stored artifact data.
+ * @function window.artifact.clearData
+ */
 window.artifact.clearData = function() {
   artifact.portalInfo = {};
   artifact.artifactTypes = {};
@@ -2911,7 +3423,11 @@ window.artifact.clearData = function() {
   artifact.entities = [];
 }
 
-
+/**
+ * Processes the results from artifact portal data. Extracts and stores portal data for each artifact type.
+ * @function window.artifact.processResult
+ * @param {Object} portals - The artifact portal data.
+ */
 window.artifact.processResult = function (portals) {
   // portals is an object, keyed from the portal GUID, containing the portal entity array
 
@@ -2958,33 +3474,68 @@ window.artifact.processResult = function (portals) {
 
 }
 
+/**
+ * Returns the types of artifacts currently known.
+ * @function window.artifact.getArtifactTypes
+ * @returns {Array} An array of artifact type strings.
+ */
 window.artifact.getArtifactTypes = function() {
   return Object.keys(artifact.artifactTypes);
 }
 
+/**
+ * Determines if a given type is a knowable artifact.
+ * @function window.artifact.isArtifact
+ * @param {string} type - The type to check.
+ * @returns {boolean} True if the type is an artifact, false otherwise.
+ */
 window.artifact.isArtifact = function(type) {
   return type in artifact.artifactTypes;
 }
 
-// used to render portals that would otherwise be below the visible level
+/**
+ * Used to render portals that would otherwise be below the visible level.
+ * @function window.artifact.getArtifactEntities
+ * @returns {Array} An array of artifact entities.
+ */
 window.artifact.getArtifactEntities = function() {
   return artifact.entities;
 }
 
+/**
+ * Gets the portals that are relevant to the artifacts.
+ * @function window.artifact.getInterestingPortals
+ * @returns {Array} An array of portal GUIDs.
+ */
 window.artifact.getInterestingPortals = function() {
   return Object.keys(artifact.portalInfo);
 }
 
-// quick test for portal being relevant to artifacts - of any type
+/**
+ * Quickly checks if a portal is relevant to any type of artifacts.
+ * @function window.artifact.isInterestingPortal
+ * @param {string} guid - The GUID of the portal to check.
+ * @returns {boolean} True if the portal is involved in artifacts, false otherwise.
+ */
 window.artifact.isInterestingPortal = function(guid) {
   return guid in artifact.portalInfo;
 }
 
-// get the artifact data for a specified artifact id (e.g. 'jarvis'), if it exists - otherwise returns something 'false'y
+/**
+ * Retrieves the artifact data for a specified artifact id (e.g. 'jarvis'), if available.
+ * @function window.artifact.getPortalData
+ * @param {string} guid - The GUID of the portal.
+ * @param {string} artifactId - The ID of the artifact type.
+ * @returns {Object|false} Artifact data for the specified portal and type, or undefined if not available.
+ */
 window.artifact.getPortalData = function(guid,artifactId) {
   return artifact.portalInfo[guid] && artifact.portalInfo[guid][artifactId];
 }
 
+/**
+ * Updates the artifact layer on the map based on the current artifact data.
+ * @function window.artifact.updateLayer
+ */
 window.artifact.updateLayer = function() {
   artifact._layer.clearLayers();
 
@@ -3037,7 +3588,10 @@ window.artifact.updateLayer = function() {
 
 }
 
-
+/**
+ * Displays a dialog listing all portals involved with artifacts, organized by artifact types.
+ * @function window.artifact.showArtifactList
+ */
 window.artifact.showArtifactList = function() {
   var html = '';
 
@@ -3137,13 +3691,28 @@ window.artifact.showArtifactList = function() {
 // *** module: boot.js ***
 (function () {
 var log = ulog('boot');
-// SETUP /////////////////////////////////////////////////////////////
-// these functions set up specific areas after the boot function
-// created a basic framework. All of these functions should only ever
-// be run once.
-
 /* global L, dialog -- eslint */
 
+/**
+ * @file These functions set up specific areas after the boot function created a basic framework.
+ *       All of these functions should only ever be run once.
+ * @module boot
+ */
+
+/**
+ * Initializes tooltips for a specified element or the entire document if no element is provided.
+ * This function sets up jQuery UI tooltips with customized behavior. It ensures that only one tooltip
+ * is visible at a time by closing others when a new one opens. The content of the tooltip is derived
+ * from the 'title' attribute of the HTML element and is processed by the `convertTextToTableMagic` function.
+ *
+ * Additionally, this function sets up a one-time event handler (if not already set) on the document
+ * to remove tooltips when clicked. This is controlled by the `tooltipClearerHasBeenSetup` flag to prevent
+ * multiple bindings of the event handler.
+ *
+ * @function setupTooltips
+ * @param {jQuery|HTMLElement} [element=document] - The jQuery or DOM element to which the tooltips will be attached.
+ *                                                  If not provided, the document itself is used.
+ */
 window.setupTooltips = function (element) {
   element = element || $(document);
   element.tooltip({
@@ -3166,6 +3735,10 @@ window.setupTooltips = function (element) {
   }
 };
 
+/**
+ * Initializes Ingress markers with custom icons.
+ * @function setupIngressMarkers
+ */
 function setupIngressMarkers () {
   L.Icon.Default.mergeOptions({
     iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAApCAYAAADAk4LOAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAocSURBVHjanNRbUFN3Hgfwv9Pdzu5sZ7cP3d1eprP7sC/bPvSls9MmB5CLcg2IIAhSWwS8rFqrpbVbu3Vdd2ov04qJgGBESAJJCOR2AiFcEpKT+wkhiIiCoCJKkQhCIEgEvvsQcaoVdffhM+fMOf///3v+5/c7h8S8lk64f0wkH7/9LZGnsUSczBBREkNESRaieM9JOg6fJzUJljckPGajhMfsF6dYjolTLMV16bZMxRbnW2KehUhSGSJKtBBlvptIM+2kJt5CRIkWIkljiCSVIWS1EHEyQ6SZtrdVBe5jomRLd126dVa6ybZYn+OAbJN9qS7dOidJYy6Iki3fS3gM5/8J+bMo0VJZm2pdaHjPiaZ9XrR+dg6tn59D26FetB06h9Z/nEPzvm4ot7lRl25drI43Vzd+4PrLM4WIkpjImkRmWJHnQktxD9o+70XLJz7o9nWD3uMFvdsLeo8Xug+7oS/23b/fg4b3XBClMNfFyUx8TeIjIWtfTSPv/iGeHHj7GyLnseniJGZGs8ODtkO9aP6oG9qdXdDs8EC3x4s+5SjujMzhIn0DTfu6odnhgXZnF5o+6kbboV5odnZBlMQEaxIsuQ+FJLy+mUS/toF88vb3f5Mlu+9od3XBcPActDu7oC70QF3kgbP0Mu5cD2LOv4DFhSXM+Rcwc3MebMUQ1EUeqAs90OwMz6N3e1GTYJkVJVooSSpDalNthFTEtJKKmNbfnonruKDaxsJwsAfq7R6oClmYjl7Arb5p3J25hz7lKFo/78XsrbswHu7DOekI5qdCmLg4A/OxfqgKWai3e2D4tAfKAjeq15sHqtebf3c6ro2QmnUMqY61HJJutMPwaQ80OzzQ7/dhqGMc94KLuO68jdbPzkFVwEJ/wIfQ3CLaDvVCVcDC8GkPrjITuBdcxBXzLbQU9zwIkmU4ULHW8GX869mEnI0z//5snHlcu6sLur1euMuHMHvrLvwDAZi/7odymxvKfBbKfBa6vd0Y892B/uMeKLexYfn3d9w/jTn/ArqEw9Dt9YL+uxfCGOPE/re+e5lUxXTmSVKt0B8It+P0aBCDhh+hKmShzHdDXchCs90D7Y4welfXg3PNdg80RR405ruhKmTRr72B6dEglNvcaD7gQ22aFeI4x1ZyJsokVuQ5odvrhSLPhduDAdiOD6D9n+H3Hxibx/RoEJPDs5geDWL6ehDTo0FMXZnF9PUgAmPzmPMvwHT0Asxf9cM/GIAizwXdXi8a8pw4E2WSEGGUyakqYKHZ4YFiSzjEXX4ZjVtdGD8/DQBYureMPuUoTEf6YDx8HqYjfeiVj+De3SUAgH8wgMb33bAfH8DtwQAUW1zQbPdAVcBCGGV0E+Fa41X1/QsNueEQtnwIDVtcaP/iPEL3ix8Ym8c16wSMh/swbBzH7PhdjDj8uDe/CNO/L0CR54KjZBC3BwNoyHVBVRDuNuFa4zUiXGu8odnugTLfDflmB/yDAbjKLkOR64Qi14mhjnGMspPQfdiNUddtLC8t46Z3Cvr9PlxlJjBi80OR60R9jhO245fgHwxAvtkBZb4bmnDIDVIZ2e5uzHdDuc0NWbYD/oFwSP1mB+Q5TqiLWCwE7sHyzUU05LkwPxWCusgD4+E+hIKLoHd7Ic9xQr7ZAdsPl+AfCECW7YAyn0XjB25URrazpJwyyGTZdqiLPJBussM/GIC9ZACybDtMR/qgL/bBW3MFMzeC0O31IjA2j+b9PkwOz6K3fgRNH3aj8z8XIM92gPn6IvwDAUg3hdeTZdtRTrU2kNPR7Xuqkzqh2d4FWZYdE/0z8ImvYkA/hsW7S3CfGoIs246pa3MYNPwI/2AAg/oxzIwGUZ/jhP34AELBRQx1jMNbdQUT/TOQZdmh2dGF6qROnI5p30fKI/R/rYhqDakKWNTnOnH7cgAAMMpOoqW4B9JMO2SZdpi/6sfy0jJCwUUAgO2HS5BtskOaaYd+vw8jdj+wDExemUV9rhPqAhanogyh8gjDm6SMal5zkqNrrctkoMxn4au9hqXQEi63/whlgRvSDBvqNtohzbBhxOEHANzsnoI0w/6A8gM3LjXdxPLSMnrlI1BtY1GbweDku7qW8gj9GlIWoScCLp1TEWuAqsADaYYN+mIfxnqmEJxcgE98FfU5TtSl29C0rxvzd0IwHOxB3UYbZFl2dFVdwZx/AePnp2E42ANppg3qQg8qYw3gc+iMk5SOkBMcNSnhqF8QcOgheY4Dii1OiHkMJKkMLN/0487IHKauzcF8rB+1G6zQ7e5C3QYrOo/2YXJoFjM3grD9cAkSHgMxj4EizwX5Zgf4HLr/BFfzqxNcDSF8Skv4lJac4GiOnEnogDKfhSQtHCJJZSDLssMnuYb5qRBueCZhPNKHEYcfd6dDOF9/HYocZ3gsj4EkjYEqn4Uwvh18jvZgKdVESqkmQkojmsOopj8JKN1teY4D8mwHxCnhJxPzGIhTGKiLWAybbmH+TgjXrBPQ7OqCmGeFhGeFOIWBKIVBfY4D8s0OCLj0mICiXxZQNBFQNCHlES0P8DnaY8L4djRudYcnJjEQJTMQr0j6OVFyeJyYx6DxfTdOr2sDn0N/sbKLUqqJkJW0+14RcOlxaZYdsk121CRYIEp8upoES7idN9kg4NLXS6mmlx4K4XO1DznB0Xx5el0bFHkuiJLCCzyNKNkCRZ4LlXGtEHDo4p8GPDaEz9W+JODSo9JMG6QZdpyNM6N63erOxpkhzbSjLsMKAVc3LKDoFwWUjvwUeTS1lGoiAg79SWVsKxS5TlSvt+BsbHixn4k1ozreAkWOExUxBgi4ur1lEXryqEdrsuJFAYcelqQzqNtgQ1VMJ6pif+5MTCfq0m0Qb2DA52gvlXBUL5SEv7uHkEe3toLP1e6uiDZAnuVA9TozqqI7w2ErojtRvd4MebYDp6INKOGoi0o4KvI4pDzSsIqW3/A52osingW1qVYIo4w4E2V6QBhlRG2qFSKeGXwufZ7P1f76MfUlfK72sYX/aacVnFrbAmmGHVWxnRBGGiGMMkIYaURVbCekGXaURelRRjVvPR3ZTioj2x6LnKR0T/IrPofuqUnuhIRnRWVkB05HdaAysgMSnhU1yZ3gc7TeEo76+RMcNVkNWe09rjjBUeeWR+lRt8EGYYwRp6hWCGOMqNtgQ3mUHgKKzlr5/62GPG0An9L+UsCl2eoEE0RJFpRTBoiSLDibYMJJSuesjjf/oibBTJ6EVMd3PlFNgplURBvSSyOaIE5hUBVngjiFQVlkM757pz7t23dk5GnIqUjDs3iOz9UyZ9Z1hL+b9SZ8/26Def3rWc+tfYVHol9Ne6KnFf4BPleTWBbZDFGSBWWRehznqBJ2v3mU7HzjMNn1xr+e6Ikt/Ig1AopuK4vQQ0DRrXyudk15RAs5FWF4qtV+K6uJE1DaUPj47PP+15DnBRRdeP/4zPP+OwCV955x/18hzAAAAABJRU5ErkJggg==',
@@ -3210,6 +3783,10 @@ function setupIngressMarkers () {
   };
 }
 
+/**
+ * Checks if the IITC is being run on the official Intel URL. If not, it displays a warning dialog.
+ * @function checkingIntelURL
+ */
 function checkingIntelURL() {
   if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
     dialog({
@@ -3229,12 +3806,13 @@ function checkingIntelURL() {
   }
 }
 
-/*
-OMS doesn't cancel the original click event, so the topmost marker will get a click event while spiderfying.
-Also, OMS only supports a global callback for all managed markers. Therefore, we will use a custom event that gets fired
-for each marker.
-*/
-
+/**
+ * Sets up the OverlappingMarkerSpiderfier (OMS) library for handling overlapping markers on the map.
+ * OMS doesn't cancel the original click event, so the topmost marker will get a click event while spiderfying.
+ * Also, OMS only supports a global callback for all managed markers. Therefore, we will use a custom event that gets fired
+ * for each marker.
+ * @function setupOMS
+ */
 window.setupOMS = function() {
   window.oms = new OverlappingMarkerSpiderfier(map, {
     keepSpiderfied: true,
@@ -3259,6 +3837,11 @@ window.setupOMS = function() {
   }, false);
 };
 
+/**
+ * Registers a marker with the OverlappingMarkerSpiderfier to manage its click events.
+ * @function registerMarkerForOMS
+ * @param {L.Marker} marker - The Leaflet marker to be managed by OMS.
+ */
 window.registerMarkerForOMS = function (marker) {
   marker.on('add', function () {
     window.oms.addMarker(marker);
@@ -3273,6 +3856,11 @@ window.registerMarkerForOMS = function (marker) {
 
 // BOOTING ///////////////////////////////////////////////////////////
 
+/**
+ * Prepares plugins to load by sorting them based on their specified priority.
+ * @function prepPluginsToLoad
+ * @returns {Function} A loader function that loads plugins up to a specified priority.
+ */
 function prepPluginsToLoad () {
 
   var priorities = {
@@ -3344,8 +3932,13 @@ function prepPluginsToLoad () {
   };
 }
 
+/**
+ * The main boot function that initializes IITC. It is responsible for setting up the map,
+ * loading plugins, and initializing various components of IITC.
+ * @function boot
+ */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-25-143711');
+  log.log('loading done, booting. Built: '+'2024-01-30-074630');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19206,10 +19799,19 @@ if (document.readyState === 'complete') { // IITCm
 // *** module: chat.js ***
 (function () {
 var log = ulog('chat');
+/**
+ * @file Namespace for chat-related functionalities.
+ * @namespace window.chat
+ */
+
 window.chat = function () {};
 var chat = window.chat;
 
-
+/**
+ * Handles tab completion in chat input.
+ *
+ * @function window.chat.handleTabCompletion
+ */
 window.chat.handleTabCompletion = function() {
   var el = $('#chatinput input');
   var curPos = el.get(0).selectionStart;
@@ -19247,6 +19849,16 @@ window.chat.handleTabCompletion = function() {
 
 
 window.chat._oldBBox = null;
+
+/**
+ * Generates post data for chat requests.
+ *
+ * @function window.chat.genPostData
+ * @param {string} channel - The chat channel.
+ * @param {Object} storageHash - Storage hash for the chat.
+ * @param {boolean} getOlderMsgs - Flag to determine if older messages are being requested.
+ * @returns {Object} The generated post data.
+ */
 window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
   if (typeof channel !== 'string') {
     throw new Error('API changed: isFaction flag now a channel string - all, faction, alerts');
@@ -19343,6 +19955,14 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
 //
 
 window.chat._requestFactionRunning = false;
+
+/**
+ * Requests faction chat messages.
+ *
+ * @function window.chat.requestFaction
+ * @param {boolean} getOlderMsgs - Flag to determine if older messages are being requested.
+ * @param {boolean} [isRetry=false] - Flag to indicate if this is a retry attempt.
+ */
 window.chat.requestFaction = function(getOlderMsgs, isRetry) {
   if(chat._requestFactionRunning && !isRetry) return;
   if(isIdle()) return renderUpdateStatus();
@@ -19360,8 +19980,22 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
   );
 }
 
-
+/**
+ * Holds data related to faction chat.
+ *
+ * @memberof window.chat
+ * @type {Object}
+ */
 window.chat._faction = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
+
+/**
+ * Handles faction chat response.
+ *
+ * @function window.chat.handleFaction
+ * @param {Object} data - Response data from server.
+ * @param {boolean} olderMsgs - Indicates if older messages were requested.
+ * @param {boolean} ascendingTimestampOrder - Indicates if messages are in ascending timestamp order.
+ */
 window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestFactionRunning = false;
   $("#chatcontrols a:contains('faction')").removeClass('loading');
@@ -19387,6 +20021,12 @@ window.chat.handleFaction = function(data, olderMsgs, ascendingTimestampOrder) {
   window.chat.renderFaction(oldMsgsWereAdded);
 }
 
+/**
+ * Renders faction chat.
+ *
+ * @function window.chat.renderFaction
+ * @param {boolean} oldMsgsWereAdded - Indicates if old messages were added in the current rendering.
+ */
 window.chat.renderFaction = function(oldMsgsWereAdded) {
   chat.renderData(chat._faction.data, 'chatfaction', oldMsgsWereAdded, chat._faction.guids);
 }
@@ -19397,6 +20037,14 @@ window.chat.renderFaction = function(oldMsgsWereAdded) {
 //
 
 window.chat._requestPublicRunning = false;
+
+/**
+ * Initiates a request for public chat data.
+ *
+ * @function window.chat.requestPublic
+ * @param {boolean} getOlderMsgs - Whether to retrieve older messages.
+ * @param {boolean} [isRetry=false] - Whether the request is a retry.
+ */
 window.chat.requestPublic = function(getOlderMsgs, isRetry) {
   if(chat._requestPublicRunning && !isRetry) return;
   if(isIdle()) return renderUpdateStatus();
@@ -19414,7 +20062,22 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
   );
 }
 
+/**
+ * Holds data related to public chat.
+ *
+ * @memberof window.chat
+ * @type {Object}
+ */
 window.chat._public = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
+
+/**
+ * Handles the public chat data received from the server.
+ *
+ * @function window.chat.handlePublic
+ * @param {Object} data - The public chat data.
+ * @param {boolean} olderMsgs - Whether the received messages are older.
+ * @param {boolean} ascendingTimestampOrder - Whether messages are in ascending timestamp order.
+ */
 window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestPublicRunning = false;
   $("#chatcontrols a:contains('all')").removeClass('loading');
@@ -19441,6 +20104,12 @@ window.chat.handlePublic = function(data, olderMsgs, ascendingTimestampOrder) {
 
 }
 
+/**
+ * Renders public chat in the UI.
+ *
+ * @function window.chat.renderPublic
+ * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
+ */
 window.chat.renderPublic = function(oldMsgsWereAdded) {
   chat.renderData(chat._public.data, 'chatall', oldMsgsWereAdded, chat._public.guids);
 }
@@ -19451,6 +20120,14 @@ window.chat.renderPublic = function(oldMsgsWereAdded) {
 //
 
 window.chat._requestAlertsRunning = false;
+
+/**
+ * Initiates a request for alerts chat data.
+ *
+ * @function window.chat.requestAlerts
+ * @param {boolean} getOlderMsgs - Whether to retrieve older messages.
+ * @param {boolean} [isRetry=false] - Whether the request is a retry.
+ */
 window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
   if(chat._requestAlertsRunning && !isRetry) return;
   if(isIdle()) return renderUpdateStatus();
@@ -19468,8 +20145,22 @@ window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
   );
 }
 
-
+/**
+ * Holds data related to alerts chat.
+ *
+ * @memberof window.chat
+ * @type {Object}
+ */
 window.chat._alerts = {data:{}, guids: [], oldestTimestamp:-1, newestTimestamp:-1};
+
+/**
+ * Handles the alerts chat data received from the server.
+ *
+ * @function window.chat.handleAlerts
+ * @param {Object} data - The alerts chat data.
+ * @param {boolean} olderMsgs - Whether the received messages are older.
+ * @param {boolean} ascendingTimestampOrder - Whether messages are in ascending timestamp order.
+ */
 window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   chat._requestAlertsRunning = false;
   $("#chatcontrols a:contains('alerts')").removeClass('loading');
@@ -19491,6 +20182,12 @@ window.chat.handleAlerts = function(data, olderMsgs, ascendingTimestampOrder) {
   window.chat.renderAlerts(oldMsgsWereAdded);
 }
 
+/**
+ * Renders alerts chat in the UI.
+ *
+ * @function window.chat.renderAlerts
+ * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
+ */
 window.chat.renderAlerts = function(oldMsgsWereAdded) {
   chat.renderData(chat._alerts.data, 'chatalerts', oldMsgsWereAdded, chat._alerts.guids);
 }
@@ -19501,12 +20198,26 @@ window.chat.renderAlerts = function(oldMsgsWereAdded) {
 // common
 //
 
+/**
+ * Adds a nickname to the chat input.
+ *
+ * @function window.chat.addNickname
+ * @param {string} nick - The nickname to add.
+ */
 window.chat.addNickname= function(nick) {
   var c = document.getElementById("chattext");
   c.value = [c.value.trim(), nick].join(" ").trim() + " ";
   c.focus()
 }
 
+/**
+ * Handles click events on nicknames in the chat.
+ *
+ * @function window.chat.nicknameClicked
+ * @param {Event} event - The click event.
+ * @param {string} nickname - The clicked nickname.
+ * @returns {boolean} Always returns false.
+ */
 window.chat.nicknameClicked = function(event, nickname) {
   var hookData = { event: event, nickname: nickname };
 
@@ -19519,6 +20230,15 @@ window.chat.nicknameClicked = function(event, nickname) {
   return false;
 }
 
+/**
+ * Updates the oldest and newest message timestamps and GUIDs in the chat storage.
+ *
+ * @function window.chat.updateOldNewHash
+ * @param {Object} newData - The new chat data received.
+ * @param {Object} storageHash - The chat storage object.
+ * @param {boolean} isOlderMsgs - Whether the new data contains older messages.
+ * @param {boolean} isAscendingOrder - Whether the new data is in ascending order.
+ */
 window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAscendingOrder) {
   // track oldest + newest timestamps/GUID
   if (newData.result.length > 0) {
@@ -19550,6 +20270,13 @@ window.chat.updateOldNewHash = function(newData, storageHash, isOlderMsgs, isAsc
   }
 };
 
+/**
+ * Parses chat message data into a more convenient format.
+ *
+ * @function window.chat.parseMsgData
+ * @param {Object} data - The raw chat message data.
+ * @returns {Object} The parsed chat message data.
+ */
 window.chat.parseMsgData = function (data) {
   var categories = data[2].plext.categories;
   var isPublic = (categories & 1) === 1;
@@ -19601,6 +20328,15 @@ window.chat.parseMsgData = function (data) {
   };
 };
 
+/**
+ * Writes new chat data to the chat storage and manages the order of messages.
+ *
+ * @function window.chat.writeDataToHash
+ * @param {Object} newData - The new chat data received.
+ * @param {Object} storageHash - The chat storage object.
+ * @param {boolean} isOlderMsgs - Whether the new data contains older messages.
+ * @param {boolean} isAscendingOrder - Whether the new data is in ascending order.
+ */
 window.chat.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
   window.chat.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
@@ -19626,12 +20362,36 @@ window.chat.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAsc
 // Rendering primitive for markup, chat cells (td) and chat row (tr)
 //
 
+/**
+ * Renders text for the chat, converting plain text to HTML and adding links.
+ *
+ * @function window.chat.renderText
+ * @param {Object} text - An object containing the plain text to render.
+ * @returns {string} The rendered HTML string.
+ */
 window.chat.renderText = function (text) {
-  return $('<div>').text(text.plain).html().autoLink();
+  let content;
+
+  if (text.team) {
+    let teamId = window.teamStringToId(text.team);
+    if (teamId === window.TEAM_NONE) teamId = window.TEAM_MAC;
+    const spanClass = window.TEAM_TO_CSS[teamId];
+    content = $('<div>').append($('<span>', { class: spanClass, text: text.plain }));
+  } else {
+    content = $('<div>').text(text.plain);
+  }
+
+  return content.html().autoLink();
 };
 
-// Override portal names that are used over and over, such as 'US Post Office'
-window.chat.getChatPortalName = function(markup) {
+/**
+ * Overrides portal names used repeatedly in chat, such as 'US Post Office', with more specific names.
+ *
+ * @function window.chat.getChatPortalName
+ * @param {Object} markup - An object containing portal markup, including the name and address.
+ * @returns {string} The processed portal name.
+ */
+window.chat.getChatPortalName = function (markup) {
   var name = markup.name;
   if (name === 'US Post Office') {
     var address = markup.address.split(',');
@@ -19640,17 +20400,27 @@ window.chat.getChatPortalName = function(markup) {
   return name;
 };
 
+/**
+ * Renders a portal link for use in the chat.
+ *
+ * @function window.chat.renderPortal
+ * @param {Object} portal - The portal data.
+ * @returns {string} HTML string of the portal link.
+ */
 window.chat.renderPortal = function (portal) {
   var lat = portal.latE6/1E6, lng = portal.lngE6/1E6;
   var perma = window.makePermalink([lat,lng]);
   var js = 'window.selectPortalByLatLng('+lat+', '+lng+');return false';
-  return '<a onclick="'+js+'"'
-    + ' title="'+portal.address+'"'
-    + ' href="'+perma+'" class="help">'
-    + window.chat.getChatPortalName(portal)
-    + '</a>';
+  return '<a onclick="' + js + '"' + ' title="' + portal.address + '"' + ' href="' + perma + '" class="help">' + window.chat.getChatPortalName(portal) + '</a>';
 };
 
+/**
+ * Renders a faction entity for use in the chat.
+ *
+ * @function window.chat.renderFactionEnt
+ * @param {Object} faction - The faction data.
+ * @returns {string} HTML string representing the faction.
+ */
 window.chat.renderFactionEnt = function (faction) {
   var teamId = window.teamStringToId(faction.team);
   var name = window.TEAM_NAMES[teamId];
@@ -19660,6 +20430,15 @@ window.chat.renderFactionEnt = function (faction) {
     .text(name)).html();
 };
 
+/**
+ * Renders a player's nickname in chat.
+ *
+ * @function window.chat.renderPlayer
+ * @param {Object} player - The player object containing nickname and team.
+ * @param {boolean} at - Whether to prepend '@' to the nickname.
+ * @param {boolean} sender - Whether the player is the sender of a message.
+ * @returns {string} The HTML string representing the player's nickname in chat.
+ */
 window.chat.renderPlayer = function (player, at, sender) {
   var name = player.plain;
   if (sender) {
@@ -19675,6 +20454,13 @@ window.chat.renderPlayer = function (player, at, sender) {
     .text((at ? '@' : '') + name)).html();
 };
 
+/**
+ * Renders a chat message entity based on its type.
+ *
+ * @function window.chat.renderMarkupEntity
+ * @param {Array} ent - The entity array, where the first element is the type and the second element is the data.
+ * @returns {string} The HTML string representing the chat message entity.
+ */
 window.chat.renderMarkupEntity = function (ent) {
   switch (ent[0]) {
   case 'TEXT':
@@ -19694,50 +20480,125 @@ window.chat.renderMarkupEntity = function (ent) {
   return $('<div>').text(ent[0]+':<'+ent[1].plain+'>').html();
 };
 
+/**
+ * Renders the markup of a chat message, converting special entities like player names, portals, etc., into HTML.
+ *
+ * @function window.chat.renderMarkup
+ * @param {Array} markup - The markup array of a chat message.
+ * @returns {string} The HTML string representing the complete rendered chat message.
+ */
 window.chat.renderMarkup = function (markup) {
   var msg = '';
-  markup.forEach(function(ent, ind) {
+
+  markup.forEach(function (ent, ind) {
     switch (ent[0]) {
-    case 'SENDER':
-    case 'SECURE':
-      // skip as already handled
-      break;
+      case 'SENDER':
+      case 'SECURE':
+        // skip as already handled
+        break;
 
-    case 'PLAYER': // automatically generated messages
-      if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
-      break;
+      case 'PLAYER': // automatically generated messages
+        if (ind > 0) msg += chat.renderMarkupEntity(ent); // don’t repeat nick directly
+        break;
 
-    default:
-      // add other enitities whatever the type
-      msg += chat.renderMarkupEntity(ent);
-      break;
+      default:
+        // add other enitities whatever the type
+        msg += chat.renderMarkupEntity(ent);
+        break;
     }
   });
   return msg;
 };
 
-window.chat.renderTimeCell = function(time, classNames) {
-  var ta = unixTimeToHHmm(time);
-  var tb = unixTimeToDateTimeString(time, true);
+/**
+ * Transforms a given markup array into an older, more straightforward format for easier understanding.
+ *
+ * @function window.chat.transformMessage
+ * @param {Array} markup - An array representing the markup to be transformed.
+ * @returns {Array} The transformed markup array with a simplified structure.
+ */
+function transformMessage(markup) {
+  // Make a copy of the markup array to avoid modifying the original input
+  let newMarkup = JSON.parse(JSON.stringify(markup));
+
+  // Collapse <faction> + "Link"/"Field". Example: "Agent <player> destroyed the <faction> Link ..."
+  if (newMarkup.length > 4) {
+    if (newMarkup[3][0] === 'FACTION' && newMarkup[4][0] === 'TEXT' && (newMarkup[4][1].plain === ' Link ' || newMarkup[4][1].plain === ' Control Field @')) {
+      newMarkup[4][1].team = newMarkup[3][1].team;
+      newMarkup.splice(3, 1);
+    }
+  }
+
+  // Skip "Agent <player>" at the beginning
+  if (newMarkup.length > 1) {
+    if (newMarkup[0][0] === 'TEXT' && newMarkup[0][1].plain === 'Agent ' && newMarkup[1][0] === 'PLAYER') {
+      newMarkup.splice(0, 2);
+    }
+  }
+
+  // Skip "<faction> agent <player>" at the beginning
+  if (newMarkup.length > 2) {
+    if (newMarkup[0][0] === 'FACTION' && newMarkup[1][0] === 'TEXT' && newMarkup[1][1].plain === ' agent ' && newMarkup[2][0] === 'PLAYER') {
+      newMarkup.splice(0, 3);
+    }
+  }
+
+  return newMarkup;
+}
+
+/**
+ * Renders a cell in the chat table to display the time a message was sent.
+ * Formats the time and adds it to a <time> HTML element with a tooltip showing the full date and time.
+ *
+ * @function window.chat.renderTimeCell
+ * @param {number} time - The timestamp of the message.
+ * @param {string} classNames - Additional class names to be added to the time cell.
+ * @returns {string} The HTML string representing a table cell with the formatted time.
+ */
+window.chat.renderTimeCell = function (time, classNames) {
+  const ta = window.unixTimeToHHmm(time);
+  let tb = window.unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0,19)+'<small class="milliseconds">'+tb.slice(19)+'</small>')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-  return '<td><time class="' + classNames + '" title="'+tb+'" data-timestamp="'+time+'">'+ta+'</time></td>';
+  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
 };
 
-window.chat.renderNickCell = function(nick, classNames) {
-  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<td>'+i[0]+'<mark class="' + classNames + '">'+ nick+'</mark>'+i[1]+'</td>';
+/**
+ * Renders a cell in the chat table for a player's nickname.
+ * Wraps the nickname in <mark> HTML element for highlighting.
+ *
+ * @function window.chat.renderNickCell
+ * @param {string} nick - The nickname of the player.
+ * @param {string} classNames - Additional class names to be added to the nickname cell.
+ * @returns {string} The HTML string representing a table cell with the player's nickname.
+ */
+window.chat.renderNickCell = function (nick, classNames) {
+  const i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
+  return '<td>' + i[0] + '<mark class="' + classNames + '">' + nick + '</mark>' + i[1] + '</td>';
 };
 
-window.chat.renderMsgCell = function(msg, classNames) {
-  return '<td class="' + classNames + '">'+msg+'</td>';
+/**
+ * Renders a cell in the chat table for a chat message.
+ * The message is inserted as inner HTML of the table cell.
+ *
+ * @function window.chat.renderMsgCell
+ * @param {string} msg - The chat message to be displayed.
+ * @param {string} classNames - Additional class names to be added to the message cell.
+ * @returns {string} The HTML string representing a table cell with the chat message.
+ */
+window.chat.renderMsgCell = function (msg, classNames) {
+  return '<td class="' + classNames + '">' + msg + '</td>';
 };
 
-window.chat.renderMsgRow = function(data) {
-  var timeClass = (data.msgToPlayer) ? 'pl_nudge_date' : '';
+/**
+ * Renders a row for a chat message including time, nickname, and message cells.
+ *
+ * @function window.chat.renderMsgRow
+ * @param {Object} data - The data for the message, including time, player, and message content.
+ * @returns {string} The HTML string representing a row in the chat table.
+ */
+window.chat.renderMsgRow = function (data) {
+  var timeClass = data.msgToPlayer ? 'pl_nudge_date' : '';
   var timeCell = chat.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
@@ -19751,7 +20612,8 @@ window.chat.renderMsgRow = function(data) {
   }
   var nickCell = chat.renderNickCell(data.player.name, nickClasses.join(' '));
 
-  var msg = chat.renderMarkup(data.markup);
+  const markup = transformMessage(data.markup);
+  var msg = chat.renderMarkup(markup);
   var msgClass = data.narrowcast ? 'system_narrowcast' : '';
   var msgCell = chat.renderMsgCell(msg, msgClass);
 
@@ -19764,7 +20626,18 @@ window.chat.renderMsgRow = function(data) {
   return '<tr data-guid="' + data.guid + '" class="' + className + '">' + timeCell + nickCell + msgCell + '</tr>';
 };
 
-// legacy rendering, not used internaly, but left there for backward compatibilty in case a plugin uses it directly
+/**
+ * Legacy function for rendering chat messages. Used for backward compatibility with plugins.
+ *
+ * @function window.chat.renderMsg
+ * @param {string} msg - The chat message.
+ * @param {string} nick - The nickname of the player who sent the message.
+ * @param {number} time - The timestamp of the message.
+ * @param {string} team - The team of the player who sent the message.
+ * @param {boolean} msgToPlayer - Flag indicating if the message is directed to the player.
+ * @param {boolean} systemNarrowcast - Flag indicating if the message is a system narrowcast.
+ * @returns {string} The HTML string representing a chat message row.
+ */
 window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
   var ta = unixTimeToHHmm(time);
   var tb = unixTimeToDateTimeString(time, true);
@@ -19792,13 +20665,26 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
   return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
 }
 
+/**
+ * Renders a divider row in the chat table.
+ *
+ * @function window.chat.renderDivider
+ * @param {string} text - Text to display within the divider row.
+ * @returns {string} The HTML string representing a divider row in the chat table.
+ */
 window.chat.renderDivider = function(text) {
   return '<tr class="divider"><td><hr></td><td>' + text + '</td><td><hr></td></tr>';
 };
 
-// renders data from the data-hash to the element defined by the given
-// ID. Set 3rd argument to true if it is likely that old data has been
-// added. Latter is only required for scrolling.
+/**
+ * Renders data from the data-hash to the element defined by the given ID.
+ *
+ * @function window.chat.renderData
+ * @param {Object} data - Chat data to be rendered.
+ * @param {string} element - ID of the DOM element to render the chat into.
+ * @param {boolean} likelyWereOldMsgs - Flag indicating if older messages are likely to have been added.
+ * @param {Array} sortedGuids - Sorted array of GUIDs representing the order of messages.
+ */
 window.chat.renderData = function(data, element, likelyWereOldMsgs, sortedGuids) {
   var elm = $('#'+element);
   if (elm.is(':hidden')) {
@@ -19844,19 +20730,36 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs, sortedGuids)
   }
 };
 
-
+/**
+ * Gets the name of the active chat tab.
+ *
+ * @function window.chat.getActive
+ * @returns {string} The name of the active chat tab.
+ */
 window.chat.getActive = function() {
   return $('#chatcontrols .active').text();
 }
 
+/**
+ * Converts a chat tab name to its corresponding COMM channel name.
+ *
+ * @function window.chat.tabToChannel
+ * @param {string} tab - The name of the chat tab.
+ * @returns {string} The corresponding channel name ('faction', 'alerts', or 'all').
+ */
 window.chat.tabToChannel = function(tab) {
   if (tab == 'faction') return 'faction';
   if (tab == 'alerts') return 'alerts';
   return 'all';
 };
 
-
-
+/**
+ * Toggles the chat window between expanded and collapsed states.
+ * When expanded, the chat window covers a larger area of the screen.
+ * This function also ensures that the chat is scrolled to the bottom when collapsed.
+ *
+ * @function window.chat.toggle
+ */
 window.chat.toggle = function() {
   var c = $('#chat, #chatcontrols');
   if(c.hasClass('expand')) {
@@ -19872,11 +20775,16 @@ window.chat.toggle = function() {
   }
 };
 
-
-// called by plugins (or other things?) that need to monitor COMM data streams when the user is not viewing them
-// instance: a unique string identifying the plugin requesting background COMM
-// channel: either 'all', 'faction' or (soon) 'alerts' - others possible in the future
-// flag: true for data wanted, false for not wanted
+/**
+ * Allows plugins to request and monitor COMM data streams in the background. This is useful for plugins
+ * that need to process COMM data even when the user is not actively viewing the COMM channels.
+ * It tracks the requested channels for each plugin instance and updates the global state accordingly.
+ *
+ * @function window.chat.backgroundChannelData
+ * @param {string} instance - A unique identifier for the plugin or instance requesting background COMM data.
+ * @param {string} channel - The name of the COMM channel ('all', 'faction', or 'alerts').
+ * @param {boolean} flag - Set to true to request data for the specified channel, false to stop requesting.
+ */
 window.chat.backgroundChannelData = function(instance,channel,flag) {
   //first, store the state for this instance
   if (!window.chat.backgroundInstanceChannel) window.chat.backgroundInstanceChannel = {};
@@ -19897,7 +20805,12 @@ window.chat.backgroundChannelData = function(instance,channel,flag) {
 
 }
 
-
+/**
+ * Requests chat messages for the currently active chat tab and background channels.
+ * It calls the appropriate request function based on the active tab or background channels.
+ *
+ * @function window.chat.request
+ */
 window.chat.request = function() {
   var channel = chat.tabToChannel(chat.getActive());
   if (channel == 'faction' || (window.chat.backgroundChannels && window.chat.backgroundChannels['faction'])) {
@@ -19911,9 +20824,12 @@ window.chat.request = function() {
   }
 }
 
-
-// checks if there are enough messages in the selected chat tab and
-// loads more if not.
+/**
+ * Checks if the currently selected chat tab needs more messages.
+ * This function is triggered by scroll events and loads older messages when the user scrolls to the top.
+ *
+ * @function window.chat.needMoreMessages
+ */
 window.chat.needMoreMessages = function() {
   var activeTab = chat.getActive();
   if (activeTab !== 'all' && activeTab !== 'faction' && activeTab !== 'alerts') {
@@ -19934,7 +20850,13 @@ window.chat.needMoreMessages = function() {
   }
 };
 
-
+/**
+ * Chooses and activates a specified chat tab.
+ * Also triggers an early refresh of the chat data when switching tabs.
+ *
+ * @function window.chat.chooseTab
+ * @param {string} tab - The name of the chat tab to activate ('all', 'faction', or 'alerts').
+ */
 window.chat.chooseTab = function(tab) {
   if (tab != 'all' && tab != 'faction' && tab != 'alerts') {
     log.warn('chat tab "'+tab+'" requested - but only "all", "faction" and "alerts" are valid - assuming "all" wanted');
@@ -19985,6 +20907,12 @@ window.chat.chooseTab = function(tab) {
   }
 }
 
+/**
+ * Displays the chat interface and activates a specified chat tab.
+ *
+ * @function window.chat.show
+ * @param {string} name - The name of the chat tab to show and activate.
+ */
 window.chat.show = function(name) {
     window.isSmartphone()
         ? $('#updatestatus').hide()
@@ -19994,13 +20922,30 @@ window.chat.show = function(name) {
     window.chat.chooseTab(name);
 }
 
+/**
+ * Chat tab chooser handler.
+ * This function is triggered by a click event on the chat tab. It reads the tab name from the event target
+ * and activates the corresponding chat tab.
+ *
+ * @function window.chat.chooser
+ * @param {Event} event - The event triggered by clicking a chat tab.
+ */
 window.chat.chooser = function(event) {
   var t = $(event.target);
   var tab = t.text();
   window.chat.chooseTab(tab);
 }
 
-// contains the logic to keep the correct scroll position.
+/**
+ * Maintains the scroll position of a chat box when new messages are added.
+ * This function is designed to keep the scroll position fixed when old messages are loaded, and to automatically scroll
+ * to the bottom when new messages are added if the user is already at the bottom of the chat.
+ *
+ * @function window.chat.keepScrollPosition
+ * @param {jQuery} box - The jQuery object of the chat box.
+ * @param {number} scrollBefore - The scroll position before new messages were added.
+ * @param {boolean} isOldMsgs - Indicates if the added messages are older messages.
+ */
 window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
   // If scrolled down completely, keep it that way so new messages can
   // be seen easily. If scrolled up, only need to fix scroll position
@@ -20026,6 +20971,11 @@ window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
 // setup
 //
 
+/**
+ * Sets up the chat interface.
+ *
+ * @function window.chat.setup
+ */
 window.chat.setup = function() {
   if (localStorage['iitc-chat-tab']) {
     chat.chooseTab(localStorage['iitc-chat-tab']);
@@ -20078,7 +21028,12 @@ window.chat.setup = function() {
   });
 }
 
-
+/**
+ * Sets up the time display in the chat input box.
+ * This function updates the time displayed next to the chat input field every minute to reflect the current time.
+ *
+ * @function window.chat.setupTime
+ */
 window.chat.setupTime = function() {
   var inputTime = $('#chatinput time');
   var updateTime = function() {
@@ -20099,7 +21054,11 @@ window.chat.setupTime = function() {
 // posting
 //
 
-
+/**
+ * Sets up the chat message posting functionality.
+ *
+ * @function window.chat.setupPosting
+ */
 window.chat.setupPosting = function() {
   if (!isSmartphone()) {
     $('#chatinput input').keydown(function(event) {
@@ -20124,7 +21083,11 @@ window.chat.setupPosting = function() {
   });
 }
 
-
+/**
+ * Posts a chat message to the currently active chat tab.
+ *
+ * @function window.chat.postMsg
+ */
 window.chat.postMsg = function() {
   var c = chat.getActive();
   if(c == 'alerts')
@@ -20168,9 +21131,12 @@ window.chat.postMsg = function() {
 // *** module: data_cache.js ***
 (function () {
 var log = ulog('data_cache');
-// MAP DATA CACHE ///////////////////////////////////
-// cache for map data tiles. 
-
+/**
+ * DataCache constructor.
+ * Manages a cache for map data tiles. The cache has a maximum age and size limit,
+ * and these limits can vary for mobile and desktop environments.
+ * @class DataCache
+ */
 window.DataCache = function() {
   this.REQUEST_CACHE_FRESH_AGE = 3*60;  // if younger than this, use data in the cache rather than fetching from the server
 
@@ -20194,6 +21160,16 @@ window.DataCache = function() {
 
 }
 
+/**
+ * Stores data in the cache.
+ * If an entry for the given key already exists, it's removed before the new data is stored.
+ * The data is stored along with its timestamp and expiration time.
+ *
+ * @function
+ * @memberof DataCache
+ * @param {string} qk - The key under which to store the data.
+ * @param {object} data - The data to be stored in the cache.
+ */
 window.DataCache.prototype.store = function (qk, data) {
   this.remove(qk);
 
@@ -20206,6 +21182,13 @@ window.DataCache.prototype.store = function (qk, data) {
   this._cache[qk] = { time: time, expire: expire, dataStr: dataStr };
 }
 
+/**
+ * Removes a specific entry from the cache based on its key.
+ *
+ * @function
+ * @memberof DataCache
+ * @param {string} qk - The key of the data to remove from the cache.
+ */
 window.DataCache.prototype.remove = function(qk) {
   if (qk in this._cache) {
     this._cacheCharSize -= this._cache[qk].dataStr.length;
@@ -20213,17 +21196,40 @@ window.DataCache.prototype.remove = function(qk) {
   }
 }
 
-
+/**
+ * Retrieves the data for a given key from the cache.
+ *
+ * @function
+ * @memberof DataCache
+ * @param {string} qk - The key of the data to retrieve.
+ * @returns {object|undefined} The cached data if it exists, otherwise undefined.
+ */
 window.DataCache.prototype.get = function(qk) {
   if (qk in this._cache) return JSON.parse(this._cache[qk].dataStr);
   else return undefined;
 }
 
+/**
+ * Retrieves the timestamp for the given key from the cache.
+ *
+ * @function
+ * @memberof DataCache
+ * @param {string} qk - The key of the data to check.
+ * @returns {number} The timestamp of the data if it exists, otherwise 0.
+ */
 window.DataCache.prototype.getTime = function(qk) {
   if (qk in this._cache) return this._cache[qk].time;
   else return 0;
 }
 
+/**
+ * Checks if the data for the given key is fresh.
+ *
+ * @function
+ * @memberof DataCache
+ * @param {string} qk - The key of the data to check.
+ * @returns {boolean|undefined} True if the data is fresh, false if it's stale, undefined if data doesn't exist.
+ */
 window.DataCache.prototype.isFresh = function(qk) {
   if (qk in this._cache) {
     var d = new Date();
@@ -20235,6 +21241,13 @@ window.DataCache.prototype.isFresh = function(qk) {
   return undefined;
 }
 
+/**
+ * Starts the interval to periodically run the cache expiration.
+ *
+ * @function
+ * @memberof DataCache
+ * @param {number} period - The period in seconds between each expiration run.
+ */
 window.DataCache.prototype.startExpireInterval = function(period) {
   if (this._interval === undefined) {
     var savedContext = this;
@@ -20242,6 +21255,14 @@ window.DataCache.prototype.startExpireInterval = function(period) {
   }
 }
 
+/**
+ * Stops the interval that checks for cache expiration.
+ * This function clears the interval set for running the cache expiration check,
+ * effectively stopping automatic cache cleanup.
+ *
+ * @function
+ * @memberof DataCache.prototype
+ */
 window.DataCache.prototype.stopExpireInterval = function() {
   if (this._interval !== undefined) {
     clearInterval(this._interval);
@@ -20249,8 +21270,14 @@ window.DataCache.prototype.stopExpireInterval = function() {
   }
 }
 
-
-
+/**
+ * Runs the cache expiration process.
+ * This function checks and removes expired cache entries based on the maximum age, item count,
+ * and character size limits.
+ *
+ * @function
+ * @memberof DataCache.prototype
+ */
 window.DataCache.prototype.runExpire = function() {
   var d = new Date();
   var t = d.getTime()-this.REQUEST_CACHE_MAX_AGE*1000;
@@ -20273,55 +21300,45 @@ window.DataCache.prototype.runExpire = function() {
 // *** module: dialog.js ***
 (function () {
 var log = ulog('dialog');
-// DIALOGS /////////////////////////////////////////////////////////
-// Inspired by TES III: Morrowind. Long live House Telvanni. ///////
-////////////////////////////////////////////////////////////////////
+/**
+ * @file Dialogs inspired by TES III: Morrowind. Long live House Telvanni.
+ * @module dialog
+ */
 
-/* The global ID of onscreen dialogs.
- * Starts at 0.
+/**
+ * The global ID of onscreen dialogs. Starts at 0.
+ * @type {number}
+ * @memberof module:dialog
  */
 window.DIALOG_ID = 0;
 
-/* All onscreen dialogs, keyed by their ID.
- */
-window.DIALOGS = {};
-
-/* The number of dialogs on screen.
- */
-window.DIALOG_COUNT = 0;
-
-/* The dialog that has focus.
- */
-window.DIALOG_FOCUS = null;
-
-/* Controls how quickly the slide toggle animation
- * should play for dialog collapsing and expanding.
- */
-window.DIALOG_SLIDE_DURATION = 100;
-
-/* Creates a dialog and puts it onscreen. Takes one argument: options, a JS object.
- * == Common options
- * (text|html): The text or HTML to display in the dialog. Text is auto-converted to HTML.
- * title: The dialog's title.
- * modal: Whether to open a modal dialog. Implies draggable=false; dialogClass='ui-dialog-modal'.
- *        Please note that modal dialogs hijack the entire screen and should only be used in very
- *        specific cases. (If IITC is running on mobile, modal will always be true).
- * id:   A unique ID for this dialog. If a dialog with id `id' is already open and dialog() is called
- *       again, it will be automatically closed.
+/**
+ * Creates a dialog and puts it onscreen with various options and callbacks.
  *
- * == Callbacks
- * closeCallback: A callback to run on close. Takes no arguments.
- * collapseCallback: A callback to run on dialog collapse.  Takes no arguments.
- * expandCallback:   A callback to run on dialog expansion. Takes no arguments.
- * collapseExpandCallback: A callback to run on both collapse and expand (overrides collapseCallback
- *                         and expandCallback, takes a boolean argument `collapsing' - true if collapsing;
- *                         false if expanding)
- * focusCallback: A callback to run when the dialog gains focus.
- * blurCallback:  A callback to run when the dialog loses focus.
+ * @function dialog
+ * @param {Object} options - Configuration options for the dialog.
+ * @param {(string|HTMLElement)} [options.text] - The text or HTML to display in the dialog.
+ *                                                Text is auto-converted to HTML.
+ * @param {string} [options.title] - The dialog's title.
+ * @param {boolean} [options.modal=false] - Whether to open a modal dialog. Implies draggable=false;
+ *                                          dialogClass='ui-dialog-modal'. Note that modal dialogs hijack
+ *                                          the entire screen and should only be used in specific cases.
+ *                                          If IITC is running on mobile, modal will always be true.
+ * @param {string} [options.id] - A unique ID for this dialog. If a dialog with this ID is already open,
+ *                                it will be automatically closed.
+ * @param {Function} [options.closeCallback] - A callback to run on close.
+ * @param {Function} [options.collapseCallback] - A callback to run on dialog collapse.
+ * @param {Function} [options.expandCallback] - A callback to run on dialog expansion.
+ * @param {Function} [options.collapseExpandCallback] - A callback to run on both collapse and expand.
+ *                                                      Overrides collapseCallback and expandCallback.
+ *                                                      Receives a boolean argument `collapsing`.
+ * @param {Function} [options.focusCallback] - A callback to run when the dialog gains focus.
+ * @param {Function} [options.blurCallback] - A callback to run when the dialog loses focus.
+ * @returns {jQuery} The jQuery object representing the created dialog.
  *
- * See http://docs.jquery.com/UI/API/1.8/Dialog for a list of all the options. If you previously
- * applied a class to your dialog after creating it with alert(), dialogClass may be particularly
- * useful.
+ * @see {@link http://docs.jquery.com/UI/API/1.8/Dialog} for a list of all jQuery UI Dialog options.
+ * If you previously applied a class to your dialog after creating it with alert(),
+ * dialogClass may be particularly useful.
  */
 window.dialog = function(options) {
   // Override for smartphones. Preserve default behavior and create a modal dialog.
@@ -20529,8 +21546,17 @@ window.dialog = function(options) {
   return dialog;
 }
 
-/* Creates an alert dialog with default settings.
- * If you want more configurability, use window.dialog instead.
+/**
+ * Creates an alert dialog with default settings. This function is a simplified wrapper around `window.dialog`.
+ * It provides a quick way to create basic alert dialogs with optional HTML content and a close callback.
+ *
+ * @function alert
+ * @param {string} text - The text or HTML content to display in the alert dialog.
+ * @param {boolean} [isHTML=false] - Specifies whether the `text` parameter should be treated as HTML.
+ *                                   If `true`, the `text` will be inserted as HTML, otherwise as plain text.
+ * @param {Function} [closeCallback] - A callback function to be executed when the alert dialog is closed.
+ *
+ * @returns {jQuery} The jQuery object representing the created alert dialog.
  */
 window.alert = function(text, isHTML, closeCallback) {
   var obj = {closeCallback: closeCallback};
@@ -20558,7 +21584,17 @@ window.setupDialogs = function() {
 (function () {
 var log = ulog('dialog_about');
 /* global script_info, app, log, L */
+/**
+ * @file This file contains functions related to the 'About IITC' dialog.
+ * @module dialog_about
+ */
 
+/**
+ * Displays the 'About IITC' dialog.
+ * This dialog includes the IITC version, a list of loaded plugins, and other relevant information.
+ *
+ * @function
+ */
 window.aboutIITC = function() {
   var html = createDialogContent();
 
@@ -20571,6 +21607,12 @@ window.aboutIITC = function() {
   });
 }
 
+/**
+ * Creates the content for the 'About IITC' dialog.
+ *
+ * @function
+ * @returns {string} HTML content for the about dialog.
+ */
 function createDialogContent() {
   var html = `<div><b>About IITC</b></div>
               <div>Ingress Intel Total Conversion</div>
@@ -20605,7 +21647,12 @@ function createDialogContent() {
   return html;
 }
 
-
+/**
+ * Retrieves a list of plugins currently loaded in IITC. The list includes plugin names, versions, and descriptions.
+ *
+ * @function
+ * @returns {string} Formatted list of plugins in HTML.
+ */
 function getPlugins() {
   var pluginsInfo = window.bootPlugins.info;
 
@@ -20624,6 +21671,14 @@ function getPlugins() {
   return plugins;
 }
 
+/**
+ * Converts plugin information into a structured object for easier processing.
+ *
+ * @function
+ * @param {Object} info - The plugin information object.
+ * @param {number} index - The index of the plugin in the array.
+ * @returns {Object} Structured plugin information.
+ */
 function convertPluginInfo(info, index) {
   // Plugins metadata come from 2 sources:
   // - buildName, pluginId, dateTimeVersion: inserted in plugin body by build script
@@ -20663,6 +21718,13 @@ function convertPluginInfo(info, index) {
   return result;
 }
 
+/**
+ * Creates a changelog section for a given plugin.
+ *
+ * @function
+ * @param {Object} plugin - The plugin for which to create the changelog.
+ * @returns {string} HTML string representing the changelog.
+ */
 function createChangelog(plugin) {
   var id = 'plugin-changelog-' + plugin.id;
   return (
@@ -20687,6 +21749,14 @@ function createChangelog(plugin) {
   );
 }
 
+/**
+ * Converts plugin information into a string format suitable for display in the 'About IITC' dialog.
+ *
+ * @function
+ * @param {Object} p - The plugin information object.
+ * @param {string} extra - Additional version information.
+ * @returns {string} Formatted plugin information string.
+ */
 function pluginInfoToString(p, extra) {
   var info = {
     changelog: '',
@@ -20712,24 +21782,51 @@ function pluginInfoToString(p, extra) {
   return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo} {changelog}</li>', info);
 }
 
-
+/**
+ * Checks if a given plugin is a standard plugin based on the build name and date.
+ * Standard plugins are those that match the build and date of the main IITC script.
+ *
+ * @function
+ * @param {Object} plugin - The plugin object to check.
+ * @returns {boolean} True if the plugin is standard, false otherwise.
+ */
 function isStandardPlugin(plugin) {
   return (plugin.build === script_info.buildName && plugin.date === script_info.dateTimeVersion);
 }
 
-
+/**
+ * Retrieves the IITC version string.
+ *
+ * @function
+ * @returns {string} The IITC version string.
+ */
 function getIITCVersion() {
   var iitc = script_info;
   return (iitc.script && iitc.script.version || iitc.dateTimeVersion) + ' [' + iitc.buildName + ']';
 }
 
-
+/**
+ * Extracts the additional version information from the IITC script version.
+ *
+ * @function
+ * @returns {string} The additional version information, if any.
+ */
 function getIITCVersionAddition() {
   var extra = script_info.script && script_info.script.version.match(/^\d+\.\d+\.\d+(\..+)$/);
   return extra && extra[1];
 }
 
-
+/**
+ * Formats version information for plugins and the main script.
+ * If an 'extra' parameter is provided and matches the end of the version string, it is removed.
+ * This is used to cut off a common timestamp appended to versions.
+ * The function also prepares a tooltip showing the build number and date, if available.
+ *
+ * @function formatVerInfo
+ * @param {Object} p - The plugin or script object containing version information.
+ * @param {string} [extra] - An optional extra string to be removed from the version information.
+ * @returns {string} Formatted version string with optional HTML tooltip.
+ */
 function formatVerInfo(p, extra) {
   if (p.version && extra) {
     var cutPos = p.version.length - extra.length;
@@ -20753,7 +21850,14 @@ function formatVerInfo(p, extra) {
   return '';
 }
 
-
+/**
+ * Checks if the browser's local storage is running short on available space.
+ * This function tries to write a specific amount of data to the local storage and captures any errors.
+ * If an error occurs, it is an indication that the local storage has limited free space left.
+ *
+ * @function
+ * @returns {boolean} Returns `true` if the local storage is running short on space, otherwise `false`.
+ */
 function isShortOnLocalStorage() {
   var MINIMUM_FREE_SPACE = 100000;
   try {
@@ -20774,14 +21878,26 @@ function isShortOnLocalStorage() {
 // *** module: entity_decode.js ***
 (function () {
 var log = ulog('entity_decode');
-// decode the on-network array entity format into an object format closer to that used before
-// makes much more sense as an object, means that existing code didn't need to change, and it's what the
-// stock intel site does internally too (the array format is only on the network)
+/**
+ * @file Decode the on-network array entity format into an object format closer to that used before
+ * makes much more sense as an object, means that existing code didn't need to change, and it's what the
+ * stock intel site does internally too (the array format is only on the network)
+ *
+ * @module entity_decode
+ */
 
-
+/**
+ * @namespace window.decodeArray
+ */
 window.decodeArray = function(){};
 
-
+/**
+ * Parses a mod array into an object.
+ *
+ * @function parseMod
+ * @param {Array} arr - The mod array.
+ * @returns {Object|null} Parsed mod object or null if the input is falsy.
+ */
 function parseMod(arr) {
   if (!arr) { return null; }
   return {
@@ -20791,6 +21907,14 @@ function parseMod(arr) {
     stats: arr[3],
   };
 }
+
+/**
+ * Parses a resonator array into an object.
+ *
+ * @function parseResonator
+ * @param {Array} arr - The resonator array.
+ * @returns {Object|null} Parsed resonator object or null if the input is falsy.
+ */
 function parseResonator(arr) {
   if (!arr) { return null; }
   return {
@@ -20799,6 +21923,13 @@ function parseResonator(arr) {
     energy: arr[2],
   };
 }
+
+/**
+ * Parses an artifact brief array into an object.
+ * @function parseArtifactBrief
+ * @param {Array} arr - The artifact brief array.
+ * @returns {Object|null} Parsed artifact brief object or null if the input is falsy.
+ */
 function parseArtifactBrief(arr) {
   if (!arr) { return null; }
 
@@ -20825,6 +21956,13 @@ function parseArtifactBrief(arr) {
   };
 }
 
+/**
+ * Parses an artifact detail array into an object.
+ *
+ * @function parseArtifactDetail
+ * @param {Array} arr - The artifact detail array.
+ * @returns {Object|null} Parsed artifact detail object or null if the input is falsy.
+ */
 function parseArtifactDetail(arr) {
   if (!arr) { return null; }
   // empty artifact data is pointless - ignore it
@@ -20838,6 +21976,13 @@ function parseArtifactDetail(arr) {
   };
 }
 
+/**
+ * Parses a history detail bit array into an object.
+ *
+ * @function parseHistoryDetail
+ * @param {number} bitarray - The history detail bit array.
+ * @returns {Object} Parsed history detail object.
+ */
 function parseHistoryDetail(bitarray) {
   return {
     _raw: bitarray,
@@ -20851,6 +21996,14 @@ function parseHistoryDetail(bitarray) {
 //there's also a 'placeholder' portal - generated from the data in links/fields. only has team/lat/lng
 
 var CORE_PORTAL_DATA_LENGTH = 4;
+
+/**
+ * Parses the core portal data from an array.
+ *
+ * @function corePortalData
+ * @param {Array} a - The portal data array.
+ * @returns {Object} An object containing the core data of a portal.
+ */
 function corePortalData(a) {
   return {
     // a[0] == type (always 'p')
@@ -20863,6 +22016,14 @@ function corePortalData(a) {
 var SUMMARY_PORTAL_DATA_LENGTH = 14;
 var DETAILED_PORTAL_DATA_LENGTH = SUMMARY_PORTAL_DATA_LENGTH+4;
 var EXTENDED_PORTAL_DATA_LENGTH = DETAILED_PORTAL_DATA_LENGTH+1;
+
+/**
+ * Parses the summary portal data from an array.
+ *
+ * @function summaryPortalData
+ * @param {Array} a - The portal data array.
+ * @returns {Object} An object containing the summary data of a portal.
+ */
 function summaryPortalData(a) {
   return {
     level:         a[4],
@@ -20878,6 +22039,13 @@ function summaryPortalData(a) {
   };
 }
 
+/**
+ * Parses the detailed portal data from an array.
+ *
+ * @function detailsPortalData
+ * @param {Array} a - The portal data array.
+ * @returns {Object} An object containing the detailed data of a portal.
+ */
 function detailsPortalData(a) {
   return {
     mods:           a[SUMMARY_PORTAL_DATA_LENGTH+0].map(parseMod),
@@ -20887,6 +22055,12 @@ function detailsPortalData(a) {
   }
 }
 
+/**
+ * Parses the extended portal data from an array.
+ * @function extendedPortalData
+ * @param {Array} a - The portal data array.
+ * @returns {Object} An object containing the extended data of a portal.
+ */
 function extendedPortalData(a) {
   return {
     history: parseHistoryDetail(a[DETAILED_PORTAL_DATA_LENGTH] || 0),
@@ -20902,6 +22076,15 @@ window.decodeArray.dataLen = {
   anyknown: [CORE_PORTAL_DATA_LENGTH, SUMMARY_PORTAL_DATA_LENGTH, DETAILED_PORTAL_DATA_LENGTH, EXTENDED_PORTAL_DATA_LENGTH]
 };
 
+/**
+ * Decodes an array of portal data into a more detailed object format.
+ *
+ * @function window.decodeArray.portal
+ * @param {Array} a - Array containing portal data.
+ * @param {string} [details='anyknown'] - The level of detail to decode.
+ *                                        Can be 'core', 'summary', 'detailed', 'extended', or 'anyknown'.
+ * @returns {Object} An object containing decoded portal data.
+ */
 window.decodeArray.portal = function(a, details) {
   if (!a) {
     log.warn('Argument not specified');
@@ -20961,16 +22144,31 @@ window.decodeArray.portalDetail = function(a) { // deprecated!!
 var log = ulog('entity_info');
 /* exported setup --eslint */
 
-// ENTITY DETAILS TOOLS //////////////////////////////////////////////
-// hand any of these functions the details-hash of an entity (i.e.
-// portal, link, field) and they will return useful data.
+/**
+ * Entity Details Tools
+ * Functions to extract useful data from entity details, such as portals, links, and fields.
+ * @module entity_info
+ */
 
-// given the entity detail data, returns the team the entity belongs
-// to. Uses TEAM_* enum values.
+/**
+ * Given the entity detail data, returns the team the entity belongs to.
+ * Uses TEAM_* enum values.
+ *
+ * @function getTeam
+ * @param {Object} details - The details hash of an entity.
+ * @returns {number} The team ID the entity belongs to.
+ */
 window.getTeam = function (details) {
   return window.teamStringToId(details.team);
 };
 
+/**
+ * Converts a team string to a team ID.
+ *
+ * @function teamStringToId
+ * @param {string} teamStr - The team string to convert.
+ * @returns {number} The team ID corresponding to the team string.
+ */
 window.teamStringToId = function (teamStr) {
   var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
   if (teamIndex >= 0) return teamIndex;
@@ -20986,9 +22184,19 @@ window.teamStringToId = function (teamStr) {
 // *** module: extract_niantic_parameters.js ***
 (function () {
 var log = ulog('extract_niantic_parameters');
-// as of 2014-08-14, Niantic have returned to minifying the javascript. This means we no longer get the nemesis object
-// and it's various member objects, functions, etc.
-// so we need to extract some essential parameters from the code for IITC to use
+/**
+ * Extract essential parameters and functions from the Ingress Intel site's minified JavaScript.
+ * Necessary due to Niantic's minification and obfuscation of their Intel Map code.
+ *
+ * @module extract_niantic_parameters
+ */
+
+/**
+ * Main function to extract required parameters from the Ingress Intel site's JavaScript.
+ * Throws an error and shows a dialog if it fails to find the necessary parameters.
+ *
+ * @function extractFromStock
+ */
 
 window.extractFromStock = function() {
   window.niantic_params = {}
@@ -21109,74 +22317,29 @@ window.extractFromStock = function() {
 // *** module: filters.js ***
 (function () {
 var log = ulog('filters');
-/* Filters API
+/* global IITC, L */
 
-Filters API is a mechanism to hide intel entities using their properties (faction,
-health, timestamp...). It provides two level APIs: a set of named filters that
-apply globally (any entity matching one of the filters will be hidden), and low
-level API to test an entity against a filter for generic purpose.
-This comes with a Leaflet layer system following the old layer system, the filter
-is disabled when the layer is added to the map and is enabled when removed.
+/** # Filters API
 
-A filter applies to a combinaison of portal/link/field and is described by
- - data properties that must (all) match
- - or a predicate for complex filter
-
-  { portal: true, link: true, data: { team: 'E' }}
-      filters any ENL portal/link
-
-  [{ link: true, data: { oGuid: "some guid" }}, { link: true, data: { dGuid: "some guid" }}]
-      filters any links on portal with guid "some guid"
-
-  { field: true, pred: function (f) { return f.options.timestamp < Date.parse('2021-10-31'); } }
-      filters any fields made before Halloween 2021
-
-Data properties can be specified as value, or as a complex expression (required
-for array data properties). A complex expression is a 2-array, first element is
-an operator, second is the argument of the operator for the property.
-The operators are:
- - ['eq', value] : this is equivalent to type directly `value`
- - ['not', ]
- - ['or', [exp1, exp2,...]]: the expression matches if one of the exp1.. matches
- - ['and', [exp1, exp2...]]: matches if all exp1 matches (useful for array
-  properties)
- - ['some', exp]: when the property is an array, matches if one of the element
-  matches `exp`
- - ['every', exp]: all elements must match `exp`
- - ['<', number]: for number comparison (and <= > >=)
-
-Examples:
-  { portal: true, data:  ['not', { history: { scoutControlled: false }, ornaments:
-  ['some', 'sc5_p'] }] }
-      filters all portals but the one never scout controlled that have a scout
-      volatile ornament
-
-  { portal: true, data: ['not', { resonators: ['every', { owner: 'some agent' } ] } ] }
-      filters all portals that have resonators not owned from 'some agent'
-      (note: that would need to load portal details)
-
-  { portal: true, data: { level: ['or', [1,4,5]], health: ['>', 85] } }
-      filters all portals with level 1,4 or 5 and health over 85
-
-  { portal: true, link: true, field: true, options: { timestamp: ['<',
-  Date.now() - 3600000] } }
-      filters all entities with no change since 1 hour (from the creation of
-      the filter)
+  @memberof IITC
+  @namespace filters
 */
 
 IITC.filters = {};
 /**
- * @type {Object.<string, FilterDesc>}
+ * @type {Object.<string, IITC.filters.FilterDesc>}
  */
 IITC.filters._filters = {};
 
 /**
+ * @memberof IITC.filters
  * @callback FilterPredicate
  * @param {Object} ent - IITC entity
  * @returns {boolean}
  */
 
 /**
+ * @memberof IITC.filters
  * @typedef FilterDesc
  * @type {object}
  * @property {boolean} filterDesc.portal         apply to portal
@@ -21184,21 +22347,35 @@ IITC.filters._filters = {};
  * @property {boolean} filterDesc.field          apply to field
  * @property {object} [filterDesc.data]          entity data properties that must match
  * @property {object} [filterDesc.options]       entity options that must match
- * @property {FilterPredicate} [filterDesc.pred] predicate on the entity
+ * @property {IITC.filters.FilterPredicate} [filterDesc.pred] predicate on the entity
  */
 
 /**
+ * Sets or updates a filter with a given name. If a filter with the same name already exists, it is overwritten.
+ *
  * @param {string} name                              filter name
- * @param {FilterDesc | FilterDesc[]} filterDesc     filter description (OR)
+ * @param {IITC.filters.FilterDesc | IITC.filters.FilterDesc[]} filterDesc     filter description (OR)
  */
 IITC.filters.set = function (name, filterDesc) {
   IITC.filters._filters[name] = filterDesc;
 };
 
+/**
+ * Checks if a filter with the specified name exists.
+ *
+ * @param {string} name - The name of the filter to check.
+ * @returns {boolean} True if the filter exists, false otherwise.
+ */
 IITC.filters.has = function (name) {
   return name in IITC.filters._filters;
 };
 
+/**
+ * Removes a filter with the specified name.
+ *
+ * @param {string} name - The name of the filter to be removed.
+ * @returns {boolean} True if the filter was successfully deleted, false otherwise.
+ */
 IITC.filters.remove = function (name) {
   return delete IITC.filters._filters[name];
 };
@@ -21299,10 +22476,11 @@ function genericCompare(constraint, object) {
 }
 
 /**
+ * Tests whether a given entity matches a specified filter.
  *
  * @param {"portal"|"link"|"field"} type Type of the entity
  * @param {object} entity Portal/link/field to test
- * @param {FilterDesc} filter Filter
+ * @param {IITC.filters.FilterDesc} filter Filter
  * @returns {boolean} `true` if the the `entity` of type `type` matches the `filter`
  */
 IITC.filters.testFilter = function (type, entity, filter) {
@@ -21332,6 +22510,7 @@ function arrayFilter(type, entity, filters) {
 }
 
 /**
+ * Tests whether a given portal matches any of the currently active filters.
  *
  * @param {object} portal Portal to test
  * @returns {boolean} `true` if the the portal matches one of the filters
@@ -21341,6 +22520,7 @@ IITC.filters.filterPortal = function (portal) {
 };
 
 /**
+ * Tests whether a given link matches any of the currently active filters.
  *
  * @param {object} link Link to test
  * @returns {boolean} `true` if the the link matches one of the filters
@@ -21350,6 +22530,7 @@ IITC.filters.filterLink = function (link) {
 };
 
 /**
+ * Tests whether a given field matches any of the currently active filters.
  *
  * @param {object} field Field to test
  * @returns {boolean} `true` if the the field matches one of the filters
@@ -21358,6 +22539,10 @@ IITC.filters.filterField = function (field) {
   return arrayFilter('field', field, Object.values(IITC.filters._filters));
 };
 
+/**
+ * Applies all existing filters to the entities (portals, links, and fields) on the map.
+ * Entities that match any of the active filters are removed from the map; others are added or remain on the map.
+ */
 IITC.filters.filterEntities = function () {
   for (const guid in window.portals) {
     const p = window.portals[guid];
@@ -21377,11 +22562,14 @@ IITC.filters.filterEntities = function () {
 };
 
 /**
+ * @memberof IITC.filters
  * @class FilterLayer
  * @description Layer abstraction to control with the layer chooser a filter.
  *              The filter is disabled on layer add, and enabled on layer remove.
  * @extends L.Layer
- * @param {{name: string, filter: FilterDesc}} options
+ * @param {Object} options - Configuration options for the filter layer
+ * @param {string} options.name - The name of the filter
+ * @param {IITC.filters.FilterDesc} options.filter - The filter description
  */
 IITC.filters.FilterLayer = L.Layer.extend({
   options: {
@@ -21405,8 +22593,6 @@ IITC.filters.FilterLayer = L.Layer.extend({
   },
 });
 
-/* global IITC, L */
-
 
 })();
 
@@ -21414,11 +22600,22 @@ IITC.filters.FilterLayer = L.Layer.extend({
 // *** module: game_status.js ***
 (function () {
 var log = ulog('game_status');
+/**
+ * @file Contains functions related to updating and displaying the current MindUnit scores in the game.
+ * The MindUnit scores represent the current global score for each faction in Ingress.
+ * @module game_status
+ */
 
-// GAME STATUS ///////////////////////////////////////////////////////
-// MindUnit display
-
-
+/**
+ * Updates the game score displayed on the map.
+ * This function queries the current global MindUnit score for each faction from the Ingress servers
+ * and updates the display. The scores are displayed in a percentage format, showing the dominance of each faction.
+ * If the data isn't available, this function attempts to fetch it from the server.
+ *
+ * @function updateGameScore
+ * @param {Object} [data] - The game score data retrieved from the Ingress servers.
+ *                          If not provided, the function will make a server request to fetch the data.
+ */
 window.updateGameScore = function(data) {
   if(!data) {
     // move the postAjax call onto a very short timer. this way, if it throws an exception, it won't prevent IITC booting
@@ -21461,79 +22658,73 @@ window.updateGameScore = function(data) {
 // *** module: hooks.js ***
 (function () {
 var log = ulog('hooks');
-// PLUGIN HOOKS ////////////////////////////////////////////////////////
-// Plugins may listen to any number of events by specifying the name of
-// the event to listen to and handing a function that should be exe-
-// cuted when an event occurs. Callbacks will receive additional data
-// the event created as their first parameter. The value is always a
-// hash that contains more details.
-//
-// For example, this line will listen for portals to be added and print
-// the data generated by the event to the console:
-// window.addHook('portalAdded', function(data) { log.log(data) });
-//
-// Boot hook: booting is handled differently because IITC may not yet
-//            be available. Have a look at the plugins in plugins/. All
-//            code before “// PLUGIN START” and after “// PLUGIN END” is
-//            required to successfully boot the plugin.
-//
-// Here’s more specific information about each event:
-// portalSelected: called when portal on map is selected/unselected.
-//              Provide guid of selected and unselected portal.
-// mapDataRefreshStart: called when we start refreshing map data
-// mapDataEntityInject: called just as we start to render data. has callback to
-//                      Sinject cached entities into the map render
-// mapDataRefreshEnd: called when we complete the map data load
-// portalAdded: called when a portal has been received and is about to
-//              be added to its layer group. Note that this does NOT
-//              mean it is already visible or will be, shortly after.
-//              If a portal is added to a hidden layer it may never be
-//              shown at all. Injection point is in
-//              code/map_data.js#renderPortal near the end. Will hand
-//              the Leaflet CircleMarker for the portal in "portal" var.
-// linkAdded:   called when a link is about to be added to the map
-// fieldAdded:  called when a field is about to be added to the map
-// portalRemoved: called when a portal has been removed
-// linkRemoved: called when a link has been removed
-// fieldRemoved: called when a field has been removed
-// portalDetailsUpdated: fired after the details in the sidebar have
-//              been (re-)rendered Provides data about the portal that
-//              has been selected.
-// publicChatDataAvailable: this hook runs after data for any of the
-//              public chats has been received and processed, but not
-//              yet been displayed. The data hash contains both the un-
-//              processed raw ajax response as well as the processed
-//              chat data that is going to be used for display.
-// factionChatDataAvailable: this hook runs after data for the faction
-//              chat has been received and processed, but not yet been
-//              displayed. The data hash contains both the unprocessed
-//              raw ajax response as well as the processed chat data
-//              that is going to be used for display.
-// alertsChatDataAvailable: this hook runs after data for the alerts
-//              chat has been received and processed, but not yet been
-//              displayed. The data hash contains both the unprocessed
-//              raw ajax response as well as the processed chat data
-//              that is going to be used for display.
-// requestFinished: DEPRECATED: best to use mapDataRefreshEnd instead
-//              called after each map data request finished. Argument is
-//              {success: boolean} indicated the request success or fail.
-// iitcLoaded: called after IITC and all plugins loaded
-// portalDetailLoaded: called when a request to load full portal detail
-//              completes. guid, success, details parameters
-// paneChanged  called when the current pane has changed. On desktop,
-//              this only selects the current chat pane; on mobile, it
-//              also switches between map, info and other panes defined
-//              by plugins
-// artifactsUpdated: called when the set of artifacts (including targets)
-//              has changed. Parameters names are old, new.
-// nicknameClicked:
-// geoSearch:
-// search:
+/**
+ * @file Plugin hooks for IITC. This file defines the infrastructure for managing and executing hooks,
+ * which are used to trigger custom plugin actions at specific points in the application lifecycle.
+ * Plugins may listen to any number of events by specifying the name of the event and providing a function
+ * to execute when an event occurs. Callbacks receive additional data created by the event as their first parameter.
+ * The value is always an Object that contains more details.
+ *
+ * For example, this line will listen for portals to be added and print the data generated by the event to the console:
+ * `window.addHook('portalAdded', function(data) { log.log(data) });`
+ *
+ * Boot hook: booting is handled differently because IITC may not yet be available.
+ * Have a look at the plugins in plugins/. All code before `// PLUGIN START` and after `// PLUGIN END` is required
+ * to successfully boot the plugin.
+ *
+ * Description of available hook events:
+ * - `portalSelected`: Triggered when a portal on the map is selected or unselected.
+ *                     Provides the GUID of both the selected and unselected portal.
+ * - `mapDataRefreshStart`: Triggered at the start of refreshing map data.
+ * - `mapDataEntityInject`: Triggered just as we start to render data.
+ *                          Allows injecting cached entities into the map render.
+ * - `mapDataRefreshEnd`: Triggered when the map data load is complete.
+ * - `portalAdded`: Triggered when a portal has been received and is about to be added to its layer group.
+ *                  Does not guarantee the portal will be visible or shown soon.
+ *                  Portals added to hidden layers may never be shown.
+ *                  Injection point is in `code/map_data.js#renderPortal` near the end.
+ *                  Provides the Leaflet CircleMarker for the portal in the "portal" variable.
+ * - `linkAdded`: Triggered when a link is about to be added to the map.
+ * - `fieldAdded`: Triggered when a field is about to be added to the map.
+ * - `portalRemoved`: Triggered when a portal has been removed.
+ * - `linkRemoved`: Triggered when a link has been removed.
+ * - `fieldRemoved`: Triggered when a field has been removed.
+ * - `portalDetailsUpdated`: Fired after the details in the sidebar have been (re-)rendered.
+ *                           Provides data about the selected portal.
+ * - `publicChatDataAvailable`: Runs after data for any of the public chats has been received and processed,
+ *                              but not yet displayed. Contains both the unprocessed raw AJAX response
+ *                              and the processed chat data that is going to be used for display.
+ * - `factionChatDataAvailable`: Similar to `publicChatDataAvailable`, but for faction chat.
+ * - `alertsChatDataAvailable`: Similar to `publicChatDataAvailable`, but for alerts chat.
+ * - `requestFinished`: **Deprecated**. Recommended to use `mapDataRefreshEnd` instead.
+ *                      Called after each map data request is finished. Argument is {success: boolean}.
+ * - `iitcLoaded`: Called after IITC and all plugins have loaded.
+ * - `portalDetailLoaded`: Called when a request to load full portal detail completes.
+ *                         Parameters are guid, success, details.
+ * - `paneChanged`: Called when the current pane has changed. On desktop, this changes the current chat pane;
+ *                  on mobile, it also switches between map, info, and other panes defined by plugins.
+ * - `artifactsUpdated`: Called when the set of artifacts (including targets) has changed.
+ *                       Parameters are old, new.
+ * - `nicknameClicked`: Event triggered when a player's nickname is clicked.
+ * - `geoSearch`: Event triggered during a geographic search.
+ * - `search`: Event triggered during a search operation.
+ *
+ * @module hooks
+ */
 
 window._hooks = {};
 window.VALID_HOOKS = []; // stub for compatibility
 
 var isRunning = 0;
+
+/**
+ * Executes all callbacks associated with a given hook event.
+ *
+ * @function runHooks
+ * @param {string} event - The name of the hook event.
+ * @param {Object} [data] - Additional data to pass to each callback.
+ * @returns {boolean} Returns `false` if the execution of the callbacks was interrupted, otherwise `true`.
+ */
 window.runHooks = function(event, data) {
   if (!_hooks[event]) { return true; }
   var interrupted = false;
@@ -21558,6 +22749,13 @@ window.runHooks = function(event, data) {
 
 window.pluginCreateHook = function() {}; // stub for compatibility
 
+/**
+ * Registers a callback function for a specified hook event.
+ *
+ * @function addHook
+ * @param {string} event - The name of the hook event.
+ * @param {Function} callback - The callback function to be executed when the event is triggered.
+ */
 window.addHook = function(event, callback) {
   if (typeof callback !== 'function') {
     throw new Error('Callback must be a function.');
@@ -21570,7 +22768,14 @@ window.addHook = function(event, callback) {
   }
 };
 
-// callback must the SAME function to be unregistered.
+/**
+ * Removes a previously registered callback function for a specified hook event.
+ * Callback must the SAME function to be unregistered.
+ *
+ * @function removeHook
+ * @param {string} event - The name of the hook event.
+ * @param {Function} callback - The callback function to be removed.
+ */
 window.removeHook = function(event, callback) {
   if (typeof callback !== 'function') {
     throw new Error('Callback must be a function.');
@@ -21598,9 +22803,18 @@ window.removeHook = function(event, callback) {
 // *** module: idle.js ***
 (function () {
 var log = ulog('idle');
-// IDLE HANDLING /////////////////////////////////////////////////////
+/**
+ * @file Contains functions and logic to handle the idle state of the user.
+ * @module idle
+ */
 
-window.idleTime = 0; // in seconds
+/**
+ * Total time of user inactivity in seconds.
+ *
+ * @name idleTime
+ * @type {number}
+ */
+window.idleTime = 0;
 window._idleTimeLimit = MAX_IDLE_TIME;
 
 var IDLE_POLL_TIME = 10;
@@ -21620,6 +22834,11 @@ var idlePoll = function() {
 
 setInterval(idlePoll, IDLE_POLL_TIME*1000);
 
+/**
+ * Resets the idle timer. This function is called when the user becomes active after being idle.
+ *
+ * @function idleReset
+ */
 window.idleReset = function () {
   // update immediately when the user comes back
   if(isIdle()) {
@@ -21633,6 +22852,11 @@ window.idleReset = function () {
   window._idleTimeLimit = MAX_IDLE_TIME;
 };
 
+/**
+ * Sets the idle state immediately, regardless of the actual idle time.
+ *
+ * @function idleSet
+ */
 window.idleSet = function() {
   var wasIdle = isIdle();
 
@@ -21659,20 +22883,34 @@ var idleMouseMove = function(e) {
   }
 }
 
+/**
+ * Initializes the idle handling setup, attaching necessary event listeners.
+ *
+ * @function setupIdle
+ */
 window.setupIdle = function() {
   $('body').keypress(idleReset);
   $('body').mousemove(idleMouseMove);
 }
 
-
+/**
+ * Checks if the user is currently idle.
+ *
+ * @function isIdle
+ * @returns {boolean} True if the user is idle, false otherwise.
+ */
 window.isIdle = function() {
   return window.idleTime >= window._idleTimeLimit;
 }
 
 window._onResumeFunctions = [];
 
-// add your function here if you want to be notified when the user
-// resumes from being idle
+/**
+ * Registers a function to be called when the user resumes from being idle.
+ *
+ * @function addResumeFunction
+ * @param {Function} f The function to be executed on resume.
+ */
 window.addResumeFunction = function(f) {
   window._onResumeFunctions.push(f);
 }
@@ -21684,30 +22922,32 @@ window.addResumeFunction = function(f) {
 // *** module: layerchooser.js ***
 (function () {
 var log = ulog('layerchooser');
-/*
- * @class LayerChooser
- * @aka window.LayerChooser
- * @inherits L.Controls.Layers
- *
- * Provides 'persistence' of layers display state between sessions.
- *
- * Also some additional methods provided, see below.
- */
-
 'use strict';
 
+/**
+ * Represents a control for selecting layers on the map. It extends the Leaflet's L.Control.Layers class.
+ * This control not only manages layer visibility but also provides persistence of layer display states between sessions.
+ * The class has been enhanced with additional options and methods for more flexible layer management.
+ *
+ * @memberof L
+ * @class LayerChooser
+ * @extends L.Control.Layers
+ */
 var LayerChooser = L.Control.Layers.extend({
   options: {
-    // @option sortLayers: Boolean = true
-    // Ensures stable sort order (based on initial), while still providing ability
-    // to enforce specific order with `addBaseLayer`/`addOverlay`
-    // `sortPriority` option.
+    /**
+     * @property {Boolean} sortLayers=true - Ensures stable sort order (based on initial), while still providing
+     *                                       ability to enforce specific order with `addBaseLayer`/`addOverlay`
+     *                                       `sortPriority` option.
+     */
     sortLayers: true,
 
-    // @option sortFunction: Function = *
-    // A [compare function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
-    // that will be used for sorting the layers, when `sortLayers` is `true`.
-    // The function receives objects with the layers's data.
+    /**
+     * @property {Function} sortFunction - A compare function that will be used for sorting the layers,
+     *                                     when `sortLayers` is `true`. The function receives objects with
+     *                                     the layer's data.
+     * @see https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+     */
     sortFunction: function (A, B) {
       var a = A.sortPriority;
       var b = B.sortPriority;
@@ -21715,6 +22955,15 @@ var LayerChooser = L.Control.Layers.extend({
     }
   },
 
+  /**
+   * Initializes a new instance of the LayerChooser control.
+   *
+   * @memberof LayerChooser
+   * @method
+   * @param {L.Layer[]} baseLayers - Array of base layers to include in the chooser.
+   * @param {L.Layer[]} overlays - Array of overlay layers to include in the chooser.
+   * @param {Object} [options] - Additional options for the LayerChooser control.
+   */
   initialize: function (baseLayers, overlays, options) {
     this._overlayStatus = {};
     var layersJSON = localStorage['ingress.intelmap.layergroupdisplayed'];
@@ -21820,50 +23069,54 @@ var LayerChooser = L.Control.Layers.extend({
     return labelEl;
   },
 
-  // @miniclass LayersEntry options (LayerChooser)
-  // @aka layersEntry options
-
-  // @option persistent: Boolean = true
-  // * When `false` - baselayer's status is not tracked.
-
-  // @option sortPriority: Number = *
-  // Enforces specific order in control, lower value means layer's upper position.
-  // If not specified - the value will be assigned implicitly in increasing manner.
-
-  // @method addBaseLayer(layer: Layer, name: String, options?: LayersEntry options): this
-  // Adds a base layer (radio button entry) with the given name to the control.
+  /**
+   * Adds a base layer (radio button entry) with the given name to the control.
+   *
+   * @memberof LayerChooser
+   * @param {L.Layer} layer - The layer to be added.
+   * @param {String} name - The name of the layer.
+   * @param {Object} [options] - Additional options for the layer entry.
+   * @param {Boolean} [options.persistent=true] - When set to `false`, the base layer's status is not tracked.
+   * @param {Number} [options.sortPriority] - Enforces a specific order in the control. Lower value means
+   *                                          higher position in the list. If not specified, the value
+   *                                          will be assigned implicitly in an increasing manner.
+   * @returns {LayerChooser} Returns the `LayerChooser` instance for chaining.
+   */
   addBaseLayer: function (layer, name, options) {
     this._addLayer(layer, name, false, options);
     return (this._map) ? this._update() : this;
   },
 
-  // @miniclass AddOverlay options (LayerChooser)
-  // @aka addOverlay options
-  // @inherits LayersEntry options
-
-  // @option persistent: Boolean = true
-  // * When `true` (or not specified) - adds overlay to the map as well,
-  //   if it's last state was active.
-  //   If no record exists then value specified in `default` option is used.
-  // * When `false` - overlay status is not tracked, `default` option is honored too.
-
-  // @option default: Boolean = true
-  // Default state of overlay (used only when no record about previous state found).
-
-  // @option enable: Boolean
-  // Enforce specified state ignoring previously saved.
-
-  // @method addOverlay(layer: L.Layer, name: String, options?: AddOverlay options): this
-  // Adds an overlay (checkbox entry) with the given name to the control.
+  /**
+   * Adds an overlay (checkbox entry) with the given name to the control.
+   *
+   * @memberof LayerChooser
+   * @param {L.Layer} layer - The overlay layer to be added.
+   * @param {String} name - The name of the overlay.
+   * @param {Object} [options] - Additional options for the overlay entry.
+   * @param {Boolean} [options.persistent=true] - When `true` (or not specified), the overlay is added to the map
+   *                                              if its last state was active. If no previous state is recorded,
+   *                                              the value specified in the `default` option is used.
+   *                                              When `false`, the overlay status is not tracked,
+   *                                              but the `default` option is still honored.
+   * @param {Boolean} [options.default=true] - The default state of the overlay, used only when no record
+   *                                           of the previous state is found.
+   * @param {Boolean} [options.enable] - If set, enforces the specified state, ignoring any previously saved state.
+   * @returns {LayerChooser} Returns the `LayerChooser` instance for chaining.
+   */
   addOverlay: function (layer, name, options) {
     this._addLayer(layer, name, true, options);
     return (this._map) ? this._update() : this;
   },
 
-  // @method removeLayer(layer: Layer|String, options?: Object): this
-  // Removes the given layer from the control.
-  // Either layer object or it's name in the control must be specified.
-  // Layer is removed from the map as well, except `.keepOnMap` option is true.
+  /**
+   * Removes the given layer from the control.
+   *
+   * @memberof LayerChooser
+   * @param {L.Layer|String} layer - The layer to be removed, either as a Leaflet layer object or its name.
+   * @param {Object} [options] - Additional options, including `keepOnMap` to keep the layer on the map.
+   * @returns {LayerChooser} Returns the `LayerChooser` instance for chaining.
+   */
   removeLayer: function (layer, options) {
     layer = this.getLayer(layer);
     var data = this.layerInfo(layer);
@@ -21918,6 +23171,14 @@ var LayerChooser = L.Control.Layers.extend({
   // Info is internal data object with following properties:
   // `layer`, `name`, `label`, `overlay`, `sortPriority`, `persistent`, `default`,
   // `labelEl`, `inputEl`, `statusTracking`.
+  /**
+   * Retrieves layer info by its name in the control, or by the layer object itself, or its label HTML element.
+   *
+   * @memberof LayerChooser
+   * @param {String|L.Layer|HTMLElement} layer - The name, layer object, or label element of the layer.
+   * @returns {Object} Layer info object with following properties: `layer`, `name`, `label`, `overlay`, `sortPriority`,
+   *                   `persistent`, `default`, `labelEl`, `inputEl`, `statusTracking`.
+   */
   layerInfo: function (layer) {
     var fn = layer instanceof L.Layer ? this.__byLayer
       : layer instanceof HTMLElement ? this.__byLabelEl
@@ -21925,18 +23186,30 @@ var LayerChooser = L.Control.Layers.extend({
     return this._layers.find(fn, layer);
   },
 
-  // @method getLayer(name: String|Layer): Layer
-  // Returns layer by it's name in the control, or by layer object itself,
-  // or label html element.
-  // The latter can be used to ensure the layer is in layerChooser.
+  /**
+   * Returns the Leaflet layer object based on its name in the control, or the layer object itself,
+   * or its label HTML element. The latter can be used to ensure the layer is in layerChooser.
+   *
+   * @memberof LayerChooser
+   * @param {String|L.Layer|HTMLElement} layer - The name, layer object, or label element of the layer.
+   * @returns {L.Layer} The corresponding Leaflet layer object.
+   */
   getLayer: function (layer) {
     var data = this.layerInfo(layer);
     return data && data.layer;
   },
 
-  // @method showLayer(layer: Layer|String|Number, display?: Boolean): this
-  // Switches layer's display state to given value (true by default).
-  // Layer can be specified also by it's name in the control.
+  /**
+   * Shows or hides a specified basemap or overlay layer. The layer can be specified by its ID, name, or layer object.
+   * If the display parameter is not provided, the layer will be shown by default.
+   * When showing a base layer, it ensures that no other base layers are displayed at the same time.
+   *
+   * @memberof LayerChooser
+   * @param {L.Layer|String|Number} layer - The layer to show or hide. This can be a Leaflet layer object,
+   *                                        a layer name, or a layer ID.
+   * @param {Boolean} [display=true] - Pass `false` to hide the layer, or `true`/omit to show it.
+   * @returns {LayerChooser} Returns the `LayerChooser` instance for chaining.
+   */
   showLayer: function (layer, display) {
     var data = this._layers[layer]; // layer is index, private use only
     if (!data) {
@@ -21965,9 +23238,14 @@ var LayerChooser = L.Control.Layers.extend({
     return this;
   },
 
-  // @method setLabel(layer: String|Layer, label?: String): this
-  // Sets layers label to specified label text (html),
-  // or resets it to original name when label is not specified.
+  /**
+   * Sets the label of a layer in the control.
+   *
+   * @memberof LayerChooser
+   * @param {String|L.Layer} layer - The name or layer object.
+   * @param {String} [label] - The label text (HTML allowed) to set. Resets to original name if not provided.
+   * @returns {LayerChooser} Returns the `LayerChooser` instance for chaining.
+   */
   setLabel: function (layer, label) {
     var data = this.layerInfo(layer);
     if (!data) {
@@ -22077,7 +23355,19 @@ var LayerChooser = L.Control.Layers.extend({
     return str.replace(/(<([^>]+)>)/gi, ''); // https://css-tricks.com/snippets/javascript/strip-html-tags-in-javascript/
   },
 
-  // !!deprecated
+  /**
+   * Retrieves the current state of base and overlay layers managed by this control.
+   * This method is deprecated and should be used with caution.
+   *
+   * The method returns an object with two properties: 'baseLayers' and 'overlayLayers'.
+   * Each array contains objects representing the respective layers with properties: 'layerId', 'name', and 'active'.
+   * 'layerId' is an internal identifier for the layer, 'name' is the layer's name, and 'active' is a boolean indicating
+   * if the layer is currently active on the map.
+   *
+   * @memberof LayerChooser
+   * @deprecated
+   * @returns {{overlayLayers: Array, baseLayers: Array}} An object containing arrays of base and overlay layers.
+   */
   getLayers: function () {
     var baseLayers = [];
     var overlayLayers = [];
@@ -22135,7 +23425,13 @@ window.removeLayerGroup = function (layerGroup) {
 // *** module: map.js ***
 (function () {
 var log = ulog('map');
-/* global log,L -- eslint */
+/* global log, L, IITC, PLAYER -- eslint */
+
+/**
+ * @file This file provides functions for working with maps.
+ * @module map
+ */
+
 function setupCRS () {
 
   // use the earth radius value from s2 geometry library
@@ -22170,6 +23466,16 @@ function setupCRS () {
   });
 }
 
+/**
+ * Normalizes latitude, longitude, and zoom values. Ensures that the values are valid numbers, providing
+ * defaults if necessary.
+ *
+ * @function normLL
+ * @param {number|string} lat - Latitude value or string that can be converted to a number.
+ * @param {number|string} lng - Longitude value or string that can be converted to a number.
+ * @param {number|string} zoom - Zoom level value or string that can be converted to a number.
+ * @returns {Object} An object containing normalized center (latitude and longitude) and zoom level.
+ */
 function normLL (lat, lng, zoom) {
   return {
     center: [
@@ -22180,7 +23486,13 @@ function normLL (lat, lng, zoom) {
   };
 }
 
-// retrieves the last shown position from URL or from a cookie
+/**
+ * Retrieves the last known map position from the URL parameters or cookies.
+ * Prioritizes URL parameters over cookies. Extracts and normalizes the latitude, longitude, and zoom level.
+ *
+ * @function getPosition
+ * @returns {Object} An object containing the map's position and zoom level, or undefined if not found.
+ */
 function getPosition () {
   var url = window.getURLParam;
 
@@ -22207,6 +23519,14 @@ function getPosition () {
   }
 }
 
+/**
+ * Initializes and returns a collection of default basemap layers. The function creates a set of base layers
+ * including CartoDB (both dark and light themes), and various Google Maps layers (Default Ingress Map, Roads,
+ * Roads with Traffic, Satellite, Hybrid, and Terrain).
+ *
+ * @returns {Object.<String, Object>} An object containing different basemap layers ready to be added to a map. Each property of the
+ *                   object is a named map layer, with its value being the corresponding Leaflet tile layer object.
+ */
 function createDefaultBaseMapLayers () {
   var baseLayers = {};
 
@@ -22257,6 +23577,13 @@ function createDefaultBaseMapLayers () {
   return baseLayers;
 }
 
+/**
+ * Creates and returns the default overlay layers for the map.
+ * Sets up various overlay layers including portals, links, fields, and faction-specific layers.
+ *
+ * @function createDefaultOverlays
+ * @returns {Object.<String, L.LayerGroup>} An object containing overlay layers for portals, links, fields, and factions
+ */
 function createDefaultOverlays() {
   /* eslint-disable dot-notation  */
 
@@ -22331,6 +23658,22 @@ window.mapOptions = {
     : true // default
 };
 
+/**
+ * Initializes the Leaflet map and configures various map layers and event listeners.
+ * This function is responsible for setting up the base map,
+ * including the default basemap tiles (CartoDB, Default Ingress Map, Google Maps),
+ * and configuring the map's properties such as center, zoom, bounds, and renderer options.
+ * It also clears the 'Loading, please wait' message from the map container.
+ *
+ * Important functionalities:
+ * - Adds dummy divs to Leaflet control areas to accommodate IITC UI elements.
+ * - Creates and adds base layers and overlays to the map.
+ * - Configures event listeners for map movements, including aborting pending requests and refreshing map data.
+ * - Manages cookies for map position and zoom level.
+ * - Handles the 'iitcLoaded' hook to set the initial map view and evaluate URL parameters for portal selection.
+ *
+ * @function setupMap
+ */
 window.setupMap = function () {
   setupCRS();
 
@@ -22486,8 +23829,6 @@ window.setupMap = function () {
   */
 };
 
-/* global IITC, PLAYER */
-
 
 })();
 
@@ -22495,18 +23836,23 @@ window.setupMap = function () {
 // *** module: map_data_calc_tools.js ***
 (function () {
 var log = ulog('map_data_calc_tools');
-// MAP DATA REQUEST CALCULATORS //////////////////////////////////////
-// Ingress Intel splits up requests for map data (portals, links,
-// fields) into tiles. To get data for the current viewport (i.e. what
-// is currently visible) it first calculates which tiles intersect.
-// For all those tiles, it then calculates the lat/lng bounds of that
-// tile and a quadkey. Both the bounds and the quadkey are “somewhat”
-// required to get complete data.
-//
-// Conversion functions courtesy of
-// http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+/**
+ * @file Contains functions for calculating map data request parameters and converting between lat/lng and map tiles.
+ * Ingress Intel splits up requests for map data (portals, links, fields) into tiles.
+ * To get data for the current viewport (i.e. what is currently visible) it first calculates which tiles intersect.
+ * For all those tiles, it then calculates the lat/lng bounds of that tile and a quadkey.
+ * Both the bounds and the quadkey are “somewhat” required to get complete data.
+ * Conversion functions courtesy of
+ * [wiki.openstreetmap.org/wiki/Slippy_map_tilenames](http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
+ * @module map_data_calc_tools
+ */
 
-
+/**
+ * Sets up the data tile parameters used for map data requests. This function initializes the TILE_PARAMS
+ * global object with default values or values detected from the stock Intel map.
+ *
+ * @function setupDataTileParams
+ */
 window.setupDataTileParams = function() {
   // default values - used to fall back to if we can't detect those used in stock intel
   var DEFAULT_ZOOM_TO_TILES_PER_EDGE = [1,1,1,40,40,80,80,320,1000,2000,2000,4000,8000,16000,16000,32000];
@@ -22555,7 +23901,14 @@ window.setupDataTileParams = function() {
 
 }
 
-
+/**
+ * Gets the map zoom tile parameters for a specific zoom level. It calculates the tile level, number of tiles per edge,
+ * minimum link length, and whether portals are available at the specified zoom level.
+ *
+ * @function getMapZoomTileParameters
+ * @param {number} zoom - The map zoom level.
+ * @returns {Object} An object containing tile parameters for the given zoom level.
+ */
 window.getMapZoomTileParameters = function (zoom) {
   var maxTilesPerEdge = window.TILE_PARAMS.TILES_PER_EDGE[window.TILE_PARAMS.TILES_PER_EDGE.length - 1];
 
@@ -22574,7 +23927,14 @@ window.getDataZoomTileParameters = function(zoom) {
   return tileParams = getMapZoomTileParameters(dataZoom);
 }
 
-
+/**
+ * Determines the data zoom level for a given map zoom level. This function adjusts the zoom level for
+ * data requests based on various factors to optimize caching performance and server load.
+ *
+ * @function getDataZoomForMapZoom
+ * @param {number} zoom - The current map zoom level.
+ * @returns {number} The adjusted zoom level for data requests.
+ */
 window.getDataZoomForMapZoom = function(zoom) {
   // we can fetch data at a zoom level different to the map zoom.
 
@@ -22611,7 +23971,6 @@ window.getDataZoomForMapZoom = function(zoom) {
   return zoom;
 }
 
-
 window.lngToTile = function(lng, params) {
   return Math.floor((lng + 180) / 360 * params.tilesPerEdge);
 }
@@ -22644,10 +24003,10 @@ window.pointToTileId = function(params, x, y) {
 // *** module: map_data_debug.js ***
 (function () {
 var log = ulog('map_data_debug');
-// MAP DATA DEBUG //////////////////////////////////////
-// useful bits to assist debugging map data tiles
-
-
+/**
+ * Contains functions for rendering debug tiles on the map. These are used for debugging map data tiles.
+ * @class RenderDebugTiles
+ */
 window.RenderDebugTiles = function() {
   this.CLEAR_CHECK_TIME = 0.1;
   this.FADE_TIME = 1.0;
@@ -22660,12 +24019,25 @@ window.RenderDebugTiles = function() {
   this.timer = undefined;
 }
 
+/**
+ * Resets the debug tiles by clearing all layers, rectangles and clear times.
+ * @function
+ * @memberof RenderDebugTiles
+ */
 window.RenderDebugTiles.prototype.reset = function() {
   this.debugTileLayer.clearLayers();
   this.debugTileToRectangle = {};
   this.debugTileClearTimes = {};
 }
 
+/**
+ * Creates a new debug tile with the specified ID and bounds.
+ *
+ * @function
+ * @memberof RenderDebugTiles
+ * @param {string} id - The ID of the debug tile.
+ * @param {L.LatLngBounds} bounds - The geographical bounds of the tile.
+ */
 window.RenderDebugTiles.prototype.create = function(id,bounds) {
   var s = {color: '#666', weight: 1, opacity: 0.4, fillColor: '#666', fillOpacity: 0.1, interactive: false};
 
@@ -22681,6 +24053,15 @@ window.RenderDebugTiles.prototype.create = function(id,bounds) {
   }
 }
 
+/**
+ * Sets the color of the border and fill for a specific debug tile.
+ *
+ * @function
+ * @memberof RenderDebugTiles
+ * @param {string} id - The ID of the debug tile.
+ * @param {string} bordercol - The color for the border.
+ * @param {string} fillcol - The color for the fill.
+ */
 window.RenderDebugTiles.prototype.setColour = function(id,bordercol,fillcol) {
   var l = this.debugTileToRectangle[id];
   if (l) {
@@ -22689,6 +24070,14 @@ window.RenderDebugTiles.prototype.setColour = function(id,bordercol,fillcol) {
   }
 }
 
+/**
+ * Sets the state of a specific debug tile. Changes its color based on the state.
+ *
+ * @function
+ * @memberof RenderDebugTiles
+ * @param {string} id - The ID of the debug tile.
+ * @param {string} state - The state of the tile (e.g., 'ok', 'error', 'requested').
+ */
 window.RenderDebugTiles.prototype.setState = function(id,state) {
   var col = '#f0f';
   var fill = '#f0f';
@@ -22716,7 +24105,13 @@ window.RenderDebugTiles.prototype.setState = function(id,state) {
   }
 }
 
-
+/**
+ * Starts a timer to run the clear pass function after a specified wait time.
+ *
+ * @function
+ * @memberof RenderDebugTiles
+ * @param {number} waitTime - The wait time in milliseconds before running the clear pass.
+ */
 window.RenderDebugTiles.prototype.startTimer = function(waitTime) {
   var _this = this;
   if (!_this.timer) {
@@ -22727,6 +24122,13 @@ window.RenderDebugTiles.prototype.startTimer = function(waitTime) {
   }
 }
 
+/**
+ * Executes a pass to clear debug tiles that have exceeded their fade time.
+ * This function adjusts the opacity of the tiles and removes them if necessary.
+ *
+ * @function
+ * @memberof RenderDebugTiles
+ */
 window.RenderDebugTiles.prototype.runClearPass = function() {
 
   var now = Date.now();
@@ -22756,15 +24158,23 @@ window.RenderDebugTiles.prototype.runClearPass = function() {
 // *** module: map_data_render.js ***
 (function () {
 var log = ulog('map_data_render');
-// MAP DATA RENDER ////////////////////////////////////////////////
-// class to handle rendering into leaflet the JSON data from the servers
 /* global L */
 
+/**
+ * Manages rendering of map data (portals, links, fields) into Leaflet.
+ * @class Render
+ */
 window.Render = function () {
   this.portalMarkerScale = undefined;
 }
 
-// start a render pass. called as we start to make the batch of data requests to the servers
+/**
+ * Initiates a render pass. It's called at the start of making a batch of data requests to the servers.
+ *
+ * @function
+ * @memberof Render
+ * @param {L.LatLngBounds} bounds - The bounds within which the render pass will occur.
+ */
 window.Render.prototype.startRenderPass = function (bounds) {
   this.deletedGuid = {};  // object - represents the set of all deleted game entity GUIDs seen in a render pass
 
@@ -22785,6 +24195,13 @@ window.Render.prototype.startRenderPass = function (bounds) {
   this.rescalePortalMarkers();
 }
 
+/**
+ * Clears portals outside the specified bounds.
+ *
+ * @function
+ * @memberof Render
+ * @param {L.LatLngBounds} bounds - The bounds to check against.
+ */
 window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
   for (var guid in window.portals) {
     var p = portals[guid];
@@ -22795,6 +24212,13 @@ window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
   }
 }
 
+/**
+ * Clears links that are outside the specified bounds.
+ *
+ * @function
+ * @memberof Render
+ * @param {L.LatLngBounds} bounds - The bounds to check against for link removal.
+ */
 window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
   for (var guid in window.links) {
     var l = links[guid];
@@ -22810,6 +24234,13 @@ window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
   }
 }
 
+/**
+ * Clears fields that are outside the specified bounds.
+ *
+ * @function
+ * @memberof Render
+ * @param {L.LatLngBounds} bounds - The bounds to check against for field removal.
+ */
 window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
   for (var guid in window.fields) {
     var f = fields[guid];
@@ -22825,14 +24256,25 @@ window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
   }
 }
 
-
-// process deleted entity list and entity data
+/**
+ * Processes tile data including deleted entity GUIDs and game entities.
+ *
+ * @function
+ * @memberof Render
+ * @param {Object} tiledata - Data for a specific map tile.
+ */
 window.Render.prototype.processTileData = function(tiledata) {
   this.processDeletedGameEntityGuids(tiledata.deletedGameEntityGuids||[]);
   this.processGameEntities(tiledata.gameEntities||[]);
 }
 
-
+/**
+ * Processes deleted game entity GUIDs and removes them from the map.
+ *
+ * @function
+ * @memberof Render
+ * @param {Array} deleted - Array of deleted game entity GUIDs.
+ */
 window.Render.prototype.processDeletedGameEntityGuids = function(deleted) {
   for(var i in deleted) {
     var guid = deleted[i];
@@ -22852,6 +24294,14 @@ window.Render.prototype.processDeletedGameEntityGuids = function(deleted) {
 
 }
 
+/**
+ * Processes game entities (fields, links, portals) and creates them on the map.
+ *
+ * @function
+ * @memberof Render
+ * @param {Array} entities - Array of game entities.
+ * @param {Object} details - Details for the {@link window.decodeArray.portal} function.
+ */
 window.Render.prototype.processGameEntities = function(entities, details) { // details expected in decodeArray.portal
 
   // we loop through the entities three times - for fields, links and portals separately
@@ -22882,9 +24332,13 @@ window.Render.prototype.processGameEntities = function(entities, details) { // d
   }
 }
 
-
-// end a render pass. does any cleaning up required, postponed processing of data, etc. called when the render
-// is considered complete
+/**
+ * Ends a render pass. This includes cleanup and processing of any remaining data.
+ * Called when the render is considered complete.
+ *
+ * @function
+ * @memberof Render
+ */
 window.Render.prototype.endRenderPass = function() {
   var countp=0,countl=0,countf=0;
 
@@ -22921,6 +24375,12 @@ window.Render.prototype.endRenderPass = function() {
   }
 }
 
+/**
+ * Brings portal markers to the front of the map view, ensuring they are rendered above links and fields.
+ *
+ * @function
+ * @memberof Render
+ */
 window.Render.prototype.bringPortalsToFront = function() {
   for (var guid in window.portals) {
     window.portals[guid].bringToFront();
@@ -22934,13 +24394,26 @@ window.Render.prototype.bringPortalsToFront = function() {
   });
 }
 
-
+/**
+ * Deletes an entity (portal, link, or field) from the map based on its GUID.
+ *
+ * @function
+ * @memberof Render
+ * @param {string} guid - The globally unique identifier of the entity to delete.
+ */
 window.Render.prototype.deleteEntity = function(guid) {
   this.deletePortalEntity(guid);
   this.deleteLinkEntity(guid);
   this.deleteFieldEntity(guid);
 }
 
+/**
+ * Deletes a portal entity from the map based on its GUID.
+ *
+ * @function
+ * @memberof Render
+ * @param {string} guid - The globally unique identifier of the portal to delete.
+ */
 window.Render.prototype.deletePortalEntity = function(guid) {
   if (guid in window.portals) {
     var p = window.portals[guid];
@@ -22951,6 +24424,13 @@ window.Render.prototype.deletePortalEntity = function(guid) {
   }
 }
 
+/**
+ * Deletes a link entity from the map based on its GUID.
+ *
+ * @function
+ * @memberof Render
+ * @param {string} guid - The globally unique identifier of the link to delete.
+ */
 window.Render.prototype.deleteLinkEntity = function(guid) {
   if (guid in window.links) {
     var l = window.links[guid];
@@ -22960,7 +24440,13 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
   }
 }
 
-
+/**
+ * Deletes a field entity from the map based on its GUID.
+ *
+ * @function
+ * @memberof Render
+ * @param {string} guid - The globally unique identifier of the field to delete.
+ */
 window.Render.prototype.deleteFieldEntity = function(guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
@@ -22970,7 +24456,18 @@ window.Render.prototype.deleteFieldEntity = function(guid) {
   }
 }
 
-
+/**
+ * Creates a placeholder portal entity. This is used when the portal is not fully loaded,
+ * but its existence is known from links/fields.
+ *
+ * @function
+ * @memberof Render
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {number} latE6 - The latitude of the portal in E6 format.
+ * @param {number} lngE6 - The longitude of the portal in E6 format.
+ * @param {string} team - The team faction of the portal.
+ * @param {number} [timestamp] - The timestamp of the portal data.
+ */
 window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
   // intel no longer returns portals at anything but the closest zoom
   // stock intel creates 'placeholder' portals from the data in links/fields - IITC needs to do the same
@@ -23012,7 +24509,15 @@ window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, l
 
 }
 
-
+/**
+ * Creates a portal entity from the provided game entity data.
+ * If the portal already exists and the new data is more recent, it replaces the existing data.
+ *
+ * @function
+ * @memberof Render
+ * @param {Array} ent - An array representing the game entity.
+ * @param {string} details - Detail level expected in {@link window.decodeArray.portal} (e.g., 'core', 'summary').
+ */
 window.Render.prototype.createPortalEntity = function(ent, details) { // details expected in decodeArray.portal
   this.seenPortalsGuid[ent[0]] = true;  // flag we've seen it
 
@@ -23118,7 +24623,13 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
 
 }
 
-
+/**
+ * Creates a field entity from the provided game entity data.
+ *
+ * @function
+ * @memberof Render
+ * @param {Array} ent - An array representing the game entity.
+ */
 window.Render.prototype.createFieldEntity = function(ent) {
   this.seenFieldsGuid[ent[0]] = true;  // flag we've seen it
 
@@ -23177,6 +24688,13 @@ window.Render.prototype.createFieldEntity = function(ent) {
   if (!IITC.filters.filterField(poly)) poly.addTo(window.map);
 }
 
+/**
+ * Creates a link entity from the provided game entity data.
+ *
+ * @function
+ * @memberof Render
+ * @param {Array} ent - An array representing the game entity.
+ */
 window.Render.prototype.createLinkEntity = function (ent) {
   // Niantic have been faking link entities, based on data from fields
   // these faked links are sent along with the real portal links, causing duplicates
@@ -23239,8 +24757,12 @@ window.Render.prototype.createLinkEntity = function (ent) {
   if (!IITC.filters.filterLink(poly)) poly.addTo(window.map);
 }
 
-
-
+/**
+ * Rescales portal markers based on the current map zoom level.
+ *
+ * @function
+ * @memberof Render
+ */
 window.Render.prototype.rescalePortalMarkers = function() {
   if (this.portalMarkerScale === undefined || this.portalMarkerScale != portalMarkerScale()) {
     this.portalMarkerScale = portalMarkerScale();
@@ -23253,13 +24775,24 @@ window.Render.prototype.rescalePortalMarkers = function() {
   }
 }
 
-
-
-// add the portal to the visible map layer
+/**
+ * Adds a portal to the visible map layer.
+ *
+ * @function
+ * @memberof Render
+ * @param {Object} portal - The portal object to add to the map layer.
+ */
 window.Render.prototype.addPortalToMapLayer = function(portal) {
   if (!IITC.filters.filterPortal(portal)) portal.addTo(window.map);
 }
 
+/**
+ * Removes a portal from the visible map layer.
+ *
+ * @function
+ * @memberof Render
+ * @param {Object} portal - The portal object to remove from the map layer.
+ */
 window.Render.prototype.removePortalFromMapLayer = function(portal) {
   //remove it from the portalsLevels layer
   portal.remove();
@@ -23274,12 +24807,10 @@ window.Render.prototype.removePortalFromMapLayer = function(portal) {
 // *** module: map_data_request.js ***
 (function () {
 var log = ulog('map_data_request');
-// MAP DATA REQUEST ///////////////////////////////////////////////////
-// class to request the map data tiles from the Ingress servers
-// and then pass it on to the render class for display purposes
-// Uses the map data cache class to reduce network requests
-
-
+/**
+ * Class for managing map data requests from the Ingress servers, caching the data, and passing it to the renderer.
+ * @class MapDataRequest
+ */
 window.MapDataRequest = function() {
   this.cache = new DataCache();
   this.render = new Render();
@@ -23356,7 +24887,12 @@ window.MapDataRequest = function() {
 
 }
 
-
+/**
+ * Starts the data request process, setting up hooks and callbacks.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.start = function() {
   var savedContext = this;
 
@@ -23375,7 +24911,12 @@ window.MapDataRequest.prototype.start = function() {
   this.cache && this.cache.startExpireInterval (15);
 }
 
-
+/**
+ * Callback for map movement start. Pauses the rendering and data requests.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.mapMoveStart = function() {
   log.log('refresh map movestart');
 
@@ -23384,6 +24925,12 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
   this.pauseRenderQueue(true);
 }
 
+/**
+ * Handles map movement end. Determines whether new data needs to be fetched based on map bounds and zoom level.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.mapMoveEnd = function () {
   var bounds = clampLatLngBounds(map.getBounds());
 
@@ -23408,6 +24955,12 @@ window.MapDataRequest.prototype.mapMoveEnd = function () {
   this.refreshOnTimeout(this.MOVE_REFRESH);
 }
 
+/**
+ * Resumes data fetching and rendering after being idle.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.idleResume = function() {
   // if we have no timer set and there are no active requests, refresh has gone idle and the timer needs restarting
 
@@ -23419,7 +24972,12 @@ window.MapDataRequest.prototype.idleResume = function() {
   }
 }
 
-
+/**
+ * Clears the current data refresh timeout.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.clearTimeout = function() {
 
   if (this.timer) {
@@ -23429,6 +24987,13 @@ window.MapDataRequest.prototype.clearTimeout = function() {
   }
 }
 
+/**
+ * Sets a timeout to refresh the map data.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {number} seconds - Time in seconds to wait before refreshing the map data.
+ */
 window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
   this.clearTimeout();
 
@@ -23443,18 +25008,38 @@ window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
   this.timerExpectedTimeoutTime = new Date().getTime() + seconds*1000;
 }
 
-
+/**
+ * Sets the current status of the map data request, including a short description, long description, and progress.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {string} short - Short description of the current status.
+ * @param {string} long - Long description of the current status.
+ * @param {number} progress - Progress indicator, typically represented as a percentage.
+ */
 window.MapDataRequest.prototype.setStatus = function(short,long,progress) {
   this.status = { short: short, long: long, progress: progress };
   window.renderUpdateStatus();
 }
 
-
+/**
+ * Gets the current status of the map data request, including short description, long description, and progress.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @returns {Object} An object containing the current status of the map data request.
+ */
 window.MapDataRequest.prototype.getStatus = function() {
   return this.status;
 };
 
-
+/**
+ * Initiates the map data refresh process. This includes resetting necessary properties,
+ * preparing requests for map data, and handling cached data.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.refresh = function() {
 
   // if we're idle, don't refresh
@@ -23607,6 +25192,13 @@ window.MapDataRequest.prototype.refresh = function() {
   }
 }
 
+/**
+ * Delays the processing of the request queue for fetching map data tiles. The delay is specified in seconds.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {number} seconds - The delay in seconds before starting to process the request queue.
+ */
 window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
   if (this.timer === undefined) {
     var _this = this;
@@ -23619,7 +25211,13 @@ window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
   }
 }
 
-
+/**
+ * Processes the request queue for fetching map data tiles. Manages the number of simultaneous tile requests,
+ * tile error handling, and updates the request status.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.processRequestQueue = function () {
   // if nothing left in the queue, finish
   if (Object.keys(this.queuedTiles).length == 0) {
@@ -23685,7 +25283,14 @@ window.MapDataRequest.prototype.processRequestQueue = function () {
   this.setStatus ('loading', longText, progress);
 }
 
-
+/**
+ * Sends requests for a group of tiles to the server.
+ * Updates the debugTiles state and manages the count of active requests.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {Array} tiles - An array of tile identifiers to request.
+ */
 window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
 
   var tilesList = [];
@@ -23711,12 +25316,23 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
   var savedThis = this;
 
   // NOTE: don't add the request with window.request.add, as we don't want the abort handling to apply to map data any more
-  window.postAjax('getEntities', data, 
+  window.postAjax(
+    'getEntities',
+    data,
     function(data, textStatus, jqXHR) { savedThis.handleResponse (data, tiles, true); },  // request successful callback
     function() { savedThis.handleResponse (undefined, tiles, false); }  // request failed callback
   );
 }
 
+/**
+ * Re-queues a tile for data fetching in case of an error or timeouts.
+ * Handles retry limits and uses stale data if available.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {string} id - The tile identifier.
+ * @param {boolean} error - Flag indicating whether the tile fetch encountered an error.
+ */
 window.MapDataRequest.prototype.requeueTile = function(id, error) {
   if (id in this.queuedTiles) {
     // tile is currently wanted...
@@ -23760,7 +25376,16 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
   } // else the tile wasn't currently wanted (an old non-cancelled request) - ignore
 }
 
-
+/**
+ * Handles the response from the server for tile data requests.
+ * Processes success and error cases, manages retries for failed tiles, and updates the render queue with new data.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {Object} data - The response data from the server.
+ * @param {Array} tiles - The array of requested tile identifiers.
+ * @param {boolean} success - Flag indicating if the request was successful.
+ */
 window.MapDataRequest.prototype.handleResponse = function (data, tiles, success) {
 
   this.activeRequestCount -= 1;
@@ -23901,7 +25526,12 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
   this.delayProcessRequestQueue(nextQueueDelay);
 }
 
-
+/**
+ * Resets the render queue, clearing existing queued render tasks and stopping any active timer.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.resetRenderQueue = function() {
   this.renderQueue = [];
 
@@ -23909,10 +25539,18 @@ window.MapDataRequest.prototype.resetRenderQueue = function() {
     clearTimeout(this.renderQueueTimer);
     this.renderQueueTimer = undefined;
   }
-  this.renderQueuePaused = false;  
+  this.renderQueuePaused = false;
 }
 
-
+/**
+ * Pushes a tile to the render queue for processing. The queue is processed to render entities on the map.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {string} id - The identifier of the tile.
+ * @param {Object} data - Data associated with the tile, including game entity GUIDs and entities.
+ * @param {string} status - The status of the tile, such as 'render-queue'.
+ */
 window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
   this.debugTiles.setState(id,'render-queue');
   this.renderQueue.push({
@@ -23927,6 +25565,13 @@ window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
   }
 }
 
+/**
+ * Starts a timer to process the render queue after a specified delay.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {number} delay - The delay in seconds before processing the render queue.
+ */
 window.MapDataRequest.prototype.startQueueTimer = function(delay) {
   if (this.renderQueueTimer === undefined) {
     var _this = this;
@@ -23936,6 +25581,13 @@ window.MapDataRequest.prototype.startQueueTimer = function(delay) {
   }
 }
 
+/**
+ * Pauses or resumes the render queue processing. When paused, the queue timer is cleared.
+ *
+ * @function
+ * @memberof MapDataRequest
+ * @param {boolean} pause - Flag indicating whether to pause (true) or resume (false) the render queue processing.
+ */
 window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
   this.renderQueuePaused = pause;
   if (pause) {
@@ -23950,6 +25602,14 @@ window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
   }
 }
 
+/**
+ * Processes the render queue, rendering entities on the map.
+ * This function handles both the rendering of new entities and the deletion of old ones.
+ * It ensures that the quantity of entities processed per cycle does not exceed a set limit.
+ *
+ * @function
+ * @memberof MapDataRequest
+ */
 window.MapDataRequest.prototype.processRenderQueue = function() {
   var drawEntityLimit = this.RENDER_BATCH_SIZE;
 
@@ -24015,54 +25675,89 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 // *** module: ornaments.js ***
 (function () {
 var log = ulog('ornaments');
-// ORNAMENTS ///////////////////////////////////////////////////////
-
-// Added as part of the Ingress #Helios in 2014, ornaments
-// are additional image overlays for portals.
-// currently there are 6 known types of ornaments: ap$x$suffix
-// - cluster portals (without suffix)
-// - volatile portals (_v)
-// - meeting points (_start)
-// - finish points (_end)
-//
-// Beacons and Frackers were introduced at the launch of the Ingress
-// ingame store on November 1st, 2015
-// - Beacons (pe$TAG - $NAME) ie: 'peNIA - NIANTIC'
-// - Frackers ('peFRACK')
-// (there are 7 different colors for each of them)
-//
-// Ornament IDs are dynamic. NIANTIC might change them at any time without prior notice.
-// New ornamnent IDs found on the map will be recorded and saved to knownOrnaments from
-// which the Ornaments dialog will be filled with checked checkboxes.
-// To exclude a set of ornaments, even if they have not yet shown up on the map, the user
-// can add an entry to excludedOrnaments, which will compared (startsWith) to all known and
-// future IDs. example: "ap" to exclude all Ornaments for anomalies (ap1, ap2, ap2_v)
-
 /* global L, dialog, log, IITC */
 
+/**
+ * @namespace window.ornaments
+ * @description Manages the overlay of additional images (ornaments) on portals, such as beacons, frackers,
+ * and anomaly markers.
+ *
+ * Added as part of the Ingress #Helios in 2014, ornaments are additional image overlays for portals.
+ * currently there are 6 known types of ornaments: `ap$x$suffix`
+ * - `cluster portals` (without suffix)
+ * - `volatile portals` (_v)
+ * - `meeting points` (_start)
+ * - `finish points` (_end)
+ *
+ * Beacons and Frackers were introduced at the launch of the Ingress ingame store on November 1st, 2015
+ * - `Beacons` (pe$TAG - $NAME) ie: `peNIA - NIANTIC`
+ * - `Frackers` ('peFRACK')
+ * (there are 7 different colors for each of them)
+ *
+ * Ornament IDs are dynamic. NIANTIC might change them at any time without prior notice.
+ * New ornamnent IDs found on the map will be recorded and saved to knownOrnaments from
+ * which the Ornaments dialog will be filled with checked checkboxes.
+ * To exclude a set of ornaments, even if they have not yet shown up on the map, the user
+ * can add an entry to excludedOrnaments, which will compared (startsWith) to all known and
+ * future IDs. example: "ap" to exclude all Ornaments for anomalies (ap1, ap2, ap2_v)
+ */
 window.ornaments = {
-
+  /**
+   * Default size for ornament.
+   * @constant
+   * @type {number}
+   */
   OVERLAY_SIZE: 60,
+
+  /**
+   * Default opacity for ornament.
+   * @constant
+   * @type {number}
+   */
   OVERLAY_OPACITY: 0.6,
-  // The icon object holds optional definitions for the ornaments an beacons. The object shall
-  // be filled from a plugin
-  // 'ornamentID' : {
-  //   name: 'meaningful name',     // shows up in dialog
-  //   layer: 'name for the Layer', // shows up in layerchooser, optional, if not set
-  //                                // ornament will be in "Ornaments"
-  //   url: 'url',                  // from which the image will be taken, optional,
-  //                                // 84x84px is default, if not set, stock images will be
-  //                                // used
-  //   offset: [dx,dy],             // optional, shift the ornament vertically or horizontally by
-  //                                // dx (vertical)and dy )horizontal.
-  //                                // [0, 0.5] to place right above the portal.
-  //                                // default is [0, 0] to center
-  //   opacity: 0..1                // optional, default is 0.6
-  // }
+
+  /**
+   * Object holding optional definitions for ornaments and beacons.
+   * The icon object holds optional definitions for the ornaments an beacons. The object shall
+   * be filled from a plugin
+   * ```
+   * 'ornamentID' : {
+   *   name: 'meaningful name',     // shows up in dialog
+   *   layer: 'name for the Layer', // shows up in layerchooser, optional, if not set
+   *                                // ornament will be in "Ornaments"
+   *   url: 'url',                  // from which the image will be taken, optional,
+   *                                // 84x84px is default, if not set, stock images will be
+   *                                // used
+   *   offset: [dx,dy],             // optional, shift the ornament vertically or horizontally by
+   *                                // dx (vertical)and dy )horizontal.
+   *                                // [0, 0.5] to place right above the portal.
+   *                                // default is [0, 0] to center
+   *   opacity: 0..1                // optional, default is 0.6
+   * }
+   * ```
+   *
+   * @property {object} icon - The icon object for ornaments and beacons.
+   */
   icon:{},
+
+  /**
+   * List of ornaments to be excluded.
+   * @property {string[]} excludedOrnaments - Patterns to be excluded from display.
+   */
   excludedOrnaments: [],
+
+  /**
+   * List of known ornaments.
+   * @property {object} knownOrnaments - Object tracking known ornaments.
+   */
   knownOrnaments: {},
 
+  /**
+   * Sets up the ornament layer and necessary event handlers.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   setup: function () {
     this._portals = {};
     this.layerGroup = L.layerGroup;
@@ -24087,11 +25782,26 @@ window.ornaments = {
       action: window.ornaments.ornamentsOpt,
     });
   },
+
+  /**
+   * Creates a new layer for a given ornament ID.
+   *
+   * @function
+   * @memberof window.ornaments
+   * @param {string} layerID - The ID for the new layer.
+   */
   createLayer: function (layerID) {
     window.ornaments.layers[layerID] = window.ornaments.layerGroup();
     window.layerChooser.addOverlay(window.ornaments.layers[layerID], layerID);
   },
 
+  /**
+   * Adds ornament overlays to the specified portal.
+   *
+   * @function
+   * @memberof window.ornaments
+   * @param {object} portal - The portal to which ornaments are added.
+   */
   addPortal: function (portal) {
     this.removePortal(portal);
     var ornaments = portal.options.data.ornaments;
@@ -24155,6 +25865,13 @@ window.ornaments = {
     }
   },
 
+  /**
+   * Removes ornament overlays from the specified portal.
+   *
+   * @function
+   * @memberof window.ornaments
+   * @param {object} portal - The portal from which ornaments are removed.
+   */
   removePortal: function (portal) {
     var guid = portal.options.guid;
     if (this._portals[guid]) {
@@ -24164,11 +25881,24 @@ window.ornaments = {
       delete this._portals[guid];
     }
   },
+
+  /**
+   * Initializes known ornaments.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   initOrnaments: function () {
     this.knownOrnaments = {};
     this.save();
   },
 
+  /**
+   * Loads ornament data from localStorage.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   load: function () {
     var dataStr;
     try {
@@ -24191,18 +25921,35 @@ window.ornaments = {
 
   },
 
+  /**
+   * Saves the current ornament configuration to localStorage.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   save: function () {
     localStorage['excludedOrnaments'] = JSON.stringify(this.excludedOrnaments);
     localStorage['knownOrnaments'] = JSON.stringify(this.knownOrnaments);
   },
 
-  // reload: addPortal also calls removePortal
+  /**
+   * Reloads all ornaments on the map.
+   * @function
+   * @memberof window.ornaments
+   */
   reload: function () {
+    // reload: addPortal also calls removePortal
     for (var guid in window.ornaments._portals) {
       window.ornaments.addPortal(window.portals[guid]);
     }
   },
 
+  /**
+   * Processes input data for managing ornaments.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   processInput: function () {
     window.ornaments.excludedOrnaments = $('#ornaments_E').val().split(/[\s,]+/);
     window.ornaments.excludedOrnaments = window.ornaments.excludedOrnaments.filter(function (ornamentCode) { return ornamentCode !== ''; });
@@ -24213,6 +25960,13 @@ window.ornaments = {
     }
   },
 
+  /**
+   * Generates a list of ornaments for display in the options dialog.
+   *
+   * @function
+   * @memberof window.ornaments
+   * @returns {string} HTML string representing the list of ornaments.
+   */
   ornamentsList: function() {
     var text ='';
     var sortedIDs = Object.keys(window.ornaments.knownOrnaments).sort();
@@ -24232,10 +25986,22 @@ window.ornaments = {
     return text;
   },
 
+  /**
+   * Replaces the content of the ornaments list in the dialog.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   replaceOL: function () {
     document.getElementById('ornamentsList').innerHTML = window.ornaments.ornamentsList();
   },
 
+  /**
+   * Handles changes in ornament options and updates the map accordingly.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   onChangeHandler: function () {
     window.ornaments.processInput();
     window.ornaments.replaceOL();
@@ -24243,6 +26009,12 @@ window.ornaments = {
     window.ornaments.reload();
   },
 
+  /**
+   * Opens the dialog for ornament options, allowing users to manage ornament visibility.
+   *
+   * @function
+   * @memberof window.ornaments
+   */
   ornamentsOpt: function () {
     var excludedIDs = window.ornaments.excludedOrnaments.join(',');
     var html = '<div class="ornamentsOpts">'
@@ -24284,11 +26056,24 @@ window.ornaments = {
 // *** module: panes.js ***
 (function () {
 var log = ulog('panes');
-// created to start cleaning up "window" interaction
-//
+/**
+ * @file Manages the display of different panes of the IITC interface.
+ * @module panes
+ */
 
+/**
+ * Tracks the currently active pane.
+ * @type {string}
+ * @member currentPane
+ */
 window.currentPane = '';
 
+/**
+ * Shows a specified pane and hides others.
+ *
+ * @function show
+ * @param {string} id - The ID of the pane to show.
+ */
 window.show = function(id) {
   if(window.currentPane == id) return;
   window.currentPane = id;
@@ -24313,6 +26098,11 @@ window.show = function(id) {
   }
 }
 
+/**
+ * Hides all panes and related elements.
+ *
+ * @function hideall
+ */
 window.hideall = function() {
   $('#chatcontrols, #chat, #chatinput, #sidebartoggle, #scrollwrapper, #updatestatus, #portal_highlight_select').hide();
   $('#farm_level_select').hide();
@@ -24327,12 +26117,20 @@ window.hideall = function() {
 // *** module: player_names.js ***
 (function () {
 var log = ulog('player_names');
-// PLAYER NAMES //////////////////////////////////////////////////////
+/**
+ * @file Manages player names and provides functions to check if a player is a special system account.
+ *
+ * @module player_names
+ */
 
-
-
-// test to see if a specific player GUID is a special system account (e.g. __JARVIS__, __ADA__) that shouldn't
-// be listed as a player
+/**
+ * Checks if a player name is a special system account (e.g., `__JARVIS__`, `__ADA__`)
+ * that shouldn't be listed as a regular player.
+ *
+ * @function isSystemPlayer
+ * @param {string} name - The player name to check.
+ * @returns {boolean} Returns `true` if the player name is a system account, otherwise `false`.
+ */
 window.isSystemPlayer = function(name) {
 
   switch (name) {
@@ -24353,11 +26151,19 @@ window.isSystemPlayer = function(name) {
 // *** module: portal_data.js ***
 (function () {
 var log = ulog('portal_data');
-/// PORTAL DATA TOOLS ///////////////////////////////////////////////////
-// misc functions to get portal info
+/**
+ * @file Contain misc functions to get portal info
+ * @module portal_data
+ */
 
-// search through the links data for all that link from or to a portal. returns an object with separate lists of in
-// and out links. may or may not be as accurate as the portal details, depending on how much data the API returns
+/**
+ * Search through the links data for all that link from and to a portal. Returns an object with separate lists of in
+ * and out links. May or may not be as accurate as the portal details, depending on how much data the API returns.
+ *
+ * @function getPortalLinks
+ * @param {string} guid - The GUID of the portal to search for links.
+ * @returns {Object} An object containing arrays of incoming ('in') and outgoing ('out') link GUIDs.
+ */
 window.getPortalLinks = function(guid) {
 
   var links = { in: [], out: [] };
@@ -24376,13 +26182,25 @@ window.getPortalLinks = function(guid) {
   return links;
 }
 
+/**
+ * Counts the total number of links (both incoming and outgoing) for a specified portal.
+ *
+ * @function getPortalLinksCount
+ * @param {string} guid - The GUID of the portal.
+ * @returns {number} The total number of links for the portal.
+ */
 window.getPortalLinksCount = function(guid) {
   var links = getPortalLinks(guid);
   return links.in.length+links.out.length;
 }
 
-
-// search through the fields for all that reference a portal
+/**
+ * Searches through the fields for all fields that reference a specified portal.
+ *
+ * @function getPortalFields
+ * @param {string} guid - The GUID of the portal to search for fields.
+ * @returns {Array} An array containing the GUIDs of fields associated with the portal.
+ */
 window.getPortalFields = function(guid) {
   var fields = [];
 
@@ -24400,6 +26218,13 @@ window.getPortalFields = function(guid) {
   return fields;
 }
 
+/**
+ * Counts the total number of fields associated with a specified portal.
+ *
+ * @function getPortalFieldsCount
+ * @param {string} guid - The GUID of the portal.
+ * @returns {number} The total number of fields associated with the portal.
+ */
 window.getPortalFieldsCount = function(guid) {
   var fields = getPortalFields(guid);
   return fields.length;
@@ -24412,6 +26237,16 @@ window.getPortalFieldsCount = function(guid) {
   var GC_LIMIT = 15000; // run garbage collector when cache has more that 5000 items
   var GC_KEEP = 10000; // keep the 4000 most recent items
 
+  /**
+   * Finds a portal GUID by its position. Searches through currently rendered portals, fields, and links.
+   * If the portal is not found in the current render, it checks a cache of recently seen portals.
+   *
+   * @function
+   * @name findPortalGuidByPositionE6
+   * @param {number} latE6 - The latitude in E6 format.
+   * @param {number} lngE6 - The longitude in E6 format.
+   * @returns {string|null} The GUID of the portal at the specified location, or null if not found.
+   */
   window.findPortalGuidByPositionE6 = function(latE6, lngE6) {
     var item = cache[latE6+","+lngE6];
     if(item) return item[0];
@@ -24442,6 +26277,15 @@ window.getPortalFieldsCount = function(guid) {
     return null;
   };
 
+  /**
+   * Pushes a portal GUID and its position into a cache.
+   *
+   * @function
+   * @name pushPortalGuidPositionCache
+   * @param {string} guid - The GUID of the portal.
+   * @param {number} latE6 - The latitude in E6 format.
+   * @param {number} lngE6 - The longitude in E6 format.
+   */
   window.pushPortalGuidPositionCache = function(guid, latE6, lngE6) {
     cache[latE6+","+lngE6] = [guid, Date.now()];
     cache_level += 1;
@@ -24466,33 +26310,58 @@ window.getPortalFieldsCount = function(guid) {
 // *** module: portal_detail.js ***
 (function () {
 var log = ulog('portal_detail');
-/// PORTAL DETAIL //////////////////////////////////////
-// code to retrieve the new portal detail data from the servers
-
-// NOTE: the API for portal detailed information is NOT FINAL
-// this is a temporary measure to get things working again after a major change to the intel map
-// API. expect things to change here
-
+/**
+ * @file Provides functionality to handle portal details, including caching and server requests.
+ * @namespace window.portalDetail
+ */
 
 var cache;
 var requestQueue = {};
 
 window.portalDetail = function() {};
 
+/**
+ * Sets up the portal detail handler, initializing the cache.
+ *
+ * @function window.portalDetail.setup
+ */
 window.portalDetail.setup = function() {
   cache = new DataCache();
 
   cache.startExpireInterval(20);
 }
 
+/**
+ * Retrieves portal details from cache by GUID.
+ *
+ * @function window.portalDetail.get
+ * @param {string} guid - The Global Unique Identifier of the portal.
+ * @returns Cached portal details if available.
+ */
 window.portalDetail.get = function(guid) {
   return cache.get(guid);
 }
 
+/**
+ * Stores portal details in the cache.
+ *
+ * @function window.portalDetail.store
+ * @param {string} guid - The Global Unique Identifier of the portal.
+ * @param {object} dict - The portal detail data.
+ * @param {number} freshtime - Optional freshness time for cache.
+ * @returns Result of cache storage operation.
+ */
 window.portalDetail.store = function (guid, dict, freshtime) {
   return cache.store(guid, dict, freshtime);
 };
 
+/**
+ * Checks if portal details are fresh in the cache.
+ *
+ * @function window.portalDetail.isFresh
+ * @param {string} guid - The Global Unique Identifier of the portal.
+ * @returns {boolean} True if details are fresh, false otherwise.
+ */
 window.portalDetail.isFresh = function(guid) {
   return cache.isFresh(guid);
 }
@@ -24540,6 +26409,14 @@ var doRequest = function(deferred, guid) {
   );
 }
 
+/**
+ * Requests detailed information for a specific portal. If the information is not already being requested,
+ * it initiates a new request. Returns a promise that resolves with the portal details.
+ *
+ * @function window.portalDetail.request
+ * @param {string} guid - The Global Unique Identifier of the portal.
+ * @returns {Promise} A promise that resolves with the portal details upon successful retrieval or rejection on failure.
+ */
 window.portalDetail.request = function(guid) {
   if (!requestQueue[guid]) {
     var deferred = $.Deferred();
@@ -24559,10 +26436,17 @@ window.portalDetail.request = function(guid) {
 // *** module: portal_detail_display.js ***
 (function () {
 var log = ulog('portal_detail_display');
-// PORTAL DETAILS MAIN ///////////////////////////////////////////////
-// main code block that renders the portal details in the sidebar and
-// methods that highlight the portal in the map view.
+/**
+ * @file Main code block that renders the portal details in the sidebar and
+ * methods that highlight the portal in the map view.
+ * @module portal_detail_display
+ */
 
+/**
+ * Resets the scroll position of the sidebar when a new portal is selected.
+ *
+ * @function resetScrollOnNewPortal
+ */
 window.resetScrollOnNewPortal = function() {
   if (selectedPortal !== window.renderPortalDetails.lastVisible) {
     // another portal selected so scroll position become irrelevant to new portal details
@@ -24570,7 +26454,17 @@ window.resetScrollOnNewPortal = function() {
   }
 };
 
-// to be ovewritten in app.js
+/**
+ * Generates and displays URLs related to the portal.
+ * This includes a permalink for the portal, a link for Ingress Prime, and links to alternative maps.
+ * Function is overwritten in `app.js`
+ *
+ * @function renderPortalUrl
+ * @param {number} lat - The latitude of the portal.
+ * @param {number} lng - The longitude of the portal.
+ * @param {string} title - The title of the portal.
+ * @param {string} guid - The GUID of the portal.
+ */
 window.renderPortalUrl = function (lat, lng, title, guid) {
   var linkDetails = $('.linkdetails');
 
@@ -24601,6 +26495,12 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
   linkDetails.append($('<aside>').append(mapHtml));
 };
 
+/**
+ * Renders the details of a portal in the sidebar.
+ *
+ * @function renderPortalDetails
+ * @param {string} guid - The globally unique identifier of the portal to display details for.
+ */
 window.renderPortalDetails = function(guid) {
   selectPortal(window.portals[guid] ? guid : null);
   if ($('#sidebar').is(':visible')) {
@@ -24717,7 +26617,7 @@ window.renderPortalDetails = function(guid) {
       historyDetails
     );
 
-  window.renderPortalUrl(lat, lng, title);
+  window.renderPortalUrl(lat, lng, title, guid);
 
   // only run the hooks when we have a portalDetails object - most plugins rely on the extended data
   // TODO? another hook to call always, for any plugins that can work with less data?
@@ -24726,6 +26626,14 @@ window.renderPortalDetails = function(guid) {
   }
 }
 
+/**
+ * Gets miscellaneous details for a specified portal.
+ *
+ * @function getPortalMiscDetails
+ * @param {string} guid - The GUID of the portal.
+ * @param {Object} d - The portal detail object containing various properties of the portal.
+ * @returns {string} HTML string representing the miscellaneous details of the portal.
+ */
 window.getPortalMiscDetails = function(guid,d) {
 
   var randDetails;
@@ -24805,9 +26713,13 @@ window.getPortalMiscDetails = function(guid,d) {
   return randDetails;
 }
 
-
-// draws link-range and hack-range circles around the portal with the
-// given details. Clear them if parameter 'd' is null.
+/**
+ * The function adds circles indicating the hack range and link range of the portal.
+ * If the portal object are null, the indicators are removed.
+ *
+ * @function setPortalIndicators
+ * @param {Object} p - The portal object for which to set the indicators.
+ */
 window.setPortalIndicators = function(p) {
 
   if(portalRangeIndicator) map.removeLayer(portalRangeIndicator);
@@ -24844,10 +26756,13 @@ window.setPortalIndicators = function(p) {
 
 }
 
-// highlights portal with given GUID. Automatically clears highlights
-// on old selection. Returns false if the selected portal changed.
-// Returns true if it's still the same portal that just needs an
-// update.
+/**
+ * Highlights the selected portal on the map and clears the highlight from the previously selected portal.
+ *
+ * @function selectPortal
+ * @param {string} guid - The GUID of the portal to select.
+ * @returns {boolean} True if the same portal is re-selected (just an update), false if a different portal is selected.
+ */
 window.selectPortal = function(guid) {
   var update = selectedPortal === guid;
   var oldPortalGuid = selectedPortal;
@@ -24881,10 +26796,19 @@ window.selectPortal = function(guid) {
 // *** module: portal_detail_display_tools.js ***
 (function () {
 var log = ulog('portal_detail_display_tools');
-// PORTAL DETAILS DISPLAY ////////////////////////////////////////////
-// hand any of these functions the details-hash of a portal, and they
-// will return pretty, displayable HTML or parts thereof.
+/**
+ * @file Hand any of these functions the details-hash of a portal, and they
+ * will return pretty, displayable HTML or parts thereof.
+ * @module portal_detail_display_tools
+ */
 
+/**
+ * Provides historical details about a portal including visitation, capture, and scout control status.
+ *
+ * @function getPortalHistoryDetails
+ * @param {Object} d - The portal detail object containing the history properties.
+ * @returns {string} HTML string representing the historical details of the portal.
+ */
 window.getPortalHistoryDetails = function (d) {
   if (!d.history) {
     return '<div id="historydetails" class="missing">History missing</div>';
@@ -24901,7 +26825,13 @@ window.getPortalHistoryDetails = function (d) {
   + '</div>', classParts);
 }
 
-// returns displayable text+link about portal range
+/**
+ * Returns displayable text and link about portal range including base range, link amp boost, and total range.
+ *
+ * @function getRangeText
+ * @param {Object} d - The portal detail object containing range information.
+ * @returns {Array} An array containing the range label, HTML content, and a tooltip title.
+ */
 window.getRangeText = function(d) {
   var range = getPortalRange(d);
 
@@ -24922,8 +26852,13 @@ window.getRangeText = function(d) {
   ];
 }
 
-
-// given portal details, returns html code to display mod details.
+/**
+ * Given portal details, returns HTML code to display mod details.
+ *
+ * @function getModDetails
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {string} HTML string representing the mod details of the portal.
+ */
 window.getModDetails = function(d) {
   var mods = [];
   var modsTitle = [];
@@ -24995,6 +26930,13 @@ window.getModDetails = function(d) {
   return t;
 }
 
+/**
+ * Generates text representing the current and total energy of a portal.
+ *
+ * @function getEnergyText
+ * @param {Object} d - The portal detail object containing energy information.
+ * @returns {Array} An array containing the energy label, formatted energy values, and a tooltip title.
+ */
 window.getEnergyText = function(d) {
   var currentNrg = getCurrentPortalEnergy(d);
   var totalNrg = getTotalPortalEnergy(d);
@@ -25003,7 +26945,13 @@ window.getEnergyText = function(d) {
   return ['energy', fill, title];
 }
 
-
+/**
+ * Generates HTML details for resonators deployed on a portal.
+ *
+ * @function getResonatorDetails
+ * @param {Object} d - The portal detail object containing resonator information.
+ * @returns {string} HTML string representing the resonator details of the portal.
+ */
 window.getResonatorDetails = function(d) {
   var resoDetails = [];
   // octant=slot: 0=E, 1=NE, 2=N, 3=NW, 4=W, 5=SW, 6=S, SE=7
@@ -25046,10 +26994,17 @@ window.getResonatorDetails = function(d) {
 
 }
 
-// helper function that renders the HTML for a given resonator. Does
-// not work with raw details-hash. Needs digested infos instead:
-// slot: which slot this resonator occupies. Starts with 0 (east) and
-// rotates clockwise. So, last one is 7 (southeast).
+/**
+ * Helper function that renders the HTML for a given resonator.
+ *
+ * @function renderResonatorDetails
+ * @param {number} slot - The slot number where the resonator is deployed. Starts with 0 (east) and rotates clockwise.
+ *                        So, last one is 7 (southeast).
+ * @param {number} level - The level of the resonator.
+ * @param {number} nrg - The energy of the resonator.
+ * @param {string|null} nick - The nickname of the owner of the resonator, or null if not applicable.
+ * @returns {Array} An array containing the HTML content of the resonator and the owner's nickname.
+ */
 window.renderResonatorDetails = function(slot, level, nrg, nick) {
   if(OCTANTS[slot] === 'N')
     var className = 'meter north';
@@ -25079,7 +27034,15 @@ window.renderResonatorDetails = function(slot, level, nrg, nick) {
   return [meter, nick || ''];
 }
 
-// calculate AP gain from destroying portal and then capturing it by deploying resonators
+/**
+ * Calculates the AP gain from destroying and then capturing a portal by deploying resonators.
+ *
+ * @function getAttackApGainText
+ * @param {Object} d - The portal detail object containing portal information.
+ * @param {number} fieldCount - The number of fields linked to the portal.
+ * @param {number} linkCount - The number of links connected to the portal.
+ * @returns {Array} An array containing the label 'AP Gain', total AP gain, and a breakdown tooltip.
+ */
 window.getAttackApGainText = function(d,fieldCount,linkCount) {
   var breakdown = getAttackApGain(d,fieldCount,linkCount);
   var totalGain = breakdown.enemyAp;
@@ -25099,7 +27062,13 @@ window.getAttackApGainText = function(d,fieldCount,linkCount) {
   return ['AP Gain', digits(totalGain), t];
 }
 
-
+/**
+ * Provides details about the hack count and cooldown time of a portal.
+ *
+ * @function getHackDetailsText
+ * @param {Object} d - The portal detail object containing hack information.
+ * @returns {Array} An array containing the label 'hacks', short hack info, and a detailed tooltip.
+ */
 window.getHackDetailsText = function(d) {
   var hackDetails = getPortalHackDetails(d);
 
@@ -25113,7 +27082,14 @@ window.getHackDetailsText = function(d) {
   return ['hacks', shortHackInfo, title];
 }
 
-
+/**
+ * Generates text representing the total mitigation provided by shields and links on a portal.
+ *
+ * @function getMitigationText
+ * @param {Object} d - The portal detail object containing mitigation information.
+ * @param {number} linkCount - The number of links connected to the portal.
+ * @returns {Array} An array containing the label 'shielding', short mitigation info, and a detailed tooltip.
+ */
 window.getMitigationText = function(d,linkCount) {
   var mitigationDetails = getPortalMitigationDetails(d,linkCount);
 
@@ -25137,8 +27113,10 @@ window.getMitigationText = function(d,linkCount) {
 // *** module: portal_highlighter.js ***
 (function () {
 var log = ulog('portal_highlighter');
-// Portal Highlighter //////////////////////////////////////////////////////////
-// these functions handle portal highlighters
+/**
+ * @file These functions handle portal highlighters
+ * @module portal_highlighter
+ */
 
 // an object mapping highlighter names to the object containing callback functions
 window._highlighters = null;
@@ -25148,7 +27126,14 @@ window._current_highlighter = localStorage.portal_highlighter;
 
 window._no_highlighter = 'No Highlights';
 
-
+/**
+ * Adds a new portal highlighter to map. The highlighter is a function that will be called for each portal.
+ *
+ * @function addPortalHighlighter
+ * @param {string} name - The name of the highlighter.
+ * @param {Function} data - The callback function for the highlighter.
+ *                          This function receives data about the portal and decides how to highlight it.
+ */
 window.addPortalHighlighter = function(name, data) {
   if(_highlighters === null) {
     _highlighters = {};
@@ -25172,7 +27157,7 @@ window.addPortalHighlighter = function(name, data) {
     if (window.isApp && app.setActiveHighlighter)
       app.setActiveHighlighter(name);
 
-    // call the setSelected callback 
+    // call the setSelected callback
     if (_highlighters[_current_highlighter].setSelected) {
       _highlighters[_current_highlighter].setSelected(true);
     }
@@ -25181,7 +27166,11 @@ window.addPortalHighlighter = function(name, data) {
   updatePortalHighlighterControl();
 }
 
-// (re)creates the highlighter dropdown list
+/**
+ * Updates the portal highlighter dropdown list, recreating the dropdown list of available highlighters.
+ *
+ * @function updatePortalHighlighterControl
+ */
 window.updatePortalHighlighterControl = function() {
   if (isApp && app.addPortalHighlighter) {
     $('#portal_highlight_select').remove();
@@ -25198,8 +27187,8 @@ window.updatePortalHighlighterControl = function() {
     $("#portal_highlight_select").html('');
     $("#portal_highlight_select").append($("<option>").attr('value',_no_highlighter).text(_no_highlighter));
     var h_names = Object.keys(_highlighters).sort();
-    
-    $.each(h_names, function(i, name) {  
+
+    $.each(h_names, function (i, name) {
       $("#portal_highlight_select").append($("<option>").attr('value',name).text(name));
     });
 
@@ -25207,6 +27196,12 @@ window.updatePortalHighlighterControl = function() {
   }
 }
 
+/**
+ * Changes the current portal highlights based on the selected highlighter.
+ *
+ * @function changePortalHighlights
+ * @param {string} name - The name of the highlighter to be applied.
+ */
 window.changePortalHighlights = function(name) {
 
   // first call any previous highlighter select callback
@@ -25227,13 +27222,24 @@ window.changePortalHighlights = function(name) {
   localStorage.portal_highlighter = name;
 }
 
+/**
+ * Applies the currently active highlighter to a specific portal.
+ * This function is typically called for each portal on the map.
+ *
+ * @function highlightPortal
+ * @param {Object} p - The portal object to be highlighted.
+ */
 window.highlightPortal = function(p) {
-  
   if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
     _highlighters[_current_highlighter].highlight({portal: p});
   }
 }
 
+/**
+ * Resets the highlighting of all portals, returning them to their default style.
+ *
+ * @function resetHighlightedPortals
+ */
 window.resetHighlightedPortals = function() {
   $.each(portals, function(guid, portal) {
     setMarkerStyle(portal, guid === selectedPortal);
@@ -25247,12 +27253,19 @@ window.resetHighlightedPortals = function() {
 // *** module: portal_info.js ***
 (function () {
 var log = ulog('portal_info');
-// PORTAL DETAILS TOOLS //////////////////////////////////////////////
-// hand any of these functions the details-hash of a portal, and they
-// will return useful, but raw data.
+/**
+ * @file This file contains functions that handle the extraction and computation of raw data
+ * from portal details for various purposes.
+ * @module portal_info
+ */
 
-// returns a float. Displayed portal level is always rounded down from
-// that value.
+/**
+ * Calculates the displayed level of a portal, which is always rounded down from the actual float value.
+ *
+ * @function getPortalLevel
+ * @param {Object} d - The portal detail object containing resonator information.
+ * @returns {number} The calculated portal level.
+ */
 window.getPortalLevel = function(d) {
   var lvl = 0;
   var hasReso = false;
@@ -25264,6 +27277,13 @@ window.getPortalLevel = function(d) {
   return hasReso ? Math.max(1, lvl/8) : 0;
 }
 
+/**
+ * Calculates the total energy capacity of a portal based on its resonators.
+ *
+ * @function getTotalPortalEnergy
+ * @param {Object} d - The portal detail object containing resonator information.
+ * @returns {number} The total energy capacity of the portal.
+ */
 window.getTotalPortalEnergy = function(d) {
   var nrg = 0;
   $.each(d.resonators, function(ind, reso) {
@@ -25278,6 +27298,13 @@ window.getTotalPortalEnergy = function(d) {
 // For backwards compatibility
 window.getPortalEnergy = window.getTotalPortalEnergy;
 
+/**
+ * Calculates the current energy of a portal based on its resonators.
+ *
+ * @function getCurrentPortalEnergy
+ * @param {Object} d - The portal detail object containing resonator information.
+ * @returns {number} The current energy of the portal.
+ */
 window.getCurrentPortalEnergy = function(d) {
   var nrg = 0;
   $.each(d.resonators, function(ind, reso) {
@@ -25287,6 +27314,15 @@ window.getCurrentPortalEnergy = function(d) {
   return nrg;
 }
 
+/**
+ * Calculates the range of a portal for creating links. The range depends on portal level and any installed Link Amps.
+ *
+ * @function getPortalRange
+ * @param {Object} d - The portal detail object containing details about the team and resonators.
+ * @returns {Object} An object containing the base range (`base`), boost multiplier (`boost`),
+ *                   total range after applying the boost (`range`),
+ *                   and a boolean indicating if the portal is linkable (`isLinkable`).
+ */
 window.getPortalRange = function(d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
@@ -25301,6 +27337,13 @@ window.getPortalRange = function(d) {
   return range;
 }
 
+/**
+ * Calculates the boost in link range provided by installed Link Amps.
+ *
+ * @function getLinkAmpRangeBoost
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {number} The total boost factor for the link range.
+ */
 window.getLinkAmpRangeBoost = function(d) {
   if (window.teamStringToId(d.team) === window.TEAM_MAC) {
     return 1.0;
@@ -25324,7 +27367,15 @@ window.getLinkAmpRangeBoost = function(d) {
   return (linkAmps.length > 0) ? boost : 1.0;
 }
 
-
+/**
+ * Calculates the potential AP gain from attacking a portal.
+ *
+ * @function getAttackApGain
+ * @param {Object} d - The portal detail object containing resonator and ownership information.
+ * @param {number} fieldCount - The number of fields attached to the portal.
+ * @param {number} linkCount - The number of links attached to the portal.
+ * @returns {Object} An object detailing various components of AP gain, including totals for friendly and enemy factions.
+ */
 window.getAttackApGain = function(d,fieldCount,linkCount) {
   if (!fieldCount) fieldCount = 0;
 
@@ -25379,7 +27430,13 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
   };
 }
 
-
+/**
+ * Corrects the portal image URL to match the current protocol (http/https).
+ *
+ * @function fixPortalImageUrl
+ * @param {string} url - The original image URL.
+ * @returns {string} The corrected image URL.
+ */
 window.fixPortalImageUrl = function (url) {
   if (url) {
     if (window.location.protocol === 'https:') {
@@ -25392,7 +27449,14 @@ window.fixPortalImageUrl = function (url) {
 
 }
 
-
+/**
+ * Returns a list of portal mods filtered by a specific type.
+ *
+ * @function getPortalModsByType
+ * @param {Object} d - The portal detail object containing mod information.
+ * @param {string} type - The type of mods to filter (e.g., 'RES_SHIELD', 'LINK_AMPLIFIER').
+ * @returns {Array} An array of mods matching the specified type.
+ */
 window.getPortalModsByType = function(d, type) {
   var mods = [];
 
@@ -25421,8 +27485,13 @@ window.getPortalModsByType = function(d, type) {
   return mods;
 }
 
-
-
+/**
+ * Calculates the total mitigation provided by shields installed on a portal.
+ *
+ * @function getPortalShieldMitigation
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {number} The total mitigation value from all shields installed on the portal.
+ */
 window.getPortalShieldMitigation = function(d) {
   var shields = getPortalModsByType(d, 'RES_SHIELD');
 
@@ -25434,6 +27503,13 @@ window.getPortalShieldMitigation = function(d) {
   return mitigation;
 }
 
+/**
+ * Calculates the link defense boost provided by installed Ultra Link Amps.
+ *
+ * @function getPortalLinkDefenseBoost
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {number} The total link defense boost factor.
+ */
 window.getPortalLinkDefenseBoost = function(d) {
   var ultraLinkAmps = getPortalModsByType(d, 'ULTRA_LINK_AMP');
 
@@ -25446,11 +27522,26 @@ window.getPortalLinkDefenseBoost = function(d) {
   return Math.round(10 * linkDefenseBoost) / 10;
 }
 
+/**
+ * Calculates the additional mitigation provided by links attached to a portal.
+ *
+ * @function getPortalLinksMitigation
+ * @param {number} linkCount - The number of links attached to the portal.
+ * @returns {number} The additional mitigation value provided by the links.
+ */
 window.getPortalLinksMitigation = function(linkCount) {
   var mitigation = Math.round(400/9*Math.atan(linkCount/Math.E));
   return mitigation;
 }
 
+/**
+ * Calculates detailed mitigation information for a portal, including contributions from shields and links.
+ *
+ * @function getPortalMitigationDetails
+ * @param {Object} d - The portal detail object containing mod and resonator information.
+ * @param {number} linkCount - The number of links attached to the portal.
+ * @returns {Object} An object detailing various components of mitigation.
+ */
 window.getPortalMitigationDetails = function(d,linkCount) {
   var linkDefenseBoost = getPortalLinkDefenseBoost(d);
 
@@ -25469,6 +27560,13 @@ window.getPortalMitigationDetails = function(d,linkCount) {
   return mitigation;
 }
 
+/**
+ * Calculates the maximum number of outgoing links that can be created from a portal.
+ *
+ * @function getMaxOutgoingLinks
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {number} The maximum number of outgoing links.
+ */
 window.getMaxOutgoingLinks = function(d) {
   var linkAmps = getPortalModsByType(d, 'ULTRA_LINK_AMP');
 
@@ -25481,6 +27579,13 @@ window.getMaxOutgoingLinks = function(d) {
   return links;
 };
 
+/**
+ * Calculates hack-related details of a portal, such as hack cooldown and burnout time.
+ *
+ * @function getPortalHackDetails
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {Object} An object containing hack-related details like cooldown time, hack count, and burnout time.
+ */
 window.getPortalHackDetails = function(d) {
 
   var heatsinks = getPortalModsByType(d, 'HEATSINK');
@@ -25506,7 +27611,13 @@ window.getPortalHackDetails = function(d) {
   return {cooldown: cooldownTime, hacks: hackCount, burnout: cooldownTime*(hackCount-1)};
 }
 
-// given a detailed portal structure, return summary portal data, as seen in the map tile data
+/**
+ * Converts detailed portal information into a summary format similar to that seen in the map tile data.
+ *
+ * @function getPortalSummaryData
+ * @param {Object} d - The detailed portal data.
+ * @returns {Object} A summary of the portal data, including level, title, image, resonator count, health, and team.
+ */
 window.getPortalSummaryData = function(d) {
 
   // NOTE: the summary data reports unclaimed portals as level 1 - not zero as elsewhere in IITC
@@ -25536,6 +27647,13 @@ window.getPortalSummaryData = function(d) {
   };
 }
 
+/**
+ * Calculates various attack values of a portal, including hit bonus, force amplifier, and attack frequency.
+ *
+ * @function getPortalAttackValues
+ * @param {Object} d - The portal detail object containing mod information.
+ * @returns {Object} An object containing attack values such as hit bonus, force amplifier, and attack frequency.
+ */
 window.getPortalAttackValues = function(d) {
   var forceamps = getPortalModsByType(d, 'FORCE_AMP');
   var turrets = getPortalModsByType(d, 'TURRET');
@@ -25582,10 +27700,17 @@ window.getPortalAttackValues = function(d) {
 // *** module: portal_marker.js ***
 (function () {
 var log = ulog('portal_marker');
-// PORTAL MARKER //////////////////////////////////////////////
-// code to create and update a portal marker
+/**
+ * @file This file contains the code related to creating and updating portal markers on the map.
+ * @module portal_marker
+ */
 
-
+/**
+ * Calculates the scale of portal markers based on the current zoom level of the map.
+ *
+ * @function portalMarkerScale
+ * @returns {number} The scale factor for portal markers.
+ */
 window.portalMarkerScale = function() {
   var zoom = map.getZoom();
   if (L.Browser.mobile)
@@ -25594,7 +27719,14 @@ window.portalMarkerScale = function() {
     return zoom >= 14 ? 1 : zoom >= 11 ? 0.8 : zoom >= 8 ? 0.65 : 0.5;
 }
 
-// create a new marker. 'data' contain the IITC-specific entity data to be stored in the object options
+/**
+ * Creates a new portal marker on the map.
+ *
+ * @function createMarker
+ * @param {L.LatLng} latlng - The latitude and longitude where the marker will be placed.
+ * @param {Object} data - The IITC-specific entity data to be stored in the marker options.
+ * @returns {L.circleMarker} A Leaflet circle marker representing the portal.
+ */
 window.createMarker = function(latlng, data) {
   var styleOptions = window.getMarkerStyleOptions(data);
 
@@ -25607,7 +27739,13 @@ window.createMarker = function(latlng, data) {
   return marker;
 }
 
-
+/**
+ * Sets the style of a portal marker, including options for when the portal is selected.
+ *
+ * @function setMarkerStyle
+ * @param {L.circleMarker} marker - The portal marker whose style will be set.
+ * @param {boolean} selected - Indicates if the portal is selected.
+ */
 window.setMarkerStyle = function(marker, selected) {
 
   var styleOptions = window.getMarkerStyleOptions(marker.options);
@@ -25623,7 +27761,13 @@ window.setMarkerStyle = function(marker, selected) {
   }
 }
 
-
+/**
+ * Determines the style options for a portal marker based on its details.
+ *
+ * @function getMarkerStyleOptions
+ * @param {Object} details - Details of the portal, including team and level.
+ * @returns {Object} Style options for the portal marker.
+ */
 window.getMarkerStyleOptions = function(details) {
   var scale = window.portalMarkerScale();
 
@@ -25666,9 +27810,18 @@ window.getMarkerStyleOptions = function(details) {
 // *** module: redeeming.js ***
 (function () {
 var log = ulog('redeeming');
-// REDEEMING ///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
+/**
+ * @file This file contains functions related to the handling of passcode redeeming in Ingress.
+ * @module redeeming
+ */
 
+/**
+ * Provides a scale factor for short names of various Ingress items used in passcode rewards.
+ *
+ * @constant
+ * @name REDEEM_SHORT_NAMES
+ * @type {Object}
+ */
 window.REDEEM_SHORT_NAMES = {
   'portal shield':'S',
   'force amp':'FA',
@@ -25684,14 +27837,26 @@ window.REDEEM_SHORT_NAMES = {
   'ultra strike':'US',
 }
 
-/* These are HTTP status codes returned by the redemption API.
- * TODO: Move to another file? Use more generally across IITC?
+/**
+ * HTTP status codes and corresponding messages returned by the redemption API.
+ *
+ * @constant
+ * @name REDEEM_STATUSES
+ * @type {Object}
  */
 window.REDEEM_STATUSES = {
   429: 'You have been rate-limited by the server. Wait a bit and try again.',
   500: 'Internal server error'
 };
 
+/**
+ * Handles the response from the passcode redeeming API.
+ *
+ * @function handleRedeemResponse
+ * @param {Object} data - The data returned by the API.
+ * @param {string} textStatus - The status of the response.
+ * @param {jqXHR} jqXHR - The jQuery wrapped XMLHttpRequest object.
+ */
 window.handleRedeemResponse = function(data, textStatus, jqXHR) {
   var passcode = jqXHR.passcode;
 
@@ -25750,6 +27915,13 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
   });
 };
 
+/**
+ * Formats passcode reward data into a long, detailed html string.
+ *
+ * @function formatPasscodeLong
+ * @param {Object} data - The reward data.
+ * @returns {string} Formatted string representing the detailed rewards.
+ */
 window.formatPasscodeLong = function(data) {
   var html = '<p><strong>Passcode confirmed. Acquired items:</strong></p><ul class="redeemReward">';
 
@@ -25784,6 +27956,13 @@ window.formatPasscodeLong = function(data) {
   return html;
 }
 
+/**
+ * Formats passcode reward data into a short, concise html string.
+ *
+ * @function formatPasscodeShort
+ * @param {Object} data - The reward data.
+ * @returns {string} Formatted string representing the concise rewards.
+ */
 window.formatPasscodeShort = function(data) {
 
   if(data.other) {
@@ -25831,6 +28010,11 @@ window.formatPasscodeShort = function(data) {
   return '<p class="redeemReward">' + awards.join(', ') + '</p>'
 }
 
+/**
+ * Sets up the redeem functionality, binding to UI elements.
+ *
+ * @function setupRedeem
+ */
 window.setupRedeem = function() {
   $("#redeem").keypress(function(e) {
     if((e.keyCode ? e.keyCode : e.which) !== 13) return;
@@ -25864,12 +28048,30 @@ window.setupRedeem = function() {
 var log = ulog('region_scoreboard');
 /* global IITC -- eslint */
 
+/**
+ * @file This file contains the code for displaying and handling the regional scoreboard.
+ * @module region_scoreboard
+ */
+
+/**
+ * Sets up and manages the main dialog for the regional scoreboard.
+ *
+ * @function RegionScoreboardSetup
+ * @returns {Function} A setup function to initialize the scoreboard.
+ */
 window.RegionScoreboardSetup = (function() {
 
   var mainDialog;
   var regionScore;
   var timer;
 
+  /**
+   * Constructs a RegionScore object from server results. Contains methods to process and retrieve score data.
+   *
+   * @class
+   * @name RegionScore
+   * @param {Object} serverResult - The data returned from the server for regional scores.
+   */
   function RegionScore(serverResult) {
     this.ori_data = serverResult;
     this.topAgents = serverResult.topAgents;
@@ -26336,7 +28538,14 @@ window.RegionScoreboardSetup = (function() {
   }
 }());
 
-
+/**
+ * Creates an SVG-based history chart for regional scores.
+ *
+ * @function HistoryChart
+ * @param {RegionScore} _regionScore - The RegionScore object containing score data.
+ * @param {boolean} logscale - Whether to use logarithmic scale for the chart.
+ * @returns {string} An SVG string representing the history chart.
+ */
 var HistoryChart = (function() {
   var regionScore;
   var scaleFct;
@@ -26531,9 +28740,11 @@ var HistoryChart = (function() {
 var log = ulog('request_handling');
 /* global REFRESH MINIMUM_OVERRIDE_REFRESH */
 
-// REQUEST HANDLING //////////////////////////////////////////////////
-// note: only meant for portal/links/fields request, everything else
-// does not count towards “loading”
+/**
+ * @file This file contains functions and variables related to request handling in IITC.
+ * Note: only meant for portal/links/fields request, everything else does not count towards “loading”
+ * @module request_handling
+ */
 
 window.activeRequests = [];
 window.failedRequestCount = 0;
@@ -26543,21 +28754,42 @@ window.statusSuccessMapTiles = 0;
 window.statusStaleMapTiles = 0;
 window.statusErrorMapTiles = 0;
 
+/**
+ * Manages and tracks active requests within the application.
+ * @namespace window.requests
+ */
 window.requests = function () {};
 
 // time of last refresh
 window.requests._lastRefreshTime = 0;
 
+/**
+ * Adds an AJAX request to the activeRequests array and updates the status.
+ *
+ * @function window.requests.add
+ * @param {jqXHR} ajax - The jQuery wrapped XMLHttpRequest object.
+ */
 window.requests.add = function (ajax) {
   window.activeRequests.push(ajax);
   renderUpdateStatus();
 }
 
+/**
+ * Removes an AJAX request from the activeRequests array and updates the status.
+ *
+ * @function window.requests.remove
+ * @param {jqXHR} ajax - The jQuery wrapped XMLHttpRequest object.
+ */
 window.requests.remove = function (ajax) {
   window.activeRequests.splice(window.activeRequests.indexOf(ajax), 1);
   renderUpdateStatus();
 }
 
+/**
+ * Aborts all active AJAX requests and resets related variables and status.
+ *
+ * @function window.requests.abort
+ */
 window.requests.abort = function () {
   $.each(window.activeRequests, function (ind, actReq) {
     if (actReq) actReq.abort();
@@ -26571,12 +28803,14 @@ window.requests.abort = function () {
   renderUpdateStatus();
 }
 
-
-
-// sets the timer for the next auto refresh. Ensures only one timeout
-// is queued. May be given 'override' in milliseconds if time should
-// not be guessed automatically. Especially useful if a little delay
-// is required, for example when zooming.
+/**
+ * Sets a timeout for the next automatic refresh of data. Ensures only one timeout is queued.
+ * Can use an override time in milliseconds.
+ * Especially useful if a little delay is required, for example when zooming.
+ *
+ * @function startRefreshTimeout
+ * @param {number} [override] - Optional override time in milliseconds for the next refresh.
+ */
 window.startRefreshTimeout = function (override) {
   // may be required to remove 'paused during interaction' message in
   // status bar
@@ -26605,6 +28839,13 @@ window.startRefreshTimeout = function (override) {
 }
 
 window.requests._onRefreshFunctions = [];
+
+/**
+ * Calls each function in the _onRefreshFunctions array, handling the automatic refresh process.
+ *
+ * @private
+ * @function window.requests._callOnRefreshFunctions
+ */
 window.requests._callOnRefreshFunctions = function () {
   startRefreshTimeout();
 
@@ -26620,8 +28861,12 @@ window.requests._callOnRefreshFunctions = function () {
   });
 }
 
-
-// add method here to be notified of auto-refreshes
+/**
+ * Adds a function to the list of functions to be called on each automatic refresh.
+ *
+ * @function window.requests.addRefreshFunction
+ * @param {Function} f - The function to add to the refresh process.
+ */
 window.requests.addRefreshFunction = function (f) {
   window.requests._onRefreshFunctions.push(f);
 }
@@ -26633,44 +28878,58 @@ window.requests.addRefreshFunction = function (f) {
 // *** module: search.js ***
 (function () {
 var log = ulog('search');
-
-// SEARCH /////////////////////////////////////////////////////////
-
-/*
-you can implement your own result provider by listing to the search hook:
-window.addHook('search', function(query) {});
-
-`query` is an object with the following members:
-- `term` is the term for which the user has searched
-- `confirmed` is a boolean indicating if the user has pressed enter after searching. You should not search online or
-  do heavy processing unless the user has confirmed the search term
-- `addResult(result)` can be called to add a result to the query.
-
-`result` may have the following members (`title` is required, as well as one of `position` and `bounds`):
-- `title`: the label for this result. Will be interpreted as HTML, so make sure to escape properly.
-- `description`: secondary information for this result. Will be interpreted as HTML, so make sure to escape properly.
-- `position`: a L.LatLng object describing the position of this result
-- `bounds`: a L.LatLngBounds object describing the bounds of this result
-- `layer`: a ILayer to be added to the map when the user selects this search result. Will be generated if not set.
-  Set to `null` to prevent the result from being added to the map.
-- `icon`: a URL to a icon to display in the result list. Should be 12x12.
-- `onSelected(result, event)`: a handler to be called when the result is selected. May return `true` to prevent the map
-  from being repositioned. You may reposition the map yourself or do other work.
-- `onRemove(result)`: a handler to be called when the result is removed from the map (because another result has been
-  selected or the search was cancelled by the user).
-*/
-
 /* global L -- eslint */
 
+/**
+ * Provides functionality for the search system within the application.
+ *
+ * You can implement your own result provider by listening to the search hook:
+ * ```window.addHook('search', function(query) {});```.
+ *
+ * The `query` object has the following members:
+ * - `term`: The term for which the user has searched.
+ * - `confirmed`: A boolean indicating if the user has pressed enter after searching.
+ *   You should not search online or do heavy processing unless the user has confirmed the search term.
+ * - `addResult(result)`: A method to add a result to the query.
+ *
+ * The `result` object can have the following members (`title` is required, as well as one of `position` and `bounds`):
+ * - `title`: The label for this result. Will be interpreted as HTML, so make sure to escape properly.
+ * - `description`: Secondary information for this result. Will be interpreted as HTML, so make sure to escape properly.
+ * - `position`: A L.LatLng object describing the position of this result.
+ * - `bounds`: A L.LatLngBounds object describing the bounds of this result.
+ * - `layer`: An ILayer to be added to the map when the user selects this search result.
+ *   Will be generated if not set. Set to `null` to prevent the result from being added to the map.
+ * - `icon`: A URL to an icon to display in the result list. Should be 12x12 pixels.
+ * - `onSelected(result, event)`: A handler to be called when the result is selected.
+ *   May return `true` to prevent the map from being repositioned. You may reposition the map yourself or do other work.
+ * - `onRemove(result)`: A handler to be called when the result is removed from the map
+ *   (because another result has been selected or the search was cancelled by the user).
+ *  @namespace window.search
+ */
 window.search = {
   lastSearch: null,
 };
 
+/**
+ * Represents a search query.
+ *
+ * @memberof window.search
+ * @class
+ * @name window.search.Query
+ * @param {string} term - The search term.
+ * @param {boolean} confirmed - Indicates if the search is confirmed (e.g., by pressing Enter).
+ */
 window.search.Query = function(term, confirmed) {
   this.term = term;
   this.confirmed = confirmed;
   this.init();
 };
+
+/**
+ * Initializes the search query, setting up the DOM elements and triggering the 'search' hook.
+ *
+ * @function
+ */
 window.search.Query.prototype.init = function() {
   this.results = [];
 
@@ -26696,14 +28955,33 @@ window.search.Query.prototype.init = function() {
 
   runHooks('search', this);
 };
+
+/**
+ * Displays the search query results in the search wrapper.
+ *
+ * @function
+ */
 window.search.Query.prototype.show = function() {
   this.container.appendTo('#searchwrapper');
 };
+
+/**
+ * Hides the search query results and cleans up.
+ *
+ * @function
+ */
 window.search.Query.prototype.hide = function() {
   this.container.remove();
   this.removeSelectedResult();
   this.removeHoverResult();
 };
+
+/**
+ * Adds a search result to this query.
+ *
+ * @function
+ * @param {Object} result - The search result object to add.
+ */
 window.search.Query.prototype.addResult = function(result) {
   if(this.results.length == 0) {
     // remove 'No results'
@@ -26755,6 +29033,13 @@ window.search.Query.prototype.addResult = function(result) {
   }
 };
 
+/**
+ * Creates and returns a layer for the given search result, which could be markers or shapes on the map.
+ *
+ * @function
+ * @param {Object} result - The search result object.
+ * @returns {L.Layer} The layer created for this result.
+ */
 window.search.Query.prototype.resultLayer = function(result) {
   if(result.layer !== null && !result.layer) {
     result.layer = L.layerGroup();
@@ -26778,6 +29063,14 @@ window.search.Query.prototype.resultLayer = function(result) {
 return result.layer;
 
 };
+
+/**
+ * Handles the selection of a search result, including map view adjustments and layer management.
+ *
+ * @function
+ * @param {Object} result - The selected search result object.
+ * @param {Event} ev - The event associated with the selection.
+ */
 window.search.Query.prototype.onResultSelected = function(result, ev) {
   this.removeHoverResult();
   this.removeSelectedResult();
@@ -26809,6 +29102,11 @@ window.search.Query.prototype.onResultSelected = function(result, ev) {
   if(window.isSmartphone()) window.show('map');
 }
 
+/**
+ * Removes the currently selected search result from the map and performs cleanup.
+ *
+ * @function
+ */
 window.search.Query.prototype.removeSelectedResult = function() {
   if(this.selectedResult) {
     if(this.selectedResult.layer) map.removeLayer(this.selectedResult.layer);
@@ -26816,6 +29114,13 @@ window.search.Query.prototype.removeSelectedResult = function() {
   }
 }
 
+/**
+ * Handles the start of a hover over a search result. Adds the layer for the result to the map if not already selected.
+ *
+ * @function
+ * @param {Object} result - The search result object being hovered over.
+ * @param {Event} ev - The event associated with the hover start.
+ */
 window.search.Query.prototype.onResultHoverStart = function(result, ev) {
   this.removeHoverResult();
   this.hoverResult = result;
@@ -26827,6 +29132,11 @@ window.search.Query.prototype.onResultHoverStart = function(result, ev) {
   if(result.layer) map.addLayer(result.layer);
 };
 
+/**
+ * Removes the hover result layer from the map unless it's the selected result.
+ *
+ * @function
+ */
 window.search.Query.prototype.removeHoverResult = function() {
   if(this.hoverResult !== this.selectedResult) {
     if(this.hoverResult) {
@@ -26836,10 +29146,24 @@ window.search.Query.prototype.removeHoverResult = function() {
   this.hoverResult = null;
 };
 
+/**
+ * Handles the end of a hover over a search result. Removes the hover result layer from the map.
+ *
+ * @function
+ * @param {Object} result - The search result object being hovered over.
+ * @param {Event} ev - The event associated with the hover end.
+ */
 window.search.Query.prototype.onResultHoverEnd = function(result, ev) {
   this.removeHoverResult();
 };
 
+/**
+ * Initiates a search with the specified term and confirmation status.
+ *
+ * @function window.search.doSearch
+ * @param {string} term - The search term.
+ * @param {boolean} confirmed - Indicates if the search term is confirmed.
+ */
 window.search.doSearch = function(term, confirmed) {
   term = term.trim();
 
@@ -26872,6 +29196,11 @@ window.search.doSearch = function(term, confirmed) {
   window.search.lastSearch.show();
 };
 
+/**
+ * Sets up the search input field and button functionality.
+ *
+ * @function window.search.setup
+ */
 window.search.setup = function() {
   $('#search')
     .keypress(function(e) {
@@ -26895,6 +29224,14 @@ window.search.setup = function() {
   });
 };
 
+/**
+ * Adds a search result for a portal to the search query results.
+ *
+ * @function window.search.addSearchResult
+ * @param {Object} query - The search query object to which the result will be added.
+ * @param {Object} data - The data for the search result. This includes information such as title, team, level, health, etc.
+ * @param {string} guid - GUID if the portal.
+ */
 window.search.addSearchResult = function (query, data, guid) {
   var team = window.teamStringToId(data.team);
   var color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
@@ -27073,16 +29410,22 @@ window.addHook('search', function (query) {
 // *** module: send_request.js ***
 (function () {
 var log = ulog('send_request');
+/**
+ * @file This file provides functions for sending AJAX requests to the Ingress API.
+ * @module send_request
+ */
 
-// posts AJAX request to Ingress API.
-// action: last part of the actual URL, the rpc/dashboard. is
-//         added automatically
-// data: JSON data to post. method will be derived automatically from
-//       action, but may be overridden. Expects to be given Hash.
-//       Strings are not supported.
-// success: method to call on success. See jQuery API docs for avail-
-//          able arguments: http://api.jquery.com/jQuery.ajax/
-// error: see above. Additionally it is logged if the request failed.
+/**
+ * Sends an AJAX POST request to the Ingress API.
+ *
+ * @function postAjax
+ * @param {string} action - The last part of the URL, automatically appended to the Ingress API endpoint.
+ * @param {Object} data - JSON data to post. The method is derived automatically from action but may be overridden.
+ *                        Expects to be given a Hash. Strings are not supported.
+ * @param {Function} successCallback - Function to call on success. See jQuery API docs for available arguments.
+ * @param {Function} errorCallback - Function to call on error. Additionally, it is logged if the request failed.
+ * @returns {jqXHR} The jQuery wrapped XMLHttpRequest object.
+ */
 window.postAjax = function(action, data, successCallback, errorCallback) {
   // state management functions... perhaps should be outside of this func?
 
@@ -27160,10 +29503,15 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
   return result;
 }
 
-
+/**
+ * Displays a dialog prompt to the user when the IITC version is out of date.
+ * Blocks all requests while the dialog is open.
+ *
+ * @function outOfDateUserPrompt
+ */
 window.outOfDateUserPrompt = function()
 {
-  // we block all requests while the dialog is open. 
+  // we block all requests while the dialog is open.
   if (!window.blockOutOfDateRequests) {
     window.blockOutOfDateRequests = true;
 
@@ -27202,6 +29550,16 @@ window.outOfDateUserPrompt = function()
 var log = ulog('sidebar');
 /* global IITC -- eslint */
 
+/**
+ * @file This file provides functions for working with the sidebar.
+ * @module sidebar
+ */
+
+/**
+ * Sets up the sidebar, including player stats, toggle button, large image preview, etc.
+ *
+ * @function setupSidebar
+ */
 window.setupSidebar = function() {
   window.setupStyles();
   setupIcons();
@@ -27212,7 +29570,12 @@ window.setupSidebar = function() {
   $('#sidebar').show();
 };
 
-// to be overrided in smartphone.js
+/**
+ * Function to append IITC's custom CSS styles to the `<head>` element.
+ * Overwritten in smartphone.js.
+ *
+ * @function setupStyles
+ */
 window.setupStyles = function () {
   $('head').append('<style>' +
     [ '#largepreview.enl img { border:2px solid '+COLORS[TEAM_ENL]+'; } ',
@@ -27229,6 +29592,11 @@ window.setupStyles = function () {
     + '</style>');
 };
 
+/**
+ * Sets up custom icons by appending SVG definitions to the DOM.
+ *
+ * @function setupIcons
+ */
 function setupIcons () {
   $(['<svg>',
       // Material Icons
@@ -27240,9 +29608,13 @@ function setupIcons () {
     '</svg>'].join('\\n')).appendTo('body');
 }
 
-// renders player details into the website. Since the player info is
-// included as inline script in the original site, the data is static
-// and cannot be updated.
+/**
+ * Renders player details into the website. Since the player info is
+ * included as inline script in the original site, the data is static
+ * and cannot be updated.
+ *
+ * @function setupPlayerStat
+ */
 window.setupPlayerStat = function () {
   // stock site updated to supply the actual player level, AP requirements and XM capacity values
   var level = PLAYER.verified_level;
@@ -27288,6 +29660,11 @@ window.setupPlayerStat = function () {
   );
 };
 
+/**
+ * Initializes the sidebar toggle functionality.
+ *
+ * @function setupSidebarToggle
+ */
 function setupSidebarToggle () {
   $('#sidebartoggle').on('click', function() {
     var toggle = $('#sidebartoggle');
@@ -27308,6 +29685,13 @@ function setupSidebarToggle () {
   });
 }
 
+/**
+ * Sets up event listeners for the large portal image view. This dialog is displayed
+ * when a user clicks on the portal photo in the sidebar. It creates a new image
+ * preview inside a dialog box.
+ *
+ * @function setupLargeImagePreview
+ */
 function setupLargeImagePreview  () {
   $('#portaldetails').on('click', '.imgpreview', function (e) {
     var img = this.querySelector('img');
@@ -27334,10 +29718,20 @@ function setupLargeImagePreview  () {
 
 // fixed Addons ****************************************************************
 
+/**
+ * Updates the permalink href attribute on mouseover and click events.
+ *
+ * @function setPermaLink
+ */
 function setPermaLink () {
   this.href = window.makePermalink(null, true);
 }
 
+/**
+ * Sets up additional elements in the sidebar, such as permalink and about dialog.
+ *
+ * @function setupAddons
+ */
 function setupAddons () {
   IITC.toolbox.addButton({
     id: 'permalink',
@@ -27366,6 +29760,19 @@ function setupAddons () {
 // *** module: smartphone.js ***
 (function () {
 var log = ulog('smartphone');
+/**
+ * @file This file provides functions and utilities specifically for the smartphone layout of IITC.
+ * @module smartphone
+ */
+
+/**
+ * Determines if the user's device is a smartphone.
+ * Note it should not detect tablets because their display is large enough to use the desktop version.
+ * The stock intel site allows forcing mobile/full sites with a vp=m or vp=f parameter. This function supports the same.
+ *
+ * @function isSmartphone
+ * @returns {boolean} True if the user's device is a smartphone, false otherwise.
+ */
 window.isSmartphone = function() {
   // this check is also used in main.js. Note it should not detect
   // tablets because their display is large enough to use the desktop
@@ -27383,8 +29790,21 @@ window.isSmartphone = function() {
   || navigator.userAgent.match(/iPhone|iPad|iPod/i);
 }
 
+/**
+ * Placeholder for smartphone specific manipulations.
+ * This function does not implement any logic by itself.
+ *
+ * @function smartphone
+ */
 window.smartphone = function() {};
 
+/**
+ * Performs initial setup tasks for IITC on smartphones before the IITC boot process.
+ * This includes adding smartphone-specific stylesheets
+ * and modifying some of the setup functions for mobile compatibility.
+ *
+ * @function runOnSmartphonesBeforeBoot
+ */
 window.runOnSmartphonesBeforeBoot = function() {
   if(!isSmartphone()) return;
   log.warn('running smartphone pre boot stuff');
@@ -27696,6 +30116,13 @@ body {\
   });
 }
 
+/**
+ * Updates the mobile information bar with portal details when a portal is selected.
+ * This function is hooked to the 'portalSelected' event and is specific to the smartphone layout.
+ *
+ * @function smartphoneInfo
+ * @param {Object} data - The data object containing details about the selected portal.
+ */
 window.smartphoneInfo = function(data) {
   var guid = data.selectedPortalGuid;
   if(!window.portals[guid]) return;
@@ -27759,6 +30186,13 @@ window.smartphoneInfo = function(data) {
   $('#mobileinfo').html(t);
 }
 
+/**
+ * Performs setup tasks for IITC on smartphones after the IITC boot process.
+ * This includes initializing mobile info display, adjusting UI elements for mobile compatibility,
+ * and setting event handlers for mobile-specific interactions.
+ *
+ * @function runOnSmartphonesAfterBoot
+ */
 window.runOnSmartphonesAfterBoot = function() {
   if(!isSmartphone()) return;
   log.warn('running smartphone post boot stuff');
@@ -27794,12 +30228,20 @@ window.runOnSmartphonesAfterBoot = function() {
 // *** module: status_bar.js ***
 (function () {
 var log = ulog('status_bar');
-// STATUS BAR ///////////////////////////////////////
+/**
+ * @file This file handles the rendering and updating of the status bar in IITC.
+ * @module status_bar
+ */
 
-// gives user feedback about pending operations. Draws current status
-// to website. Updates info in layer chooser.
 window.renderUpdateStatusTimer_ = undefined;
 
+/**
+ * Renders the status bar. This function updates the status bar with information about the current
+ * zoom level (portal levels and link lengths), map data loading progress, and any pending requests or failed requests.
+ * It schedules the update to the next event loop to improve performance and ensure smoother rendering.
+ *
+ * @function renderUpdateStatus
+ */
 window.renderUpdateStatus = function() {
   var progress = 1;
 
@@ -28013,12 +30455,12 @@ IITC.toolbox = {
     buttonElement.textContent = buttonData.label;
     buttonElement.onclick = buttonData.action;
 
-    if (buttonData.class) buttonElement.className = buttonData.class;
-    if (buttonData.title) buttonElement.title = buttonData.title;
-    if (buttonData.access_key) buttonElement.accessKey = buttonData.access_key;
-    if (buttonData.mouseover) buttonElement.mouseover = buttonData.mouseover;
+    if (typeof buttonData.title === 'string') buttonElement.title = buttonData.title;
+    if (typeof buttonData.class === 'string') buttonElement.className = buttonData.class;
+    if (typeof buttonData.access_key === 'string') buttonElement.accessKey = buttonData.access_key;
+    if (typeof buttonData.mouseover === 'string') buttonElement.mouseover = buttonData.mouseover;
 
-    if (buttonData.icon) {
+    if (typeof buttonData.icon === 'string') {
       const iconHTML = `<i class="fa ${buttonData.icon}"></i>`;
       buttonElement.innerHTML = iconHTML + buttonElement.innerHTML;
     }
@@ -28135,11 +30577,23 @@ IITC.toolbox._syncWithLegacyToolbox();
 // *** module: utils_file.js ***
 (function () {
 var log = ulog('utils_file');
-// import/export/sharing API
+/**
+ * @file This file provides utilities for handling files in an environment-independent way, including
+ * functions to save files and wrappers around the FileReader API to integrate with Leaflet's event system.
+ *
+ * @see https://github.com/IITC-CE/ingress-intel-total-conversion/issues/244
+ * @module utils_file
+ */
 
-// misc. utilities to facilitate files handling in environment-independed way
-// see https://github.com/IITC-CE/ingress-intel-total-conversion/issues/244
-
+/**
+ * Saves data as a file with a specified filename and data type.
+ *
+ * @private
+ * @function saveAs
+ * @param {string|BlobPart|BlobPart[]} data - The data to be saved.
+ * @param {string} [filename] - The name of the file to save.
+ * @param {string} [dataType] - The MIME type of the file, used to specify the file format.
+ */
 function saveAs (data,filename,dataType) {
   if (!(data instanceof Array)) { data = [data]; }
   var file = new Blob(data, {type: dataType});
@@ -28156,27 +30610,26 @@ function saveAs (data,filename,dataType) {
   URL.revokeObjectURL(objectURL);
 } // alternative: https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js
 
-// @function saveFile(data: String, filename?: String, dataType? String)
-// Save data to file with given filename, using generic browser routine,
-// or  IITCm file chooser (overwritten in app.js).
-// `dataType` can be set to filter IITCm file chooser filetypes.
+/**
+ * Saves data to a file with the given filename. This function is an alias to the `saveAs` function.
+ * or it can use the IITC Mobile file chooser (overwritten in app.js). The `dataType` parameter can be used to filter
+ * file types in the IITCm file chooser.
+ *
+ * @function saveFile
+ * @param {string|BlobPart|BlobPart[]} data - The data to be saved.
+ * @param {string} [filename] - The name of the file to save.
+ * @param {string} [dataType] - The MIME type of the file, used to specify the file format.
+ */
 window.saveFile = saveAs;
 
-/*
- * @class L.FileReader
- * @inherits L.Evented
+/**
+ * Leaflet wrapper over [FileReader](https://w3c.github.io/FileAPI/#APIASynch) Web API,
+ * making it compatible with the Leaflet event system.
+ * This class extends `L.Evented`.
  *
- * Leaflet wrapper over [`FileReader`](https://w3c.github.io/FileAPI/#APIASynch) Web API,
- * to make it compatible with Leaflet event system.
- *
- * @example
- *
- * ```js
- * L.fileReader(file)
- *   .on('load',function (e) {
- *      console.log(e.file.name,e.reader.result)
- *    });
- * ```
+ * @memberof L
+ * @class FileReader
+ * @extends L.Evented
  */
 L.FileReader = L.Evented.extend({
   options: {
@@ -28215,11 +30668,17 @@ L.FileReader = L.Evented.extend({
     return reader;
   },
 
-  // @method read(file?, options?: Object or String): this
-  // Starts reading the contents of the `file` using [reader method](https://w3c.github.io/FileAPI/#reading-a-file) specified in `options`.
-  // `file` argument is optional only if already specified (in constructor, or in previous call of the method).
-  // `options` argument has the same meaning as in constructor.
-  // Note: all 'init*' event handlers expected to be already attached **before** this method call.
+  /**
+   * Starts reading the contents of the specified file
+   * using [reader method](https://w3c.github.io/FileAPI/#reading-a-file) specified in `options`.
+   * Note: all 'init*' event handlers expected to be already attached **before** this method call.
+   *
+   * @method
+   * @memberof L.FileReader
+   * @param {Blob} [file] - The file or blob to be read. Optional if already set.
+   * @param {Object|string} [options] - Options for file reading. Same as in constructor.
+   * @returns {L.FileReader} Returns the `L.FileReader` instance for chaining.
+   */
   read: function (file, options) {
     if (options) { this._setOptions(options); }
     if (file) {
@@ -28273,11 +30732,20 @@ L.FileReader = L.Evented.extend({
   }
 });
 
-// @factory L.fileReader(file?: Blob, options?: Object or String)
-// Instantiates a `L.FileReader` object given the [`File`/`Blob`](https://w3c.github.io/FileAPI/#dfn-file)
-// and optionally an object literal with `options`.
-// If `file` argument is specified, then `read` method is called immediately.
-// Note: it's possible to specify `readAs` directly instead of full `options` object.
+/**
+ * Factory function to instantiate a `L.FileReader` object.
+ * Instantiates a `L.FileReader` object given the [`File`/`Blob`](https://w3c.github.io/FileAPI/#dfn-file)
+ * and optionally an object literal with `options`.
+ * Note: it's possible to specify `readAs` directly instead of full `options` object.
+ *
+ * @memberof L
+ * @function fileReader
+ * @param {Blob} [file] - The file or blob to be read. Optional.
+ * @param {Object|string} [options] - Options for file reading or a string representing the read method.
+ * @returns {L.FileReader} A new instance of `L.FileReader`.
+ * @example
+ * var reader = L.fileReader(file, { readAs: 'readAsText' });
+ */
 L.fileReader = function (file, options) {
   return new L.FileReader(file, options);
 };
@@ -28297,10 +30765,16 @@ L.FileReader._chooseFiles = function (callback,options) {
   input.remove();
 };
 
-// @function loadFile(options?: Object): Object (L.FileReader instance)
-// Instantiates a `L.FileReader` object, and initiates file chooser dialog
-// simulating click on hidden `input` HTML element, created using given `options`.
-// Calls `read` method with file chosen by user.
+/**
+ * Instantiates a `L.FileReader` object and initiates a file chooser dialog.
+ * This function simulates a click on a hidden file input element created with the given options.
+ * The `read` method is called with the file chosen by the user.
+ *
+ * @function loadFile
+ * @memberof L.FileReader
+ * @param {Object} [options] - Options for the file input element.
+ * @returns {L.FileReader} A new instance of `L.FileReader` with the file to be read.
+ */
 L.FileReader.loadFile = function (options) {
   var reader = new this;
   this._chooseFiles(function (fileList) {
@@ -28309,26 +30783,23 @@ L.FileReader.loadFile = function (options) {
   return reader;
 };
 
-/*
- * @aka L.FileListLoader
- * @inherits L.Evented
+/**
+ * A class for handling a list of files (`FileList`), processing each file with `L.FileReader`.
+ * It extends `L.Evented` to use event handling.
  *
- * Used to handle [FileList](https://w3c.github.io/FileAPI/#filelist-section), processing it as whole.
- * Each `File` will be loaded with `L.FileReader` using common event handlers,
- * including propagated from underlying `L.FileReader`.
- *
+ * @class L.FileListLoader
+ * @extends L.Evented
+ * @param {FileList} fileList - The list of files to be processed.
+ * @param {Object} [options] - Options for file reading.
  * @example
- *
- * ```js
  * L.FileListLoader(fileList)
- *   .on('load',function (e) {
- *      console.log(e.file.name,e.reader.result)
- *    });
- *   .on('loaded',function (e) {
- *      console.log('All done!')
- *    });
+ *   .on('load', function(e) {
+ *     console.log(e.file.name, e.reader.result);
+ *   })
+ *   .on('loaded', function() {
+ *     console.log('All files processed');
+ *   })
  *   .load();
- * ```
  */
 L.FileListLoader = L.Evented.extend({
   options: {
@@ -28378,18 +30849,31 @@ L.FileListLoader = L.Evented.extend({
   }
 });
 
-// @factory L.fileListLoader(fileList?: FileList, options?: Object)
-// Instantiates a `FileListLoader` object given the [`FileList`](https://w3c.github.io/FileAPI/#filelist-section)
-// and optionally an object literal with `options`.
-// If `fileList` argument is specified, then `load` method is called immediately.
+/**
+ * A factory function that instantiates a `FileListLoader` object given the `FileList` and options.
+ *
+ * @memberof L
+ * @function fileListLoader
+ * @param {FileList} [fileList] - The list of files to load.
+ *                                See [FileList](https://w3c.github.io/FileAPI/#filelist-section).
+ *                                If `fileList` argument is specified, then `load` method is called immediately.
+ * @param {Object} [options] - Options for file reading.
+ * @returns {L.FileListLoader} A new FileListLoader instance.
+ */
 L.fileListLoader = function (fileList, options) {
   return new L.FileListLoader(fileList, options);
 };
 
-// @function loadFiles(options?: Object): Object (L.FileListLoader instance)
-// Instantiates a `L.FileListLoader` object, and initiates file chooser dialog
-// simulating click on hidden `input` HTML element, created using specified `options`.
-// Calls `load` method with list of files, chosen by user.
+/**
+ * Instantiates a `L.FileListLoader` object and initiates a file chooser dialog.
+ * This simulates a click on a hidden `input` HTML element created using the specified `options`.
+ * It then calls the `load` method with the list of files chosen by the user.
+ *
+ * @memberof L.FileListLoader
+ * @function loadFiles
+ * @param {Object} [options] - Options for the file input, like `accept`, `multiple`, `capture`.
+ * @returns {L.FileListLoader} A new instance of `L.FileListLoader`.
+ */
 L.FileListLoader.loadFiles = function (options) {
   var loader = new this();
   L.FileReader._chooseFiles(loader.load.bind(loader), options);
@@ -28403,9 +30887,19 @@ L.FileListLoader.loadFiles = function (options) {
 // *** module: utils_misc.js ***
 (function () {
 var log = ulog('utils_misc');
-// UTILS + MISC  ///////////////////////////////////////////////////////
+/**
+ * @file Misc utils
+ *
+ * @module utils_misc
+ */
 
-// retrieves parameter from the URL?query=string.
+/**
+ * Retrieves a parameter from the URL query string.
+ *
+ * @function getURLParam
+ * @param {string} param - The name of the parameter to retrieve.
+ * @returns {string} The value of the parameter, or an empty string if not found.
+ */
 window.getURLParam = function(param) {
   var items = window.location.search.substr(1).split('&');
   if (items == "") return "";
@@ -28422,8 +30916,14 @@ window.getURLParam = function(param) {
   return '';
 }
 
-// read cookie by name.
-// http://stackoverflow.com/a/5639455/1684530 by cwolves
+/**
+ * Reads a cookie by name.
+ * @see http://stackoverflow.com/a/5639455/1684530
+ *
+ * @function readCookie
+ * @param {string} name - The name of the cookie to read.
+ * @returns {string} The value of the cookie, or undefined if not found.
+ */
 window.readCookie = function(name){
   var C, i, c = document.cookie.split('; ');
   var cookies = {};
@@ -28434,33 +30934,65 @@ window.readCookie = function(name){
   return cookies[name];
 }
 
+/**
+ * Writes a cookie with a specified name and value.
+ *
+ * @function writeCookie
+ * @param {string} name - The name of the cookie.
+ * @param {string} val - The value of the cookie.
+ */
 window.writeCookie = function(name, val) {
   var d = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toUTCString();
   document.cookie = name + "=" + val + '; expires='+d+'; path=/';
 }
 
+/**
+ * Erases a cookie with a specified name.
+ *
+ * @function eraseCookie
+ * @param {string} name - The name of the cookie to erase.
+ */
 window.eraseCookie = function(name) {
   document.cookie = name + '=; expires=Thu, 1 Jan 1970 00:00:00 GMT; path=/';
 }
 
-// add thousand separators to given number.
-// http://stackoverflow.com/a/1990590/1684530 by Doug Neiner.
+/**
+ * Adds thousand separators to a given number.
+ * @see http://stackoverflow.com/a/1990590/1684530
+ *
+ * @function digits
+ * @param {number} d - The number to format.
+ * @returns {string} The formatted number with thousand separators.
+ */
 window.digits = function(d) {
   // U+2009 - Thin Space. Recommended for use as a thousands separator...
   // https://en.wikipedia.org/wiki/Space_(punctuation)#Table_of_spaces
   return (d+"").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1&#8201;");
 }
 
-
+/**
+ * Pads a number with zeros up to a specified length.
+ *
+ * @function zeroPad
+ * @param {number} number - The number to pad.
+ * @param {number} pad - The desired length of the output string.
+ * @returns {string} The padded number as a string.
+ */
 window.zeroPad = function(number,pad) {
   number = number.toString();
   var zeros = pad - number.length;
   return Array(zeros>0?zeros+1:0).join("0") + number;
 }
 
-
-// converts javascript timestamps to HH:mm:ss format if it was today;
-// otherwise it returns YYYY-MM-DD
+/**
+ * Converts a UNIX timestamp to a human-readable string.
+ * If the timestamp is from today, returns the time (HH:mm:ss format); otherwise, returns the date (YYYY-MM-DD).
+ *
+ * @function unixTimeToString
+ * @param {number} time - The UNIX timestamp to convert.
+ * @param {boolean} [full] - If true, returns both date and time.
+ * @returns {string|null} The formatted date and/or time.
+ */
 window.unixTimeToString = function(time, full) {
   if(!time) return null;
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
@@ -28474,8 +31006,15 @@ window.unixTimeToString = function(time, full) {
     return date;
 }
 
-// converts a javascript time to a precise date and time (optionally with millisecond precision)
-// formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone
+/**
+ * Converts a UNIX timestamp to a precise date and time string in the local timezone.
+ * Formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone
+ *
+ * @function unixTimeToDateTimeString
+ * @param {number} time - The UNIX timestamp to convert.
+ * @param {boolean} [millisecond] - Whether to include millisecond precision.
+ * @returns {string|null} The formatted date and time string.
+ */
 window.unixTimeToDateTimeString = function(time, millisecond) {
   if(!time) return null;
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
@@ -28483,6 +31022,13 @@ window.unixTimeToDateTimeString = function(time, millisecond) {
     +' '+zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+':'+zeroPad(d.getSeconds(),2)+(millisecond?'.'+zeroPad(d.getMilliseconds(),3):'');
 }
 
+/**
+ * Converts a UNIX timestamp to a time string formatted as HH:mm.
+ *
+ * @function unixTimeToHHmm
+ * @param {number|string} time - The UNIX timestamp to convert.
+ * @returns {string|null} Formatted time as HH:mm.
+ */
 window.unixTimeToHHmm = function(time) {
   if(!time) return null;
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
@@ -28491,6 +31037,14 @@ window.unixTimeToHHmm = function(time) {
   return  h + ':' + s;
 }
 
+/**
+ * Formats an interval of time given in seconds into a human-readable string.
+ *
+ * @function formatInterval
+ * @param {number} seconds - The interval in seconds.
+ * @param {number} [maxTerms] - The maximum number of time units to include.
+ * @returns {string} The formatted time interval.
+ */
 window.formatInterval = function(seconds,maxTerms) {
 
   var d = Math.floor(seconds / 86400);
@@ -28509,10 +31063,22 @@ window.formatInterval = function(seconds,maxTerms) {
   return terms.join(' ');
 }
 
+/**
+ * Formats a distance in meters, converting to kilometers if the distance is over 10,000 meters.
+ *
+ * @function formatDistance
+ * @param {number} distance - The distance in meters.
+ * @returns {string} The formatted distance.
+ */
 window.formatDistance = function (distance) {
   return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
 };
 
+/**
+ * Changes the coordinates and map scale to show the range for portal links.
+ *
+ * @function rangeLinkClick
+ */
 window.rangeLinkClick = function() {
   if(window.portalRangeIndicator)
     window.map.fitBounds(window.portalRangeIndicator.getBounds());
@@ -28520,6 +31086,14 @@ window.rangeLinkClick = function() {
     window.show('map');
 }
 
+/**
+ * Displays a dialog with links to show the specified location on various map services.
+ *
+ * @function showPortalPosLinks
+ * @param {number} lat - Latitude of the location.
+ * @param {number} lng - Longitude of the location.
+ * @param {string} name - Name of the location.
+ */
 window.showPortalPosLinks = function(lat, lng, name) {
   var encoded_name = encodeURIComponent(name);
   var qrcode = '<div id="qrcode"></div>';
@@ -28535,6 +31109,12 @@ window.showPortalPosLinks = function(lat, lng, name) {
   });
 }
 
+/**
+ * Checks if the device is a touch-enabled device.
+ *
+ * @function isTouchDevice
+ * @returns {boolean} True if the device is touch-enabled, otherwise false.
+ */
 window.isTouchDevice = function() {
   return 'ontouchstart' in window // works on most browsers
       || 'onmsgesturechange' in window; // works on ie10
@@ -28546,13 +31126,25 @@ window.androidCopy = function(text) {
   return true; // i.e. execute other actions
 }
 
-// returns number of pixels left to scroll down before reaching the
-// bottom. Works similar to the native scrollTop function.
+/**
+ * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
+ *
+ * @function scrollBottom
+ * @param {string|jQuery} elm - The element to calculate the scroll bottom for.
+ * @returns {number} The number of pixels from the bottom.
+ */
 window.scrollBottom = function(elm) {
   if(typeof elm === 'string') elm = $(elm);
   return elm.get(0).scrollHeight - elm.innerHeight() - elm.scrollTop();
 }
 
+/**
+ * Zooms the map to a specific portal and shows its details if available.
+ *
+ * @function zoomToAndShowPortal
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {L.LatLng} latlng - The latitude and longitude of the portal.
+ */
 window.zoomToAndShowPortal = function(guid, latlng) {
   map.setView(latlng, DEFAULT_ZOOM);
   // if the data is available, render it immediately. Otherwise defer
@@ -28563,6 +31155,14 @@ window.zoomToAndShowPortal = function(guid, latlng) {
     urlPortal = guid;
 }
 
+/**
+ * Selects a portal by its latitude and longitude.
+ *
+ * @function selectPortalByLatLng
+ * @param {number|Array|L.LatLng} lat - The latitude of the portal
+ *                                      or an array or L.LatLng object containing both latitude and longitude.
+ * @param {number} [lng] - The longitude of the portal.
+ */
 window.selectPortalByLatLng = function(lat, lng) {
   if(lng === undefined && lat instanceof Array) {
     lng = lat[1];
@@ -28584,13 +31184,25 @@ window.selectPortalByLatLng = function(lat, lng) {
   map.setView(urlPortalLL, DEFAULT_ZOOM);
 };
 
-// escape a javascript string, so quotes and backslashes are escaped with a backslash
-// (for strings passed as parameters to html onclick="..." for example)
+/**
+ * Escapes special characters in a string for use in JavaScript.
+ * (for strings passed as parameters to html onclick="..." for example)
+ *
+ * @function escapeJavascriptString
+ * @param {string} str - The string to escape.
+ * @returns {string} The escaped string.
+ */
 window.escapeJavascriptString = function(str) {
   return (str+'').replace(/[\\"']/g,'\\$&');
 }
 
-//escape special characters, such as tags
+/**
+ * Escapes HTML special characters in a string.
+ *
+ * @function escapeHtmlSpecialChars
+ * @param {string} str - The string to escape.
+ * @returns {string} The escaped string.
+ */
 window.escapeHtmlSpecialChars = function(str) {
   var div = document.createElement('div');
   var text = document.createTextNode(str);
@@ -28598,16 +31210,36 @@ window.escapeHtmlSpecialChars = function(str) {
   return div.innerHTML;
 }
 
+/**
+ * Formats energy of portal.
+ *
+ * @function prettyEnergy
+ * @param {number} nrg - The energy value to format.
+ * @returns {string} The formatted energy value.
+ */
 window.prettyEnergy = function(nrg) {
   return nrg> 1000 ? Math.round(nrg/1000) + ' k': nrg;
 }
 
+/**
+ * Converts a list of items into a unique array, removing duplicates.
+ *
+ * @function uniqueArray
+ * @param {Array} arr - The array to process.
+ * @returns {Array} A new array containing only unique elements.
+ */
 window.uniqueArray = function(arr) {
   return $.grep(arr, function(v, i) {
     return $.inArray(v, arr) === i;
   });
 }
 
+/**
+ * Generates a four-column HTML table from an array of data blocks.
+ *
+ * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
+ * @returns {string} HTML string representing the constructed table.
+ */
 window.genFourColumnTable = function(blocks) {
   var t = $.map(blocks, function(detail, index) {
     if(!detail) return '';
@@ -28621,9 +31253,13 @@ window.genFourColumnTable = function(blocks) {
   return t;
 }
 
-
-// converts given text with newlines (\n) and tabs (\t) to a HTML
-// table automatically.
+/**
+ * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
+ *
+ * @function convertTextToTableMagic
+ * @param {string} text - The text to convert.
+ * @returns {string} The resulting HTML table.
+ */
 window.convertTextToTableMagic = function(text) {
   // check if it should be converted to a table
   if(!text.match(/\t/)) return text.replace(/\n/g, '<br>');
@@ -28655,12 +31291,30 @@ window.convertTextToTableMagic = function(text) {
   return table;
 }
 
+/**
+ * Clamps a given value between a minimum and maximum value.
+ *
+ * @private
+ * @function clamp
+ * @param {number} n - The value to clamp.
+ * @param {number} max - The maximum allowed value.
+ * @param {number} min - The minimum allowed value.
+ * @returns {number} The clamped value.
+ */
 function clamp(n, max, min) {
   if (n === 0) return 0;
   return n > 0 ? Math.min(n, max) : Math.max(n, min);
 }
 
 var MAX_LATITUDE = 85.051128; // L.Projection.SphericalMercator.MAX_LATITUDE
+
+/**
+ * Clamps a latitude and longitude to the maximum and minimum valid values.
+ *
+ * @function clampLatLng
+ * @param {L.LatLng} latlng - The latitude and longitude to clamp.
+ * @returns {Array<number>} The clamped latitude and longitude.
+ */
 window.clampLatLng = function (latlng) {
   // Ingress accepts requests only for this range
   return [
@@ -28669,6 +31323,13 @@ window.clampLatLng = function (latlng) {
   ];
 }
 
+/**
+ * Clamps a latitude and longitude bounds to the maximum and minimum valid values.
+ *
+ * @function clampLatLngBounds
+ * @param {L.LatLngBounds} bounds - The bounds to clamp.
+ * @returns {L.LatLngBounds} The clamped bounds.
+ */
 window.clampLatLngBounds = function (bounds) {
   var SW = bounds.getSouthWest(), NE = bounds.getNorthEast();
   return L.latLngBounds(clampLatLng(SW), clampLatLng(NE));
@@ -28694,6 +31355,13 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+/**
+ * Determines if a point is inside a polygon.
+ *
+ * @param {Array<L.LatLng>} polygon - The vertices of the polygon.
+ * @param {L.LatLng} point - The point to test.
+ * @returns {boolean} True if the point is inside the polygon, false otherwise.
+ */
 window.pnpoly = function (polygon, point) {
   var inside = 0;
   // j records previous value. Also handles wrapping around.
@@ -28705,17 +31373,29 @@ window.pnpoly = function (polygon, point) {
   return !!inside;
 };
 
+/**
+ * Creates a link to open a specific portal in Ingress Prime.
+ *
+ * @function makePrimeLink
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {number} lat - The latitude of the portal.
+ * @param {number} lng - The longitude of the portal.
+ * @returns {string} The Ingress Prime link for the portal
+ */
 window.makePrimeLink = function (guid, lat, lng) {
   return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
 };
 
-// @function makePermalink(latlng?: LatLng, options?: Object): String
-// Makes the permalink for the portal with specified latlng, possibly including current map view.
-// Portal latlng can be omitted to create mapview-only permalink.
-// @option: includeMapView: Boolean = null
-// Use to add zoom level and latlng of current map center.
-// @option: fullURL: Boolean = null
-// Use to make absolute fully qualified URL (default: relative link).
+/**
+ * Generates a permalink URL based on the specified latitude and longitude and additional options.
+ *
+ * @param {L.LatLng} [latlng] - The latitude and longitude for the permalink.
+ *                              Can be omitted to create mapview-only permalink.
+ * @param {Object} [options] - Additional options for permalink generation.
+ * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
+ * @param {boolean} [options.fullURL] - Generate a fully qualified URL (default: relative link).
+ * @returns {string} The generated permalink URL.
+ */
 window.makePermalink = function (latlng, options) {
   options = options || {};
 
