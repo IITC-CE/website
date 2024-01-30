@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Direction of links on map
 // @category       Tweaks
-// @version        0.2.1.20231016.122701
+// @version        0.2.3.20240130.200755
 // @description    Show the direction of links on the map by adding short dashes to the line at the origin portal.
 // @id             link-show-direction
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,10 +22,22 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-16-122701';
+plugin_info.dateTimeVersion = '2024-01-30-200755';
 plugin_info.pluginId = 'link-show-direction';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.2.3',
+    changes: ['Default value for link show direction mode was set to Static near origin'],
+  },
+  {
+    version: '0.2.2',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 // use own namespace for plugin
 window.plugin.linkShowDirection = function() {};
@@ -153,7 +165,7 @@ window.plugin.linkShowDirection.showDialog = function() {
 
     input.addEventListener('click', function() {
       localStorage['plugin-linkshowdirection-drawtools'] = input.checked.toString();
-      
+
       if(input.checked)
         window.plugin.linkShowDirection.animateLinks();
       else
@@ -175,11 +187,12 @@ window.plugin.linkShowDirection.setup  = function() {
 
   addHook('linkAdded', function(data) { window.plugin.linkShowDirection.addLinkStyle(data.link); });
 
+  const default_mode = 'Static near origin';
   try {
-    window.plugin.linkShowDirection.mode = localStorage['plugin-linkshowdirection-mode'];
-  } catch(e) {
+    window.plugin.linkShowDirection.mode = localStorage['plugin-linkshowdirection-mode'] || default_mode;
+  } catch (e) {
     console.warn(e);
-    window.plugin.linkShowDirection.mode = 'Disabled';
+    window.plugin.linkShowDirection.mode = default_mode;
   }
 
   window.plugin.linkShowDirection.animateLinks();

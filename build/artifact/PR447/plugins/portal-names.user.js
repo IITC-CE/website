@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Portal Names
 // @category       Layer
-// @version        0.2.1.20231016.122701
+// @version        0.2.2.20240130.200755
 // @description    Show portal names on the map.
 // @id             portal-names
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,10 +22,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2023-10-16-122701';
+plugin_info.dateTimeVersion = '2024-01-30-200755';
 plugin_info.pluginId = 'portal-names';
 //END PLUGIN AUTHORS NOTE
 
+/* exported setup, changelog --eslint */
+
+var changelog = [
+  {
+    version: '0.2.2',
+    changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
+  },
+];
 
 // use own namespace for plugin
 window.plugin.portalNames = function() {};
@@ -125,7 +133,7 @@ window.plugin.portalNames.updatePortalLabels = function() {
       if (!buckets[b]) buckets[b] = {};
       buckets[b][guid] = true;
     }
-  }  
+  }
 
   var coveredPortals = {};
 
@@ -139,11 +147,11 @@ window.plugin.portalNames.updatePortalLabels = function() {
                 point.subtract([window.plugin.portalNames.NAME_WIDTH,0]),
                 point.add([window.plugin.portalNames.NAME_WIDTH,window.plugin.portalNames.NAME_HEIGHT])
       );
-  
+
       for (var otherGuid in bucketGuids) {
         if (guid != otherGuid) {
           var otherPoint = portalPoints[otherGuid];
-  
+
           if (largeBounds.contains(otherPoint)) {
             // another portal is within the rectangle for this one's name - so no name for this one
             coveredPortals[guid] = true;
