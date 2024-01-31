@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Cache viewed portals on map
 // @category       Cache
-// @version        0.1.1.20240130.163402
+// @version        0.1.1.20240131.073337
 // @description    Cache the details of recently viewed portals and use this to populate the map when possible
 // @id             cache-portals-on-map
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
