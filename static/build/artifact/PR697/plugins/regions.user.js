@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.3.0.20240130.163402
+// @version        0.3.0.20240131.073337
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-30-163402';
+plugin_info.dateTimeVersion = '2024-01-31-073337';
 plugin_info.pluginId = 'regions';
 //END PLUGIN AUTHORS NOTE
 
@@ -480,16 +480,16 @@ window.plugin.regions.search = function(query) {
 
 window.plugin.regions.getSearchResult = function (match) {
   var faceId = window.plugin.regions.FACE_NAMES.indexOf(match[1]);
-  var id1 = parseInt(match[2])-1;
+  var id1 = parseInt(match[2]) - 1;
   var codeWordId = window.plugin.regions.CODE_WORDS.indexOf(match[3]);
   var id2 = match[4] === undefined ? undefined : parseInt(match[4]);
 
-  if(faceId === -1 || id1 < 0 ||id1 > 15 || codeWordId === -1 || id2 < 0 || id2 > 15) return;
+  if (faceId === -1 || id1 < 0 || id1 > 15 || codeWordId === -1 || id2 < 0 || id2 > 15) return;
 
   // for Odd faces Nia swaps id & codename
   if (faceId & 1) {
     [id1, codeWordId] = [codeWordId, id1];
-  }  
+  }
 
   // looks good. now we need the face/i/j values for this cell face is used as-is
   // id1 is the region 'i' value (first 4 bits), codeword is the 'j' value (first 4 bits)

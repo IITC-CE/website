@@ -2,7 +2,7 @@
 // @author         modos189
 // @name           IITC plugin: Fix maps offsets in China
 // @category       Tweaks
-// @version        0.3.2.20240130.163402
+// @version        0.3.2.20240131.073337
 // @description    Show correct maps for China user by applying offset tweaks.
 // @id             fix-china-map-offset
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
