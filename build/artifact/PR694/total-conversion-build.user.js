@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240131.091554
+// @version        0.37.1.20240203.231351
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-31-091554';
+plugin_info.dateTimeVersion = '2024-02-03-231351';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -95,7 +95,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-31-091554';
+window.iitcBuildDate = '2024-02-03-231351';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -997,10 +997,14 @@ h3.title {\
 }\
 \
 #toolbox {\
+  display: none;\
+}\
+\
+#toolbox, #toolbox_component {\
   text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\
 }\
 \
-#toolbox > a {\
+#toolbox > a, #toolbox_component > a {\
   margin-left: 5px;\
   margin-right: 5px;\
   white-space: nowrap;\
@@ -1431,6 +1435,10 @@ table.artifact .portal {\
   color: #FFCE00;\
   margin: 8px;\
   text-align: center;\
+}\
+\
+.cursor_help {\
+  cursor: help;\
 }\
 \
 /* region scores */\
@@ -2350,42 +2358,45 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 
 // remove body element entirely to remove event listeners
 document.body = document.createElement('body');
-document.body.innerHTML = ''
-  + '<div id="map">Loading, please wait</div>'
-  + '<div id="chatcontrols" style="display:none">'
-  + '<a accesskey="0" title="[0]"><span class="toggle"></span></a>'
-  + '<a accesskey="1" title="[1]">all</a>'
-  + '<a accesskey="2" title="[2]" class="active">faction</a>'
-  + '<a accesskey="3" title="[3]">alerts</a>'
-  + '</div>'
-  + '<div id="chat" style="display:none">'
-  + '  <div id="chatfaction"></div>'
-  + '  <div id="chatall"></div>'
-  + '  <div id="chatalerts"></div>'
-  + '</div>'
-  + '<form id="chatinput" style="display:none"><table><tr>'
-  + '  <td><time></time></td>'
-  + '  <td><mark>tell faction:</mark></td>'
-  + '  <td><input id="chattext" type="text" maxlength="256" accesskey="c" title="[c]" /></td>'
-  + '</tr></table></form>'
-  + '<a id="sidebartoggle" accesskey="i" title="Toggle sidebar [i]"><span class="toggle close"></span></a>'
-  + '<div id="scrollwrapper">' // enable scrolling for small screens
-  + '  <div id="sidebar" style="display: none">'
-  + '    <div id="playerstat">t</div>'
-  + '    <div id="gamestat">&nbsp;loading global control stats</div>'
-  + '    <div id="searchwrapper">'
-  + '      <button title="Current location" id="buttongeolocation"><img src="'+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNjM1OTRFNUE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNjM1OTRFNkE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE2MzU5NEUzQTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE2MzU5NEU0QTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+kxvtEgAAAWVJREFUeNqsVctRwzAUlDTccQlxB3RA0kHSQXLxNXEFgQrsHO1L6AA6cKgAd4BLEBXAU2YfszY2oMCb2Rlbelqv3s+2qiozYjPBVjAX3Az2WsFJcBB0WZb1Nt0IWSF4FexGyAzWdvAp6rpOpgjDxgucg3lBKViRzz3WPN6Db8OkjsgaUvQgSAW54IkI77CWwkcVN0PCPZFtAG+mzZPfmVRUhlAZK0mZIR6qbGPi7ChY4zl1yKZ+NTfxltNttg6loep8LJuUjad4zh3F7s1cbs8ayxDD9xEH+0uiL2ed+WdjwhWU2YjzVmJoUfCfhC2eb/8g7Fr73KHRDWopiWVC22kdnhymhrZfcYG6goQcAmGHhleV64lsjlUD+5cSz85RtbfUSscfrp+Qn87Ic2KuyGlBEyd8dYkO4IJfInkc70C2QMf0CD1I95hzCc1GtcfBe7hm/l1he5p3JYVh+AsoaV727EOAAQAWgF3ledLuQAAAAABJRU5ErkJggg=='+'" alt="Current location"/></button>'
-  + '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>'
-  + '    </div>'
-  + '    <div id="portaldetails"></div>'
-  + '    <input id="redeem" placeholder="Redeem code…" type="text"/>'
-  + '    <div id="toolbox"></div>'
-  + '  </div>'
-  + '</div>'
-  + '<div id="updatestatus"><div id="innerstatus"></div></div>'
+document.body.innerHTML =
+  '<div id="map">Loading, please wait</div>' +
+  '<div id="chatcontrols" style="display:none">' +
+  '<a accesskey="0" title="[0]"><span class="toggle"></span></a>' +
+  '<a accesskey="1" title="[1]">all</a>' +
+  '<a accesskey="2" title="[2]" class="active">faction</a>' +
+  '<a accesskey="3" title="[3]">alerts</a>' +
+  '</div>' +
+  '<div id="chat" style="display:none">' +
+  '  <div id="chatfaction"></div>' +
+  '  <div id="chatall"></div>' +
+  '  <div id="chatalerts"></div>' +
+  '</div>' +
+  '<form id="chatinput" style="display:none"><table><tr>' +
+  '  <td><time></time></td>' +
+  '  <td><mark>tell faction:</mark></td>' +
+  '  <td><input id="chattext" type="text" maxlength="256" accesskey="c" title="[c]" /></td>' +
+  '</tr></table></form>' +
+  '<a id="sidebartoggle" accesskey="i" title="Toggle sidebar [i]"><span class="toggle close"></span></a>' +
+  '<div id="scrollwrapper">' + // enable scrolling for small screens
+  '  <div id="sidebar" style="display: none">' +
+  '    <div id="playerstat">t</div>' +
+  '    <div id="gamestat">&nbsp;loading global control stats</div>' +
+  '    <div id="searchwrapper">' +
+  '      <button title="Current location" id="buttongeolocation"><img src="' +
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNjM1OTRFNUE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNjM1OTRFNkE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE2MzU5NEUzQTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE2MzU5NEU0QTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+kxvtEgAAAWVJREFUeNqsVctRwzAUlDTccQlxB3RA0kHSQXLxNXEFgQrsHO1L6AA6cKgAd4BLEBXAU2YfszY2oMCb2Rlbelqv3s+2qiozYjPBVjAX3Az2WsFJcBB0WZb1Nt0IWSF4FexGyAzWdvAp6rpOpgjDxgucg3lBKViRzz3WPN6Db8OkjsgaUvQgSAW54IkI77CWwkcVN0PCPZFtAG+mzZPfmVRUhlAZK0mZIR6qbGPi7ChY4zl1yKZ+NTfxltNttg6loep8LJuUjad4zh3F7s1cbs8ayxDD9xEH+0uiL2ed+WdjwhWU2YjzVmJoUfCfhC2eb/8g7Fr73KHRDWopiWVC22kdnhymhrZfcYG6goQcAmGHhleV64lsjlUD+5cSz85RtbfUSscfrp+Qn87Ic2KuyGlBEyd8dYkO4IJfInkc70C2QMf0CD1I95hzCc1GtcfBe7hm/l1he5p3JYVh+AsoaV727EOAAQAWgF3ledLuQAAAAABJRU5ErkJggg==' +
+  '" alt="Current location"/></button>' +
+  '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>' +
+  '    </div>' +
+  '    <div id="portaldetails"></div>' +
+  '    <input id="redeem" placeholder="Redeem code…" type="text"/>' +
+  '    <div id="toolbox"></div>' +
+  '    <div id="toolbox_component"></div>' +
+  '  </div>' +
+  '</div>' +
+  '<div id="updatestatus"><div id="innerstatus"></div></div>' +
   // avoid error by stock JS
-  + '<div id="play_button"></div>'
-  + '<div id="header"><div id="nav"></div></div>';
+  '<div id="play_button"></div>' +
+  '<div id="header"><div id="nav"></div></div>';
 
 /* ****************************************************************************************************************** */
 
@@ -3282,6 +3293,8 @@ window.runOnAppAfterBoot = function () {
 // *** module: artifact.js ***
 (function () {
 var log = ulog('artifact');
+/* global IITC -- eslint */
+
 /**
  * @file Provides functions related to Ingress artifacts, including setup, data request, and processing functions.
  * Added as part of the ingress #13magnus in november 2013, artifacts
@@ -3319,14 +3332,12 @@ window.artifact.setup = function() {
   artifact._layer = new L.LayerGroup();
   window.layerChooser.addOverlay(artifact._layer, 'Artifacts');
 
-  $('<a>')
-    .html('Artifacts')
-    .attr({
-      id: 'artifacts-toolbox-link',
-      title: 'Show artifact portal list'
-    })
-    .click(window.artifact.showArtifactList)
-    .appendTo('#toolbox');
+  IITC.toolbox.addButton({
+    id: 'artifacts-toolbox-link',
+    label: 'Artifacts',
+    title: 'Show artifact portal list',
+    action: window.artifact.showArtifactList,
+  });
 }
 
 /**
@@ -3927,7 +3938,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-31-091554');
+  log.log('loading done, booting. Built: '+'2024-02-03-231351');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -25664,7 +25675,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 // *** module: ornaments.js ***
 (function () {
 var log = ulog('ornaments');
-/* global L, dialog, log */
+/* global L, dialog, log, IITC */
 
 /**
  * @namespace window.ornaments
@@ -25763,13 +25774,13 @@ window.ornaments = {
     window.layerChooser.addOverlay(this.layers['Ornaments'], 'Ornaments');
     window.layerChooser.addOverlay(this.layers['Excluded ornaments'], 'Excluded ornaments', {default: false});
 
-    $('<a>', {
-      text:'Ornaments Opt',
+    IITC.toolbox.addButton({
       id: 'ornaments-toolbox-link',
+      label: 'Ornaments Opt',
       title: 'Edit ornament exclusions',
       accesskey: 'o',
-      click: window.ornaments.ornamentsOpt})
-      .appendTo('#toolbox');
+      action: window.ornaments.ornamentsOpt,
+    });
   },
 
   /**
@@ -28035,6 +28046,8 @@ window.setupRedeem = function() {
 // *** module: region_scoreboard.js ***
 (function () {
 var log = ulog('region_scoreboard');
+/* global IITC -- eslint */
+
 /**
  * @file This file contains the code for displaying and handling the regional scoreboard.
  * @module region_scoreboard
@@ -28515,14 +28528,12 @@ window.RegionScoreboardSetup = (function() {
         }
       });
     } else {
-      $('<a>')
-        .html('Region scores')
-        .attr({
-          id: 'scoreboard',
-          title: 'View regional scoreboard'
-        })
-        .click(showDialog)
-        .appendTo('#toolbox');
+      IITC.toolbox.addButton({
+        id: 'scoreboard',
+        label: 'Region scores',
+        title: 'View regional scoreboard',
+        action: showDialog,
+      });
     }
   }
 }());
@@ -29537,6 +29548,8 @@ window.outOfDateUserPrompt = function()
 // *** module: sidebar.js ***
 (function () {
 var log = ulog('sidebar');
+/* global IITC -- eslint */
+
 /**
  * @file This file provides functions for working with the sidebar.
  * @module sidebar
@@ -29720,24 +29733,20 @@ function setPermaLink () {
  * @function setupAddons
  */
 function setupAddons () {
-  $('<a>')
-    .html('Permalink')
-    .attr({
-      id: 'permalink',
-      title: 'URL link to this map view'
-    })
-    .on({
-      mouseover: setPermaLink,
-      click: setPermaLink
-    })
-    .appendTo('#toolbox');
+  IITC.toolbox.addButton({
+    id: 'permalink',
+    label: 'Permalink',
+    title: 'URL link to this map view',
+    action: setPermaLink,
+    mouseover: setPermaLink,
+  });
 
-  $('<a>')
-    .html('About IITC')
-    .attr('id', 'about-iitc')
-    .css('cursor', 'help')
-    .click(aboutIITC)
-    .appendTo('#toolbox');
+  IITC.toolbox.addButton({
+    id: 'about-iitc',
+    label: 'About IITC',
+    action: window.aboutIITC,
+    class: 'cursor_help',
+  });
 
   window.artifact.setup();
 
@@ -30044,7 +30053,7 @@ body {\
   border: 2px outset #20A8B1;\
 }\
 \
-#toolbox > a {\
+#toolbox > a, #toolbox_component > a {\
   padding: 5px;\
   margin-top: 3px;\
   margin-bottom: 3px;\
@@ -30313,6 +30322,253 @@ window.renderUpdateStatus = function() {
   }, 0);
 
 }
+
+
+})();
+
+
+// *** module: toolbox.js ***
+(function () {
+var log = ulog('toolbox');
+/* global IITC */
+
+/**
+ * Toolbox API
+ *
+ * @memberof IITC
+ * @namespace toolbox
+ */
+
+/**
+ * @typedef {Object} ButtonArgs
+ * @property {string} [id] - Optional. The ID of the button.
+ * @property {string|undefined} label - The label text of the button.
+ * @property {Function|undefined} action - The onclick action for the button.
+ * @property {string|null} [class] - Optional. The class(es) for the button.
+ * @property {string|null} [title] - Optional. The title (tooltip) for the button.
+ * @property {string|null} [access_key] - Optional. The access key for the button.
+ * @property {Function|null} [mouseover] - Optional. The mouseover event for the button.
+ * @property {string|null} [icon] - Optional. Icon name from FontAwesome for the button.
+ */
+
+IITC.toolbox = {
+  buttons: {},
+  _defaultSortMethod: (a, b) => a.label.localeCompare(b.label),
+  sortMethod: (...args) => IITC.toolbox._defaultSortMethod(...args),
+
+  /**
+   * Adds a button to the toolbox.
+   *
+   * @param {ButtonArgs} buttonArgs - The arguments for the button.
+   * @returns {string|null} The ID of the added button or null if required parameters are missing.
+   *
+   * @example
+   * const buttonId = IITC.toolbox.addButton({
+   *   label: 'AboutIITC',
+   *   action: window.AboutIITC
+   * });
+   *
+   * @example
+   * const buttonId = IITC.toolbox.addButton({
+   *   label: 'Test Button',
+   *   action: () => alert('Clicked!')
+   * });
+   */
+  addButton(buttonArgs) {
+    if (!buttonArgs.label) {
+      console.warn('Required parameter "label" are missing.');
+      return null;
+    }
+
+    if (!buttonArgs.action) {
+      console.warn('Required parameter "action" are missing.');
+      return null;
+    }
+
+    let id = buttonArgs.id || `toolbox-btn-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    this.buttons[id] = buttonArgs;
+
+    this._renderButton(id);
+    this._applySort();
+
+    return id;
+  },
+
+  /**
+   * Updates an existing button in the toolbox.
+   *
+   * @param {string} buttonId - The ID of the button to update.
+   * @param {ButtonArgs} newButtonArgs - The new arguments for the button.
+   * @returns {boolean} True if the button is successfully updated, false otherwise.
+   *
+   * @example
+   * const isUpdated = IITC.toolbox.updateButton(buttonId, { label: 'Updated Button', action: () => console.log('New Action') });
+   */
+  updateButton(buttonId, newButtonArgs) {
+    if (this.buttons[buttonId]) {
+      Object.assign(this.buttons[buttonId], newButtonArgs);
+      this._renderButton(buttonId);
+      this._applySort();
+      return true;
+    } else {
+      console.warn(`Button with ID ${buttonId} not found.`);
+      return false;
+    }
+  },
+
+  /**
+   * Removes a button from the toolbox.
+   *
+   * @param {string} buttonId - The ID of the button to remove.
+   * @returns {boolean} True if the button is successfully removed, false otherwise.
+   *
+   * @example
+   * const isRemoved = IITC.toolbox.removeButton(buttonId);
+   */
+  removeButton(buttonId) {
+    if (this.buttons[buttonId]) {
+      delete this.buttons[buttonId];
+      const buttonElement = document.getElementById(buttonId);
+      if (buttonElement) {
+        buttonElement.remove();
+      }
+      this._applySort();
+      return true;
+    } else {
+      console.warn(`Button with ID ${buttonId} not found for removal.`);
+      return false;
+    }
+  },
+
+  /**
+   * Internal method to render a button.
+   *
+   * @private
+   * @param {string} buttonId - The ID of the button to render.
+   */
+  _renderButton(buttonId) {
+    const buttonData = this.buttons[buttonId];
+    if (!buttonData) return; // The button with the given ID was not found
+
+    let buttonElement = document.getElementById(buttonId) || document.createElement('a');
+    buttonElement.id = buttonId;
+    buttonElement.textContent = buttonData.label;
+    buttonElement.onclick = buttonData.action;
+
+    if (typeof buttonData.title === 'string') buttonElement.title = buttonData.title;
+    if (typeof buttonData.class === 'string') buttonElement.className = buttonData.class;
+    if (typeof buttonData.access_key === 'string') buttonElement.accessKey = buttonData.access_key;
+    if (typeof buttonData.mouseover === 'string') buttonElement.mouseover = buttonData.mouseover;
+
+    if (typeof buttonData.icon === 'string') {
+      const iconHTML = `<i class="fa ${buttonData.icon}"></i>`;
+      buttonElement.innerHTML = iconHTML + buttonElement.innerHTML;
+    }
+
+    const toolbox_component = document.querySelector('#toolbox_component');
+    if (!document.getElementById(buttonId)) {
+      toolbox_component.appendChild(buttonElement);
+    }
+  },
+
+  /**
+   * Internal method to apply sorting to the buttons.
+   *
+   * @private
+   */
+  _applySort() {
+    const toolbox_component = document.querySelector('#toolbox_component');
+    const buttonElements = Array.from(toolbox_component.children);
+
+    try {
+      buttonElements.sort((a, b) => this.sortMethod(this.buttons[a.id], this.buttons[b.id]));
+    } catch (e) {
+      console.error('Sorting function produced error', e);
+      buttonElements.sort((a, b) => this._defaultSortMethod(this.buttons[a.id], this.buttons[b.id]));
+    }
+    buttonElements.forEach((buttonElement) => toolbox_component.appendChild(buttonElement));
+  },
+
+  /**
+   * Sets the sorting method for the toolbox buttons.
+   *
+   * @param {Function} sortMethod - The sorting method to be used.
+   * @returns {void}
+   *
+   * @example
+   * IITC.toolbox.setSortMethod((a, b) => a.label.localeCompare(b.label));
+   */
+  setSortMethod(sortMethod) {
+    this.sortMethod = sortMethod;
+    this._applySort();
+  },
+
+  /**
+   * Internal method to synchronize the toolbox with the legacy toolbox.
+   *
+   * @private
+   * @returns {void}
+   */
+  _syncWithLegacyToolbox() {
+    // Select the old toolbox element
+    const oldToolbox = document.querySelector('#toolbox');
+
+    // Function to process an individual button
+    const processButton = (node) => {
+      // Check if the node is an 'A' tag (anchor/link, which represents a button)
+      if (node.tagName === 'A') {
+        let iconClass = null;
+        // Find an icon element within the button, if it exists
+        const iconElement = node.querySelector('i.fa');
+        if (iconElement) {
+          // Extract the icon class
+          const iconClasses = Array.from(iconElement.classList).filter((cls) => cls.startsWith('fa-'));
+          if (iconClasses.length > 0) iconClass = iconClasses[0];
+        }
+
+        // Prepare the button arguments for either updating or adding the button
+        const buttonArgs = {
+          id: node.id,
+          label: node.textContent.trim(),
+          action: () => node.click(),
+          class: node.className,
+          title: node.title,
+          access_key: node.accessKey,
+          mouseover: node.mouseover,
+          icon: iconClass,
+        };
+
+        // Update an existing button or add a new one
+        buttonArgs['id'] = `legacy-toolbox-btn-${buttonArgs.id || buttonArgs.label}`;
+        if (this.buttons[buttonArgs.id]) {
+          this.updateButton(buttonArgs.id, buttonArgs);
+        } else {
+          this.addButton(buttonArgs);
+        }
+      }
+    };
+
+    // Initialize for existing buttons in the toolbox
+    oldToolbox.querySelectorAll('a').forEach(processButton);
+
+    // Mutation observer to watch for changes in the toolbox
+    const observer = new MutationObserver((mutations) => {
+      // Iterate through mutations
+      mutations.forEach((mutation) => {
+        // Process each added node and attribute changes
+        mutation.addedNodes.forEach(processButton);
+        if (mutation.type === 'attributes') {
+          processButton(mutation.target);
+        }
+      });
+    });
+
+    // Start observing the toolbox for changes
+    observer.observe(oldToolbox, { childList: true, subtree: true, attributes: true });
+  },
+};
+
+IITC.toolbox._syncWithLegacyToolbox();
 
 
 })();
