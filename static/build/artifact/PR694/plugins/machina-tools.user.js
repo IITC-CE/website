@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.1.20240131.091554
+// @version        0.8.1.20240203.231351
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,12 +22,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-31-091554';
+plugin_info.dateTimeVersion = '2024-02-03-231351';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global , digits, L, map, dialog, getPortalLinks, portalDetail, turf */
+/* global , digits, L, map, dialog, getPortalLinks, portalDetail, turf, IITC */
 
 var changelog = [
   {
@@ -818,18 +818,16 @@ function setupHooks() {
 }
 
 function setupToolBoxLinks() {
-  let toolbox = $('#toolbox');
-  $('<a>', {
+  IITC.toolbox.addButton({
+    label: 'Conflict Area Info',
     title: 'Conflict Area Info',
-    click: machinaTools.showConflictAreaInfoDialog,
-    html: 'Conflict Area Info',
-  }).appendTo(toolbox);
-
-  $('<a>', {
+    action: machinaTools.showConflictAreaInfoDialog,
+  });
+  IITC.toolbox.addButton({
+    label: 'Machina Clusters',
     title: 'Display Visible Machina Clusters Info',
-    click: machinaTools.showClustersDialog,
-    html: 'Machina Clusters',
-  }).appendTo(toolbox);
+    action: machinaTools.showClustersDialog,
+  });
 }
 
 function setupControlButtons() {

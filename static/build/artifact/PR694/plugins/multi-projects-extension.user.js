@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.2.20240131.091554
+// @version        0.1.2.20240203.231351
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,10 +22,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-31-091554';
+plugin_info.dateTimeVersion = '2024-02-03-231351';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
+/* global IITC -- eslint */
 /* exported setup, changelog --eslint */
 
 var changelog = [
@@ -284,7 +285,12 @@ window.plugin.mpe.ui.redrawHTMLOptions = function(PJ){
 }
 
 window.plugin.mpe.ui.addControl = function(){
-  $('#toolbox').append('<a class="list-group-item" onclick="window.plugin.mpe.dialog.openMain();return false;"><i class="fa fa-files-o"></i>MultiProjects</a>');
+  IITC.toolbox.addButton({
+    label: 'MultiProjects',
+    action: window.plugin.mpe.dialog.openMain,
+    class: 'list-group-item',
+    icon: 'fa-files-o',
+  });
 }
 window.plugin.mpe.ui.appendContainerInSidebar = function(){
   if(!$('#multi-projects.mpeSidebar').length){
