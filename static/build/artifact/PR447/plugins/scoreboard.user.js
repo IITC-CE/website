@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.3.3.20240130.200755
+// @version        0.3.3.20240204.191155
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -22,10 +22,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-30-200755';
+plugin_info.dateTimeVersion = '2024-02-04-191155';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 
+/* global IITC -- eslint */
 /* exported setup, changelog --eslint */
 
 var changelog = [
@@ -188,11 +189,11 @@ function setup () {
       }
     });
   } else {
-    $('<a>')
-      .html('Scoreboard')
-      .attr('title','Display a dynamic scoreboard in the current view')
-      .click(displayScoreboard)
-      .appendTo('#toolbox');
+    IITC.toolbox.addButton({
+      label: 'Scoreboard',
+      title: 'Display a dynamic scoreboard in the current view',
+      action: displayScoreboard,
+    });
   }
 
   $('<style>').html('\

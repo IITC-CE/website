@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.2.20240130.200755
+// @version        0.4.2.20240204.191155
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,11 +22,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-30-200755';
+plugin_info.dateTimeVersion = '2024-02-04-191155';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
-/* global plugin -- eslint */
+/* global IITC, plugin -- eslint */
 
 // use own namespace for plugin
 window.plugin.portalslist = function() {};
@@ -483,7 +483,12 @@ var setup =  function() {
     app.addPane("plugin-portalslist", "Portals list", "ic_action_paste");
     addHook("paneChanged", window.plugin.portalslist.onPaneChanged);
   } else {
-    $('#toolbox').append('<a onclick="window.plugin.portalslist.displayPL()" title="Display a list of portals in the current view [t]" accesskey="t">Portals list</a>');
+    IITC.toolbox.addButton({
+      label: 'Portals list',
+      title: 'Display a list of portals in the current view [t]',
+      action: window.plugin.portalslist.displayPL,
+      accesskey: 't',
+    });
   }
 
   $("<style>")
