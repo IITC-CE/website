@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.5.0.20240130.200755
+// @version        0.5.0.20240204.191155
 // @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,11 +22,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-30-200755';
+plugin_info.dateTimeVersion = '2024-02-04-191155';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 
-/* global gapi -- eslint */
+/* global gapi, IITC -- eslint */
 
 ////////////////////////////////////////////////////////////////////////
 // Notice for developers:
@@ -743,7 +743,9 @@ window.plugin.sync.toggleDialogLink = function() {
   authed = plugin.sync.authorizer.isAuthed();
   anyFail = plugin.sync.registeredPluginsFields.anyFail;
 
-  $('#sync-show-dialog').toggleClass('sync-show-dialog-error', !authed || anyFail);
+  IITC.toolbox.updateButton('sync-show-dialog', {
+    class: !authed || anyFail ? 'sync-show-dialog-error' : '',
+  });
 };
 
 window.plugin.sync.showDialog = function() {
@@ -760,7 +762,11 @@ window.plugin.sync.setupDialog = function() {
                          + 'disabled="disabled">Authorize</button>'
                          + '<div id="sync-log"></div>'
                          + '</div>';
-  $('#toolbox').append('<a id="sync-show-dialog" onclick="window.plugin.sync.showDialog();">Sync</a> ');
+  IITC.toolbox.addButton({
+    id: 'sync-show-dialog',
+    label: 'Sync',
+    action: window.plugin.sync.showDialog,
+  });
 };
 
 window.plugin.sync.setupCSS = function() {

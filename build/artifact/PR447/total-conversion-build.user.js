@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240130.200755
+// @version        0.37.1.20240204.191155
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-01-30-200755';
+plugin_info.dateTimeVersion = '2024-02-04-191155';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -95,7 +95,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-01-30-200755';
+window.iitcBuildDate = '2024-02-04-191155';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -1010,10 +1010,14 @@ h3.title {\
 }\
 \
 #toolbox {\
+  display: none;\
+}\
+\
+#toolbox, #toolbox_component {\
   text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\
 }\
 \
-#toolbox > a {\
+#toolbox > a, #toolbox_component > a {\
   margin-left: 5px;\
   margin-right: 5px;\
   white-space: nowrap;\
@@ -1444,6 +1448,10 @@ table.artifact .portal {\
   color: #FFCE00;\
   margin: 8px;\
   text-align: center;\
+}\
+\
+.cursor_help {\
+  cursor: help;\
 }\
 \
 /* region scores */\
@@ -2363,36 +2371,38 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 
 // remove body element entirely to remove event listeners
 document.body = document.createElement('body');
-document.body.innerHTML = ''
-  + '<div id="map">Loading, please wait</div>'
-  + '<div id="chatcontrols" style="display:none">'
-  + '<a accesskey="0" title="[0]"><span class="toggle"></span></a>'
-  + '</div>'
-  + '<div id="chat" style="display:none">'
-  + '</div>'
-  + '<form id="chatinput" style="display:none"><table><tr>'
-  + '  <td><time></time></td>'
-  + '  <td><mark>tell faction:</mark></td>'
-  + '  <td><input id="chattext" type="text" maxlength="256" accesskey="c" title="[c]" /></td>'
-  + '</tr></table></form>'
-  + '<a id="sidebartoggle" accesskey="i" title="Toggle sidebar [i]"><span class="toggle close"></span></a>'
-  + '<div id="scrollwrapper">' // enable scrolling for small screens
-  + '  <div id="sidebar" style="display: none">'
-  + '    <div id="playerstat">t</div>'
-  + '    <div id="gamestat">&nbsp;loading global control stats</div>'
-  + '    <div id="searchwrapper">'
-  + '      <button title="Current location" id="buttongeolocation"><img src="'+'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNjM1OTRFNUE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNjM1OTRFNkE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE2MzU5NEUzQTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE2MzU5NEU0QTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+kxvtEgAAAWVJREFUeNqsVctRwzAUlDTccQlxB3RA0kHSQXLxNXEFgQrsHO1L6AA6cKgAd4BLEBXAU2YfszY2oMCb2Rlbelqv3s+2qiozYjPBVjAX3Az2WsFJcBB0WZb1Nt0IWSF4FexGyAzWdvAp6rpOpgjDxgucg3lBKViRzz3WPN6Db8OkjsgaUvQgSAW54IkI77CWwkcVN0PCPZFtAG+mzZPfmVRUhlAZK0mZIR6qbGPi7ChY4zl1yKZ+NTfxltNttg6loep8LJuUjad4zh3F7s1cbs8ayxDD9xEH+0uiL2ed+WdjwhWU2YjzVmJoUfCfhC2eb/8g7Fr73KHRDWopiWVC22kdnhymhrZfcYG6goQcAmGHhleV64lsjlUD+5cSz85RtbfUSscfrp+Qn87Ic2KuyGlBEyd8dYkO4IJfInkc70C2QMf0CD1I95hzCc1GtcfBe7hm/l1he5p3JYVh+AsoaV727EOAAQAWgF3ledLuQAAAAABJRU5ErkJggg=='+'" alt="Current location"/></button>'
-  + '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>'
-  + '    </div>'
-  + '    <div id="portaldetails"></div>'
-  + '    <input id="redeem" placeholder="Redeem code…" type="text"/>'
-  + '    <div id="toolbox"></div>'
-  + '  </div>'
-  + '</div>'
-  + '<div id="updatestatus"><div id="innerstatus"></div></div>'
+document.body.innerHTML =
+  '<div id="map">Loading, please wait</div>' +
+  '<div id="chatcontrols" style="display:none">' +
+  '<a accesskey="0" title="[0]"><span class="toggle"></span></a>' +
+  '</div>' +
+  '<div id="chat" style="display:none"></div>' +
+  '<form id="chatinput" style="display:none"><table><tr>' +
+  '  <td><time></time></td>' +
+  '  <td><mark>tell faction:</mark></td>' +
+  '  <td><input id="chattext" type="text" maxlength="256" accesskey="c" title="[c]" /></td>' +
+  '</tr></table></form>' +
+  '<a id="sidebartoggle" accesskey="i" title="Toggle sidebar [i]"><span class="toggle close"></span></a>' +
+  '<div id="scrollwrapper">' + // enable scrolling for small screens
+  '  <div id="sidebar" style="display: none">' +
+  '    <div id="playerstat">t</div>' +
+  '    <div id="gamestat">&nbsp;loading global control stats</div>' +
+  '    <div id="searchwrapper">' +
+  '      <button title="Current location" id="buttongeolocation"><img src="' +
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNjM1OTRFNUE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNjM1OTRFNkE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE2MzU5NEUzQTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE2MzU5NEU0QTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+kxvtEgAAAWVJREFUeNqsVctRwzAUlDTccQlxB3RA0kHSQXLxNXEFgQrsHO1L6AA6cKgAd4BLEBXAU2YfszY2oMCb2Rlbelqv3s+2qiozYjPBVjAX3Az2WsFJcBB0WZb1Nt0IWSF4FexGyAzWdvAp6rpOpgjDxgucg3lBKViRzz3WPN6Db8OkjsgaUvQgSAW54IkI77CWwkcVN0PCPZFtAG+mzZPfmVRUhlAZK0mZIR6qbGPi7ChY4zl1yKZ+NTfxltNttg6loep8LJuUjad4zh3F7s1cbs8ayxDD9xEH+0uiL2ed+WdjwhWU2YjzVmJoUfCfhC2eb/8g7Fr73KHRDWopiWVC22kdnhymhrZfcYG6goQcAmGHhleV64lsjlUD+5cSz85RtbfUSscfrp+Qn87Ic2KuyGlBEyd8dYkO4IJfInkc70C2QMf0CD1I95hzCc1GtcfBe7hm/l1he5p3JYVh+AsoaV727EOAAQAWgF3ledLuQAAAAABJRU5ErkJggg==' +
+  '" alt="Current location"/></button>' +
+  '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>' +
+  '    </div>' +
+  '    <div id="portaldetails"></div>' +
+  '    <input id="redeem" placeholder="Redeem code…" type="text"/>' +
+  '    <div id="toolbox"></div>' +
+  '    <div id="toolbox_component"></div>' +
+  '  </div>' +
+  '</div>' +
+  '<div id="updatestatus"><div id="innerstatus"></div></div>' +
   // avoid error by stock JS
-  + '<div id="play_button"></div>'
-  + '<div id="header"><div id="nav"></div></div>';
+  '<div id="play_button"></div>' +
+  '<div id="header"><div id="nav"></div></div>';
 
 /* ****************************************************************************************************************** */
 
@@ -3289,6 +3299,8 @@ window.runOnAppAfterBoot = function () {
 // *** module: artifact.js ***
 (function () {
 var log = ulog('artifact');
+/* global IITC -- eslint */
+
 /**
  * @file Provides functions related to Ingress artifacts, including setup, data request, and processing functions.
  * Added as part of the ingress #13magnus in november 2013, artifacts
@@ -3326,14 +3338,12 @@ window.artifact.setup = function() {
   artifact._layer = new L.LayerGroup();
   window.layerChooser.addOverlay(artifact._layer, 'Artifacts');
 
-  $('<a>')
-    .html('Artifacts')
-    .attr({
-      id: 'artifacts-toolbox-link',
-      title: 'Show artifact portal list'
-    })
-    .click(window.artifact.showArtifactList)
-    .appendTo('#toolbox');
+  IITC.toolbox.addButton({
+    id: 'artifacts-toolbox-link',
+    label: 'Artifacts',
+    title: 'Show artifact portal list',
+    action: window.artifact.showArtifactList,
+  });
 }
 
 /**
@@ -3934,7 +3944,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-01-30-200755');
+  log.log('loading done, booting. Built: '+'2024-02-04-191155');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19797,11 +19807,11 @@ if (document.readyState === 'complete') { // IITCm
 var log = ulog('chat');
 /**
  * @file Namespace for chat-related functionalities.
- * @namespace window.chat
+ *
+ * @namespace chat
  */
-
-window.chat = function () {};
-var chat = window.chat;
+var chat = function () {};
+window.chat = chat;
 
 //
 // common
@@ -19853,26 +19863,45 @@ chat.nicknameClicked = function (event, nickname) {
 // you can add channels from another source provider (message relay, logging from plugins...)
 
 /**
+ * Hold channel description
+ *
+ * See comm.js for examples
+ * @typedef {Object} chat.ChannelDescription
+ * @property {string} id - uniq id, matches 'tab' parameter for server requests
+ * @property {string} name - visible name
+ * @property {string} [inputPrompt] - (optional) string for the input prompt
+ * @property {string} [inputClass] - (optional) class to apply to #chatinput
+ * @property {chat.ChannelSendMessageFn} [sendMessage] - (optional) function to send the message
+ * @property {chat.ChannelRequestFn} [request] - (optional) function to call to request new message
+ * @property {chat.ChannelRenderFn} [render] - (optional) function to render channel content,, called on tab change
+ * @property {boolean} [localBounds] - (optional) if true, reset on view change
+ */
+/**
+ * @callback chat.ChannelSendMessageFn
+ * @param {string} id - channel id
+ * @param {string} message - input message
+ * @returns {void}
+ */
+/**
+ * @callback chat.ChannelRequestFn
+ * @param {string} id - channel id
+ * @param {boolean} getOlderMsgs - true if request data from a scroll to top
+ * @param {boolean} isRetry
+ * @returns {void}
+ */
+/**
+ * @callback chat.ChannelRenderFn
+ * @param {string} id - channel id
+ * @param {boolean} oldMsgsWereAdded - true if data has been added at the top (to preserve scroll position)
+ * @returns {void}
+ */
+
+/**
  * Holds channels infos.
  *
- * @memberof window.chat
- * @type {Object}
+ * @type {chat.ChannelDescription[]}
  */
-chat.channels = [
-  // id: uniq id, matches 'tab' parameter for server requests
-  // name: visible name
-  // inputPrompt: (optional) string for the input prompt
-  // inputClass: (optional) class to apply to #chatinput
-  // sendMessage(id, msg): (optional) function to send the message
-  //              first argument is `id`
-  // request(id, getOlderMsgs, isRetry): (optional) function to call
-  //          to request new message, first argument is `id`, second is true
-  //          when trigger from scrolling to top
-  // render(id, oldMsgsWereAdded): (optional) function to render channel content
-  // localBounds: (optional) if true, reset on view change
-  //
-  // See comm.js for examples
-];
+chat.channels = [];
 
 /**
  * Gets the name of the active chat tab.
@@ -19889,7 +19918,7 @@ chat.getActive = function () {
  *
  * @function chat.getChannelDesc
  * @param {string} tab - The name of the chat tab.
- * @returns {string} The corresponding channel name ('faction', 'alerts', or 'all').
+ * @returns {chat.ChannelDescription} The corresponding channel name ('faction', 'alerts', or 'all').
  */
 chat.getChannelDesc = function (tab) {
   var channelObject = null;
@@ -19897,28 +19926,6 @@ chat.getChannelDesc = function (tab) {
     if (entry.id === tab) channelObject = entry;
   });
   return channelObject;
-};
-
-/**
- * Toggles the chat window between expanded and collapsed states.
- * When expanded, the chat window covers a larger area of the screen.
- * This function also ensures that the chat is scrolled to the bottom when collapsed.
- *
- * @function chat.toggle
- */
-chat.toggle = function () {
-  var c = $('#chat, #chatcontrols');
-  if (c.hasClass('expand')) {
-    c.removeClass('expand');
-    var div = $('#chat > div:visible');
-    div.data('ignoreNextScroll', true);
-    div.scrollTop(99999999); // scroll to bottom
-    $('.leaflet-control').removeClass('chat-expand');
-  } else {
-    c.addClass('expand');
-    $('.leaflet-control').addClass('chat-expand');
-    chat.needMoreMessages();
-  }
 };
 
 /**
@@ -20042,6 +20049,28 @@ chat.chooseTab = function (tab) {
 };
 
 /**
+ * Toggles the chat window between expanded and collapsed states.
+ * When expanded, the chat window covers a larger area of the screen.
+ * This function also ensures that the chat is scrolled to the bottom when collapsed.
+ *
+ * @function chat.toggle
+ */
+chat.toggle = function () {
+  var c = $('#chat, #chatcontrols');
+  if (c.hasClass('expand')) {
+    c.removeClass('expand');
+    var div = $('#chat > div:visible');
+    div.data('ignoreNextScroll', true);
+    div.scrollTop(99999999); // scroll to bottom
+    $('.leaflet-control').removeClass('chat-expand');
+  } else {
+    c.addClass('expand');
+    $('.leaflet-control').addClass('chat-expand');
+    chat.needMoreMessages();
+  }
+};
+
+/**
  * Displays the chat interface and activates a specified chat tab.
  *
  * @function chat.show
@@ -20100,10 +20129,14 @@ chat.keepScrollPosition = function (box, scrollBefore, isOldMsgs) {
   }
 };
 
-//
-// comm tab api
-//
-
+/**
+ * Create and insert into the DOM/Mobile app the channel tab
+ *
+ * @function createChannelTab
+ * @memberof chat
+ * @param {chat.ChannelDescription} channelDesc - channel description
+ * @static
+ */
 function createChannelTab(channelDesc) {
   var chatControls = $('#chatcontrols');
   var chatDiv = $('#chat');
@@ -20125,12 +20158,20 @@ function createChannelTab(channelDesc) {
   if (window.useAndroidPanes()) {
     // exlude hard coded panes
     if (channelDesc.id !== 'all' && channelDesc.id !== 'faction' && channelDesc.id !== 'alerts') {
-      android.addPane(channelDesc.id, channelDesc.name, 'ic_action_view_as_list');
+      app.addPane(channelDesc.id, channelDesc.name, 'ic_action_view_as_list');
     }
   }
 }
 
 var isTabsSetup = false;
+/**
+ * Add to the channel list a new channel description
+ *
+ * If tabs are already created, a tab is created for this channel as well
+ *
+ * @function chat.addChannel
+ * @param {chat.ChannelDescription} channelDesc - channel description
+ */
 chat.addChannel = function (channelDesc) {
   // deny reserved name
   if (channelDesc.id === 'info' || channelDesc.id === 'map') {
@@ -20154,11 +20195,17 @@ chat.addChannel = function (channelDesc) {
 // setup
 //
 
+/**
+ * Sets up all channels starting from intel COMM
+ *
+ * @function chat.setupTabs
+ * @param {chat.ChannelDescription} channelDesc - channel description
+ */
 chat.setupTabs = function () {
   isTabsSetup = true;
 
   // insert at the begining the comm channels
-  chat.channels.splice(0, 0, ...comm.channels);
+  chat.channels.splice(0, 0, ...IITC.comm.channels);
 
   chat.channels.forEach(function (entry, i) {
     entry.index = i + 1;
@@ -20166,9 +20213,9 @@ chat.setupTabs = function () {
   });
 
   // legacy compatibility
-  chat._public = comm._channels.all;
-  chat._faction = comm._channels.faction;
-  chat._alerts = comm._channels.alerts;
+  chat._public = IITC.comm._channelsData.all;
+  chat._faction = IITC.comm._channelsData.faction;
+  chat._alerts = IITC.comm._channelsData.alerts;
 
   /**
    * Initiates a request for public chat data.
@@ -20178,7 +20225,7 @@ chat.setupTabs = function () {
    * @param {boolean} [isRetry=false] - Whether the request is a retry.
    */
   chat.requestPublic = function (getOlderMsgs, isRetry) {
-    return comm.requestChannel('all', getOlderMsgs, isRetry);
+    return IITC.comm.requestChannel('all', getOlderMsgs, isRetry);
   };
 
   /**
@@ -20189,7 +20236,7 @@ chat.setupTabs = function () {
    * @param {boolean} [isRetry=false] - Flag to indicate if this is a retry attempt.
    */
   chat.requestFaction = function (getOlderMsgs, isRetry) {
-    return comm.requestChannel('faction', getOlderMsgs, isRetry);
+    return IITC.comm.requestChannel('faction', getOlderMsgs, isRetry);
   };
 
   /**
@@ -20200,7 +20247,7 @@ chat.setupTabs = function () {
    * @param {boolean} [isRetry=false] - Whether the request is a retry.
    */
   chat.requestAlerts = function (getOlderMsgs, isRetry) {
-    return comm.requestChannel('alerts', getOlderMsgs, isRetry);
+    return IITC.comm.requestChannel('alerts', getOlderMsgs, isRetry);
   };
 
   /**
@@ -20210,7 +20257,7 @@ chat.setupTabs = function () {
    * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
    */
   chat.renderPublic = function (oldMsgsWereAdded) {
-    return comm.renderChannel('all', oldMsgsWereAdded);
+    return IITC.comm.renderChannel('all', oldMsgsWereAdded);
   };
 
   /**
@@ -20220,7 +20267,7 @@ chat.setupTabs = function () {
    * @param {boolean} oldMsgsWereAdded - Indicates if old messages were added in the current rendering.
    */
   chat.renderFaction = function (oldMsgsWereAdded) {
-    return comm.renderChannel('faction', oldMsgsWereAdded);
+    return IITC.comm.renderChannel('faction', oldMsgsWereAdded);
   };
 
   /**
@@ -20230,10 +20277,25 @@ chat.setupTabs = function () {
    * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
    */
   chat.renderAlerts = function (oldMsgsWereAdded) {
-    return comm.renderChannel('allerts', oldMsgsWereAdded);
+    return IITC.comm.renderChannel('allerts', oldMsgsWereAdded);
   };
 
-  chat.getChatPortalName = comm.getChatPortalName;
+  chat.getChatPortalName = IITC.comm.getChatPortalName;
+
+  /**
+   * Renders data from the data-hash to the element defined by the given ID.
+   *
+   * @function chat.renderData
+   * @param {Object} data - Chat data to be rendered.
+   * @param {string} element - ID of the DOM element to render the chat into.
+   * @param {boolean} likelyWereOldMsgs - Flag indicating if older messages are likely to have been added.
+   * @param {Array} sortedGuids - Sorted array of GUIDs representing the order of messages.
+   * @memberof window.chat
+   * @type {Object}
+   */
+  chat.renderData = function (data, element, likelyWereOldMsgs, sortedGuids) {
+    return IITC.comm.renderData(data, element, likelyWereOldMsgs, sortedGuids);
+  };
 };
 
 /**
@@ -20387,7 +20449,7 @@ chat.setupPosting = function () {
   });
 };
 
-/* global log, PLAYER, L, comm, android */
+/* global log, PLAYER, L, IITC, app */
 
 
 })();
@@ -20397,48 +20459,85 @@ chat.setupPosting = function () {
 (function () {
 var log = ulog('comm');
 /**
- * @file Namespace for comm-related functionalities.
- * @namespace window.comm
+ * Namespace for comm-related functionalities.
+ *
+ * @memberof IITC
+ * @namespace comm
  */
 
-var comm = {};
-window.comm = comm;
+/**
+ * @type {chat.ChannelDescription[]}
+ */
+var _channels = [
+  {
+    id: 'all',
+    name: 'All',
+    localBounds: true,
+    inputPrompt: 'broadcast:',
+    inputClass: 'public',
+    request: requestChannel,
+    render: renderChannel,
+    sendMessage: sendChatMessage,
+  },
+  {
+    id: 'faction',
+    name: 'Faction',
+    localBounds: true,
+    inputPrompt: 'tell faction:',
+    inputClass: 'faction',
+    request: requestChannel,
+    render: renderChannel,
+    sendMessage: sendChatMessage,
+  },
+  {
+    id: 'alerts',
+    name: 'Alerts',
+    inputPrompt: 'tell Jarvis:',
+    inputClass: 'alerts',
+    request: requestChannel,
+    render: renderChannel,
+    sendMessage: function () {
+      alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't comm to the 'alerts' channel!)");
+    },
+  },
+];
 
 /**
  * Holds data related to each intel channel.
  *
- * @memberof window.comm
  * @type {Object}
  */
-comm._channels = {};
+var _channelsData = {};
 
 /**
  * Initialize the channel data.
  *
- * @function comm.initChannelData
- * @returns {string} The channel object.
+ * @function IITC.comm._initChannelData
+ * @private
+ * @param {chat.ChannelDescription} channel - The channel object.
  */
-comm.initChannelData = function (channel) {
+function _initChannelData(channel) {
   // preserve channel object
-  if (!comm._channels[channel.id]) comm._channels[channel.id] = {};
-  comm._channels[channel.id].data = {};
-  comm._channels[channel.id].guids = [];
-  comm._channels[channel.id].oldestTimestamp = -1;
-  delete comm._channels[channel.id].oldestGUID;
-  comm._channels[channel.id].newestTimestamp = -1;
-  delete comm._channels[channel.id].newestGUID;
-};
+  if (!_channelsData[channel.id]) _channelsData[channel.id] = {};
+  _channelsData[channel.id].data = {};
+  _channelsData[channel.id].guids = [];
+  _channelsData[channel.id].oldestTimestamp = -1;
+  delete _channelsData[channel.id].oldestGUID;
+  _channelsData[channel.id].newestTimestamp = -1;
+  delete _channelsData[channel.id].newestGUID;
+}
 
 /**
  * Updates the oldest and newest message timestamps and GUIDs in the chat storage.
  *
- * @function comm.updateOldNewHash
+ * @function IITC.comm._updateOldNewHash
+ * @private
  * @param {Object} newData - The new chat data received.
  * @param {Object} storageHash - The chat storage object.
  * @param {boolean} isOlderMsgs - Whether the new data contains older messages.
  * @param {boolean} isAscendingOrder - Whether the new data is in ascending order.
  */
-comm.updateOldNewHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
+function _updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder) {
   // track oldest + newest timestamps/GUID
   if (newData.result.length > 0) {
     var first = {
@@ -20467,16 +20566,16 @@ comm.updateOldNewHash = function (newData, storageHash, isOlderMsgs, isAscending
       }
     }
   }
-};
+}
 
 /**
  * Parses comm message data into a more convenient format.
  *
- * @function comm.parseMsgData
+ * @function IITC.comm.parseMsgData
  * @param {Object} data - The raw comm message data.
  * @returns {Object} The parsed comm message data.
  */
-comm.parseMsgData = function (data) {
+function parseMsgData(data) {
   var categories = data[2].plext.categories;
   var isPublic = (categories & 1) === 1;
   var isSecure = (categories & 2) === 2;
@@ -20525,19 +20624,20 @@ comm.parseMsgData = function (data) {
     player: player,
     markup: markup,
   };
-};
+}
 
 /**
  * Writes new chat data to the chat storage and manages the order of messages.
  *
- * @function comm.writeDataToHash
+ * @function IITC.comm._writeDataToHash
+ * @private
  * @param {Object} newData - The new chat data received.
  * @param {Object} storageHash - The chat storage object.
  * @param {boolean} isOlderMsgs - Whether the new data contains older messages.
  * @param {boolean} isAscendingOrder - Whether the new data is in ascending order.
  */
-comm.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingOrder) {
-  comm.updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
+function _writeDataToHash(newData, storageHash, isOlderMsgs, isAscendingOrder) {
+  _updateOldNewHash(newData, storageHash, isOlderMsgs, isAscendingOrder);
 
   newData.result.forEach(function (json) {
     // avoid duplicates
@@ -20545,26 +20645,26 @@ comm.writeDataToHash = function (newData, storageHash, isOlderMsgs, isAscendingO
       return true;
     }
 
-    var parsedData = comm.parseMsgData(json);
+    var parsedData = IITC.comm.parseMsgData(json);
 
     // format: timestamp, autogenerated, HTML message, nick, additional data (parsed, plugin specific data...)
-    storageHash.data[parsedData.guid] = [parsedData.time, parsedData.auto, comm.renderMsgRow(parsedData), parsedData.player.name, parsedData];
+    storageHash.data[parsedData.guid] = [parsedData.time, parsedData.auto, IITC.comm.renderMsgRow(parsedData), parsedData.player.name, parsedData];
     if (isAscendingOrder) {
       storageHash.guids.push(parsedData.guid);
     } else {
       storageHash.guids.unshift(parsedData.guid);
     }
   });
-};
+}
 
 /**
  * Posts a chat message to intel comm context.
  *
- * @function comm.sendChatMessage
+ * @function IITC.comm.sendChatMessage
  * @param {string} tab intel tab name (either all or faction)
  * @param {string} msg message to be sent
  */
-comm.sendChatMessage = function (tab, msg) {
+function sendChatMessage(tab, msg) {
   if (tab !== 'all' && tab !== 'faction') return;
 
   var latlng = map.getCenter();
@@ -20589,18 +20689,19 @@ comm.sendChatMessage = function (tab, msg) {
       alert(errMsg);
     }
   );
-};
+}
 
-comm._oldBBox = null;
+var _oldBBox = null;
 /**
  * Generates post data for chat requests.
  *
- * @function comm.genPostData
+ * @function IITC.comm._genPostData
+ * @private
  * @param {string} channel - The chat channel.
  * @param {boolean} getOlderMsgs - Flag to determine if older messages are being requested.
  * @returns {Object} The generated post data.
  */
-comm.genPostData = function (channel, getOlderMsgs) {
+function _genPostData(channel, getOlderMsgs) {
   if (typeof channel !== 'string') {
     throw new Error('API changed: isFaction flag now a channel string - all, faction, alerts');
   }
@@ -20608,28 +20709,28 @@ comm.genPostData = function (channel, getOlderMsgs) {
   var b = window.clampLatLngBounds(map.getBounds());
 
   // set a current bounding box if none set so far
-  if (!comm._oldBBox) comm._oldBBox = b;
+  if (!_oldBBox) _oldBBox = b;
 
   // to avoid unnecessary comm refreshes, a small difference compared to the previous bounding box
   // is not considered different
   var CHAT_BOUNDINGBOX_SAME_FACTOR = 0.1;
   // if the old and new box contain each other, after expanding by the factor, don't reset comm
-  if (!(b.pad(CHAT_BOUNDINGBOX_SAME_FACTOR).contains(comm._oldBBox) && comm._oldBBox.pad(CHAT_BOUNDINGBOX_SAME_FACTOR).contains(b))) {
-    log.log('Bounding Box changed, comm will be cleared (old: ' + comm._oldBBox.toBBoxString() + '; new: ' + b.toBBoxString() + ')');
+  if (!(b.pad(CHAT_BOUNDINGBOX_SAME_FACTOR).contains(_oldBBox) && _oldBBox.pad(CHAT_BOUNDINGBOX_SAME_FACTOR).contains(b))) {
+    log.log('Bounding Box changed, comm will be cleared (old: ' + _oldBBox.toBBoxString() + '; new: ' + b.toBBoxString() + ')');
 
     // need to reset these flags now because clearing will only occur
     // after the request is finished – i.e. there would be one almost
     // useless request.
-    comm.channels.forEach(function (entry) {
+    _channels.forEach(function (entry) {
       if (entry.localBounds) {
-        comm.initChannelData(entry);
+        _initChannelData(entry);
         $('#chat' + entry.id).data('needsClearing', true);
       }
     });
-    comm._oldBBox = b;
+    _oldBBox = b;
   }
 
-  var storageHash = comm._channels[channel];
+  var storageHash = _channelsData[channel];
 
   var ne = b.getNorthEast();
   var sw = b.getSouthWest();
@@ -20672,52 +20773,53 @@ comm.genPostData = function (channel, getOlderMsgs) {
     if (min > -1) $.extend(data, { ascendingTimestampOrder: true });
   }
   return data;
-};
+}
 
-comm._requestRunning = {};
+var _requestRunning = {};
 
 /**
  * Requests chat messages.
  *
- * @function comm.requestChannel
+ * @function IITC.comm.requestChannel
  * @param {string} channel - Comm Intel channel (all/faction/alerts)
  * @param {boolean} getOlderMsgs - Flag to determine if older messages are being requested.
  * @param {boolean} [isRetry=false] - Flag to indicate if this is a retry attempt.
  */
-comm.requestChannel = function (channel, getOlderMsgs, isRetry) {
-  if (comm._requestRunning[channel] && !isRetry) return;
+function requestChannel(channel, getOlderMsgs, isRetry) {
+  if (_requestRunning[channel] && !isRetry) return;
   if (window.isIdle()) return window.renderUpdateStatus();
-  comm._requestRunning[channel] = true;
+  _requestRunning[channel] = true;
   $("#chatcontrols a[data-channel='" + channel + "']").addClass('loading');
 
-  var d = comm.genPostData(channel, getOlderMsgs);
+  var d = _genPostData(channel, getOlderMsgs);
   window.postAjax(
     'getPlexts',
     d,
     function (data) {
-      comm.handleChannel(channel, data, getOlderMsgs, d.ascendingTimestampOrder);
+      _handleChannel(channel, data, getOlderMsgs, d.ascendingTimestampOrder);
     },
     isRetry
       ? function () {
-          comm._requestRunning[channel] = false;
+          _requestRunning[channel] = false;
         }
       : function () {
-          comm.requestChannel(channel, getOlderMsgs, true);
+          requestChannel(channel, getOlderMsgs, true);
         }
   );
-};
+}
 
 /**
  * Handles faction chat response.
  *
- * @function comm.handleChannel
+ * @function IITC.comm._handleChannel
+ * @private
  * @param {string} channel - Comm Intel channel (all/faction/alerts)
  * @param {Object} data - Response data from server.
  * @param {boolean} olderMsgs - Indicates if older messages were requested.
  * @param {boolean} ascendingTimestampOrder - Indicates if messages are in ascending timestamp order.
  */
-comm.handleChannel = function (channel, data, olderMsgs, ascendingTimestampOrder) {
-  comm._requestRunning[channel] = false;
+function _handleChannel(channel, data, olderMsgs, ascendingTimestampOrder) {
+  _requestRunning[channel] = false;
   $("#chatcontrols a[data-channel='" + channel + "']").removeClass('loading');
 
   if (!data || !data.result) {
@@ -20732,31 +20834,31 @@ comm.handleChannel = function (channel, data, olderMsgs, ascendingTimestampOrder
 
   $('#chat' + channel).data('needsClearing', null);
 
-  var old = comm._channels[channel].oldestGUID;
-  comm.writeDataToHash(data, comm._channels[channel], olderMsgs, ascendingTimestampOrder);
-  var oldMsgsWereAdded = old !== comm._channels[channel].oldestGUID;
+  var old = _channelsData[channel].oldestGUID;
+  _writeDataToHash(data, _channelsData[channel], olderMsgs, ascendingTimestampOrder);
+  var oldMsgsWereAdded = old !== _channelsData[channel].oldestGUID;
 
   var hook = channel + 'ChatDataAvailable';
   // backward compability
   if (channel === 'all') hook = 'publicChatDataAvailable';
-  window.runHooks(hook, { raw: data, result: data.result, processed: comm._channels[channel].data });
+  window.runHooks(hook, { raw: data, result: data.result, processed: _channelsData[channel].data });
 
   // generic hook
-  window.runHooks('commDataAvailable', { channel: channel, raw: data, result: data.result, processed: comm._channels[channel].data });
+  window.runHooks('commDataAvailable', { channel: channel, raw: data, result: data.result, processed: _channelsData[channel].data });
 
-  comm.renderChannel(channel, oldMsgsWereAdded);
-};
+  renderChannel(channel, oldMsgsWereAdded);
+}
 
 /**
  * Renders intel chat.
  *
- * @function comm.renderChannel
+ * @function IITC.comm.renderChannel
  * @param {string} channel - Comm Intel channel (all/faction/alerts)
  * @param {boolean} oldMsgsWereAdded - Indicates if old messages were added in the current rendering.
  */
-comm.renderChannel = function (channel, oldMsgsWereAdded) {
-  comm.renderData(comm._channels[channel].data, 'chat' + channel, oldMsgsWereAdded, comm._channels[channel].guids);
-};
+function renderChannel(channel, oldMsgsWereAdded) {
+  IITC.comm.renderData(_channelsData[channel].data, 'chat' + channel, oldMsgsWereAdded, _channelsData[channel].guids);
+}
 
 //
 // Rendering primitive for markup, chat cells (td) and chat row (tr)
@@ -20765,11 +20867,11 @@ comm.renderChannel = function (channel, oldMsgsWereAdded) {
 /**
  * Renders text for the chat, converting plain text to HTML and adding links.
  *
- * @function comm.renderText
+ * @function IITC.comm.renderText
  * @param {Object} text - An object containing the plain text to render.
  * @returns {string} The rendered HTML string.
  */
-comm.renderText = function (text) {
+function renderText(text) {
   let content;
 
   if (text.team) {
@@ -20782,63 +20884,63 @@ comm.renderText = function (text) {
   }
 
   return content.html().autoLink();
-};
+}
 
 /**
  * Overrides portal names used repeatedly in chat, such as 'US Post Office', with more specific names.
  *
- * @function comm.getChatPortalName
+ * @function IITC.comm.getChatPortalName
  * @param {Object} markup - An object containing portal markup, including the name and address.
  * @returns {string} The processed portal name.
  */
-comm.getChatPortalName = function (markup) {
+function getChatPortalName(markup) {
   var name = markup.name;
   if (name === 'US Post Office') {
     var address = markup.address.split(',');
     name = 'USPS: ' + address[0];
   }
   return name;
-};
+}
 
 /**
  * Renders a portal link for use in the chat.
  *
- * @function comm.renderPortal
+ * @function IITC.comm.renderPortal
  * @param {Object} portal - The portal data.
  * @returns {string} HTML string of the portal link.
  */
-comm.renderPortal = function (portal) {
+function renderPortal(portal) {
   var lat = portal.latE6 / 1e6,
     lng = portal.lngE6 / 1e6;
   var perma = window.makePermalink([lat, lng]);
   var js = 'window.selectPortalByLatLng(' + lat + ', ' + lng + ');return false';
-  return '<a onclick="' + js + '"' + ' title="' + portal.address + '"' + ' href="' + perma + '" class="help">' + comm.getChatPortalName(portal) + '</a>';
-};
+  return '<a onclick="' + js + '"' + ' title="' + portal.address + '"' + ' href="' + perma + '" class="help">' + IITC.comm.getChatPortalName(portal) + '</a>';
+}
 
 /**
  * Renders a faction entity for use in the chat.
  *
- * @function comm.renderFactionEnt
+ * @function IITC.comm.renderFactionEnt
  * @param {Object} faction - The faction data.
  * @returns {string} HTML string representing the faction.
  */
-comm.renderFactionEnt = function (faction) {
+function renderFactionEnt(faction) {
   var teamId = window.teamStringToId(faction.team);
   var name = window.TEAM_NAMES[teamId];
   var spanClass = window.TEAM_TO_CSS[teamId];
   return $('<div>').html($('<span>').attr('class', spanClass).text(name)).html();
-};
+}
 
 /**
  * Renders a player's nickname in chat.
  *
- * @function comm.renderPlayer
+ * @function IITC.comm.renderPlayer
  * @param {Object} player - The player object containing nickname and team.
  * @param {boolean} at - Whether to prepend '@' to the nickname.
  * @param {boolean} sender - Whether the player is the sender of a message.
  * @returns {string} The HTML string representing the player's nickname in chat.
  */
-comm.renderPlayer = function (player, at, sender) {
+function renderPlayer(player, at, sender) {
   var name = player.plain;
   if (sender) {
     name = player.plain.replace(/: $/, '');
@@ -20854,44 +20956,44 @@ comm.renderPlayer = function (player, at, sender) {
         .text((at ? '@' : '') + name)
     )
     .html();
-};
+}
 
 /**
  * Renders a chat message entity based on its type.
  *
- * @function comm.renderMarkupEntity
+ * @function IITC.comm.renderMarkupEntity
  * @param {Array} ent - The entity array, where the first element is the type and the second element is the data.
  * @returns {string} The HTML string representing the chat message entity.
  */
-comm.renderMarkupEntity = function (ent) {
+function renderMarkupEntity(ent) {
   switch (ent[0]) {
     case 'TEXT':
-      return comm.renderText(ent[1]);
+      return IITC.comm.renderText(ent[1]);
     case 'PORTAL':
-      return comm.renderPortal(ent[1]);
+      return IITC.comm.renderPortal(ent[1]);
     case 'FACTION':
-      return comm.renderFactionEnt(ent[1]);
+      return IITC.comm.renderFactionEnt(ent[1]);
     case 'SENDER':
-      return comm.renderPlayer(ent[1], false, true);
+      return IITC.comm.renderPlayer(ent[1], false, true);
     case 'PLAYER':
-      return comm.renderPlayer(ent[1]);
+      return IITC.comm.renderPlayer(ent[1]);
     case 'AT_PLAYER':
-      return comm.renderPlayer(ent[1], true);
+      return IITC.comm.renderPlayer(ent[1], true);
     default:
   }
   return $('<div>')
     .text(ent[0] + ':<' + ent[1].plain + '>')
     .html();
-};
+}
 
 /**
  * Renders the markup of a chat message, converting special entities like player names, portals, etc., into HTML.
  *
- * @function comm.renderMarkup
+ * @function IITC.comm.renderMarkup
  * @param {Array} markup - The markup array of a chat message.
  * @returns {string} The HTML string representing the complete rendered chat message.
  */
-comm.renderMarkup = function (markup) {
+function renderMarkup(markup) {
   var msg = '';
 
   markup.forEach(function (ent, ind) {
@@ -20902,22 +21004,22 @@ comm.renderMarkup = function (markup) {
         break;
 
       case 'PLAYER': // automatically generated messages
-        if (ind > 0) msg += comm.renderMarkupEntity(ent); // don’t repeat nick directly
+        if (ind > 0) msg += IITC.comm.renderMarkupEntity(ent); // don’t repeat nick directly
         break;
 
       default:
         // add other enitities whatever the type
-        msg += comm.renderMarkupEntity(ent);
+        msg += IITC.comm.renderMarkupEntity(ent);
         break;
     }
   });
   return msg;
-};
+}
 
 /**
  * Transforms a given markup array into an older, more straightforward format for easier understanding.
  *
- * @function comm.transformMessage
+ * @function IITC.comm.transformMessage
  * @param {Array} markup - An array representing the markup to be transformed.
  * @returns {Array} The transformed markup array with a simplified structure.
  */
@@ -20954,59 +21056,59 @@ function transformMessage(markup) {
  * Renders a cell in the chat table to display the time a message was sent.
  * Formats the time and adds it to a <time> HTML element with a tooltip showing the full date and time.
  *
- * @function comm.renderTimeCell
+ * @function IITC.comm.renderTimeCell
  * @param {number} time - The timestamp of the message.
  * @param {string} classNames - Additional class names to be added to the time cell.
  * @returns {string} The HTML string representing a table cell with the formatted time.
  */
-comm.renderTimeCell = function (time, classNames) {
+function renderTimeCell(time, classNames) {
   const ta = window.unixTimeToHHmm(time);
   let tb = window.unixTimeToDateTimeString(time, true);
   // add <small> tags around the milliseconds
   tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
-};
+}
 
 /**
  * Renders a cell in the chat table for a player's nickname.
  * Wraps the nickname in <mark> HTML element for highlighting.
  *
- * @function comm.renderNickCell
+ * @function IITC.comm.renderNickCell
  * @param {string} nick - The nickname of the player.
  * @param {string} classNames - Additional class names to be added to the nickname cell.
  * @returns {string} The HTML string representing a table cell with the player's nickname.
  */
-comm.renderNickCell = function (nick, classNames) {
+function renderNickCell(nick, classNames) {
   const i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
   return '<td>' + i[0] + '<mark class="' + classNames + '">' + nick + '</mark>' + i[1] + '</td>';
-};
+}
 
 /**
  * Renders a cell in the chat table for a chat message.
  * The message is inserted as inner HTML of the table cell.
  *
- * @function comm.renderMsgCell
+ * @function IITC.comm.renderMsgCell
  * @param {string} msg - The chat message to be displayed.
  * @param {string} classNames - Additional class names to be added to the message cell.
  * @returns {string} The HTML string representing a table cell with the chat message.
  */
-comm.renderMsgCell = function (msg, classNames) {
+function renderMsgCell(msg, classNames) {
   return '<td class="' + classNames + '">' + msg + '</td>';
-};
+}
 
 /**
  * Renders a row for a chat message including time, nickname, and message cells.
  *
- * @function comm.renderMsgRow
+ * @function IITC.comm.renderMsgRow
  * @param {Object} data - The data for the message, including time, player, and message content.
  * @returns {string} The HTML string representing a row in the chat table.
  */
-comm.renderMsgRow = function (data) {
+function renderMsgRow(data) {
   var timeClass = data.msgToPlayer ? 'pl_nudge_date' : '';
-  var timeCell = comm.renderTimeCell(data.time, timeClass);
+  var timeCell = IITC.comm.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (window.TEAM_TO_CSS[data.player.team]) {
+  if (data.player.team === window.TEAM_ENL || data.player.team === window.TEAM_RES) {
     nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
   // highlight things said/done by the player in a unique colour
@@ -21014,12 +21116,12 @@ comm.renderMsgRow = function (data) {
   if (data.player.name === window.PLAYER.nickname) {
     nickClasses.push('pl_nudge_me');
   }
-  var nickCell = comm.renderNickCell(data.player.name, nickClasses.join(' '));
+  var nickCell = IITC.comm.renderNickCell(data.player.name, nickClasses.join(' '));
 
-  const markup = transformMessage(data.markup);
-  var msg = comm.renderMarkup(markup);
+  const markup = IITC.comm.transformMessage(data.markup);
+  var msg = IITC.comm.renderMarkup(markup);
   var msgClass = data.narrowcast ? 'system_narrowcast' : '';
-  var msgCell = comm.renderMsgCell(msg, msgClass);
+  var msgCell = IITC.comm.renderMsgCell(msg, msgClass);
 
   var className = '';
   if (!data.auto && data.public) {
@@ -21028,65 +21130,29 @@ comm.renderMsgRow = function (data) {
     className = 'faction';
   }
   return '<tr data-guid="' + data.guid + '" class="' + className + '">' + timeCell + nickCell + msgCell + '</tr>';
-};
-
-/**
- * Legacy function for rendering chat messages. Used for backward compatibility with plugins.
- *
- * @function comm.renderMsg
- * @param {string} msg - The chat message.
- * @param {string} nick - The nickname of the player who sent the message.
- * @param {number} time - The timestamp of the message.
- * @param {string} team - The team of the player who sent the message.
- * @param {boolean} msgToPlayer - Flag indicating if the message is directed to the player.
- * @param {boolean} systemNarrowcast - Flag indicating if the message is a system narrowcast.
- * @returns {string} The HTML string representing a chat message row.
- */
-comm.renderMsg = function (msg, nick, time, team, msgToPlayer, systemNarrowcast) {
-  var ta = window.unixTimeToHHmm(time);
-  var tb = window.unixTimeToDateTimeString(time, true);
-  // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-  // help cursor via “#chat time”
-  var t = '<time title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time>';
-  if (msgToPlayer) {
-    t = '<div class="pl_nudge_date">' + t + '</div><div class="pl_nudge_pointy_spacer"></div>';
-  }
-  if (systemNarrowcast) {
-    msg = '<div class="system_narrowcast">' + msg + '</div>';
-  }
-  var color = window.COLORS[team];
-  // highlight things said/done by the player in a unique colour (similar to @player mentions from others in the chat text itself)
-  if (nick === window.PLAYER.nickname) {
-    color = '#fd6';
-  }
-  var s = 'style="cursor:pointer; color:' + color + '"';
-  var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<tr><td>' + t + '</td><td>' + i[0] + '<mark class="nickname" ' + s + '>' + nick + '</mark>' + i[1] + '</td><td>' + msg + '</td></tr>';
-};
+}
 
 /**
  * Renders a divider row in the chat table.
  *
- * @function comm.renderDivider
+ * @function IITC.comm.renderDivider
  * @param {string} text - Text to display within the divider row.
  * @returns {string} The HTML string representing a divider row in the chat table.
  */
-comm.renderDivider = function (text) {
+function renderDivider(text) {
   return '<tr class="divider"><td><hr></td><td>' + text + '</td><td><hr></td></tr>';
-};
+}
 
 /**
  * Renders data from the data-hash to the element defined by the given ID.
  *
- * @function comm.renderData
+ * @function IITC.comm.renderData
  * @param {Object} data - Chat data to be rendered.
  * @param {string} element - ID of the DOM element to render the chat into.
  * @param {boolean} likelyWereOldMsgs - Flag indicating if older messages are likely to have been added.
  * @param {Array} sortedGuids - Sorted array of GUIDs representing the order of messages.
  */
-comm.renderData = function (data, element, likelyWereOldMsgs, sortedGuids) {
+function renderData(data, element, likelyWereOldMsgs, sortedGuids) {
   var elm = $('#' + element);
   if (elm.is(':hidden')) {
     return;
@@ -21114,7 +21180,7 @@ comm.renderData = function (data, element, likelyWereOldMsgs, sortedGuids) {
     var msg = data[guid];
     var nextTime = new Date(msg[0]).toLocaleDateString();
     if (prevTime && prevTime !== nextTime) {
-      msgs += comm.renderDivider(nextTime);
+      msgs += IITC.comm.renderDivider(nextTime);
     }
     msgs += msg[2];
     prevTime = nextTime;
@@ -21135,47 +21201,34 @@ comm.renderData = function (data, element, likelyWereOldMsgs, sortedGuids) {
     elm.scrollTop(elm.data('needsScrollTop'));
     elm.data('needsScrollTop', null);
   }
-};
-
-comm.channels = [
-  {
-    id: 'all',
-    name: 'All',
-    localBounds: true,
-    inputPrompt: 'broadcast:',
-    inputClass: 'public',
-    request: comm.requestChannel,
-    render: comm.renderChannel,
-    sendMessage: comm.sendChatMessage,
-  },
-  {
-    id: 'faction',
-    name: 'Faction',
-    localBounds: true,
-    inputPrompt: 'tell faction:',
-    inputClass: 'faction',
-    request: comm.requestChannel,
-    render: comm.renderChannel,
-    sendMessage: comm.sendChatMessage,
-  },
-  {
-    id: 'alerts',
-    name: 'Alerts',
-    inputPrompt: 'tell Jarvis:',
-    inputClass: 'alerts',
-    request: comm.requestChannel,
-    render: comm.renderChannel,
-    sendMessage: function () {
-      alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't comm to the 'alerts' channel!)");
-    },
-  },
-];
-
-for (const channel of comm.channels) {
-  comm.initChannelData(channel);
 }
 
-/* global log, map, chat */
+IITC.comm = {
+  channels: _channels,
+  sendChatMessage,
+  parseMsgData,
+  // Render primitive, may be override
+  renderMsgRow,
+  renderDivider,
+  renderTimeCell,
+  renderNickCell,
+  renderMsgCell,
+  renderMarkup,
+  transformMessage,
+  renderMarkupEntity,
+  renderPlayer,
+  renderFactionEnt,
+  renderPortal,
+  renderText,
+  getChatPortalName,
+  // exposed API for legacy
+  requestChannel,
+  renderChannel,
+  renderData,
+  _channelsData,
+};
+
+/* global log, map, chat, IITC */
 
 
 })();
@@ -25729,7 +25782,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 // *** module: ornaments.js ***
 (function () {
 var log = ulog('ornaments');
-/* global L, dialog, log */
+/* global L, dialog, log, IITC */
 
 /**
  * @namespace window.ornaments
@@ -25828,13 +25881,13 @@ window.ornaments = {
     window.layerChooser.addOverlay(this.layers['Ornaments'], 'Ornaments');
     window.layerChooser.addOverlay(this.layers['Excluded ornaments'], 'Excluded ornaments', {default: false});
 
-    $('<a>', {
-      text:'Ornaments Opt',
+    IITC.toolbox.addButton({
       id: 'ornaments-toolbox-link',
+      label: 'Ornaments Opt',
       title: 'Edit ornament exclusions',
       accesskey: 'o',
-      click: window.ornaments.ornamentsOpt})
-      .appendTo('#toolbox');
+      action: window.ornaments.ornamentsOpt,
+    });
   },
 
   /**
@@ -28099,6 +28152,8 @@ window.setupRedeem = function() {
 // *** module: region_scoreboard.js ***
 (function () {
 var log = ulog('region_scoreboard');
+/* global IITC -- eslint */
+
 /**
  * @file This file contains the code for displaying and handling the regional scoreboard.
  * @module region_scoreboard
@@ -28579,14 +28634,12 @@ window.RegionScoreboardSetup = (function() {
         }
       });
     } else {
-      $('<a>')
-        .html('Region scores')
-        .attr({
-          id: 'scoreboard',
-          title: 'View regional scoreboard'
-        })
-        .click(showDialog)
-        .appendTo('#toolbox');
+      IITC.toolbox.addButton({
+        id: 'scoreboard',
+        label: 'Region scores',
+        title: 'View regional scoreboard',
+        action: showDialog,
+      });
     }
   }
 }());
@@ -29600,6 +29653,8 @@ window.outOfDateUserPrompt = function()
 // *** module: sidebar.js ***
 (function () {
 var log = ulog('sidebar');
+/* global IITC -- eslint */
+
 /**
  * @file This file provides functions for working with the sidebar.
  * @module sidebar
@@ -29783,24 +29838,20 @@ function setPermaLink () {
  * @function setupAddons
  */
 function setupAddons () {
-  $('<a>')
-    .html('Permalink')
-    .attr({
-      id: 'permalink',
-      title: 'URL link to this map view'
-    })
-    .on({
-      mouseover: setPermaLink,
-      click: setPermaLink
-    })
-    .appendTo('#toolbox');
+  IITC.toolbox.addButton({
+    id: 'permalink',
+    label: 'Permalink',
+    title: 'URL link to this map view',
+    action: setPermaLink,
+    mouseover: setPermaLink,
+  });
 
-  $('<a>')
-    .html('About IITC')
-    .attr('id', 'about-iitc')
-    .css('cursor', 'help')
-    .click(aboutIITC)
-    .appendTo('#toolbox');
+  IITC.toolbox.addButton({
+    id: 'about-iitc',
+    label: 'About IITC',
+    action: window.aboutIITC,
+    class: 'cursor_help',
+  });
 
   window.artifact.setup();
 
@@ -30107,7 +30158,7 @@ body {\
   border: 2px outset #20A8B1;\
 }\
 \
-#toolbox > a {\
+#toolbox > a, #toolbox_component > a {\
   padding: 5px;\
   margin-top: 3px;\
   margin-bottom: 3px;\
@@ -30376,6 +30427,253 @@ window.renderUpdateStatus = function() {
   }, 0);
 
 }
+
+
+})();
+
+
+// *** module: toolbox.js ***
+(function () {
+var log = ulog('toolbox');
+/* global IITC */
+
+/**
+ * Toolbox API
+ *
+ * @memberof IITC
+ * @namespace toolbox
+ */
+
+/**
+ * @typedef {Object} ButtonArgs
+ * @property {string} [id] - Optional. The ID of the button.
+ * @property {string|undefined} label - The label text of the button.
+ * @property {Function|undefined} action - The onclick action for the button.
+ * @property {string|null} [class] - Optional. The class(es) for the button.
+ * @property {string|null} [title] - Optional. The title (tooltip) for the button.
+ * @property {string|null} [access_key] - Optional. The access key for the button.
+ * @property {Function|null} [mouseover] - Optional. The mouseover event for the button.
+ * @property {string|null} [icon] - Optional. Icon name from FontAwesome for the button.
+ */
+
+IITC.toolbox = {
+  buttons: {},
+  _defaultSortMethod: (a, b) => a.label.localeCompare(b.label),
+  sortMethod: (...args) => IITC.toolbox._defaultSortMethod(...args),
+
+  /**
+   * Adds a button to the toolbox.
+   *
+   * @param {ButtonArgs} buttonArgs - The arguments for the button.
+   * @returns {string|null} The ID of the added button or null if required parameters are missing.
+   *
+   * @example
+   * const buttonId = IITC.toolbox.addButton({
+   *   label: 'AboutIITC',
+   *   action: window.AboutIITC
+   * });
+   *
+   * @example
+   * const buttonId = IITC.toolbox.addButton({
+   *   label: 'Test Button',
+   *   action: () => alert('Clicked!')
+   * });
+   */
+  addButton(buttonArgs) {
+    if (!buttonArgs.label) {
+      console.warn('Required parameter "label" are missing.');
+      return null;
+    }
+
+    if (!buttonArgs.action) {
+      console.warn('Required parameter "action" are missing.');
+      return null;
+    }
+
+    let id = buttonArgs.id || `toolbox-btn-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    this.buttons[id] = buttonArgs;
+
+    this._renderButton(id);
+    this._applySort();
+
+    return id;
+  },
+
+  /**
+   * Updates an existing button in the toolbox.
+   *
+   * @param {string} buttonId - The ID of the button to update.
+   * @param {ButtonArgs} newButtonArgs - The new arguments for the button.
+   * @returns {boolean} True if the button is successfully updated, false otherwise.
+   *
+   * @example
+   * const isUpdated = IITC.toolbox.updateButton(buttonId, { label: 'Updated Button', action: () => console.log('New Action') });
+   */
+  updateButton(buttonId, newButtonArgs) {
+    if (this.buttons[buttonId]) {
+      Object.assign(this.buttons[buttonId], newButtonArgs);
+      this._renderButton(buttonId);
+      this._applySort();
+      return true;
+    } else {
+      console.warn(`Button with ID ${buttonId} not found.`);
+      return false;
+    }
+  },
+
+  /**
+   * Removes a button from the toolbox.
+   *
+   * @param {string} buttonId - The ID of the button to remove.
+   * @returns {boolean} True if the button is successfully removed, false otherwise.
+   *
+   * @example
+   * const isRemoved = IITC.toolbox.removeButton(buttonId);
+   */
+  removeButton(buttonId) {
+    if (this.buttons[buttonId]) {
+      delete this.buttons[buttonId];
+      const buttonElement = document.getElementById(buttonId);
+      if (buttonElement) {
+        buttonElement.remove();
+      }
+      this._applySort();
+      return true;
+    } else {
+      console.warn(`Button with ID ${buttonId} not found for removal.`);
+      return false;
+    }
+  },
+
+  /**
+   * Internal method to render a button.
+   *
+   * @private
+   * @param {string} buttonId - The ID of the button to render.
+   */
+  _renderButton(buttonId) {
+    const buttonData = this.buttons[buttonId];
+    if (!buttonData) return; // The button with the given ID was not found
+
+    let buttonElement = document.getElementById(buttonId) || document.createElement('a');
+    buttonElement.id = buttonId;
+    buttonElement.textContent = buttonData.label;
+    buttonElement.onclick = buttonData.action;
+
+    if (typeof buttonData.title === 'string') buttonElement.title = buttonData.title;
+    if (typeof buttonData.class === 'string') buttonElement.className = buttonData.class;
+    if (typeof buttonData.access_key === 'string') buttonElement.accessKey = buttonData.access_key;
+    if (typeof buttonData.mouseover === 'string') buttonElement.mouseover = buttonData.mouseover;
+
+    if (typeof buttonData.icon === 'string') {
+      const iconHTML = `<i class="fa ${buttonData.icon}"></i>`;
+      buttonElement.innerHTML = iconHTML + buttonElement.innerHTML;
+    }
+
+    const toolbox_component = document.querySelector('#toolbox_component');
+    if (!document.getElementById(buttonId)) {
+      toolbox_component.appendChild(buttonElement);
+    }
+  },
+
+  /**
+   * Internal method to apply sorting to the buttons.
+   *
+   * @private
+   */
+  _applySort() {
+    const toolbox_component = document.querySelector('#toolbox_component');
+    const buttonElements = Array.from(toolbox_component.children);
+
+    try {
+      buttonElements.sort((a, b) => this.sortMethod(this.buttons[a.id], this.buttons[b.id]));
+    } catch (e) {
+      console.error('Sorting function produced error', e);
+      buttonElements.sort((a, b) => this._defaultSortMethod(this.buttons[a.id], this.buttons[b.id]));
+    }
+    buttonElements.forEach((buttonElement) => toolbox_component.appendChild(buttonElement));
+  },
+
+  /**
+   * Sets the sorting method for the toolbox buttons.
+   *
+   * @param {Function} sortMethod - The sorting method to be used.
+   * @returns {void}
+   *
+   * @example
+   * IITC.toolbox.setSortMethod((a, b) => a.label.localeCompare(b.label));
+   */
+  setSortMethod(sortMethod) {
+    this.sortMethod = sortMethod;
+    this._applySort();
+  },
+
+  /**
+   * Internal method to synchronize the toolbox with the legacy toolbox.
+   *
+   * @private
+   * @returns {void}
+   */
+  _syncWithLegacyToolbox() {
+    // Select the old toolbox element
+    const oldToolbox = document.querySelector('#toolbox');
+
+    // Function to process an individual button
+    const processButton = (node) => {
+      // Check if the node is an 'A' tag (anchor/link, which represents a button)
+      if (node.tagName === 'A') {
+        let iconClass = null;
+        // Find an icon element within the button, if it exists
+        const iconElement = node.querySelector('i.fa');
+        if (iconElement) {
+          // Extract the icon class
+          const iconClasses = Array.from(iconElement.classList).filter((cls) => cls.startsWith('fa-'));
+          if (iconClasses.length > 0) iconClass = iconClasses[0];
+        }
+
+        // Prepare the button arguments for either updating or adding the button
+        const buttonArgs = {
+          id: node.id,
+          label: node.textContent.trim(),
+          action: () => node.click(),
+          class: node.className,
+          title: node.title,
+          access_key: node.accessKey,
+          mouseover: node.mouseover,
+          icon: iconClass,
+        };
+
+        // Update an existing button or add a new one
+        buttonArgs['id'] = `legacy-toolbox-btn-${buttonArgs.id || buttonArgs.label}`;
+        if (this.buttons[buttonArgs.id]) {
+          this.updateButton(buttonArgs.id, buttonArgs);
+        } else {
+          this.addButton(buttonArgs);
+        }
+      }
+    };
+
+    // Initialize for existing buttons in the toolbox
+    oldToolbox.querySelectorAll('a').forEach(processButton);
+
+    // Mutation observer to watch for changes in the toolbox
+    const observer = new MutationObserver((mutations) => {
+      // Iterate through mutations
+      mutations.forEach((mutation) => {
+        // Process each added node and attribute changes
+        mutation.addedNodes.forEach(processButton);
+        if (mutation.type === 'attributes') {
+          processButton(mutation.target);
+        }
+      });
+    });
+
+    // Start observing the toolbox for changes
+    observer.observe(oldToolbox, { childList: true, subtree: true, attributes: true });
+  },
+};
+
+IITC.toolbox._syncWithLegacyToolbox();
 
 
 })();
