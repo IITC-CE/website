@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240204.191155
+// @version        0.37.1.20240204.191646
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-04-191155';
+plugin_info.dateTimeVersion = '2024-02-04-191646';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -95,7 +95,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-02-04-191155';
+window.iitcBuildDate = '2024-02-04-191646';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3944,7 +3944,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-02-04-191155');
+  log.log('loading done, booting. Built: '+'2024-02-04-191646');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20514,17 +20514,17 @@ var _channelsData = {};
  *
  * @function IITC.comm._initChannelData
  * @private
- * @param {chat.ChannelDescription} channel - The channel object.
+ * @param {chat.ChannelDescription} id - The channel id.
  */
-function _initChannelData(channel) {
+function _initChannelData(id) {
   // preserve channel object
-  if (!_channelsData[channel.id]) _channelsData[channel.id] = {};
-  _channelsData[channel.id].data = {};
-  _channelsData[channel.id].guids = [];
-  _channelsData[channel.id].oldestTimestamp = -1;
-  delete _channelsData[channel.id].oldestGUID;
-  _channelsData[channel.id].newestTimestamp = -1;
-  delete _channelsData[channel.id].newestGUID;
+  if (!_channelsData[id]) _channelsData[id] = {};
+  _channelsData[id].data = {};
+  _channelsData[id].guids = [];
+  _channelsData[id].oldestTimestamp = -1;
+  delete _channelsData[id].oldestGUID;
+  _channelsData[id].newestTimestamp = -1;
+  delete _channelsData[id].newestGUID;
 }
 
 /**
@@ -20730,6 +20730,7 @@ function _genPostData(channel, getOlderMsgs) {
     _oldBBox = b;
   }
 
+  if (!_channelsData[channel]) _initChannelData(channel);
   var storageHash = _channelsData[channel];
 
   var ne = b.getNorthEast();
@@ -20834,6 +20835,7 @@ function _handleChannel(channel, data, olderMsgs, ascendingTimestampOrder) {
 
   $('#chat' + channel).data('needsClearing', null);
 
+  if (!_channelsData[channel]) _initChannelData(channel);
   var old = _channelsData[channel].oldestGUID;
   _writeDataToHash(data, _channelsData[channel], olderMsgs, ascendingTimestampOrder);
   var oldMsgsWereAdded = old !== _channelsData[channel].oldestGUID;
@@ -20857,6 +20859,7 @@ function _handleChannel(channel, data, olderMsgs, ascendingTimestampOrder) {
  * @param {boolean} oldMsgsWereAdded - Indicates if old messages were added in the current rendering.
  */
 function renderChannel(channel, oldMsgsWereAdded) {
+  if (!_channelsData[channel]) _initChannelData(channel);
   IITC.comm.renderData(_channelsData[channel].data, 'chat' + channel, oldMsgsWereAdded, _channelsData[channel].guids);
 }
 
