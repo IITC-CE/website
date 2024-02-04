@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240204.191646
+// @version        0.37.1.20240204.193225
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-04-191646';
+plugin_info.dateTimeVersion = '2024-02-04-193225';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -95,7 +95,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-02-04-191646';
+window.iitcBuildDate = '2024-02-04-193225';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3944,7 +3944,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-02-04-191646');
+  log.log('loading done, booting. Built: '+'2024-02-04-193225');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20803,8 +20803,9 @@ function requestChannel(channel, getOlderMsgs, isRetry) {
       ? function () {
           _requestRunning[channel] = false;
         }
-      : function () {
-          requestChannel(channel, getOlderMsgs, true);
+      : function (_, textStatus) {
+          if (textStatus === 'abort') _requestRunning[channel] = false;
+          else requestChannel(channel, getOlderMsgs, true);
         }
   );
 }
@@ -21204,6 +21205,10 @@ function renderData(data, element, likelyWereOldMsgs, sortedGuids) {
     elm.scrollTop(elm.data('needsScrollTop'));
     elm.data('needsScrollTop', null);
   }
+}
+
+for (const channel of _channels) {
+  _initChannelData(channel.id);
 }
 
 IITC.comm = {
@@ -28906,7 +28911,6 @@ window.requests.abort = function () {
 
   window.activeRequests = [];
   window.failedRequestCount = 0;
-  window.chat._requestRunning = {};
 
   renderUpdateStatus();
 }
