@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.1.1.20240208.201424
+// @version        0.1.1.20240208.202852
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-08-201424';
+plugin_info.dateTimeVersion = '2024-02-08-202852';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,6 +30,10 @@ plugin_info.pluginId = 'debug-console';
 /* global L */
 
 var changelog = [
+  {
+    version: '0.2.0',
+    changes: ['Use channel new API', 'Handle multiline messages'],
+  },
   {
     version: '0.1.1',
     changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
@@ -181,7 +185,7 @@ function setup() {
   debugTab.create();
   overwriteNative();
 
-  $('<style>').prop('type', 'text/css').html('\
+  $('<style>').prop('type', 'text/css').text('\
 #chat #chatdebug td:nth-child(-n+2) {\
     width: 51px\
 }\
@@ -206,6 +210,10 @@ function setup() {
     display: inline;\
     white-space: pre-line;\
     word-break: break-all;\
+}\
+\
+#chatinput.debug mark {\
+    color: #bbb;\
 }\
 ').appendTo('head');
 
