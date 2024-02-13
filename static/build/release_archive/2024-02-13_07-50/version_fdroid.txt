@@ -1,0 +1,2 @@
+versionName=0.37.2
+versionCode=1707810442
