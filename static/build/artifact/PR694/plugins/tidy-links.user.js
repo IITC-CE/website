@@ -2,7 +2,7 @@
 // @author         boombuler
 // @name           IITC plugin: Tidy Links
 // @category       Draw
-// @version        0.6.1.20240222.063126
+// @version        0.6.1.20240222.074947
 // @description    Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (former `Max Links`)
 // @id             tidy-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-22-063126';
+plugin_info.dateTimeVersion = '2024-02-22-074947';
 plugin_info.pluginId = 'tidy-links';
 //END PLUGIN AUTHORS NOTE
 
