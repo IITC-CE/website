@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Hide portal levels
 // @category       Layer
-// @version        0.1.1.20240214.192955
+// @version        0.1.1.20240222.051944
 // @description    Replace all levels with single layerChooser's entry; reverting on longclick
 // @id             hide-portal-levels
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
