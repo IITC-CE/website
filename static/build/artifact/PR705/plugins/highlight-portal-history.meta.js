@@ -2,7 +2,7 @@
 // @author         Johtaja
 // @name           IITC plugin: Highlight portals based on history
 // @category       Highlighter
-// @version        0.3.1.20240223.081404
+// @version        0.3.1.20240223.082744
 // @description    Use the portal fill color to denote the portal has been visited, captured, scout controlled
 // @id             highlight-portal-history
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
