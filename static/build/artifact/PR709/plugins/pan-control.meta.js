@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Pan control
 // @category       Controls
-// @version        0.2.3.20240225.093557
+// @version        0.2.3.20240227.145810
 // @description    Show a panning control on the map.
 // @id             pan-control
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
