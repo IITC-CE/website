@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.37.1.20240208.202852
+// @version        0.38.0.20240228.214533
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-08-202852';
+plugin_info.dateTimeVersion = '2024-02-28-214533';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -34,7 +34,14 @@ window.script_info = plugin_info;
 window.script_info.changelog = [
   {
     version: '0.38.0',
-    changes: ['Function marked deprecated: portalApGainMaths, getPortalApGain, potentialPortalLevel, findPortalLatLng'],
+    changes: [
+      'Function marked deprecated: portalApGainMaths, getPortalApGain, potentialPortalLevel, findPortalLatLng',
+      'Added Filters API (`IITC.filters`)',
+      'Added Toolbox API (`IITC.toolbox`)',
+      'Added Google Maps Roads+Transit map',
+      'Added the ability to search using a scanner link or GUID',
+      'Added conversion of new comm messages to the old style',
+    ],
   },
   {
     version: '0.37.1',
@@ -95,7 +102,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-02-08-202852';
+window.iitcBuildDate = '2024-02-28-214533';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3940,7 +3947,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-02-08-202852');
+  log.log('loading done, booting. Built: '+'2024-02-28-214533');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21017,15 +21024,17 @@ function renderMarkup(markup) {
 }
 
 /**
- * Transforms a given markup array into an older, more straightforward format for easier understanding.
+ * Transforms a the markup array into an older, more straightforward format for easier understanding.
+ *
+ * May be used to build an entirely new markup to be rendered without altering the original one.
  *
  * @function IITC.comm.transformMessage
- * @param {Array} markup - An array representing the markup to be transformed.
+ * @param {Object} data - The data for the message, including time, player, and message content.
  * @returns {Array} The transformed markup array with a simplified structure.
  */
-function transformMessage(markup) {
+function transformMessage(data) {
   // Make a copy of the markup array to avoid modifying the original input
-  let newMarkup = JSON.parse(JSON.stringify(markup));
+  let newMarkup = JSON.parse(JSON.stringify(data.markup));
 
   // Collapse <faction> + "Link"/"Field". Example: "Agent <player> destroyed the <faction> Link ..."
   if (newMarkup.length > 4) {
@@ -21118,7 +21127,7 @@ function renderMsgRow(data) {
   }
   var nickCell = IITC.comm.renderNickCell(data.player.name, nickClasses.join(' '));
 
-  const markup = IITC.comm.transformMessage(data.markup);
+  const markup = IITC.comm.transformMessage(data);
   var msg = IITC.comm.renderMarkup(markup);
   var msgClass = data.narrowcast ? 'system_narrowcast' : '';
   var msgCell = IITC.comm.renderMsgCell(msg, msgClass);

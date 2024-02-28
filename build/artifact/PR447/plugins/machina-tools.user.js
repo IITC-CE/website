@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.8.1.20240208.202852
+// @version        0.9.0.20240228.214533
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-08-202852';
+plugin_info.dateTimeVersion = '2024-02-28-214533';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,6 +30,14 @@ plugin_info.pluginId = 'machina-tools';
 /* global , digits, L, map, dialog, getPortalLinks, portalDetail, turf, IITC */
 
 var changelog = [
+  {
+    version: '0.9.0',
+    changes: [
+      'Added max link length table to both cluster dialogs',
+      'Also new layer with max lengths accumulated while moving map (reset only with reload)',
+      'IITC.toolbox API is used to create plugin buttons',
+    ],
+  },
   {
     version: '0.8.1',
     changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],

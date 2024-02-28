@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.10.1.20240208.202852
+// @version        0.10.2.20240228.214533
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-08-202852';
+plugin_info.dateTimeVersion = '2024-02-28-214533';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,6 +30,10 @@ plugin_info.pluginId = 'draw-tools';
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.10.2',
+    changes: ['IITC.toolbox API is used to create plugin buttons'],
+  },
   {
     version: '0.10.1',
     changes: ['Version upgrade due to a change in the wrapper: added plugin icon'],
