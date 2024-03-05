@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.38.0.20240227.093417
+// @version        0.38.0.20240305.161024
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-02-27-093417';
+plugin_info.dateTimeVersion = '2024-03-05-161024';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -102,7 +102,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-02-27-093417';
+window.iitcBuildDate = '2024-03-05-161024';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3947,7 +3947,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-02-27-093417');
+  log.log('loading done, booting. Built: '+'2024-03-05-161024');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21007,19 +21007,50 @@ function renderText(text) {
 }
 
 /**
+ * List of transformations for portal names used in chat.
+ * Each transformation function takes the portal markup object and returns a transformed name.
+ * If a transformation does not apply, the original name is returned.
+ *
+ * @const IITC.comm.portalNameTransformations
+ * @example
+ * // Adding a transformation that appends the portal location to its name
+ * portalNameTransformations.push((markup) => {
+ *   const latlng = `${markup.latE6 / 1E6},${markup.lngE6 / 1E6}`; // Convert E6 format to decimal
+ *   return `[${latlng}] ${markup.name}`;
+ * });
+ */
+const portalNameTransformations = [
+  // Transformation for 'US Post Office'
+  (markup) => {
+    if (markup.name === 'US Post Office') {
+      const address = markup.address.split(',');
+      return 'USPS: ' + address[0];
+    }
+    return markup.name;
+  },
+  (markup) => {
+    // Converts E6 format to decimal for latitude and longitude, then appends it to the portal name
+    const latlng = `${markup.latE6 / 1E6},${markup.lngE6 / 1E6}`;
+    return `[${latlng}] ${markup.name}`;
+  },
+];
+
+/**
  * Overrides portal names used repeatedly in chat, such as 'US Post Office', with more specific names.
+ * Applies a series of transformations to the portal name based on the portal markup.
  *
  * @function IITC.comm.getChatPortalName
  * @param {Object} markup - An object containing portal markup, including the name and address.
  * @returns {string} The processed portal name.
  */
 function getChatPortalName(markup) {
-  var name = markup.name;
-  if (name === 'US Post Office') {
-    var address = markup.address.split(',');
-    name = 'USPS: ' + address[0];
-  }
-  return name;
+  // Use reduce to apply each transformation to the data
+  const transformedData = portalNameTransformations.reduce((initialMarkup, transform) => {
+    const updatedName = transform(initialMarkup);
+    return {...initialMarkup, name: updatedName};
+  }, markup);
+
+  return transformedData.name;
 }
 
 /**
@@ -21137,40 +21168,77 @@ function renderMarkup(markup) {
 }
 
 /**
- * Transforms a given markup array into an older, more straightforward format for easier understanding.
+ * List of transformations to be applied to the message data.
+ * Each transformation function takes the full message data object and returns the transformed markup.
+ * The default transformations aim to convert the message markup into an older, more straightforward format,
+ * facilitating easier understanding and backward compatibility with plugins expecting the older message format.
+ *
+ * @const IITC.comm.messageTransformFunctions
+ * @example
+ * // Adding a new transformation function to the array
+ * // This new function adds a "new" prefix to the player's plain text if the player is from the RESISTANCE team
+ * messageTransformFunctions.push((data) => {
+ *   const markup = data.markup;
+ *   if (markup.length > 2 && markup[0][0] === 'PLAYER' && markup[0][1].team === 'RESISTANCE') {
+ *     markup[1][1].plain = 'new ' + markup[1][1].plain;
+ *   }
+ *   return markup;
+ * });
+ */
+const messageTransformFunctions = [
+  // Collapse <faction> + "Link"/"Field".
+  (data) => {
+    const markup = data.markup;
+    if (
+      markup.length > 4 &&
+      markup[3][0] === 'FACTION' &&
+      markup[4][0] === 'TEXT' &&
+      (markup[4][1].plain === ' Link ' || markup[4][1].plain === ' Control Field @')
+    ) {
+      markup[4][1].team = markup[3][1].team;
+      markup.splice(3, 1);
+    }
+    return markup;
+  },
+  // Skip "Agent <player>" at the beginning
+  (data) => {
+    const markup = data.markup;
+    if (markup.length > 1 && markup[0][0] === 'TEXT' && markup[0][1].plain === 'Agent ' && markup[1][0] === 'PLAYER') {
+      markup.splice(0, 2);
+    }
+    return markup;
+  },
+  // Skip "<faction> agent <player>" at the beginning
+  (data) => {
+    const markup = data.markup;
+    if (markup.length > 2 && markup[0][0] === 'FACTION' && markup[1][0] === 'TEXT' && markup[1][1].plain === ' agent ' && markup[2][0] === 'PLAYER') {
+      markup.splice(0, 3);
+    }
+    return markup;
+  },
+];
+
+/**
+ * Applies transformations to the markup array based on the transformations defined in
+ * the {@link IITC.comm.messageTransformFunctions} array.
+ * Assumes all transformations return a new markup array.
+ * May be used to build an entirely new markup to be rendered without altering the original one.
  *
  * @function IITC.comm.transformMessage
- * @param {Array} markup - An array representing the markup to be transformed.
- * @returns {Array} The transformed markup array with a simplified structure.
+ * @param {Object} data - The data for the message, including time, player, and message content.
+ * @returns {Object} The transformed markup array.
  */
-function transformMessage(markup) {
-  // Make a copy of the markup array to avoid modifying the original input
-  let newMarkup = JSON.parse(JSON.stringify(markup));
+const transformMessage = (data) => {
+  const initialData = JSON.parse(JSON.stringify(data));
 
-  // Collapse <faction> + "Link"/"Field". Example: "Agent <player> destroyed the <faction> Link ..."
-  if (newMarkup.length > 4) {
-    if (newMarkup[3][0] === 'FACTION' && newMarkup[4][0] === 'TEXT' && (newMarkup[4][1].plain === ' Link ' || newMarkup[4][1].plain === ' Control Field @')) {
-      newMarkup[4][1].team = newMarkup[3][1].team;
-      newMarkup.splice(3, 1);
-    }
-  }
+  // Use reduce to apply each transformation to the data
+  const transformedData = messageTransformFunctions.reduce((data, transform) => {
+    const updatedMarkup = transform(data);
+    return {...data, markup: updatedMarkup};
+  }, initialData);
 
-  // Skip "Agent <player>" at the beginning
-  if (newMarkup.length > 1) {
-    if (newMarkup[0][0] === 'TEXT' && newMarkup[0][1].plain === 'Agent ' && newMarkup[1][0] === 'PLAYER') {
-      newMarkup.splice(0, 2);
-    }
-  }
-
-  // Skip "<faction> agent <player>" at the beginning
-  if (newMarkup.length > 2) {
-    if (newMarkup[0][0] === 'FACTION' && newMarkup[1][0] === 'TEXT' && newMarkup[1][1].plain === ' agent ' && newMarkup[2][0] === 'PLAYER') {
-      newMarkup.splice(0, 3);
-    }
-  }
-
-  return newMarkup;
-}
+  return transformedData.markup;
+};
 
 /**
  * Renders a cell in the chat table to display the time a message was sent.
@@ -21238,7 +21306,7 @@ function renderMsgRow(data) {
   }
   var nickCell = IITC.comm.renderNickCell(data.player.name, nickClasses.join(' '));
 
-  const markup = IITC.comm.transformMessage(data.markup);
+  const markup = IITC.comm.transformMessage(data);
   var msg = IITC.comm.renderMarkup(markup);
   var msgClass = data.narrowcast ? 'system_narrowcast' : '';
   var msgCell = IITC.comm.renderMsgCell(msg, msgClass);
@@ -21298,6 +21366,7 @@ function renderData(data, element, likelyWereOldMsgs, sortedGuids) {
   var prevTime = null;
   vals.forEach(function (guid) {
     var msg = data[guid];
+    if (IITC.comm.declarativeMessageFilter.filterMessage(msg[4])) return;
     var nextTime = new Date(msg[0]).toLocaleDateString();
     if (prevTime && prevTime !== nextTime) {
       msgs += IITC.comm.renderDivider(nextTime);
@@ -21331,6 +21400,9 @@ IITC.comm = {
   channels: _channels,
   sendChatMessage,
   parseMsgData,
+  // List of transformations
+  portalNameTransformations,
+  messageTransformFunctions,
   // Render primitive, may be override
   renderMsgRow,
   renderDivider,
@@ -21356,6 +21428,164 @@ IITC.comm = {
 };
 
 /* global log, map, chat, IITC */
+
+
+})();
+
+
+// *** module: comm_declarative_message_filter.js ***
+(function () {
+var log = ulog('comm_declarative_message_filter');
+/* global IITC */
+
+/**
+ * Declarative message filter for COMM API
+ *
+ * @memberof IITC.comm
+ * @namespace declarativeMessageFilter
+ */
+
+IITC.comm.declarativeMessageFilter = {
+  _rules: {},
+
+  /**
+   * Adds a new filtering rule with a given ID.
+   *
+   * @param {string} id The ID of the rule to add.
+   * @param {Object} rule The rule to add.
+   *
+   * @example
+   * // Hide all messages from Resistance team
+   * IITC.comm.declarativeMessageFilter.addRule({
+   *   id: "hideResistanceTeam1",
+   *   conditions: [
+   *     { field: "player.team", value: "Resistance" },
+   *   ]
+   * });
+   *
+   * @example
+   * // Hide all messages except those from the Resistance team using the inverted rule
+   * IITC.comm.declarativeMessageFilter.addRule({
+   *   id: "hideExceptResistanceTeam",
+   *   conditions: [
+   *     { field: "player.team", value: "Resistance", invert: true },
+   *   ]
+   * });
+   *
+   * @example
+   * // Hide messages that look like spam
+   * IITC.comm.declarativeMessageFilter.addRule({
+   *   id: "hideSpam",
+   *   conditions: [
+   *     { field: "markup[4][1].plain", condition: /ingress-(shop|store)|(store|shop)-ingress/i },
+   *   ]
+   * });
+   */
+  addRule: (id, rule) => {
+    if (IITC.comm.declarativeMessageFilter._rules[id]) {
+      console.warn(`Rule with ID '${id}' already exists. Overwriting.`);
+    }
+    IITC.comm.declarativeMessageFilter._rules[id] = rule;
+  },
+
+  /**
+   * Removes a filtering rule by its ID.
+   *
+   * @param {string} id The ID of the rule to remove.
+   */
+  removeRule: (id) => {
+    if (IITC.comm.declarativeMessageFilter._rules[id]) {
+      delete IITC.comm.declarativeMessageFilter._rules[id];
+    } else {
+      console.error(`No rule found with ID '${id}'.`);
+    }
+  },
+
+  /**
+   * Gets a rule by its ID.
+   *
+   * @param {string} id The ID of the rule to get.
+   * @returns {Object|null} The rule object, or null if not found.
+   */
+  getRuleById: (id) => {
+    return IITC.comm.declarativeMessageFilter._rules[id] || null;
+  },
+
+  /**
+   * Gets all current filtering rules.
+   *
+   * @returns {Object} The current set of filtering rules.
+   */
+  getAllRules: () => {
+    return IITC.comm.declarativeMessageFilter._rules;
+  },
+
+  /**
+   * Extracts the value from the message object by a given path.
+   *
+   * @param {Object} object The message object.
+   * @param {String} path Path to the property in dot notation.
+   * @returns {*} The value of the property at the specified path or undefined if the path is not valid.
+   */
+  getMessageValueByPath: (object, path) => {
+    const parts = path.replace(/\[(\w+)]/g, '.$1').split('.');
+    let current = object;
+
+    for (const part of parts) {
+      if (part in current) {
+        current = current[part];
+      } else {
+        return undefined; // Path is not valid
+      }
+    }
+    return current;
+  },
+
+  /**
+   * Checks if the message matches a single rule.
+   *
+   * @param {Object} message The message to check.
+   * @param {Object} rule The rule to match against.
+   * @returns {boolean} True if the message matches the rule, false otherwise.
+   */
+  matchesRule: (message, rule) => {
+    return rule.conditions.every((condition) => {
+      const messageValue = IITC.comm.declarativeMessageFilter.getMessageValueByPath(message, condition.field);
+      let result;
+
+      if ('value' in condition) {
+        result = messageValue === condition.value;
+      } else if ('pattern' in condition) {
+        const regex = new RegExp(condition.pattern);
+        result = regex.test(messageValue);
+      } else {
+        return false; // If the condition does not contain 'value' or 'pattern', we consider that the message does not match the rule
+      }
+
+      // Invert the result if the condition is inverted
+      if (condition.invert) {
+        return !result;
+      }
+      return result;
+    });
+  },
+
+  /**
+   * Checks if a message matches any of the current filtering rules.
+   *
+   * @param {Object} message The message to check.
+   * @returns {boolean} True if the message matches any rule, false otherwise.
+   */
+  filterMessage: (message) => {
+    const rules = IITC.comm.declarativeMessageFilter.getAllRules();
+    for (const ruleId in rules) {
+      if (IITC.comm.declarativeMessageFilter.matchesRule(message, rules[ruleId])) {
+        return true;
+      }
+    }
+    return false;
+  },
+};
 
 
 })();
@@ -23838,6 +24068,7 @@ function createDefaultOverlays() {
       filter: [
         { portal: true, data: { level: i, team: 'R' } },
         { portal: true, data: { level: i, team: 'E' } },
+        { portal: true, data: { level: i, team: 'M' } },
       ],
     });
     addLayers[t] = portalsLayer;
