@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.38.0.20240305.161024
+// @version        0.38.0.20240310.172020
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-03-05-161024';
+plugin_info.dateTimeVersion = '2024-03-10-172020';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -102,7 +102,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-03-05-161024';
+window.iitcBuildDate = '2024-03-10-172020';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -1013,7 +1013,7 @@ h3.title {\
 }\
 \
 #toolbox {\
-  display: none;\
+  display: none !important;\
 }\
 \
 #toolbox, #toolbox_component {\
@@ -2398,8 +2398,8 @@ document.body.innerHTML =
   '    </div>' +
   '    <div id="portaldetails"></div>' +
   '    <input id="redeem" placeholder="Redeem code…" type="text"/>' +
-  '    <div id="toolbox"></div>' +
   '    <div id="toolbox_component"></div>' +
+  '    <div id="toolbox"></div>' +
   '  </div>' +
   '</div>' +
   '<div id="updatestatus"><div id="innerstatus"></div></div>' +
@@ -3947,7 +3947,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-03-05-161024');
+  log.log('loading done, booting. Built: '+'2024-03-10-172020');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -19811,7 +19811,7 @@ var log = ulog('chat');
 /**
  * @file Namespace for chat-related functionalities.
  *
- * @namespace chat
+ * @module chat
  */
 var chat = function () {};
 window.chat = chat;
@@ -19895,7 +19895,7 @@ window.chat = new Proxy(window.chat, {
 /**
  * Adds a nickname to the chat input.
  *
- * @function chat.addNickname
+ * @function addNickname
  * @param {string} nick - The nickname to add.
  */
 chat.addNickname = function (nick) {
@@ -19907,7 +19907,7 @@ chat.addNickname = function (nick) {
 /**
  * Handles click events on nicknames in the chat.
  *
- * @function chat.nicknameClicked
+ * @function nicknameClicked
  * @param {Event} event - The click event.
  * @param {string} nickname - The clicked nickname.
  * @returns {boolean} Always returns false.
@@ -19941,31 +19941,31 @@ chat.nicknameClicked = function (event, nickname) {
  * Hold channel description
  *
  * See comm.js for examples
- * @typedef {Object} chat.ChannelDescription
+ * @typedef {Object} ChannelDescription
  * @property {string} id - uniq id, matches 'tab' parameter for server requests
  * @property {string} name - visible name
  * @property {string} [inputPrompt] - (optional) string for the input prompt
  * @property {string} [inputClass] - (optional) class to apply to #chatinput
- * @property {chat.ChannelSendMessageFn} [sendMessage] - (optional) function to send the message
- * @property {chat.ChannelRequestFn} [request] - (optional) function to call to request new message
- * @property {chat.ChannelRenderFn} [render] - (optional) function to render channel content,, called on tab change
+ * @property {ChannelSendMessageFn} [sendMessage] - (optional) function to send the message
+ * @property {ChannelRequestFn} [request] - (optional) function to call to request new message
+ * @property {ChannelRenderFn} [render] - (optional) function to render channel content,, called on tab change
  * @property {boolean} [localBounds] - (optional) if true, reset on view change
  */
 /**
- * @callback chat.ChannelSendMessageFn
+ * @callback ChannelSendMessageFn
  * @param {string} id - channel id
  * @param {string} message - input message
  * @returns {void}
  */
 /**
- * @callback chat.ChannelRequestFn
+ * @callback ChannelRequestFn
  * @param {string} id - channel id
  * @param {boolean} getOlderMsgs - true if request data from a scroll to top
  * @param {boolean} isRetry
  * @returns {void}
  */
 /**
- * @callback chat.ChannelRenderFn
+ * @callback ChannelRenderFn
  * @param {string} id - channel id
  * @param {boolean} oldMsgsWereAdded - true if data has been added at the top (to preserve scroll position)
  * @returns {void}
@@ -19974,14 +19974,15 @@ chat.nicknameClicked = function (event, nickname) {
 /**
  * Holds channels infos.
  *
- * @type {chat.ChannelDescription[]}
+ * @type {ChannelDescription[]}
+ * @memberof module:chat
  */
 chat.channels = [];
 
 /**
  * Gets the name of the active chat tab.
  *
- * @function chat.getActive
+ * @function getActive
  * @returns {string} The name of the active chat tab.
  */
 chat.getActive = function () {
@@ -19991,9 +19992,9 @@ chat.getActive = function () {
 /**
  * Converts a chat tab name to its corresponding channel object.
  *
- * @function chat.getChannelDesc
+ * @function getChannelDesc
  * @param {string} tab - The name of the chat tab.
- * @returns {chat.ChannelDescription} The corresponding channel name ('faction', 'alerts', or 'all').
+ * @returns {ChannelDescription} The corresponding channel name ('faction', 'alerts', or 'all').
  */
 chat.getChannelDesc = function (tab) {
   var channelObject = null;
@@ -20008,7 +20009,7 @@ chat.getChannelDesc = function (tab) {
  * that need to process COMM data even when the user is not actively viewing the COMM channels.
  * It tracks the requested channels for each plugin instance and updates the global state accordingly.
  *
- * @function chat.backgroundChannelData
+ * @function backgroundChannelData
  * @param {string} instance - A unique identifier for the plugin or instance requesting background COMM data.
  * @param {string} channel - The name of the COMM channel ('all', 'faction', or 'alerts').
  * @param {boolean} flag - Set to true to request data for the specified channel, false to stop requesting.
@@ -20036,7 +20037,7 @@ chat.backgroundChannelData = function (instance, channel, flag) {
  * Requests chat messages for the currently active chat tab and background channels.
  * It calls the appropriate request function based on the active tab or background channels.
  *
- * @function chat.request
+ * @function request
  */
 chat.request = function () {
   var channel = chat.getActive();
@@ -20051,7 +20052,7 @@ chat.request = function () {
  * Checks if the currently selected chat tab needs more messages.
  * This function is triggered by scroll events and loads older messages when the user scrolls to the top.
  *
- * @function chat.needMoreMessages
+ * @function needMoreMessages
  */
 chat.needMoreMessages = function () {
   var activeTab = chat.getActive();
@@ -20072,7 +20073,7 @@ chat.needMoreMessages = function () {
  * Chooses and activates a specified chat tab.
  * Also triggers an early refresh of the chat data when switching tabs.
  *
- * @function chat.chooseTab
+ * @function chooseTab
  * @param {string} tab - The name of the chat tab to activate ('all', 'faction', or 'alerts').
  */
 chat.chooseTab = function (tab) {
@@ -20128,7 +20129,7 @@ chat.chooseTab = function (tab) {
  * When expanded, the chat window covers a larger area of the screen.
  * This function also ensures that the chat is scrolled to the bottom when collapsed.
  *
- * @function chat.toggle
+ * @function toggle
  */
 chat.toggle = function () {
   var c = $('#chat, #chatcontrols');
@@ -20148,7 +20149,7 @@ chat.toggle = function () {
 /**
  * Displays the chat interface and activates a specified chat tab.
  *
- * @function chat.show
+ * @function show
  * @param {string} name - The name of the chat tab to show and activate.
  */
 chat.show = function (name) {
@@ -20167,7 +20168,7 @@ chat.show = function (name) {
  * This function is triggered by a click event on the chat tab. It reads the tab name from the event target
  * and activates the corresponding chat tab.
  *
- * @function chat.chooser
+ * @function chooser
  * @param {Event} event - The event triggered by clicking a chat tab.
  */
 chat.chooser = function (event) {
@@ -20181,7 +20182,7 @@ chat.chooser = function (event) {
  * This function is designed to keep the scroll position fixed when old messages are loaded, and to automatically scroll
  * to the bottom when new messages are added if the user is already at the bottom of the chat.
  *
- * @function chat.keepScrollPosition
+ * @function keepScrollPosition
  * @param {jQuery} box - The jQuery object of the chat box.
  * @param {number} scrollBefore - The scroll position before new messages were added.
  * @param {boolean} isOldMsgs - Indicates if the added messages are older messages.
@@ -20209,7 +20210,7 @@ chat.keepScrollPosition = function (box, scrollBefore, isOldMsgs) {
  *
  * @function createChannelTab
  * @memberof chat
- * @param {chat.ChannelDescription} channelDesc - channel description
+ * @param {ChannelDescription} channelDesc - channel description
  * @static
  */
 function createChannelTab(channelDesc) {
@@ -20244,8 +20245,8 @@ var isTabsSetup = false;
  *
  * If tabs are already created, a tab is created for this channel as well
  *
- * @function chat.addChannel
- * @param {chat.ChannelDescription} channelDesc - channel description
+ * @function addChannel
+ * @param {ChannelDescription} channelDesc - channel description
  */
 chat.addChannel = function (channelDesc) {
   // deny reserved name
@@ -20273,8 +20274,8 @@ chat.addChannel = function (channelDesc) {
 /**
  * Sets up all channels starting from intel COMM
  *
- * @function chat.setupTabs
- * @param {chat.ChannelDescription} channelDesc - channel description
+ * @function setupTabs
+ * @param {ChannelDescription} channelDesc - channel description
  */
 chat.setupTabs = function () {
   isTabsSetup = true;
@@ -20295,7 +20296,7 @@ chat.setupTabs = function () {
   /**
    * Initiates a request for public chat data.
    *
-   * @function chat.requestPublic
+   * @function requestPublic
    * @param {boolean} getOlderMsgs - Whether to retrieve older messages.
    * @param {boolean} [isRetry=false] - Whether the request is a retry.
    */
@@ -20306,7 +20307,7 @@ chat.setupTabs = function () {
   /**
    * Requests faction chat messages.
    *
-   * @function chat.requestFaction
+   * @function requestFaction
    * @param {boolean} getOlderMsgs - Flag to determine if older messages are being requested.
    * @param {boolean} [isRetry=false] - Flag to indicate if this is a retry attempt.
    */
@@ -20317,7 +20318,7 @@ chat.setupTabs = function () {
   /**
    * Initiates a request for alerts chat data.
    *
-   * @function chat.requestAlerts
+   * @function requestAlerts
    * @param {boolean} getOlderMsgs - Whether to retrieve older messages.
    * @param {boolean} [isRetry=false] - Whether the request is a retry.
    */
@@ -20328,7 +20329,7 @@ chat.setupTabs = function () {
   /**
    * Renders public chat in the UI.
    *
-   * @function chat.renderPublic
+   * @function renderPublic
    * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
    */
   chat.renderPublic = function (oldMsgsWereAdded) {
@@ -20338,7 +20339,7 @@ chat.setupTabs = function () {
   /**
    * Renders faction chat.
    *
-   * @function chat.renderFaction
+   * @function renderFaction
    * @param {boolean} oldMsgsWereAdded - Indicates if old messages were added in the current rendering.
    */
   chat.renderFaction = function (oldMsgsWereAdded) {
@@ -20348,7 +20349,7 @@ chat.setupTabs = function () {
   /**
    * Renders alerts chat in the UI.
    *
-   * @function chat.renderAlerts
+   * @function renderAlerts
    * @param {boolean} oldMsgsWereAdded - Indicates if older messages were added to the chat.
    */
   chat.renderAlerts = function (oldMsgsWereAdded) {
@@ -20359,7 +20360,7 @@ chat.setupTabs = function () {
 /**
  * Sets up the chat interface.
  *
- * @function chat.setup
+ * @function setup
  */
 chat.setup = function () {
   chat.setupTabs();
@@ -20393,7 +20394,7 @@ chat.setup = function () {
  * Sets up the time display in the chat input box.
  * This function updates the time displayed next to the chat input field every minute to reflect the current time.
  *
- * @function chat.setupTime
+ * @function setupTime
  */
 chat.setupTime = function () {
   var inputTime = $('#chatinput time');
@@ -20419,7 +20420,7 @@ chat.setupTime = function () {
 /**
  * Handles tab completion in chat input.
  *
- * @function chat.handleTabCompletion
+ * @function handleTabCompletion
  */
 chat.handleTabCompletion = function () {
   var el = $('#chatinput input');
@@ -20460,7 +20461,7 @@ chat.handleTabCompletion = function () {
 /**
  * Posts a chat message to the currently active chat tab.
  *
- * @function chat.postMsg
+ * @function postMsg
  */
 chat.postMsg = function () {
   var c = chat.getActive();
@@ -20478,7 +20479,7 @@ chat.postMsg = function () {
 /**
  * Sets up the chat message posting functionality.
  *
- * @function chat.setupPosting
+ * @function setupPosting
  */
 chat.setupPosting = function () {
   if (!window.isSmartphone()) {
@@ -20511,7 +20512,7 @@ chat.setupPosting = function () {
  * Legacy function for rendering chat messages. Used for backward compatibility with plugins.
  *
  * @deprecated
- * @function window.chat.renderMsg
+ * @function renderMsg
  * @param {string} msg - The chat message.
  * @param {string} nick - The nickname of the player who sent the message.
  * @param {number} time - The timestamp of the message.
@@ -20551,7 +20552,7 @@ chat.renderMsg = function (msg, nick, time, team, msgToPlayer, systemNarrowcast)
  * Used for backward compatibility with plugins.
  *
  * @deprecated
- * @function window.chat.tabToChannel
+ * @function tabToChannel
  * @param {string} tab - The name of the chat tab.
  * @returns {string} The corresponding channel name ('faction', 'alerts', or 'all').
  */
@@ -20579,6 +20580,7 @@ var log = ulog('comm');
 
 /**
  * @type {chat.ChannelDescription[]}
+ * @memberof IITC.comm
  */
 var _channels = [
   {
@@ -20618,6 +20620,7 @@ var _channels = [
  * Holds data related to each intel channel.
  *
  * @type {Object}
+ * @memberof IITC.comm
  */
 var _channelsData = {};
 
@@ -20637,6 +20640,54 @@ function _initChannelData(id) {
   delete _channelsData[id].oldestGUID;
   _channelsData[id].newestTimestamp = -1;
   delete _channelsData[id].newestGUID;
+}
+
+/**
+ * Template of portal link in comm.
+ * @type {String}
+ * @memberof IITC.comm
+ */
+let portalTemplate =
+  '<a onclick="window.selectPortalByLatLng({{ lat }}, {{ lng }});return false" title="{{ title }}" href="{{ url }}" class="help">{{ portal_name }}</a>';
+/**
+ * Template for time cell.
+ * @type {String}
+ * @memberof IITC.comm
+ */
+let timeCellTemplate = '<td><time class="{{ class_names }}" title="{{ time_title }}" data-timestamp="{{ unixtime }}">{{ time }}</time></td>';
+/**
+ * Template for player's nickname cell.
+ * @type {String}
+ * @memberof IITC.comm
+ */
+let nickCellTemplate = '<span class="invisep">&lt;</span><mark class="{{ class_names }}">{{ nick }}</mark><span class="invisep">&gt;</span>';
+/**
+ * Template for chat message text cell.
+ * @type {String}
+ * @memberof IITC.comm
+ */
+let msgCellTemplate = '<td class="{{ class_names }}">{{ msg }}</td>';
+/**
+ * Template for message row, includes cells for time, player nickname and message text.
+ * @type {String}
+ * @memberof IITC.comm
+ */
+let msgRowTemplate = '<tr data-guid="{{ guid }}" class="{{ class_names }}">{{ time_cell }}{{ nick_cell }}{{ msg_cell }}</tr>';
+/**
+ * Template for message divider.
+ * @type {String}
+ * @memberof IITC.comm
+ */
+let dividerTemplate = '<tr class="divider"><td><hr></td><td>{{ text }}</td><td><hr></td></tr>';
+
+/**
+ * Returns the coordinates for the message to be sent, default is the center of the map.
+ *
+ * @function IITC.comm.getLatLngForSendingMessage
+ * @returns {L.LatLng}
+ */
+function getLatLngForSendingMessage() {
+  return map.getCenter();
 }
 
 /**
@@ -20779,7 +20830,7 @@ function _writeDataToHash(newData, storageHash, isOlderMsgs, isAscendingOrder) {
 function sendChatMessage(tab, msg) {
   if (tab !== 'all' && tab !== 'faction') return;
 
-  var latlng = map.getCenter();
+  const latlng = IITC.comm.getLatLngForSendingMessage();
 
   var data = {
     message: msg,
@@ -21028,11 +21079,6 @@ const portalNameTransformations = [
     }
     return markup.name;
   },
-  (markup) => {
-    // Converts E6 format to decimal for latitude and longitude, then appends it to the portal name
-    const latlng = `${markup.latE6 / 1E6},${markup.lngE6 / 1E6}`;
-    return `[${latlng}] ${markup.name}`;
-  },
 ];
 
 /**
@@ -21047,7 +21093,7 @@ function getChatPortalName(markup) {
   // Use reduce to apply each transformation to the data
   const transformedData = portalNameTransformations.reduce((initialMarkup, transform) => {
     const updatedName = transform(initialMarkup);
-    return {...initialMarkup, name: updatedName};
+    return { ...initialMarkup, name: updatedName };
   }, markup);
 
   return transformedData.name;
@@ -21061,11 +21107,17 @@ function getChatPortalName(markup) {
  * @returns {string} HTML string of the portal link.
  */
 function renderPortal(portal) {
-  var lat = portal.latE6 / 1e6,
-    lng = portal.lngE6 / 1e6;
-  var perma = window.makePermalink([lat, lng]);
-  var js = 'window.selectPortalByLatLng(' + lat + ', ' + lng + ');return false';
-  return '<a onclick="' + js + '"' + ' title="' + portal.address + '"' + ' href="' + perma + '" class="help">' + IITC.comm.getChatPortalName(portal) + '</a>';
+  const lat = portal.latE6 / 1e6;
+  const lng = portal.lngE6 / 1e6;
+  const permalink = window.makePermalink([lat, lng]);
+  const portalName = IITC.comm.getChatPortalName(portal);
+
+  return IITC.comm.portalTemplate
+    .replace('{{ lat }}', lat.toString())
+    .replace('{{ lng }}', lng.toString())
+    .replace('{{ title }}', portal.address)
+    .replace('{{ url }}', permalink)
+    .replace('{{ portal_name }}', portalName);
 }
 
 /**
@@ -21234,7 +21286,7 @@ const transformMessage = (data) => {
   // Use reduce to apply each transformation to the data
   const transformedData = messageTransformFunctions.reduce((data, transform) => {
     const updatedMarkup = transform(data);
-    return {...data, markup: updatedMarkup};
+    return { ...data, markup: updatedMarkup };
   }, initialData);
 
   return transformedData.markup;
@@ -21245,16 +21297,25 @@ const transformMessage = (data) => {
  * Formats the time and adds it to a <time> HTML element with a tooltip showing the full date and time.
  *
  * @function IITC.comm.renderTimeCell
- * @param {number} time - The timestamp of the message.
+ * @param {number} unixtime - The timestamp of the message.
  * @param {string} classNames - Additional class names to be added to the time cell.
  * @returns {string} The HTML string representing a table cell with the formatted time.
  */
-function renderTimeCell(time, classNames) {
-  const ta = window.unixTimeToHHmm(time);
-  let tb = window.unixTimeToDateTimeString(time, true);
+function renderTimeCell(unixtime, classNames) {
+  const time = window.unixTimeToHHmm(unixtime);
+  const datetime = window.unixTimeToDateTimeString(unixtime, true);
   // add <small> tags around the milliseconds
-  tb = (tb.slice(0, 19) + '<small class="milliseconds">' + tb.slice(19) + '</small>').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  return '<td><time class="' + classNames + '" title="' + tb + '" data-timestamp="' + time + '">' + ta + '</time></td>';
+  const datetime_title = (datetime.slice(0, 19) + '<small class="milliseconds">' + datetime.slice(19) + '</small>')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+  return IITC.comm.timeCellTemplate
+    .replace('{{ class_names }}', classNames)
+    .replace('{{ datetime }}', datetime)
+    .replace('{{ time_title }}', datetime_title)
+    .replace('{{ unixtime }}', unixtime.toString())
+    .replace('{{ time }}', time);
 }
 
 /**
@@ -21267,8 +21328,7 @@ function renderTimeCell(time, classNames) {
  * @returns {string} The HTML string representing a table cell with the player's nickname.
  */
 function renderNickCell(nick, classNames) {
-  const i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<td>' + i[0] + '<mark class="' + classNames + '">' + nick + '</mark>' + i[1] + '</td>';
+  return IITC.comm.nickCellTemplate.replace('{{ class_names }}', classNames).replace('{{ nick }}', nick);
 }
 
 /**
@@ -21281,7 +21341,7 @@ function renderNickCell(nick, classNames) {
  * @returns {string} The HTML string representing a table cell with the chat message.
  */
 function renderMsgCell(msg, classNames) {
-  return '<td class="' + classNames + '">' + msg + '</td>';
+  return IITC.comm.msgCellTemplate.replace('{{ class_names }}', classNames).replace('{{ msg }}', msg);
 }
 
 /**
@@ -21317,7 +21377,13 @@ function renderMsgRow(data) {
   } else if (!data.auto && data.secure) {
     className = 'faction';
   }
-  return '<tr data-guid="' + data.guid + '" class="' + className + '">' + timeCell + nickCell + msgCell + '</tr>';
+
+  return IITC.comm.msgRowTemplate
+    .replace('{{ class_names }}', className)
+    .replace('{{ guid }}', data.guid)
+    .replace('{{ time_cell }}', timeCell)
+    .replace('{{ nick_cell }}', nickCell)
+    .replace('{{ msg_cell }}', msgCell);
 }
 
 /**
@@ -21328,7 +21394,7 @@ function renderMsgRow(data) {
  * @returns {string} The HTML string representing a divider row in the chat table.
  */
 function renderDivider(text) {
-  return '<tr class="divider"><td><hr></td><td>' + text + '</td><td><hr></td></tr>';
+  return IITC.comm.dividerTemplate.replace('{{ text }}', text);
 }
 
 /**
@@ -21400,6 +21466,7 @@ IITC.comm = {
   channels: _channels,
   sendChatMessage,
   parseMsgData,
+  getLatLngForSendingMessage,
   // List of transformations
   portalNameTransformations,
   messageTransformFunctions,
@@ -21417,6 +21484,13 @@ IITC.comm = {
   renderPortal,
   renderText,
   getChatPortalName,
+  // templates
+  portalTemplate,
+  timeCellTemplate,
+  nickCellTemplate,
+  msgCellTemplate,
+  msgRowTemplate,
+  dividerTemplate,
   // exposed API for legacy
   requestChannel,
   renderChannel,
