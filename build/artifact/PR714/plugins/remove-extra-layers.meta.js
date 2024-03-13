@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Remove extra layers
 // @category       Layer
-// @version        0.1.1.20240311.213827
+// @version        0.1.1.20240313.181537
 // @description    Remove 'Artifacts', 'Beacons' and 'Frackers' from layerChooser (still keeping them on map)
 // @id             remove-extra-layers
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
