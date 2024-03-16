@@ -6,6 +6,8 @@ import os
 import json
 import hashlib
 import shutil
+import time
+import urllib.request
 
 
 def md5sum(filename, blocksize=65536):
@@ -79,3 +81,16 @@ def copy_last_build_from_archive():
         if os.path.exists(build_path):
             shutil.rmtree(build_path)
         shutil.copytree(f"{builds_archive_path}/{last_build}", build_path)
+
+
+def load_page_with_retries(url, max_retries=3, timeout=10):
+    for attempt in range(max_retries):
+        try:
+            response = urllib.request.urlopen(url, timeout=timeout)
+            return response
+        except Exception as e:
+            print(f"Attempt {attempt + 1} of {max_retries} failed: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(10)  # Delay before the next attempt
+            else:
+                return None
