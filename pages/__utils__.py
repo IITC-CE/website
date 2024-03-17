@@ -6,6 +6,8 @@ import os
 import json
 import hashlib
 import shutil
+import time
+import urllib.request
 
 
 def md5sum(filename, blocksize=65536):
@@ -79,3 +81,33 @@ def copy_last_build_from_archive():
         if os.path.exists(build_path):
             shutil.rmtree(build_path)
         shutil.copytree(f"{builds_archive_path}/{last_build}", build_path)
+
+
+def load_page_with_retries(url, max_retries=3, timeout=10):
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(url, timeout=timeout) as response:
+                # Correctly read and decode the response content here
+                content = response.read().decode('utf-8')  # Decoding to string here
+            return content  # Return the content as a string
+        except Exception as e:
+            print(f"Attempt {attempt + 1} of {max_retries} failed: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(10)  # Delay before the next attempt
+            else:
+                return None
+
+
+def fetch_json_from_url(url):
+    response_content = load_page_with_retries(url)
+    if response_content is not None:
+        try:
+            # Directly pass the string content to json.loads
+            json_data = json.loads(response_content)
+            return json_data
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON from response: {e}")
+            return None
+    else:
+        print("Failed to fetch data from URL.")
+        return None

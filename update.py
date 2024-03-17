@@ -7,6 +7,7 @@ import os
 
 from pages import index as page_index
 from pages import download_desktop as page_download_desktop
+from pages import donate as page_donate
 from pages import __filelist__ as page_filelist
 from pages import __utils__ as page_utils
 
@@ -28,6 +29,9 @@ def generate_page(page):
 
     if page == "download_desktop.html":
         markers.update(page_download_desktop.get_zip_file_names())
+
+    if page == "donate.html":
+        markers.update(page_donate.get_donations_data())
 
     html = template.render(markers)
     path = "static/" + page
