@@ -83,6 +83,24 @@
     word-break: break-word;
 }
 
+.section-donate .donations-list {
+    width: fit-content;
+}
+
+.section-donate .donation-period {
+    font-weight: bold;
+}
+
+.section-donate .donation-income span {
+    display: block;
+    padding: 5px 10px;
+    font-family: monospace, monospace;
+}
+
+.section-donate .donation-income:nth-child(odd) span {
+    background: #f0f0f0;
+}
+
 @media only screen and (max-width: 600px) {
     .section-donate .btn {
         padding: 13px 0;

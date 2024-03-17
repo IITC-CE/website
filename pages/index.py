@@ -13,7 +13,7 @@ def get_telegram_widget(channel):
     if response is None:
         return None
 
-    soup = BeautifulSoup(response.read(), 'html5lib')
+    soup = BeautifulSoup(response, 'html5lib')
     posts = soup.find('section', class_='tgme_channel_history').findChildren('div', recursive=False)
     last_post = posts[-1]
     message = last_post.find('div', class_='tgme_widget_message_text')

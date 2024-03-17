@@ -13,6 +13,15 @@
                         Your contributions will help pay for the domain and server costs.
                     </p>
 
+                    {% if net_income %}
+                    <p>
+                        Annual costs: <i>${{ annual_costs }}</i><br>
+                        Monthly costs: <i>${{ monthly_costs }}</i><br>
+                        Net income at <i>{{ current_year_month }}</i>: <b>${{ net_income }}</b><br>
+                        <a href="#list">Dates of receipt of donations</a>
+                    </p>
+                    {% endif %}
+
                     <h5>Online payments:</h5>
                     <div class="dotate-block dotate-block__several" style="margin-bottom: 0">
                         <a href="https://paypal.me/iitccedonate" target="_blank" class="btn paypal waves-effect waves-light">PayPal</a>
@@ -62,6 +71,25 @@
                             </div>
                         </div>
                     </div>
+
+                    {% if net_income %}
+                        <h5 id="list">Dates of receipt of donations:</h5>
+                        {% for period in donations_data|reverse %}
+                            <ul class="donations-list">
+                                <li class="donation-period">{{ period }}</li>
+                                {% for donation in donations_data[period]['donations']|reverse %}
+                                    <li class="donation-income">
+                                        <span>
+                                            {{ donation.date }} —
+                                            {% if donation.euro %}{{ donation.euro }}€{% endif %}
+                                            {% if donation.dollar %}${{ donation.dollar }}{% endif %}
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endfor %}
+                    {% endif %}
+
                 </div>
             </div>
         </div>
