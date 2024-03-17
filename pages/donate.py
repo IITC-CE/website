@@ -40,7 +40,7 @@ def parse_donations_data(data):
         # Parse donations
         for line in lines[6:]:  # Skip headers
             try:
-                date, euro, dollar = re.split(r' \| ', line)
+                date, euro, dollar = re.split(r' \| ', line+" ")
                 euro = euro.strip() if euro.strip() else None
                 dollar = dollar.strip() if dollar.strip() else None
                 donations.append({'date': date, 'euro': euro, 'dollar': dollar})
