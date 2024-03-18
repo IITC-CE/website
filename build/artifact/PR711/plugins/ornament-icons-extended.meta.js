@@ -2,7 +2,7 @@
 // @author         johtata
 // @name           IITC plugin: Ornament icons extended
 // @category       Layer
-// @version        0.1.1.20240310.172020
+// @version        0.1.1.20240318.175806
 // @description    Additonal icons and names for beacons
 // @id             ornament-icons-extended
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
