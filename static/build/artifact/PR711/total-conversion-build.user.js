@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.38.1.20240318.175806
+// @version        0.38.1.20240318.183126
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-03-18-175806';
+plugin_info.dateTimeVersion = '2024-03-18-183126';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -106,7 +106,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-03-18-175806';
+window.iitcBuildDate = '2024-03-18-183126';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -163,9 +163,10 @@ html, body {\
 // remove complete page. We only wanted the user-data and the page’s
 // security context so we can access the API easily. Setup as much as
 // possible without requiring scripts.
-document.head.innerHTML = ''
-  + '<title>Ingress Intel Map</title>'
-  + '<style>'+'\
+document.head.innerHTML =
+  '<title>Ingress Intel Map</title>' +
+  '<style>' +
+  '\
 /* general rules ******************************************************/\
 \
 /* for printing directly from the browser, hide all UI components\
@@ -1633,8 +1634,10 @@ svg.icon-button {\
 .ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2) {\
   float: left;\
 }\
-'+'</style>'
-  + '<style>'+'\
+' +
+  '</style>' +
+  '<style>' +
+  '\
 /* required styles */\
 \
 .leaflet-pane,\
@@ -2292,8 +2295,10 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 		color-adjust: exact;\
 		}\
 	}\
-'+'</style>'
-  + '<style>'+'\
+' +
+  '</style>' +
+  '<style>' +
+  '\
 /*!\
  * jQuery UI Resizable 1.12.1\
  * http://jqueryui.com\
@@ -2372,9 +2377,10 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 	right: -5px;\
 	top: -5px;\
 }\
-'+'</style>'
+' +
+  '</style>' +
 //note: smartphone.css injection moved into code/smartphone.js
-  + '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>';
+  '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>';
 
 // remove body element entirely to remove event listeners
 document.body = document.createElement('body');
@@ -3951,7 +3957,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-03-18-175806');
+  log.log('loading done, booting. Built: '+'2024-03-18-183126');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
