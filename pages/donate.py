@@ -97,7 +97,7 @@ def calculate_net_income(parsed_data, start_date="01.06.2022", euro_to_dollar_ra
 
             total_expenses += annual_costs + (monthly_costs * months_of_expenses)
 
-    net_income = total_donations - total_expenses
+    net_income = round(total_donations - total_expenses, 2)
     return net_income
 
 
