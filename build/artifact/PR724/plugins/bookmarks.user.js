@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.4.20240331.204128
+// @version        0.4.4.20240331.211855
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-03-31-204128';
+plugin_info.dateTimeVersion = '2024-03-31-211855';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -765,7 +765,7 @@ window.plugin.bookmarks.loadStorageBox = function() {
     const folders = window.plugin.bookmarks.bkmrksObj['portals'];
     const idsInUse = new Set();
 
-    const counts = {'skip': 0, 'add': 0, 'delete': 0};
+    const counts = {skip: 0, add: 0, delete: 0};
     let total = 0;
 
     // Find existing ids in use so we don't accidentally reuse them.
@@ -795,7 +795,7 @@ window.plugin.bookmarks.loadStorageBox = function() {
           case 'skip':
             break;
 
-          case 'add':
+          case 'add': {
             const label = portal.options.data.title;
             const ll = portal.getLatLng();
             const latlng = `${ll.lat},${ll.lng}`;
@@ -809,11 +809,12 @@ window.plugin.bookmarks.loadStorageBox = function() {
             idsInUse.add(ID);
 
             window.plugin.bookmarks.bkmrksObj['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = {
-              'guid': guid,
-              'latlng': latlng,
-              'label': label,
+              guid: guid,
+              latlng: latlng,
+              label: label,
             };
             break;
+          }
 
           case 'delete':
             delete folders[bkmrkData['id_folder']]['bkmrk'][bkmrkData['id_bookmark']];
@@ -827,7 +828,7 @@ window.plugin.bookmarks.loadStorageBox = function() {
       window.plugin.bookmarks.refreshBkmrks();
       window.plugin.bookmarks.updateStarPortal();
       window.runHooks('pluginBkmrksEdit',
-                      {'target': 'all', 'action': 'import'});
+                      {target: 'all', action: 'import'});
       console.log('BOOKMARKS:', total, counts);
     }
   }
