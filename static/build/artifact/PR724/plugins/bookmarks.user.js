@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.4.20240401.040159
+// @version        0.4.4.20240401.043954
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-04-01-040159';
+plugin_info.dateTimeVersion = '2024-04-01-043954';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -813,13 +813,13 @@ window.plugin.bookmarks.loadStorageBox = function() {
     // per portal basis.  Instead, it uses the same one ran when bookmarks are
     // imported.
     console.log('BOOKMARKS: visible ' + command);
-    const displayBounds = map.getBounds();
+    const displayBounds = window.map.getBounds();
     const folders = window.plugin.bookmarks.bkmrksObj['portals'];
 
     const counts = {skip: 0, add: 0, delete: 0};
     let visible = 0;
 
-    for (const [guid, marker] of Object.entries(portals)) {
+    for (const [guid, marker] of Object.entries(window.portals)) {
       // The check for _map restricts to portals actually shown currently
       if (displayBounds.contains(marker.getLatLng()) && marker._map) {
         visible += 1;
