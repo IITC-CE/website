@@ -1,2 +1,2 @@
 versionName=0.38.0
-versionCode=1711943879
+versionCode=1711944098
