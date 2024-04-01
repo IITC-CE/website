@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.4.20240331.211855
+// @version        0.4.4.20240401.035820
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-03-31-211855';
+plugin_info.dateTimeVersion = '2024-04-01-035820';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -396,6 +396,58 @@ window.plugin.bookmarks.loadStorageBox = function() {
     }
   }
 
+  /**
+   * Adds a portal to the default bookmark folder.
+   *
+   * @param {L.circleMarker} marker - As enhanced when added to
+   * window.portals.
+   * @param {boolean} doPostProcess - Whether additional post processing
+   * should be done after the bookmark was added.  E.g., saving to local
+   * storage, refreshing the widget, and running hooks.  If part of a batch
+   * update, this should probably be false.
+   */
+  window.plugin.bookmarks.addPortalBookmarkByMarker = function(marker, doPostProcess) {
+    const guid = marker.options.guid;
+    const label = marker.options.data.title;
+    const ll = marker.getLatLng();
+    const latlng = `${ll.lat},${ll.lng}`;
+    const ID = window.plugin.bookmarks.generateID();
+
+    window.plugin.bookmarks.bkmrksObj['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = {
+      guid: guid,
+      latlng: latlng,
+      label: label,
+    };
+
+    if (doPostProcess) {
+      window.plugin.bookmarks.saveStorage();
+      window.plugin.bookmarks.refreshBkmrks();
+      window.runHooks('pluginBkmrksEdit', {
+        target: 'portal',
+        action: 'add',
+        id: ID,
+        guid: guid,
+      });
+      console.log(`BOOKMARKS: added portal ${ID}`);
+    }
+  }
+
+  /**
+   * Adds a portal to the default bookmark folder.
+   *
+   * @param {string} guid - The GUID of the portal.
+   * @param {boolean} doPostProcess - Whether additional post processing
+   * should be done after the bookmark was added.  E.g., saving to local
+   * storage, refreshing the widget, and running hooks.  If part of a batch
+   * update, this should probably be false.
+   */
+  window.plugin.bookmarks.addPortalBookmarkByGuid = function(guid, doPostProcess) {
+    const marker = window.portals[guid];
+    if (marker) {
+      window.plugin.bookmarks.addPortalBookmarkByMarker(marker, doPostProcess);
+    }
+  }
+
   plugin.bookmarks.addPortalBookmark = function(guid, latlng, label) {
     var ID = window.plugin.bookmarks.generateID();
 
@@ -763,74 +815,34 @@ window.plugin.bookmarks.loadStorageBox = function() {
     console.log('BOOKMARKS: visible ' + command);
     const displayBounds = map.getBounds();
     const folders = window.plugin.bookmarks.bkmrksObj['portals'];
-    const idsInUse = new Set();
 
     const counts = {skip: 0, add: 0, delete: 0};
-    let total = 0;
+    let visible = 0;
 
-    // Find existing ids in use so we don't accidentally reuse them.
-    for (const idFolders of Object.keys(folders)) {
-      idsInUse.add(idFolders);
-      for (const idBkmrk of Object.keys(folders[idFolders]['bkmrk'])) {
-        idsInUse.add(idBkmrk);
-      }
-    }
-    for (const [guid, portal] of Object.entries(portals)) {
+    for (const [guid, marker] of Object.entries(portals)) {
       // The check for _map restricts to portals actually shown currently
       if (displayBounds.contains(portal.getLatLng()) && portal._map) {
-        total += 1;
+        visible += 1;
 
-        // First, figure out what to do with the portal.
-        let op = 'skip';
         const bkmrkData = window.plugin.bookmarks.findByGuid(guid);
         if (bkmrkData && ['off', 'toggle'].includes(command)) {
-          op = 'delete';
+          delete folders[bkmrkData['id_folder']]['bkmrk'][bkmrkData['id_bookmark']];    counts.delete += 1;
         } else if (!bkmrkData && ['on', 'toggle'].includes(command)) {
-          op = 'add';
-        }
-        counts[op]++;
-
-        // Then do it.
-        switch (op) {
-          case 'skip':
-            break;
-
-          case 'add': {
-            const label = portal.options.data.title;
-            const ll = portal.getLatLng();
-            const latlng = `${ll.lat},${ll.lng}`;
-
-            // Even with random numbers, generateID() can collide
-            let ID = window.plugin.bookmarks.generateID();
-            while (idsInUse.has(ID)) {
-              console.log('BOOKMARKS: id collision: ' + ID);
-              ID = window.plugin.bookmarks.generateID();
-            }
-            idsInUse.add(ID);
-
-            window.plugin.bookmarks.bkmrksObj['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = {
-              guid: guid,
-              latlng: latlng,
-              label: label,
-            };
-            break;
-          }
-
-          case 'delete':
-            delete folders[bkmrkData['id_folder']]['bkmrk'][bkmrkData['id_bookmark']];
-            break;
+          window.plugin.bookmarks.addPortalBookmarkByMarker(marker, false);
+          counts.add += 1;
+        } else {
+          counts.skip += 1;
         }
       }
     }
 
-    if (total) {
+    if (counts.add || counts.delete) {
       window.plugin.bookmarks.saveStorage();
       window.plugin.bookmarks.refreshBkmrks();
-      window.plugin.bookmarks.updateStarPortal();
       window.runHooks('pluginBkmrksEdit',
                       {target: 'all', action: 'import'});
-      console.log('BOOKMARKS:', total, counts);
     }
+    console.log('BOOKMARKS:', `visible: ${visible}`, 'summary:', counts);
   }
 
   window.plugin.bookmarks.dialogLoadListFolders = function(idBox, clickAction, showOthersF, scanType/*0 = maps&portals; 1 = maps; 2 = portals*/) {
