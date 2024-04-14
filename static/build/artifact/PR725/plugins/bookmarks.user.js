@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.4.20240412.170656
+// @version        0.4.4.20240414.190322
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-04-12-170656';
+plugin_info.dateTimeVersion = '2024-04-14-190322';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -437,11 +437,14 @@ window.plugin.bookmarks.loadStorageBox = function() {
    * should be done after the bookmark was added.  E.g., saving to local
    * storage, refreshing the widget, and running hooks.  If part of a batch
    * update, this should probably be false.
+   * @throws {Error} - If guid does not exist in window.portals.
    */
   window.plugin.bookmarks.addPortalBookmarkByGuid = function(guid, doPostProcess) {
     const marker = window.portals[guid];
     if (marker) {
       window.plugin.bookmarks.addPortalBookmarkByMarker(marker, doPostProcess);
+    } else {
+      throw new Error(`Could not find portal information for guid "${guid}"`);
     }
   }
 
@@ -1271,7 +1274,7 @@ window.plugin.bookmarks.loadStorageBox = function() {
           if(window.plugin.bookmarks.findByGuid(guid)) {
             window.plugin.bookmarks.switchStarPortal(guid);
           } else {
-            window.plugin.bookmarks.addPortalBookmarkByGuid(guid, true);
+            window.plugin.bookmarks.addPortalBookmarkByMarker(portal, true);
           }
         }, false);
 

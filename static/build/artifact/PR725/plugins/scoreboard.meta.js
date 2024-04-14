@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.3.4.20240412.170656
+// @version        0.3.4.20240414.190322
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard

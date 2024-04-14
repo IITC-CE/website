@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Zoom slider
 // @category       Controls
-// @version        0.2.2.20240412.170656
+// @version        0.2.2.20240414.190322
 // @description    Show a zoom slider on the map instead of the zoom buttons.
 // @id             zoom-slider
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
