@@ -2,7 +2,7 @@
 // @author         jacob1123
 // @name           IITC plugin: Gray Google map
 // @category       Map Tiles
-// @version        0.1.5.20240414.190322
+// @version        0.1.5.20240418.075955
 // @description    Add a simplified gray Version of Google map tiles as an optional layer.
 // @id             basemap-google-gray
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-04-14-190322';
+plugin_info.dateTimeVersion = '2024-04-18-075955';
 plugin_info.pluginId = 'basemap-google-gray';
 //END PLUGIN AUTHORS NOTE
 
