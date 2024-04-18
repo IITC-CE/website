@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.4.20240418.080557
+// @version        0.4.4.20240418.080839
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-04-18-080557';
+plugin_info.dateTimeVersion = '2024-04-18-080839';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -389,7 +389,7 @@ window.plugin.bookmarks.loadStorageBox = function() {
     }
     // If portal isn't saved in bookmarks: Add this bookmark
     else{
-      window.plugin.bookmarks.addPortalBookmarkByGuid(guid, true);
+    window.plugin.bookmarks.addPortalBookmarkByGuid(guid, true);
     }
   }
 
@@ -439,7 +439,7 @@ window.plugin.bookmarks.addPortalBookmarkByMarker = function (marker, doPostProc
  * update, this should probably be false.
  * @throws {Error} - If guid does not exist in window.portals.
  */
-window.plugin.bookmarks.addPortalBookmarkByGuid = function(guid, doPostProcess) {
+window.plugin.bookmarks.addPortalBookmarkByGuid = function (guid, doPostProcess) {
   const marker = window.portals[guid];
   if (marker) {
     window.plugin.bookmarks.addPortalBookmarkByMarker(marker, doPostProcess);
@@ -1274,7 +1274,7 @@ window.plugin.bookmarks.addPortalBookmark = function (guid, latlng, label) {
           if(window.plugin.bookmarks.findByGuid(guid)) {
             window.plugin.bookmarks.switchStarPortal(guid);
           } else {
-            window.plugin.bookmarks.addPortalBookmarkByMarker(portal, true);
+              window.plugin.bookmarks.addPortalBookmarkByMarker(portal, true);
           }
         }, false);
 
