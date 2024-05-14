@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.38.1.20240514.064600
+// @version        0.38.1.20240514.081515
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-05-14-064600';
+plugin_info.dateTimeVersion = '2024-05-14-081515';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -106,7 +106,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-05-14-064600';
+window.iitcBuildDate = '2024-05-14-081515';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3350,7 +3350,7 @@ window.artifact.setup = function() {
     action: window.artifact.showArtifactList,
   });
 
-  addHook('mapDataEntityInject', window.artifact.entityInject);
+  window.addHook('mapDataEntityInject', window.artifact.entityInject);
 }
 
 /**
@@ -3510,7 +3510,7 @@ window.artifact.isArtifact = function(type) {
  * Used to render portals that would otherwise be below the visible level.
  * @function window.artifact.getArtifactEntities
  * @returns {Array} array of Portal entities with shards or shard targets
- * 
+ *
  * unused by IITC
  */
 window.artifact.getArtifactEntities = function () {
@@ -3522,8 +3522,8 @@ window.artifact.getArtifactEntities = function () {
  * @param {hookdata} data
  */
 window.artifact.entityInject = function (data) {
-  data.callback(artifact.entities, 'summary');
-}
+  data.callback(window.artifact.entities, 'summary');
+};
 
 /**
  * Gets the portals that are relevant to the artifacts.
@@ -3550,7 +3550,7 @@ window.artifact.isInterestingPortal = function(guid) {
  * @param {string} guid - The GUID of the portal.
  * @param {string} artifactId - The ID of the artifact type.
  * @returns {Object|false} Artifact data for the specified portal and type, or undefined if not available.
- * 
+ *
  * unused by IITC
  */
 window.artifact.getPortalData = function (guid, artifactId) {
@@ -3963,7 +3963,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-05-14-064600');
+  log.log('loading done, booting. Built: '+'2024-05-14-081515');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
