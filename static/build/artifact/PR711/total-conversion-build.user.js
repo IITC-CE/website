@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.38.1.20240318.184317
+// @version        0.38.1.20240515.104515
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-03-18-184317';
+plugin_info.dateTimeVersion = '2024-05-15-104515';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -106,7 +106,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-03-18-184317';
+window.iitcBuildDate = '2024-05-15-104515';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -3357,6 +3357,8 @@ window.artifact.setup = function() {
     title: 'Show artifact portal list',
     action: window.artifact.showArtifactList,
   });
+
+  window.addHook('mapDataEntityInject', window.artifact.entityInject);
 }
 
 /**
@@ -3515,11 +3517,21 @@ window.artifact.isArtifact = function(type) {
 /**
  * Used to render portals that would otherwise be below the visible level.
  * @function window.artifact.getArtifactEntities
- * @returns {Array} An array of artifact entities.
+ * @returns {Array} array of Portal entities with shards or shard targets
+ *
+ * unused by IITC
  */
-window.artifact.getArtifactEntities = function() {
+window.artifact.getArtifactEntities = function () {
   return artifact.entities;
 }
+
+/**
+ * Inject artifact portals into render process
+ * @param {hookdata} data
+ */
+window.artifact.entityInject = function (data) {
+  data.callback(window.artifact.entities, 'summary');
+};
 
 /**
  * Gets the portals that are relevant to the artifacts.
@@ -3546,8 +3558,10 @@ window.artifact.isInterestingPortal = function(guid) {
  * @param {string} guid - The GUID of the portal.
  * @param {string} artifactId - The ID of the artifact type.
  * @returns {Object|false} Artifact data for the specified portal and type, or undefined if not available.
+ *
+ * unused by IITC
  */
-window.artifact.getPortalData = function(guid,artifactId) {
+window.artifact.getPortalData = function (guid, artifactId) {
   return artifact.portalInfo[guid] && artifact.portalInfo[guid][artifactId];
 }
 
@@ -3957,7 +3971,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-03-18-184317');
+  log.log('loading done, booting. Built: '+'2024-05-15-104515');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -25704,10 +25718,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
   this.render.startRenderPass(dataBounds);
 
-  window.runHooks ('mapDataEntityInject', {callback: this.render.processGameEntities.bind(this.render)});
-
-
-  this.render.processGameEntities(artifact.getArtifactEntities(), 'summary');
+  window.runHooks('mapDataEntityInject', { callback: this.render.processGameEntities.bind(this.render) });
 
   var logMessage = 'requesting data tiles at zoom '+dataZoom;
   logMessage += ' (L'+tileParams.level+'+ portals';
@@ -26733,11 +26744,12 @@ var log = ulog('player_names');
  * @param {string} name - The player name to check.
  * @returns {boolean} Returns `true` if the player name is a system account, otherwise `false`.
  */
-window.isSystemPlayer = function(name) {
+window.isSystemPlayer = function (name) {
 
   switch (name) {
     case '__ADA__':
     case '__JARVIS__':
+    case '__MACHINA__':
       return true;
 
     default:
@@ -31058,7 +31070,7 @@ IITC.toolbox = {
     if (typeof buttonData.title === 'string') buttonElement.title = buttonData.title;
     if (typeof buttonData.class === 'string') buttonElement.className = buttonData.class;
     if (typeof buttonData.access_key === 'string') buttonElement.accessKey = buttonData.access_key;
-    if (typeof buttonData.mouseover === 'string') buttonElement.mouseover = buttonData.mouseover;
+    if (typeof buttonData.mouseover === 'function') buttonElement.onmouseover = buttonData.mouseover;
 
     if (typeof buttonData.icon === 'string') {
       const iconHTML = `<i class="fa ${buttonData.icon}"></i>`;
@@ -32022,11 +32034,13 @@ window.makePermalink = function (latlng, options) {
   return url + '?' + args.join('&');
 };
 
-Object.defineProperty(String.prototype, 'capitalize', {
-  value: function() {
-    return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
-  }
-});
+if (!String.prototype.capitalize) {
+  Object.defineProperty(String.prototype, 'capitalize', {
+    value: function () {
+      return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+    },
+  });
+}
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#polyfill
 if (!String.prototype.startsWith) {
