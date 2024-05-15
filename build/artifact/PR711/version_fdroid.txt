@@ -1,2 +1,2 @@
-versionName=0.38.0
-versionCode=1710787380
+versionName=0.38.0-test-2024.05.15-10:45
+versionCode=1715769896
