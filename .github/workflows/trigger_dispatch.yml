@@ -9,7 +9,7 @@ jobs:
     if: github.event.action == 'new_iitc_build'
     steps:
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: "./website"
           token: ${{ secrets.API_TOKEN_GITHUB }}
@@ -25,7 +25,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Receive artifact
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             let download = await github.rest.actions.downloadArtifact({
@@ -71,7 +71,26 @@ jobs:
 
       - name: Delete old builds
         run: |
+          # Getting the list of open PRs sorted by last update date
+          open_prs=$(curl -s "https://api.github.com/repos/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/pulls?state=open&sort=updated&direction=desc" | jq -r '.[].number')
+          
+          # Converting a PR list to an array
+          open_prs_array=($open_prs)
+          
           cd ./website/
+          
+          # Removing artifacts for which there are no active PRs
+          ARTIFACTS_DIR="./static/build/artifact"
+          for dir in "$ARTIFACTS_DIR"/*; do
+            if [ -d "$dir" ]; then
+              pr_number=$(basename "$dir")
+              if [[ ! " ${open_prs_array[@]} " =~ " ${pr_number} " ]]; then
+                rm -rf "$dir"
+              fi
+            fi
+          done
+
+          # Deleting old beta versions
           ls -trd ./static/build/beta_archive/* | head -n -50 | xargs --no-run-if-empty git rm -r
 
       - name: Copy files to website
@@ -114,25 +133,4 @@ jobs:
           else
             git commit -m "🤖 New IITC ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
           fi
-          git push origin master
-
-  delete_pr_build:
-    name: Delete PR build
-    runs-on: ubuntu-latest
-    if: github.event.action == 'delete_iitc_pr_build'
-    steps:
-
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.API_TOKEN_GITHUB }}
-
-      - name: Setup git config
-        run: |
-          git config user.name "github-actions"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Delete old build artifacts
-        run: |
-          git rm -r static/build/artifact/PR${{ github.event.client_payload.pr_number }}/
-          git commit -m "🤖 PR №${{ github.event.client_payload.pr_number }} merged, deleting old build artifacts"
           git push origin master

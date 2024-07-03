@@ -12,14 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # git restore-mtime uses the ref log to find the correct timestamp
           # for each file. This requires a full git history. The default value (1)
           # creates a shallow checkout.
           fetch-depth: 0
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -37,7 +37,7 @@ jobs:
       - name: Push static files to gh-pages
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        if: ${{ env.API_TOKEN_GITHUB }}
+        if: ${{ env.API_TOKEN_GITHUB && github.event_name != 'pull_request' }}
         uses: cpina/github-action-push-to-another-repository@main
         with:
           source-directory: 'static'
