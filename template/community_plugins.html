@@ -1,0 +1,28 @@
+{% extends "__base__.html" %}
+{% block title %}Community plugins — IITC-CE{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <h4>Community plugins</h4>
+                    <p>A collection of amazing plugins made by community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% with %}
+    {% set build_type="community" %}
+    {% include '_plugins_table.html' %}
+    {% endwith %}
+
+    <div id="modal_info" class="modal bottom-sheet">
+        <div class="modal-content">
+            <div id="modal_info_content"></div>
+            <div id="remark42"></div>
+        </div>
+    </div>
+
+{% endblock %}
