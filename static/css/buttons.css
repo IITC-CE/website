@@ -1,0 +1,41 @@
+.btn {
+    justify-content: center;
+    padding: 0 1.5rem 0.2rem;
+    border-radius: 0.63rem;
+    border: 1px solid var(--accent-main);
+    background: var(--accent-main);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 150%;
+    color: var(--primary-main);
+    box-shadow: none;
+    text-transform: lowercase;
+    letter-spacing: normal;
+    transition: filter .2s ease;
+}
+
+.btn:hover, .btn:focus {
+    filter: brightness(1.1) saturate(90%);
+    box-shadow: none;
+}
+
+.btn.lite {
+    background: transparent;
+    color: var(--accent-main);
+}
+
+.btn.trim-right {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-right: 1rem;
+}
+
+.btn.trim-left {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-left: 1rem;
+}
+
+.btn.small {
+    padding: 0 0.5rem 0.2rem;
+}

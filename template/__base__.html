@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8"/>
 
-    <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Material Symbols - Outlined Set -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/user.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/buttons.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/aside.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/header.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/plugins-list.css' | md5sum }}" media="screen,projection"/>
@@ -39,28 +41,29 @@
 </head>
 <body>
     <aside>
-        <ul id="slide-out" class="sidenav sidenav-fixed blue-grey lighten-5">
+        <ul id="slide-out" class="sidenav sidenav-fixed">
             <li class="logo">
                 <a id="logo-container" href="/" class="brand-logo">
                     <object id="front-page-logo" type="image/svg+xml" data="img/iitc-logo.svg">Your browser does not support SVG</object>
                 </a>
             </li>
-            <li><a {% if active_page == "index.html" %}class="active" {% endif %}href="/"><i class="material-icons">home</i> Home</a></li>
-            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/releases" target="_blank"><i class="material-icons">new_releases</i> Release notes <i class="material-icons right">exit_to_app</i></a></li>
-            <li><a {% if active_page == "faq.html" %}class="active" {% endif %}href="faq.html"><i class="material-icons">help_outline</i> FAQ</a></li>
-            <li><a href="#" onclick="return false" class="sidenav-download-button"><i class="material-icons">cloud_download</i> Downloads</a>
+            <li><a {% if active_page == "index.html" %}class="active" {% endif %}href="/"><span class="material-symbols-outlined">home</span> Home</a></li>
+            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/releases" target="_blank"><span class="material-symbols-outlined">release_alert</span> Release notes <div class="spacer"></div><span class="material-symbols-outlined">exit_to_app</span></a></li>
+            <li><a {% if active_page == "faq.html" %}class="active" {% endif %}href="faq.html"><span class="material-symbols-outlined">help</span> FAQ</a></li>
+            <li><a href="#" onclick="return false" class="sidenav-download-button"><span class="material-symbols-outlined">download</span> Downloads</a>
                 <div class="sidenav-download-submenu">
                     <ul>
-                        <li><a {% if active_page == "download_desktop.html" %}class="active" {% endif %}href="download_desktop.html"><i class="material-icons">desktop_mac</i> Desktop</a></li>
-                        <li><a {% if active_page == "download_mobile.html" %}class="active" {% endif %}href="download_mobile.html"><i class="material-icons">smartphone</i> Mobile</a></li>
+                        <li><a {% if active_page == "download_desktop.html" %}class="active" {% endif %}href="download_desktop.html"><span class="material-symbols-outlined">install_desktop</span> Desktop</a></li>
+                        <li><a {% if active_page == "download_mobile.html" %}class="active" {% endif %}href="download_mobile.html"><span class="material-symbols-outlined">install_mobile</span> Mobile</a></li>
                     </ul>
                   </div>
             </li>
-            <li><a href="https://weblate.iitc.app" target="_blank"><i class="material-icons">translate</i> Localization <i class="material-icons right">exit_to_app</i></a></li>
-            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank"><i class="material-icons">developer_board</i> GitHub Repository <i class="material-icons right">exit_to_app</i></a></li>
-            <li><a {% if active_page == "donate.html" %}class="active" {% endif %}href="donate.html"><i class="material-icons">attach_money</i> Donate</a></li>
+            <li><a {% if active_page == "community_plugins.html" %}class="active" {% endif %}href="community_plugins.html"><span class="material-symbols-outlined">extension</span> Community plugins</a></li>
+            <li><a href="https://weblate.iitc.app" target="_blank"><span class="material-symbols-outlined">translate</span> Localization <div class="spacer"></div><span class="material-symbols-outlined">exit_to_app</span></a></li>
+            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank"><span class="material-symbols-outlined">developer_board</span> GitHub Repository <div class="spacer"></div><span class="material-symbols-outlined">exit_to_app</span></a></li>
+            <li><a {% if active_page == "donate.html" %}class="active" {% endif %}href="donate.html"><span class="material-symbols-outlined">volunteer_activism</span> Donate</a></li>
         </ul>
-        <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><i class="material-icons">menu</i></a>
+        <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><span class="material-symbols-outlined">menu</span></a>
     </aside>
     <main>
         <header class="section {% if active_page == "index.html" %}primary{% else %}secondary{% endif %}">
@@ -75,12 +78,12 @@
         </header>
         {% block content %}{% endblock %}
     </main>
-    <footer class="page-footer teal">
+    <footer class="page-footer">
         <div class="container">
             <div class="row">
-                <div class="col s12">
-                    <i class="medium material-icons left warning-icon">warning</i>
-                    <p class="grey-text text-lighten-4 warning-text">
+                <div class="col s12 warning">
+                    <span class="material-symbols-outlined warning-icon">warning</span>
+                    <p class="warning-text">
                         This site and the scripts are not officially affiliated with Ingress or Niantic Labs.
                         Using these scripts is likely to be considered against the Ingress Terms of Service.
                         Any use is at your own risk.</p>
@@ -89,7 +92,7 @@
         </div>
         <div class="footer-copyright">
             <div class="container links">
-                <span>© <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
+                <span>©&nbsp;<abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
                 <span><a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
             </div>
         </div>

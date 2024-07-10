@@ -5,3 +5,12 @@
 .faq .list {
     list-style-type: initial;
 }
+
+.faq .collapsible-header div {
+    width: 100%;
+}
+
+.faq .collapsible-header::after {
+    width: auto;
+    min-width: 1rem;
+}

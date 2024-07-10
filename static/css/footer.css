@@ -1,11 +1,46 @@
+.page-footer .footer-copyright, .page-footer .footer-copyright a {
+    min-height: auto;
+}
+
 footer .links {
     display: flex;
+    color: var(--primary-darker);
     justify-content: space-between;
+}
+
+footer .links span {
+    display: flex;
+    align-items: center;
 }
 
 footer .warning-icon {
     line-height: 1.3em;
     font-size: 4rem;
+}
+
+.page-footer {
+    background: var(--accent-main);
+    padding-top: 2rem;
+}
+
+.page-footer .warning {
+    display: flex;
+    padding-bottom: 2rem;
+}
+
+.page-footer .warning-icon {
+    font-size: 4rem;
+    color: var(--primary-darker);
+    margin-right: 1rem;
+}
+
+.page-footer .warning-text {
+    max-width: 1000px;
+    color: var(--primary-darker);
+}
+
+.page-footer .footer-copyright {
+    background-color: rgba(51,51,51,.08);
 }
 
 @media only screen and (max-width: 760px) {

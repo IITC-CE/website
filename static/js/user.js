@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     M.Modal.init(document.querySelectorAll('.modal'), {});
     M.Tabs.init(document.querySelectorAll('.tabs'), {});
+    M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), {constrainWidth: false});
     img_lazy();
 
     if (window.location.hash.endsWith("_beta")) {

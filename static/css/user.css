@@ -1,41 +1,36 @@
+:root {
+    --primary-main: #FFFFFF;
+    --primary-darker: #EEEEEE;
+    --secondary-main: #000000;
+    --accent-main: #26A69A;
+}
+
+/* mulish-regular - cyrillic_latin */
 @font-face {
-    font-family: 'Material Icons';
+    font-display: fallback;
+    font-family: 'Mulish';
     font-style: normal;
     font-weight: 400;
-    src: url(iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
-    src: local('Material Icons'),
-        local('MaterialIcons-Regular'),
-        url(iconfont/MaterialIcons-Regular.woff2) format('woff2'),
-        url(iconfont/MaterialIcons-Regular.woff) format('woff'),
-        url(iconfont/MaterialIcons-Regular.ttf) format('truetype');
+    src: url(../fonts/mulish-v13-cyrillic_latin-regular.woff2) format('woff2');
 }
 
-.material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
+/* mulish-500 - cyrillic_latin */
+@font-face {
+    font-display: fallback;
+    font-family: 'Mulish';
     font-style: normal;
-    font-size: 24px;  /* Preferred icon size */
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Support for IE. */
-    font-feature-settings: 'liga';
+    font-weight: 500;
+    src: url(../fonts/mulish-v13-cyrillic_latin-500.woff2) format('woff2');
 }
 
-
+/* mulish-600 - cyrillic_latin */
+@font-face {
+    font-display: fallback;
+    font-family: 'Mulish';
+    font-style: normal;
+    font-weight: 600;
+    src: url(../fonts/mulish-v13-cyrillic_latin-600.woff2) format('woff2');
+}
 
 aside, main, footer {
     padding-left: 300px;
@@ -49,6 +44,10 @@ aside, main, footer {
 
 html {
     scroll-behavior: smooth;
+    font-size: 16px;
+    line-height: 150%;
+    font-family: 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+                 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 body {
@@ -93,8 +92,8 @@ main {
 
 .container {
     margin:0 auto;
-    max-width:1280px;
-    width:90%
+    max-width: 1920px;
+    width: 95%;
 }
 
 .row .col {
@@ -186,4 +185,16 @@ table.striped > tbody > tr:nth-child(2n+1) {
     font-size: 13px;
     background: #f3f3f3;
     border: 1px solid #eee;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+h4 {
+    font-size: 2rem;
 }
