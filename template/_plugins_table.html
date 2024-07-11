@@ -13,7 +13,7 @@
             <div class="container">
                 <div class="row g-0 plugins_container grid">
                     {% for item in category.plugins %}
-                        {% set unique_id = [item['id'], item['author']]|join('-by-') %}
+                        {% set unique_id = item['unique_id'] or [item['id'], item['author']]|join('-by-') %}
 
 
                         <div id="{{ unique_id }}" class="scrollspy grid-item s12 m6 l4">
