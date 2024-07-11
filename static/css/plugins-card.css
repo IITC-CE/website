@@ -1,12 +1,10 @@
 .card-plugin {
     display: flex;
     height: 19rem;
-    padding: 1.25rem;
-    transition: border-color .25s;
-    flex-direction: column;
     overflow: hidden;
-    border-radius: 0.63rem;
-    background: var(--primary-darker);
+    border: 1px solid var(--primary-higher);
+    margin: 0;
+    transition: border-color .25s;
 }
 .grid-item:target .card-plugin {
     border: 1px solid #1e8cb7;
@@ -25,7 +23,7 @@
 .card-plugin .header .icon {
     min-width: 64px;
     height: 64px;
-    background: white;
+    background: var(--primary-main);
     border-radius: 10%;
     overflow: hidden;
 }

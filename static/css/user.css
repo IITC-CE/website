@@ -1,8 +1,20 @@
 :root {
     --primary-main: #FFFFFF;
-    --primary-darker: #EEEEEE;
+    --primary-higher: #EEEEEE;
+    --primary-lower: #E6E6E6;
     --secondary-main: #000000;
+    --secondary-higher: #444444;
     --accent-main: #26A69A;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-main: #1B1B1D;
+        --primary-higher: #242424;
+        --primary-lower: #3E4043;
+        --secondary-main: #FFFFFF;
+        --secondary-higher: #BBBBBB;
+    }
 }
 
 /* mulish-regular - cyrillic_latin */
@@ -54,6 +66,7 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    color: var(--secondary-main);
 }
 
 .favicon {
@@ -152,14 +165,8 @@ footer i.medium {
 
 .hr {
     height: 3px;
-    background: #eaeaea;
+    background: var(--primary-lower);
     margin: 1.5rem 0;
-}
-
-.card-panel {
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    box-shadow: 0 3px 5px #eee;
 }
 
 .top_zero {
@@ -197,4 +204,12 @@ h1, h2, h3, h4, h5, h6 {
 
 h4 {
     font-size: 2rem;
+}
+
+.release {
+  border-left: 1rem solid #4caf50 !important;
+}
+
+.beta {
+  border-left: 1rem solid #ffeb3b !important;
 }

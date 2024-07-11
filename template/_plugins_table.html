@@ -17,7 +17,7 @@
 
 
                         <div id="{{ unique_id }}" class="scrollspy grid-item s12 m6 l4">
-                            <div class="card-plugin">
+                            <div class="card-panel card-plugin">
                                 <div class="header">
                                     <div class="icon" title="{{ item.id }}">
                                         {% if item.icon or item.icon64 %}
@@ -51,12 +51,12 @@
                                         <ul id='plugin-dropdown-{{ unique_id }}' class='dropdown-content'>
                                             {% if item.release_version %}
                                                 <li>
-                                                    <a class="plugin-install clickable green lighten-4 black-text waves-effect" href="/build/release/plugins/{{ item.filename }}">Install release v{{ item.release_version }}</a>
+                                                    <a class="plugin-install clickable release waves-effect" href="/build/release/plugins/{{ item.filename }}">Install release v{{ item.release_version }}</a>
                                                 </a>
                                             {% endif %}
                                             {% if item.beta_version %}
                                                 <li>
-                                                    <a class="plugin-install clickable yellow lighten-4 black-text waves-effect" href="/build/beta/plugins/{{ item.filename }}">Install beta v{{ item.beta_version }}</a>
+                                                    <a class="plugin-install clickable beta waves-effect" href="/build/beta/plugins/{{ item.filename }}">Install beta v{{ item.beta_version }}</a>
                                                 </li>
                                             {% endif %}
                                         </ul>

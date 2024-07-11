@@ -59,7 +59,7 @@
 }
 
 .section-donate .donation-item .item-block {
-    background: #eceff1;
+    background: var(--primary-higher);
     border-radius: 6px;
     padding: 14px 20px;
 }
@@ -97,7 +97,7 @@
 }
 
 .section-donate .donation-income:nth-child(odd) span {
-    background: #f0f0f0;
+    background: var(--primary-higher);
 }
 
 @media only screen and (max-width: 600px) {

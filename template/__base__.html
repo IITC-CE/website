@@ -9,6 +9,7 @@
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/user.css' | md5sum }}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="{{ 'css/card.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/buttons.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/aside.css' | md5sum }}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/header.css' | md5sum }}" media="screen,projection"/>
@@ -44,7 +45,7 @@
         <ul id="slide-out" class="sidenav sidenav-fixed">
             <li class="logo">
                 <a id="logo-container" href="/" class="brand-logo">
-                    <object id="front-page-logo" type="image/svg+xml" data="img/iitc-logo.svg">Your browser does not support SVG</object>
+                    <img id="front-page-logo" src="img/iitc-logo.svg" alt="logo">
                 </a>
             </li>
             <li><a {% if active_page == "index.html" %}class="active" {% endif %}href="/"><span class="material-symbols-outlined">home</span> Home</a></li>
@@ -93,7 +94,7 @@
         <div class="footer-copyright">
             <div class="container links">
                 <span>©&nbsp;<abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
-                <span><a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
+                <span><a href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
             </div>
         </div>
     </footer>

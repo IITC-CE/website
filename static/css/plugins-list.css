@@ -19,7 +19,7 @@
 
 .plugins_category .category_description {
     display: inline;
-    color: #444;
+    color: var(--secondary-higher);
 }
 
 .plugins_container .col {

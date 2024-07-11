@@ -27,7 +27,7 @@
                 </div>
                 <div class="section">
                     <h4>Useful links</h4>
-                    <p>IITC and all plugins in one .zip file:
+                    <p>IITC core and all plugins in one .zip file:
                         <a href="/build/release/{{ all_in_one_zip_file.release }}">release</a>,
                         <a href="/build/beta/{{ all_in_one_zip_file.beta }}">beta</a>
                     </p>
@@ -37,28 +37,30 @@
                     </p>
                 </div>
                 <div class="section">
-                    <h4>Download IITC</h4>
+                    <h4>Download IITC core</h4>
                     <div class="row">
-                        <div class="col s12 m6">
-                            <div class="card-panel green lighten-5">
-                                <p>This is most tested version, but may not contain new features or fixes. If you are not sure otherwise, this version is the most suitable for you. </p>
+                        <div class="col s12 m6 p-0">
+                            <div class="card-panel release">
+                                <h5>Release channel</h5>
+                                <p>This is most tested version, but may not contain new features or fixes. If you are not sure otherwise, this version is the most suitable for you.</p>
 
-                                <a class="btn waves-effect waves-light" href="/build/release/total-conversion-build.user.js">release version</a>
+                                <a class="btn waves-effect waves-light" href="/build/release/total-conversion-build.user.js">install release version</a>
                                 <p>v{{ release_iitc_version }}</p>
                             </div>
                         </div>
-                        <div class="col s12 m6">
-                            <div class="card-panel yellow lighten-5">
-                                <p>Beta channel is an optimal balance between time-tested Release channel and Test builds channel, which contains a lot of fixes and new features but can break at any time.</p>
+                        <div class="col s12 m6 p-0">
+                            <div class="card-panel beta">
+                                <h5>Beta channel</h5>
+                                <p>Contains new features and fixes that are not yet in Release. But may contain more bugs. Use the Beta version and help with testing if you are a long-time IITC user.</p>
 
-                                <a class="btn waves-effect waves-light" href="/build/beta/total-conversion-build.user.js">beta version</a>
+                                <a class="btn waves-effect waves-light" href="/build/beta/total-conversion-build.user.js">install beta version</a>
                                 <p>v{{ beta_iitc_version }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="section">
-                    <h4>Plugins</h4>
+                    <h4>Download IITC plugins</h4>
                     <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
                 </div>
             </div>
