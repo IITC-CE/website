@@ -13,10 +13,10 @@
             <div class="container">
                 <div class="row g-0 plugins_container grid">
                     {% for item in category.plugins %}
-                        {% set unique_id = item['id_hash'] or [item['id'], item['author']]|join('-by-') %}
+                        {% set id_hash = item['id_hash'] or [item['id'], item['author']]|join('-by-') %}
 
 
-                        <div id="{{ unique_id }}" class="scrollspy grid-item s12 m6 xl4">
+                        <div id="{{ id_hash }}" class="scrollspy grid-item s12 m6 xl4">
                             <div class="card-panel card-plugin">
                                 <div class="header">
                                     <div class="icon" title="{{ item.id }}">
@@ -27,8 +27,8 @@
                                         {% endif %}
                                     </div>
 
-                                    <div class="title">
-                                        <div class="plugin-name"><a title="{{ item.name }}" href="#{{ unique_id }}"><span>{{ item.name }}</span></a></div>
+                                    <div class="title-author">
+                                        <div class="plugin-name"><a title="{{ item.name }}" href="#{{ id_hash }}" class="title"><span>{{ item.name }}</span></a></div>
                                         {% if item.author %}<span class="plugin-author">by&nbsp;{{ item.author }}</span>{% endif %}
                                     </div>
                                 </div>
@@ -37,7 +37,7 @@
                                     <p class="plugin-description">{{ item.description }}</p>
                                 </div>
                                 <div class="buttons">
-                                    <a class="btn lite plugin-info clickable waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}'); return false">
+                                    <a class="btn lite plugin-info clickable waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ id_hash }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}'); return false">
                                         info &nbsp;<span class="comments_counter"><span class="material-symbols-outlined icon">comment</span> <span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span></span>
                                     </a>
 
@@ -45,10 +45,10 @@
 
                                     {% if build_type == "core" %}
                                         <a class="btn trim-right plugin-install clickable waves-effect" {% if item.release_version %}href="/build/release/plugins/{{ item.filename }}" title="Install release v{{ item.release_version }}"{% endif %}>install</a>
-                                        <a class="dropdown-trigger btn trim-left small" href="#" data-target="plugin-dropdown-{{ unique_id }}">
+                                        <a class="dropdown-trigger btn trim-left small" href="#" data-target="plugin-dropdown-{{ id_hash }}">
                                             <span class="material-symbols-outlined">arrow_drop_down</span>
                                         </a>
-                                        <ul id='plugin-dropdown-{{ unique_id }}' class='dropdown-content'>
+                                        <ul id='plugin-dropdown-{{ id_hash }}' class='dropdown-content'>
                                             {% if item.release_version %}
                                                 <li>
                                                     <a class="plugin-install clickable release waves-effect" href="/build/release/plugins/{{ item.filename }}">Install release v{{ item.release_version }}</a>
@@ -68,7 +68,7 @@
                         </div>
 
                         <div
-                                id="{{ unique_id }}_info"
+                                id="{{ id_hash }}_info"
                                 style="display: none"
                                 {% if build_type == "core" %}
                                     {% if item.release_version %}
@@ -96,8 +96,8 @@
                                     {% endif %}
                                 </div>
 
-                                <div class="title">
-                                    <div class="plugin-name"><a title="{{ item.name }}" href="#{{ unique_id }}"><span>{{ item.name }}</span></a></div>
+                                <div class="title-author">
+                                    <div class="plugin-name"><div class="title"><span>{{ item.name }}</span></div></div>
                                     {% if item.author %}<span class="plugin-author">by&nbsp;{{ item.author }}</span>{% endif %}
                                 </div>
                             </div>
@@ -158,10 +158,19 @@
                             {% endif %}
 
                             <div class="hr"></div>
-
                             <table class="striped">
                                 <tbody>
-                            {% for key in ['id', 'category', 'release_version', 'beta_version', 'version', 'updateURL', 'downloadURL', 'namespace', 'match', 'include', 'grant', 'updatedAt'] %}
+                                    <tr>
+                                        <td>unique_id</td>
+                                        <td>
+                                            {% if build_type == "core" %}
+                                                {{ [item['id'], item['author']]|join('@') }}
+                                            {% else %}
+                                                {{ item['id'] }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                            {% for key in ['category', 'release_version', 'beta_version', 'version', 'updateURL', 'downloadURL', 'namespace', 'match', 'include', 'grant', 'updatedAt'] %}
                                 {% if item[key] %}
                                     <tr>
                                         <td>{{ key }}</td>

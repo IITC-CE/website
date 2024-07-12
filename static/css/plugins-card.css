@@ -39,7 +39,7 @@
     height: 64px;
 }
 
-.card-plugin .header .title {
+.card-plugin .header .title-author {
     padding-left: 1.25rem;
     height: 4rem;
     overflow: hidden;
@@ -48,7 +48,7 @@
     justify-content: space-evenly;
 }
 
-.card-plugin .header .plugin-name a {
+.card-plugin .header .plugin-name .title {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
