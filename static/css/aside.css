@@ -36,7 +36,7 @@ a.sidenav-trigger.top-nav {
     top: 18px;
     float: none;
     margin-left: 1.5rem;
-    color: var(--primary-main);
+    color: #FFFFFF;
     font-size: 36px;
     z-index: 2;
 }
@@ -71,4 +71,10 @@ a.sidenav-trigger.top-nav i {
 
 .sidenav-download-submenu li a {
     padding-left: 3rem;
+}
+
+@media only screen and (max-width: 992px) {
+    .sidenav li > a {
+        border-radius: 0;
+    }
 }
