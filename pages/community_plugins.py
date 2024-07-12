@@ -51,7 +51,6 @@ def get_community_plugins_by_categories() -> Dict[str, Dict]:
                 "name": category,
                 "plugins": []
             }
-        plugin["unique_id"] = plugin["id"].replace("@", "-by-")
         categorized[category]["plugins"].append(plugin)
 
     # Sort plugins within each category by 'name'

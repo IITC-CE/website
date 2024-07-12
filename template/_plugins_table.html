@@ -13,7 +13,7 @@
             <div class="container">
                 <div class="row g-0 plugins_container grid">
                     {% for item in category.plugins %}
-                        {% set unique_id = item['unique_id'] or [item['id'], item['author']]|join('-by-') %}
+                        {% set unique_id = item['id_hash'] or [item['id'], item['author']]|join('-by-') %}
 
 
                         <div id="{{ unique_id }}" class="scrollspy grid-item s12 m6 xl4">
@@ -37,7 +37,7 @@
                                     <p class="plugin-description">{{ item.description }}</p>
                                 </div>
                                 <div class="buttons">
-                                    <a class="btn lite plugin-info clickable waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}')">
+                                    <a class="btn lite plugin-info clickable waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ unique_id }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}'); return false">
                                         info &nbsp;<span class="comments_counter"><span class="material-symbols-outlined icon">comment</span> <span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span></span>
                                     </a>
 
@@ -67,18 +67,101 @@
                             </div>
                         </div>
 
-                        <div id="{{ unique_id }}_info" style="display: none">
-                            <h4>{{ item.name }}</h4>
-                            {% if item.author %}<h5>by&nbsp;{{ item.author }}</h5>{% endif %}
-                            {% if item.image %}<div class="plugin_image"><a href="{{ item.image }}" target="_blank" title="Click the image to open in full size"><img loading="lazy" class="lazyload" data-src="1{{ item.image }}" src="data:image/gif;base64,R0lGODlhCgAIAIABAN3d3f///yH5BAEAAAEALAAAAAAKAAgAAAINjAOnyJv2oJOrVXrzKQA7"></a></div>{% endif %}
+                        <div
+                                id="{{ unique_id }}_info"
+                                style="display: none"
+                                {% if build_type == "core" %}
+                                    {% if item.release_version %}
+                                        data-download-release="/build/release/plugins/{{ item.filename }}"
+                                    {% endif %}
+                                    {% if item.beta_version %}
+                                        data-download-beta="/build/beta/plugins/{{ item.filename }}"
+                                    {% endif %}
+                                {% else %}
+                                    data-download="{{ item.downloadURL }}"
+                                {% endif %}
+                                {% if item.homepageURL %}
+                                    data-homepage="{{ item.homepageURL }}"
+                                {% endif %}
+                                {% if item.issueTracker %}
+                                    data-issue-tracker="{{ item.issueTracker }}"
+                                {% endif %}
+                        >
+                            <div class="header">
+                                <div class="icon" title="{{ item.id }}">
+                                    {% if item.icon or item.icon64 %}
+                                        <img loading="lazy" class="lazyload" data-src="{{ item.icon64 or item.icon }}">
+                                    {% else %}
+                                        <img loading="lazy" class="lazyload" data-src="img/plugin.png">
+                                    {% endif %}
+                                </div>
 
-                            <div class="hr"></div>
-                            <p>{{ item.description }}</p>
+                                <div class="title">
+                                    <div class="plugin-name"><a title="{{ item.name }}" href="#{{ unique_id }}"><span>{{ item.name }}</span></a></div>
+                                    {% if item.author %}<span class="plugin-author">by&nbsp;{{ item.author }}</span>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="content">
+                                <p class="plugin-description">{{ item.description }}</p>
+
+                                {% if item.antiFeatures %}
+                                    <div class="hr"></div>
+                                    <div class="meta antiFeatures">
+                                        <h5>Anti-Features</h5>
+                                        <p>This plugin has features you may not like. <a href="https://github.com/modos189/Community-plugins/blob/master/CONTRIBUTING.md#anti-features" target="_blank">Learn more!</a></p>
+                                        {% for el in item.antiFeatures %}
+                                            <p><strong>{{ el }}</strong> –
+                                            {% if el == "scraper" %}
+                                                The plugin makes additional requests for more information than is explicitly requested by the user. For example, it infects full information about portals that the user has not clicked on.
+                                            {% endif %}
+                                            {% if el == "highLoad" %}
+                                                The plugin makes many more requests than the usual Intel/IITC use.
+                                            {% endif %}
+                                            {% if el == "export" %}
+                                                The plugin allows you to export Niantic data (excluding debugging purposes).
+                                            {% endif %}
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                {% if item.depends %}
+                                    <div class="hr"></div>
+                                    <div class="meta depends">
+                                        <h5>Depends</h5>
+                                        <p>This plugin requires the installation of another plugin.</p>
+                                        {% with deps=item._depends_links %}
+                                            {% include '_deps_badges.html' %}
+                                        {% endwith %}
+                                    </div>
+                                {% endif %}
+
+                                {% if item.recommends %}
+                                    <div class="hr"></div>
+                                    <div class="meta recommends">
+                                        <h5>Recommends</h5>
+                                        <p>This plugin recommends installing other plugins to extend functionality.</p>
+                                        {% with deps=item._recommends_links %}
+                                            {% include '_deps_badges.html' %}
+                                        {% endwith %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            {% if item.preview %}
+                                <div class="plugin_image">
+                                    <a href="{{ item.preview }}" target="_blank" title="Click the image to open in full size">
+                                        <img loading="lazy" class="lazyload" data-src="{{ item.preview }}" src="data:image/gif;base64,R0lGODlhCgAIAIABAN3d3f///yH5BAEAAAEALAAAAAAKAAgAAAINjAOnyJv2oJOrVXrzKQA7">
+                                    </a>
+                                </div>
+                            {% endif %}
+
                             <div class="hr"></div>
 
                             <table class="striped">
                                 <tbody>
-                            {% for key in ['category', 'release_version', 'beta_version', 'updateURL', 'downloadURL', 'supportURL', 'namespace'] %}
+                            {% for key in ['id', 'category', 'release_version', 'beta_version', 'version', 'updateURL', 'downloadURL', 'namespace', 'match', 'include', 'grant', 'updatedAt'] %}
                                 {% if item[key] %}
                                     <tr>
                                         <td>{{ key }}</td>

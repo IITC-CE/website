@@ -180,7 +180,7 @@ footer i.medium {
 }
 
 table.striped > tbody > tr:nth-child(2n+1) {
-    background-color: #eaeaea;
+    background-color: var(--primary-lower);
 }
 
 #modal_iitc_fdroid_repo {

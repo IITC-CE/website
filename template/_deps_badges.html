@@ -1,0 +1,11 @@
+{% for dep in deps %}
+    {% if dep.hash == None %}
+        <span class="badge">{{ dep.id }}</span>
+    {% else %}
+        {% if dep.source == "core" %}
+            <a href="download_desktop.html#{{ dep.hash }}" target="_blank" class="badge">{{ dep.id }}</a>
+        {% else %}
+            <a href="#{{ dep.hash }}" target="_blank" class="badge">{{ dep.id }}</a>
+        {% endif %}
+    {% endif %}
+{% endfor %}
