@@ -22,7 +22,23 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         init_remark(window.remark_config);
     }
+    fixSidenavIndexHref();
 });
+
+// Fix homepage link if the site is running on GitHub Pages or locally
+function fixSidenavIndexHref() {
+  const currentPath = window.location.pathname;
+  const pathParts = currentPath.split('/');
+
+  // Check if the page is not in the root directory
+  // pathParts[0] will be an empty string, pathParts[1] will be the filename or folder
+  if (pathParts.length > 2) {
+    const sidenavIndexLink = document.querySelector('.sidenav .index a');
+    if (sidenavIndexLink) {
+      sidenavIndexLink.setAttribute('href', 'index.html');
+    }
+  }
+}
 
 function fixModalScroll() {
     document.querySelector("html").style.scrollBehavior = "auto";
