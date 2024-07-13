@@ -158,33 +158,43 @@
                             {% endif %}
 
                             <div class="hr"></div>
-                            <table class="striped">
-                                <tbody>
-                                    <tr>
-                                        <td>unique_id</td>
-                                        <td>
-                                            {% if build_type == "core" %}
-                                                {{ [item['id'], item['author']]|join('@') }}
-                                            {% else %}
-                                                {{ item['id'] }}
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                            {% for key in ['category', 'release_version', 'beta_version', 'version', 'updateURL', 'downloadURL', 'namespace', 'match', 'include', 'grant', 'updatedAt'] %}
-                                {% if item[key] %}
-                                    <tr>
-                                        <td>{{ key }}</td>
-                                        <td>
-                                            {% if key in ['updateURL', 'downloadURL', 'supportURL'] and item[key].startswith('http') %}
-                                                <a href="{{ item[key] }}" title="{{ key }}">{{ item[key] }}</a>
-                                            {% else %}
-                                                {{ item[key] }}
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}</tbody>
-                            </table>
+
+                            <ul class="plugin_metadata">
+                                <li>
+                                    <span class="key">unique_id:</span>
+                                    <span class="badge">
+                                        {% if build_type == "core" %}
+                                            {{ [item['id'], item['author']]|join('@') }}
+                                        {% else %}
+                                            {{ item['id'] }}
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                {% for key in ['category', 'release_version', 'beta_version', 'version', 'updatedAt'] %}
+                                    {% if item[key] %}
+                                        <li>
+                                            <span class="key">{{ key }}:</span>
+                                            <span class="badge">
+                                                {% if key == "updatedAt" %}
+                                                    {{ item[key].replace('T', ' ').replace('Z', '') }}
+                                                {% else %}
+                                                    {{ item[key] }}
+                                                {% endif %}
+                                            </span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% for key in ['match', 'include', 'grant'] %}
+                                    {% if item[key] %}
+                                        <li>
+                                            <span class="key">{{ key }}:</span>
+                                            {% for val in item[key] %}
+                                                <span class="badge">{{ val }}</span>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
                             <div class="hr"></div>
                         </div>
 

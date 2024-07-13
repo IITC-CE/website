@@ -39,28 +39,25 @@
     margin: 1rem 0 0 0;
 }
 
-.modal .meta .badge {
-    display: inline-block;
-    margin-top: 0.5rem;
-    min-width: 3rem;
-    padding: 0 11px;
-    margin-left: 0;
-    margin-right: 0.5rem;
-    text-align: center;
-    font-size: 1rem;
-    line-height: initial;
-    height: 1.5rem;
-    float: none;
-    box-sizing: border-box;
-    font-weight: 300;
-    color: var(--secondary-main);
-    background-color: var(--primary-lower);
-    border-radius: 2px;
+.plugin_metadata {
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
-.modal .meta a.badge {
-    color: #FFFFFF;
-    background-color: var(--accent-main);
+.plugin_metadata li {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0.3rem 0;
+}
+
+.plugin_metadata .key {
+    font-weight: bold;
+    margin: 1px 1rem 3px 0;
+}
+
+.plugin_metadata .badge {
+    margin: 2px;
 }
 
 .modal .modal-footer {
