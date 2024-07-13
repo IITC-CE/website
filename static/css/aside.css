@@ -9,6 +9,10 @@
     border-radius: 0 0.6rem 0.6rem 0;
 }
 
+.sidenav li:nth-child(2) > a {
+    border-radius: 0 0 0.6rem 0;
+}
+
 .sidenav li > a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-flat):not(.btn-large):not(.btn-floating) {
     color: var(--secondary-main);
 }

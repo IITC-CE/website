@@ -71,22 +71,21 @@ function init_custom_modal(plugin_unique_id, modal_id, el, url) {
     modal_move_content(plugin_info, modal_id);
 
     const modal_footer = document.getElementById(modal_id).parentNode.parentNode.querySelector(".modal-footer");
+
     set_modal_data(modal_footer, ".install-plugin", plugin_info.dataset.download);
+    set_modal_data(modal_footer, ".install-plugin-release", plugin_info.dataset.downloadRelease);
+    set_modal_data(modal_footer, ".install-plugin-beta", plugin_info.dataset.downloadBeta);
 
-    if (plugin_info.dataset.download) set_modal_data(modal_footer, ".install-plugin", plugin_info.dataset.download);
-    if (plugin_info.dataset.downloadRelease) set_modal_data(modal_footer, ".install-plugin-release", plugin_info.dataset.downloadRelease);
-    if (plugin_info.dataset.downloadBeta) set_modal_data(modal_footer, ".install-plugin-beta", plugin_info.dataset.downloadBeta);
-
-    if (plugin_info.dataset.homepage) set_modal_data(modal_footer, ".homepage-plugin", plugin_info.dataset.homepage);
-    if (plugin_info.dataset.issueTracker) set_modal_data(modal_footer, ".issue-tracker-plugin", plugin_info.dataset.issueTracker);
+    set_modal_data(modal_footer, ".homepage-plugin", plugin_info.dataset.homepage);
+    set_modal_data(modal_footer, ".issue-tracker-plugin", plugin_info.dataset.issueTracker);
 
     document.getElementById("remark42").innerHTML = "";
     init_modal_remark(plugin_unique_id, el, url);
 }
 
 function set_modal_data(modal_footer, btn_class, href) {
-    modal_footer.querySelector(btn_class).href = href;
-    modal_footer.querySelector(btn_class).style.display = "inline-flex";
+    modal_footer.querySelector(btn_class).href = (href) ? href : "#";
+    modal_footer.querySelector(btn_class).style.display = (href) ? "inline-flex" : "none";
 }
 
 function init_remark(remark_config) {

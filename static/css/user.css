@@ -126,21 +126,15 @@ footer i.medium {
     line-height: 1.3em;
 }
 
-.telegram-icon {
-    width: 20px;
-    height: 20px;
-    vertical-align: text-bottom;
-}
-
 .telegram-see-more {
-    margin-top: -8px;
     margin-left: 10px;
+    position: relative;
+    top: -0.3rem;
 }
 
 @media only screen and (max-width: 550px) {
     .telegram-see-more {
         margin: 15px 0 30px;
-        display: block;
     }
 }
 
@@ -218,4 +212,15 @@ h4 {
 
 .beta {
   border-left: 1rem solid #ffeb3b !important;
+}
+
+
+.fullwidth-image {
+    width: 100%;
+    max-width: 1200px;
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 150%;
 }
