@@ -24,6 +24,7 @@
 
 .modal .plugin_image img {
     max-height: 30vh;
+    max-width: 100%;
 }
 
 .modal .card-plugin .content p {

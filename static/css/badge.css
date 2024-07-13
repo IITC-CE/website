@@ -1,4 +1,4 @@
-.badge {
+span.badge, a.badge {
     display: inline-block;
     margin-top: 0.5rem;
     min-width: 3rem;

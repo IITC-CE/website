@@ -9,7 +9,7 @@
     border-radius: 0 0.6rem 0.6rem 0;
 }
 
-.sidenav li:nth-child(2) > a {
+.sidenav li.index > a {
     border-radius: 0 0 0.6rem 0;
 }
 

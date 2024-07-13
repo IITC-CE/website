@@ -8,7 +8,7 @@
 }
 
 .grid-item:target .card-plugin {
-    border: 1px solid #1e8cb7;
+    border: 1px solid var(--accent-main);
 }
 
 .card-plugin .buttons {
