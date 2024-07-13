@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8"/>
 
-    <!-- Material Symbols - Outlined Set -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="preload" href="fonts/mulish-v13-cyrillic_latin-regular.woff2" as="font" />
+    <link rel="preload" href="fonts/mulish-v13-cyrillic_latin-500.woff2" as="font" />
+    <link rel="preload" href="fonts/mulish-v13-cyrillic_latin-600.woff2" as="font" />
+    <link rel="preload" href="fonts/material-symbols-outlined-v195-latin-regular.woff2" as="font" />
 
+    <link type="text/css" rel="stylesheet" href="{{ 'css/fonts.css' | md5sum }}" media="screen,projection"/>
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="{{ 'css/user.css' | md5sum }}" media="screen,projection"/>

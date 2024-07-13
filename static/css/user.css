@@ -17,33 +17,6 @@
     }
 }
 
-/* mulish-regular - cyrillic_latin */
-@font-face {
-    font-display: fallback;
-    font-family: 'Mulish';
-    font-style: normal;
-    font-weight: 400;
-    src: url(../fonts/mulish-v13-cyrillic_latin-regular.woff2) format('woff2');
-}
-
-/* mulish-500 - cyrillic_latin */
-@font-face {
-    font-display: fallback;
-    font-family: 'Mulish';
-    font-style: normal;
-    font-weight: 500;
-    src: url(../fonts/mulish-v13-cyrillic_latin-500.woff2) format('woff2');
-}
-
-/* mulish-600 - cyrillic_latin */
-@font-face {
-    font-display: fallback;
-    font-family: 'Mulish';
-    font-style: normal;
-    font-weight: 600;
-    src: url(../fonts/mulish-v13-cyrillic_latin-600.woff2) format('woff2');
-}
-
 aside, main, footer {
     padding-left: 300px;
 }
