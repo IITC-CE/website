@@ -96,8 +96,71 @@
 
 }
 
+.card-plugin .buttons .install-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
 @media only screen and (max-width: 1300px) {
     .card-plugin {
         height: 20rem;
+    }
+}
+
+/* List view */
+@media only screen and (min-width: 600px) {
+    body.plugins_view_list .grid-item .card-plugin {
+        flex-direction: row;
+        height: auto;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .header {
+        width: 400px;
+        min-width: 400px;
+        max-width: 400px;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .buttons {
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
+        flex-direction: column-reverse;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .content p {
+        margin-top: 0;
+        padding-right: 1rem;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .buttons {
+        justify-content: flex-end;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .btn {
+        height: 30px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .buttons .spacer {
+        height: 4px;
+        flex-grow: initial;
+    }
+}
+
+@media only screen and (max-width: 1700px) and (min-width: 600px) {
+    body.plugins_view_list .grid-item .card-plugin .header {
+        width: 300px;
+        min-width: 300px;
+        max-width: 300px;
+        padding-right: 1rem;
+    }
+}
+
+@media only screen and (max-width: 992px) and (min-width: 600px) {
+    body.plugins_view_list .grid-item .card-plugin .header {
+        width: 250px;
+        min-width: 250px;
+        max-width: 250px;
     }
 }

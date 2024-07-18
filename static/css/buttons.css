@@ -27,13 +27,13 @@
 .btn.trim-right {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    padding-right: 1rem;
+    padding-right: 0.8rem;
 }
 
 .btn.trim-left {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    padding-left: 1rem;
+    padding-left: 0.8rem;
 }
 
 .btn.small {

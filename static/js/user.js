@@ -23,7 +23,33 @@ document.addEventListener('DOMContentLoaded', function() {
         init_remark(window.remark_config);
     }
     fixSidenavIndexHref();
+    initPluginsView();
 });
+
+function initPluginsView() {
+    const view_buttons = document.querySelector('.section_title .title_buttons .view');
+    if (view_buttons) {
+        view_buttons.classList.add("show");
+        const view_mode = localStorage.getItem("plugins_view_mode") || "grid";
+        setPluginsViewMode(view_mode, false);
+    }
+}
+
+function setPluginsViewMode(view_mode, is_save=true) {
+    if (view_mode === "grid") {
+        document.querySelector('.section_title .title_buttons .view .grid').classList.remove("lite");
+        document.querySelector('.section_title .title_buttons .view .list').classList.add("lite");
+    } else {
+        document.querySelector('.section_title .title_buttons .view .grid').classList.add("lite");
+        document.querySelector('.section_title .title_buttons .view .list').classList.remove("lite");
+    }
+    document.querySelector('body').classList.remove("plugins_view_grid");
+    document.querySelector('body').classList.remove("plugins_view_list");
+    document.querySelector('body').classList.add("plugins_view_" + view_mode);
+    if (is_save) {
+        localStorage.setItem("plugins_view_mode", view_mode);
+    }
+}
 
 // Fix homepage link if the site is running on GitHub Pages or locally
 function fixSidenavIndexHref() {

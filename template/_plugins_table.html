@@ -44,24 +44,28 @@
                                     <div class="spacer"></div>
 
                                     {% if build_type == "core" %}
-                                        <a class="btn trim-right plugin-install clickable waves-effect" {% if item.release_version %}href="/build/release/plugins/{{ item.filename }}" title="Install release v{{ item.release_version }}"{% endif %}>install</a>
-                                        <a class="dropdown-trigger btn trim-left small" href="#" data-target="plugin-dropdown-{{ id_hash }}">
-                                            <span class="material-symbols-outlined">arrow_drop_down</span>
-                                        </a>
-                                        <ul id='plugin-dropdown-{{ id_hash }}' class='dropdown-content'>
-                                            {% if item.release_version %}
-                                                <li>
-                                                    <a class="plugin-install clickable release waves-effect" href="/build/release/plugins/{{ item.filename }}">Install release v{{ item.release_version }}</a>
-                                                </a>
-                                            {% endif %}
-                                            {% if item.beta_version %}
-                                                <li>
-                                                    <a class="plugin-install clickable beta waves-effect" href="/build/beta/plugins/{{ item.filename }}">Install beta v{{ item.beta_version }}</a>
-                                                </li>
-                                            {% endif %}
-                                        </ul>
+                                        <div class="install-wrapper">
+                                            <a class="btn trim-right plugin-install clickable waves-effect" {% if item.release_version %}href="/build/release/plugins/{{ item.filename }}" title="Install release v{{ item.release_version }}"{% endif %}>install</a>
+                                            <a class="dropdown-trigger btn trim-left small" href="#" data-target="plugin-dropdown-{{ id_hash }}">
+                                                <span class="material-symbols-outlined">arrow_drop_down</span>
+                                            </a>
+                                            <ul id='plugin-dropdown-{{ id_hash }}' class='dropdown-content'>
+                                                {% if item.release_version %}
+                                                    <li>
+                                                        <a class="plugin-install clickable release waves-effect" href="/build/release/plugins/{{ item.filename }}">Install release v{{ item.release_version }}</a>
+                                                    </a>
+                                                {% endif %}
+                                                {% if item.beta_version %}
+                                                    <li>
+                                                        <a class="plugin-install clickable beta waves-effect" href="/build/beta/plugins/{{ item.filename }}">Install beta v{{ item.beta_version }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
                                     {% else %}
-                                        <a class="btn plugin-install clickable waves-effect" href="{{ item.downloadURL }}" title="Install plugin">install</a>
+                                        <div>
+                                            <a class="btn plugin-install clickable waves-effect" href="{{ item.downloadURL }}" title="Install plugin">install</a>
+                                        </div>
                                     {% endif %}
                                 </div>
                             </div>

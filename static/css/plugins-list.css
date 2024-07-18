@@ -29,3 +29,14 @@
 .plugins_container {
     padding: 0 .75rem;
 }
+
+/* List view */
+@media only screen and (min-width: 600px) {
+    body.plugins_view_list .plugins_container {
+        overflow-x: auto;
+    }
+
+    body.plugins_view_list .plugins_container .grid-item {
+        grid-column: auto/span 12;
+    }
+}

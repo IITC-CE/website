@@ -64,7 +64,6 @@
 .modal .modal-footer {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 5px;
     min-height: var(--modal-footer-height);
     height: auto;
 }
