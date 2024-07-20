@@ -1,0 +1,32 @@
+{% extends "__base__.html" %}
+{% block title %}Community plugins — IITC-CE{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <div class="section_title">
+                        <h4 class="name">Community plugins</h4>
+                        <div class="title_buttons">
+                            <a href="https://github.com/IITC-CE/Community-plugins/blob/master/CONTRIBUTING.md" target="_blank" class="btn lite">Add your plugin</a>
+                            <div class="view">
+                                <a href="#" class="btn lite grid" onclick="setPluginsViewMode('grid');return false"><span class="material-symbols-outlined">grid_view</span></a>
+                                <a href="#" class="btn lite list" onclick="setPluginsViewMode('list');return false"><span class="material-symbols-outlined">lists</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <p>A collection of amazing plugins made by community. Please note that community plugins listed here are not reviewed or endorsed by the IITC team. Use them at your own risk.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% with %}
+    {% set build_type="community" %}
+    {% include '_plugins_table.html' %}
+    {% endwith %}
+
+    {% include '_plugin_modal.html' %}
+
+{% endblock %}

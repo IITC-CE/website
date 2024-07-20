@@ -1,82 +1,81 @@
 .card-plugin {
     display: flex;
-    height: 160px;
-    margin: 0.25rem;
-    transition: border-color .25s;
-    flex-direction: column;
+    height: 19rem;
     overflow: hidden;
-    border-radius: 3px;
-    box-shadow: 0 3px 3px #eee;
-    border: 1px solid #ddd;
-}
-.grid-item:target .card-plugin {
-    border: 1px solid #1e8cb7;
+    border: 1px solid var(--primary-higher);
+    margin: 0;
+    transition: border-color .25s;
 }
 
-.card-plugin .buttons, .card-plugin .title {
+.grid-item:target .card-plugin {
+    border: 1px solid var(--accent-main);
+}
+
+.card-plugin .buttons {
     font-size: 14px;
     font-weight: 500;
-}
-
-.card-plugin .plugin-info, .card-plugin .plugin-install {
-    padding: 5px 12px;
 }
 
 /* plugin header */
 .card-plugin .header {
     display: flex;
-    height: 45px;
 }
 
 .card-plugin .header .icon {
-    padding: 10px;
+    min-width: 64px;
+    height: 64px;
+    background: var(--primary-main);
+    border-radius: 10%;
+    overflow: hidden;
 }
 
 .card-plugin .header .icon i {
     font-size: 32px;
+    padding: 16px;
 }
 
 .card-plugin .header .icon img {
-    width: 32px;
-    height: 32px;
+    width: 64px;
+    height: 64px;
 }
 
-.card-plugin .header .title {
-    padding: 10px 10px 0 0;
+.card-plugin .header .title-author {
+    padding-left: 1.25rem;
+    height: 4rem;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
-.card-plugin .header .title a {
+.card-plugin .header .plugin-name .title {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 19px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 110%;
+    height: 115%;
+    max-height: 2.8rem;
+    color: var(--secondary-main);
 }
 
-.card-plugin .header .title a span {
-    white-space: nowrap;
-}
-
-.card-plugin .header .plugin-name {
-    line-height: 13px;
-    height: 13px;
-}
-
-.card-plugin .header .plugin-meta {
+.card-plugin .header .plugin-author {
     white-space: nowrap;
 }
 
 /* plugin content */
 .card-plugin .content {
-    padding: 0 10px;
     flex-grow: 1;
-    height: 57px;
 }
 
 .card-plugin .content p {
-    margin: 5px 0;
-    max-height: 70px;
+    font-size: 1.1rem;
+    line-height: 150%;
+    max-height: 8.2rem;
+    margin: 1rem 0 0 0;
     overflow: hidden;
+    height: 100%;
 }
 
 /* plugin buttons */
@@ -86,31 +85,82 @@
     padding: 0;
 }
 
-.card-plugin .buttons .clickable {
-    transition: filter .1s ease-in-out;
+.card-plugin .buttons .comments_counter .icon {
+    font-size: 1.2rem;
+    margin-top: -0.2rem;
+    display: inline-block;
+    vertical-align: middle;
 }
 
-.card-plugin .buttons .clickable:hover {
-    filter: brightness(0.9) saturate(170%);
+.card-plugin .buttons {
+
 }
 
-.card-plugin .buttons .buttons-shadow {
+.card-plugin .buttons .install-wrapper {
     display: flex;
-    width: 100%;
-    background: #fff;
-    box-shadow: 0 -5px 0 5px #fff, -10px 0 10px 10px #fff;
+    flex-direction: row;
 }
 
-.card-plugin .buttons .plugin-info {
-    color: #333;
-    text-align: center;
-    background: #eaeaea;
+@media only screen and (max-width: 1300px) {
+    .card-plugin {
+        height: 20rem;
+    }
 }
 
-.card-plugin .buttons .comments_counter {
-    display: none;
+/* List view */
+@media only screen and (min-width: 600px) {
+    body.plugins_view_list .grid-item .card-plugin {
+        flex-direction: row;
+        height: auto;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .header {
+        width: 400px;
+        min-width: 400px;
+        max-width: 400px;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .buttons {
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
+        flex-direction: column-reverse;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .content p {
+        margin-top: 0;
+        padding-right: 1rem;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .buttons {
+        justify-content: flex-end;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .btn {
+        height: 30px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    body.plugins_view_list .grid-item .card-plugin .buttons .spacer {
+        height: 4px;
+        flex-grow: initial;
+    }
 }
 
-.card-plugin .buttons .spacer {
-    flex-grow: 1;
+@media only screen and (max-width: 1700px) and (min-width: 600px) {
+    body.plugins_view_list .grid-item .card-plugin .header {
+        width: 300px;
+        min-width: 300px;
+        max-width: 300px;
+        padding-right: 1rem;
+    }
+}
+
+@media only screen and (max-width: 992px) and (min-width: 600px) {
+    body.plugins_view_list .grid-item .card-plugin .header {
+        width: 250px;
+        min-width: 250px;
+        max-width: 250px;
+    }
 }

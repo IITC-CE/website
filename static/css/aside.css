@@ -1,8 +1,30 @@
+.sidenav {
+    --sidenav-item-height: 2.5rem;
+    --sidenav-padding: 2rem;
+    box-shadow: none;
+}
+
+.sidenav li > a {
+    margin: 0;
+    border-radius: 0 0.6rem 0.6rem 0;
+}
+
+.sidenav li.index > a {
+    border-radius: 0 0 0.6rem 0;
+}
+
+.sidenav li > a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-flat):not(.btn-large):not(.btn-floating) {
+    color: var(--secondary-main);
+}
+
 #logo-container {
     height: 100px;
-    background: black;
+    background: #1B1B1D;
     text-align: center;
     padding: 20px;
+    border-radius: 0;
+    margin: 0;
+    justify-content: center;
 }
 
 #front-page-logo {
@@ -18,7 +40,7 @@ a.sidenav-trigger.top-nav {
     top: 18px;
     float: none;
     margin-left: 1.5rem;
-    color: #fff;
+    color: #FFFFFF;
     font-size: 36px;
     z-index: 2;
 }
@@ -36,17 +58,27 @@ a.sidenav-trigger.top-nav i {
 }
 
 .sidenav .active, .sidenav li > a:hover {
-    background-color: #D7DADC;
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 18%, transparent);
+}
+
+.sidenav li > a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-flat):not(.btn-large):not(.btn-floating):hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
 }
 
 .sidenav-download-button {
     cursor: default;
 }
 
-.sidenav-download-submenu li {
-    background: rgba(0,0,0,0.04);
+.sidenav-download-submenu ul {
+    padding-left: 0;
 }
 
 .sidenav-download-submenu li a {
-    padding-left: 50px;
+    padding-left: 3rem;
+}
+
+@media only screen and (max-width: 992px) {
+    .sidenav li > a {
+        border-radius: 0;
+    }
 }

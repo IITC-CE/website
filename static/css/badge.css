@@ -1,0 +1,24 @@
+span.badge, a.badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    min-width: 3rem;
+    padding: 0 11px;
+    margin-left: 0;
+    margin-right: 0.5rem;
+    text-align: center;
+    font-size: 1rem;
+    line-height: initial;
+    height: 1.5rem;
+    float: none;
+    box-sizing: border-box;
+    font-weight: 300;
+    color: var(--secondary-main);
+    background-color: var(--primary-lower);
+    border-radius: 2px;
+    white-space: nowrap;
+}
+
+a.badge {
+    color: #FFFFFF;
+    background-color: var(--accent-main);
+}

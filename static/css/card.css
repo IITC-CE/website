@@ -1,0 +1,9 @@
+.card-panel {
+    display: block;
+    border: 0;
+    padding: 1.25rem;
+    flex-direction: column;
+    border-radius: 0.63rem;
+    background: var(--primary-higher);
+    box-shadow: none;
+}

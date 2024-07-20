@@ -8,7 +8,7 @@
                 <div class="section">
                     <h2 id="iitc-button">IITC Button browser add-on</h2>
                     <p>IITC Button make it easier to install IITC and manage plugins. Now, to install a new plugin, simply select it from the list.</p>
-                    <a href="img/iitc-button.png" target="_blank"><img class="fullwidth-image" src="img/iitc-button.png" alt="IITC Button addon"></a>
+                    <a href="img/iitc-button.avif" target="_blank"><img class="fullwidth-image" src="img/iitc-button.avif" alt="IITC Button addon"></a>
                     <h5>Get it on <a href="https://addons.mozilla.org/firefox/addon/iitc-button" target="_blank">Firefox Add-ons</a> and <a href="https://chrome.google.com/webstore/detail/iitc-button/febaefghpimpenpigafpolgljcfkeakn" target="_blank">Chrome Web Store</a>.</h5>
                 </div>
                 <div class="section">
@@ -27,7 +27,7 @@
                 </div>
                 <div class="section">
                     <h4>Useful links</h4>
-                    <p>IITC and all plugins in one .zip file:
+                    <p>IITC core and all plugins in one .zip file:
                         <a href="/build/release/{{ all_in_one_zip_file.release }}">release</a>,
                         <a href="/build/beta/{{ all_in_one_zip_file.beta }}">beta</a>
                     </p>
@@ -37,28 +37,39 @@
                     </p>
                 </div>
                 <div class="section">
-                    <h4>Download IITC</h4>
+                    <h4>Download IITC core</h4>
                     <div class="row">
-                        <div class="col s12 m6">
-                            <div class="card-panel green lighten-5">
-                                <p>This is most tested version, but may not contain new features or fixes. If you are not sure otherwise, this version is the most suitable for you. </p>
+                        <div class="col s12 m6 p-0">
+                            <div class="card-panel release">
+                                <h5>Release channel</h5>
+                                <p>This is most tested version, but may not contain new features or fixes. If you are not sure otherwise, this version is the most suitable for you.</p>
 
-                                <a class="btn waves-effect waves-light" href="/build/release/total-conversion-build.user.js">release version</a>
+                                <a class="btn waves-effect waves-light" href="/build/release/total-conversion-build.user.js">install release version</a>
                                 <p>v{{ release_iitc_version }}</p>
                             </div>
                         </div>
-                        <div class="col s12 m6">
-                            <div class="card-panel yellow lighten-5">
-                                <p>Beta channel is an optimal balance between time-tested Release channel and Test builds channel, which contains a lot of fixes and new features but can break at any time.</p>
+                        <div class="col s12 m6 p-0">
+                            <div class="card-panel beta">
+                                <h5>Beta channel</h5>
+                                <p>Contains new features and fixes that are not yet in Release. But may contain more bugs. Use the Beta version and help with testing if you are a long-time IITC user.</p>
 
-                                <a class="btn waves-effect waves-light" href="/build/beta/total-conversion-build.user.js">beta version</a>
+                                <a class="btn waves-effect waves-light" href="/build/beta/total-conversion-build.user.js">install beta version</a>
                                 <p>v{{ beta_iitc_version }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="section">
-                    <h4>Plugins</h4>
+                    <div class="section_title">
+                        <h4 class="name">Download IITC plugins</h4>
+                        <div class="title_buttons">
+                            <div class="view">
+                                <a href="#" class="btn lite grid" onclick="setPluginsViewMode('grid');return false"><span class="material-symbols-outlined">grid_view</span></a>
+                                <a href="#" class="btn lite list" onclick="setPluginsViewMode('list');return false"><span class="material-symbols-outlined">lists</span></a>
+                            </div>
+                        </div>
+                    </div>
+
                     <p>Plugins extend/modify the IITC experience. You do not need to install all plugins. Some are only useful to a minority of users.</p>
                 </div>
             </div>
@@ -66,15 +77,10 @@
     </div>
 
     {% with %}
-    {% set build_type="internal" %}
+    {% set build_type="core" %}
     {% include '_plugins_table.html' %}
     {% endwith %}
 
-    <div id="modal_info" class="modal bottom-sheet">
-        <div class="modal-content">
-            <div id="modal_info_content"></div>
-            <div id="remark42"></div>
-        </div>
-    </div>
+    {% include '_plugin_modal.html' %}
 
 {% endblock %}
