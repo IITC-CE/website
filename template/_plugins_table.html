@@ -37,6 +37,11 @@
                                     <p class="plugin-description">{{ item.description }}</p>
                                 </div>
                                 <div class="buttons">
+                                    {% if build_type == "core" %}
+                                        {% set plugin_comments_url = "https://iitc.app/download_desktop.html?plugin="+id_hash %}
+                                    {% else %}
+                                        {% set plugin_comments_url = "https://iitc.app/community_plugins.html?plugin="+id_hash %}
+                                    {% endif %}
                                     <a class="btn lite plugin-info clickable waves-effect modal-trigger" href="#modal_info" onclick="init_custom_modal('{{ id_hash }}', 'modal_info_content', this.parentNode.parentNode.parentNode, '{{ plugin_comments_url }}'); return false">
                                         info &nbsp;<span class="comments_counter"><span class="material-symbols-outlined icon">comment</span> <span class="remark42__counter" data-url="{{ plugin_comments_url }}"></span></span>
                                     </a>

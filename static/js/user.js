@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const hash = window.location.hash;
     if (hash) {
-        document.querySelector(hash).querySelector('.plugin-info').click();
+        document.querySelector(hash)?.querySelector('.plugin-info').click();
     }
 
     if (document.getElementsByClassName('remark42__counter').length) {
