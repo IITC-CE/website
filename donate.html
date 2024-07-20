@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8"/>
 
-    <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preload" href="fonts/mulish-v13-cyrillic_latin-regular.woff2" as="font" />
+    <link rel="preload" href="fonts/mulish-v13-cyrillic_latin-500.woff2" as="font" />
+    <link rel="preload" href="fonts/mulish-v13-cyrillic_latin-600.woff2" as="font" />
+    <link rel="preload" href="fonts/material-symbols-outlined-v195-latin-regular.woff2" as="font" />
+
+    <link type="text/css" rel="stylesheet" href="css/fonts.css?ffa21d972db3db71716f28643b0aadab" media="screen,projection"/>
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/user.css?ced5d901286255e4e4a5c5e850f4df20" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/aside.css?c300938d7b26976c241cea71604f8e28" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/user.css?a680d16e1e8f46c67e79eaec5c6f2098" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/badge.css?6fda0ca73e22717d9adab7e58223396f" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/card.css?bc0abeca5b4c432aad2e9c2f926e2b67" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/buttons.css?4740dd96ffd45ee4a334ec91332929b6" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/aside.css?fa52a0e482a6a4188ce23f3a26e9d0f1" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="css/header.css?8db3351989fcc4d6a48cb4fcee7d4008" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/plugins-list.css?1fb689571a8488c61fc8e3ecd10657f9" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/plugins-card.css?19b52421ecf6d85b65b13f18aa835dfa" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/plugins-modal.css?94532bb14a83ee059b2e3ff2d76ca819" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/plugins-list.css?cd79830618a67acd97ab2e57c0a3924b" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/plugins-card.css?91cb3742e69b58bef7299effc0646857" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/plugins-modal.css?2b4010f3a4f5f93f85b6aa69be8063da" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="css/telegram-widget-frame.css?ae90e820b776cb1d9cd93e1b8e643c92" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="css/iitc-screenshots.css?82046495d41c6c899dc8d14dee8d8ce9" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/donate.css?a1f6d8920d9db5e818898caa1da4b40d" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/faq.css?d37dcd88e5f0f004d10bbaed0276dd48" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="css/footer.css?c765c6f9b69871bd666d9e7fe59d77cf" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/donate.css?83eff217c51c850bde2f9d284e9dc8a2" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/faq.css?19e98a7ad9a02dddb7d0203f0992b3cd" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/section-title.css?971d15dce3d3f4fa37b28943b2613759" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/footer.css?e7aa5c366eba89e17044d7d5c5887094" media="screen,projection"/>
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -39,28 +47,29 @@
 </head>
 <body>
     <aside>
-        <ul id="slide-out" class="sidenav sidenav-fixed blue-grey lighten-5">
+        <ul id="slide-out" class="sidenav sidenav-fixed">
             <li class="logo">
                 <a id="logo-container" href="/" class="brand-logo">
-                    <object id="front-page-logo" type="image/svg+xml" data="img/iitc-logo.svg">Your browser does not support SVG</object>
+                    <img id="front-page-logo" src="img/iitc-logo.svg" alt="logo">
                 </a>
             </li>
-            <li><a href="/"><i class="material-icons">home</i> Home</a></li>
-            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/releases" target="_blank"><i class="material-icons">new_releases</i> Release notes <i class="material-icons right">exit_to_app</i></a></li>
-            <li><a href="faq.html"><i class="material-icons">help_outline</i> FAQ</a></li>
-            <li><a href="#" onclick="return false" class="sidenav-download-button"><i class="material-icons">cloud_download</i> Downloads</a>
+            <li class="index"><a href="/"><span class="material-symbols-outlined">home</span> Home</a></li>
+            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/releases" target="_blank"><span class="material-symbols-outlined">release_alert</span> Release notes <div class="spacer"></div><span class="material-symbols-outlined">exit_to_app</span></a></li>
+            <li><a href="faq.html"><span class="material-symbols-outlined">help</span> FAQ</a></li>
+            <li><a href="#" onclick="return false" class="sidenav-download-button"><span class="material-symbols-outlined">download</span> Downloads</a>
                 <div class="sidenav-download-submenu">
                     <ul>
-                        <li><a href="download_desktop.html"><i class="material-icons">desktop_mac</i> Desktop</a></li>
-                        <li><a href="download_mobile.html"><i class="material-icons">smartphone</i> Mobile</a></li>
+                        <li><a href="download_desktop.html"><span class="material-symbols-outlined">install_desktop</span> Desktop</a></li>
+                        <li><a href="download_mobile.html"><span class="material-symbols-outlined">install_mobile</span> Mobile</a></li>
                     </ul>
                   </div>
             </li>
-            <li><a href="https://weblate.iitc.app" target="_blank"><i class="material-icons">translate</i> Localization <i class="material-icons right">exit_to_app</i></a></li>
-            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank"><i class="material-icons">developer_board</i> GitHub Repository <i class="material-icons right">exit_to_app</i></a></li>
-            <li><a class="active" href="donate.html"><i class="material-icons">attach_money</i> Donate</a></li>
+            <li><a href="community_plugins.html"><span class="material-symbols-outlined">extension</span> Community plugins</a></li>
+            <li><a href="https://weblate.iitc.app" target="_blank"><span class="material-symbols-outlined">translate</span> Localization <div class="spacer"></div><span class="material-symbols-outlined">exit_to_app</span></a></li>
+            <li><a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank"><span class="material-symbols-outlined">developer_board</span> GitHub Repository <div class="spacer"></div><span class="material-symbols-outlined">exit_to_app</span></a></li>
+            <li><a class="active" href="donate.html"><span class="material-symbols-outlined">volunteer_activism</span> Donate</a></li>
         </ul>
-        <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><i class="material-icons">menu</i></a>
+        <a href="#" data-target="slide-out" class="top-nav sidenav-trigger waves-effect waves-light circle hide-on-large-only"><span class="material-symbols-outlined">menu</span></a>
     </aside>
     <main>
         <header class="section secondary">
@@ -429,12 +438,12 @@
     </div>
 
     </main>
-    <footer class="page-footer teal">
+    <footer class="page-footer">
         <div class="container">
             <div class="row">
-                <div class="col s12">
-                    <i class="medium material-icons left warning-icon">warning</i>
-                    <p class="grey-text text-lighten-4 warning-text">
+                <div class="col s12 warning">
+                    <span class="material-symbols-outlined warning-icon">warning</span>
+                    <p class="warning-text">
                         This site and the scripts are not officially affiliated with Ingress or Niantic Labs.
                         Using these scripts is likely to be considered against the Ingress Terms of Service.
                         Any use is at your own risk.</p>
@@ -443,13 +452,13 @@
         </div>
         <div class="footer-copyright">
             <div class="container links">
-                <span>© <abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
-                <span><a class="grey-text text-lighten-4" href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a class="grey-text text-lighten-4" href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
+                <span>©&nbsp;<abbr title="Ingress Intel Total Conversion (Community edition)">IITC-CE</abbr>, All rights reserved.</span>
+                <span><a href="https://status.iitc.app/">Uptime status</a>&nbsp;|&nbsp;<a href="https://github.com/IITC-CE/website/">Edit on GitHub</a></span>
             </div>
         </div>
     </footer>
 
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script type="text/javascript" src="js/user.js?e73a1b57db64321d36eb5289d2f707f6"></script>
+    <script type="text/javascript" src="js/user.js?92a978636032a7bc02614a1398ca21c8"></script>
 </body>
 </html>

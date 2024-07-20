@@ -1,41 +1,21 @@
-@font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: url(iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
-    src: local('Material Icons'),
-        local('MaterialIcons-Regular'),
-        url(iconfont/MaterialIcons-Regular.woff2) format('woff2'),
-        url(iconfont/MaterialIcons-Regular.woff) format('woff'),
-        url(iconfont/MaterialIcons-Regular.ttf) format('truetype');
+:root {
+    --primary-main: #FFFFFF;
+    --primary-higher: #EEEEEE;
+    --primary-lower: #E6E6E6;
+    --secondary-main: #000000;
+    --secondary-higher: #444444;
+    --accent-main: #26A69A;
 }
 
-.material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;  /* Preferred icon size */
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Support for IE. */
-    font-feature-settings: 'liga';
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-main: #1B1B1D;
+        --primary-higher: #242424;
+        --primary-lower: #3E4043;
+        --secondary-main: #FFFFFF;
+        --secondary-higher: #BBBBBB;
+    }
 }
-
-
 
 aside, main, footer {
     padding-left: 300px;
@@ -49,12 +29,23 @@ aside, main, footer {
 
 html {
     scroll-behavior: smooth;
+    font-size: 16px;
+    line-height: 150%;
+    font-family: 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+                 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+@media only screen and (max-width: 1300px) {
+    html {
+        font-size: 14px;
+    }
 }
 
 body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    color: var(--secondary-main);
 }
 
 .favicon {
@@ -93,8 +84,8 @@ main {
 
 .container {
     margin:0 auto;
-    max-width:1280px;
-    width:90%
+    max-width: 1920px;
+    width: 95%;
 }
 
 .row .col {
@@ -108,21 +99,15 @@ footer i.medium {
     line-height: 1.3em;
 }
 
-.telegram-icon {
-    width: 20px;
-    height: 20px;
-    vertical-align: text-bottom;
-}
-
 .telegram-see-more {
-    margin-top: -8px;
     margin-left: 10px;
+    position: relative;
+    top: -0.3rem;
 }
 
 @media only screen and (max-width: 550px) {
     .telegram-see-more {
         margin: 15px 0 30px;
-        display: block;
     }
 }
 
@@ -153,14 +138,8 @@ footer i.medium {
 
 .hr {
     height: 3px;
-    background: #eaeaea;
+    background: var(--primary-lower);
     margin: 1.5rem 0;
-}
-
-.card-panel {
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    box-shadow: 0 3px 5px #eee;
 }
 
 .top_zero {
@@ -168,7 +147,7 @@ footer i.medium {
 }
 
 table.striped > tbody > tr:nth-child(2n+1) {
-    background-color: #eaeaea;
+    background-color: var(--primary-lower);
 }
 
 #modal_iitc_fdroid_repo {
@@ -186,4 +165,35 @@ table.striped > tbody > tr:nth-child(2n+1) {
     font-size: 13px;
     background: #f3f3f3;
     border: 1px solid #eee;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+h4 {
+    font-size: 2rem;
+}
+
+.release {
+  border-left: 1rem solid #4caf50 !important;
+}
+
+.beta {
+  border-left: 1rem solid #ffeb3b !important;
+}
+
+
+.fullwidth-image {
+    width: 100%;
+    max-width: 1200px;
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 150%;
 }

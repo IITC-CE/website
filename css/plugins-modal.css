@@ -1,13 +1,69 @@
 /* plugins category modal */
-.plugin_image {
+.modal .modal-content {
+    background: var(--primary-higher);
+}
+
+.modal .card-plugin {
+    flex-direction: column;
+    border: none;
+    height: auto;
+    overflow: auto;
+}
+
+.modal .plugin_image {
     text-align: center;
     margin-top: 1.5em;
 }
 
-.plugin_image img {
+.modal .plugin_image a {
+    display: block;
+    padding: 1rem;
+    background: var(--primary-lower);
+    line-height: 0;
+}
+
+.modal .plugin_image img {
+    max-height: 30vh;
     max-width: 100%;
 }
 
-.modal.bottom-sheet {
-    max-height: 90%;
+.modal .card-plugin .content p {
+    max-height: none;
+    margin: 1.5rem 0 0 0;
+}
+
+.modal .meta h5 {
+    font-size: 1.2rem;
+}
+
+.modal .card-plugin .content .meta p {
+    margin: 1rem 0 0 0;
+}
+
+.plugin_metadata {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.plugin_metadata li {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0.3rem 0;
+}
+
+.plugin_metadata .key {
+    font-weight: bold;
+    margin: 1px 1rem 3px 0;
+}
+
+.plugin_metadata .badge {
+    margin: 2px;
+}
+
+.modal .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: var(--modal-footer-height);
+    height: auto;
 }

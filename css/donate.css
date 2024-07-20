@@ -9,8 +9,6 @@
 }
 
 .section-donate .btn {
-    filter: brightness(1.0) saturate(80%);
-    transition: filter .2s ease;
     padding: 16px 0;
     height: auto;
     font-weight: 700;
@@ -18,10 +16,7 @@
     line-height: 20px;
     color: #fff;
     text-transform: none;
-}
-
-.section-donate .btn:hover, .section-donate .btn:focus {
-    filter: brightness(1.1) saturate(170%);
+    border: 0;
 }
 
 .section-donate .dotate-block a {
@@ -39,6 +34,7 @@
 
 .section-donate .btn.paypal {
     background: #114DA4;
+    border: 1px solid #17478C;
 }
 
 .section-donate .btn.liberapay {
@@ -63,7 +59,7 @@
 }
 
 .section-donate .donation-item .item-block {
-    background: #eceff1;
+    background: var(--primary-higher);
     border-radius: 6px;
     padding: 14px 20px;
 }
@@ -85,10 +81,13 @@
 
 .section-donate .donations-list {
     width: fit-content;
+    list-style-type: none;
+    padding: 0;
 }
 
 .section-donate .donation-period {
     font-weight: bold;
+    padding: 1rem 0;
 }
 
 .section-donate .donation-income span {
@@ -98,7 +97,7 @@
 }
 
 .section-donate .donation-income:nth-child(odd) span {
-    background: #f0f0f0;
+    background: var(--primary-higher);
 }
 
 @media only screen and (max-width: 600px) {

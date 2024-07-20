@@ -5,3 +5,16 @@
 .faq .list {
     list-style-type: initial;
 }
+
+.faq .collapsible-header div {
+    width: 100%;
+}
+
+.faq .collapsible-header::after {
+    width: auto;
+    min-width: 1rem;
+}
+
+.faq.collapsible.popout > li {
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16);
+}
