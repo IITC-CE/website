@@ -75,7 +75,7 @@ jobs:
           open_prs=$(curl -s "https://api.github.com/repos/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/pulls?state=open&sort=updated&direction=desc" | jq -r '.[].number')
           
           # Converting a PR list to an array
-          open_prs_array=($open_prs)
+          open_prs_combined=" $(echo "$open_prs" | tr '\n' ' ') "
           
           cd ./website/
           
@@ -84,7 +84,7 @@ jobs:
           for dir in "$ARTIFACTS_DIR"/*; do
             if [ -d "$dir" ]; then
               pr_number=$(basename "$dir")
-              if [[ ! " ${open_prs_array[@]} " =~ " ${pr_number} " ]]; then
+              if [[ ! $open_prs_combined =~ " ${pr_number/PR/} " ]]; then
                 rm -rf "$dir"
               fi
             fi
