@@ -2,7 +2,7 @@
 // @author         jacob1123
 // @name           IITC plugin: Gray Google map
 // @category       Map Tiles
-// @version        0.1.5.20240813.070929
+// @version        0.1.5.20240813.080055
 // @description    Add a simplified gray Version of Google map tiles as an optional layer.
 // @id             basemap-google-gray
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
