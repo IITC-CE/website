@@ -2,7 +2,7 @@
 // @author         danielatkins
 // @name           IITC plugin: Overlay KML / GPX / GeoJSON
 // @category       Layer
-// @version        0.3.1.20240813.081113
+// @version        0.3.1.20240814.111418
 // @description    Allow users to overlay their own KML / GPX / GeoJSON files on top of IITC.
 // @id             overlay-kml
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-08-13-081113';
+plugin_info.dateTimeVersion = '2024-08-14-111418';
 plugin_info.pluginId = 'overlay-kml';
 //END PLUGIN AUTHORS NOTE
 
