@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.4.0.20240813.081113
+// @version        0.4.0.20240814.111418
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -22,7 +22,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-08-13-081113';
+plugin_info.dateTimeVersion = '2024-08-14-111418';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 
@@ -130,84 +130,20 @@ function makeTable (portals,linksCount,fieldsCount) {
     '<th class="mac">__MACHINA__</th>' +
     '</tr>\n';
 
-  html +=
-    '<tr><td>Portals</td>' +
-    '<td>' +
-    portals.enl.total +
-    '</td>' +
-    '<td>' +
-    portals.res.total +
-    '</td>' +
-    '<td>' +
-    portals.mac.total +
-    '</td>' +
-    '</tr>' +
-    '<tr><td>avg Level</td>' +
-    '<td>' +
-    portals.enl.levels +
-    '</td>' +
-    '<td>' +
-    portals.res.levels +
-    '</td>' +
-    '<td>' +
-    portals.mac.levels +
-    '</td>' +
-    '</tr>' +
-    '<tr><td>avg Health</td>' +
-    '<td>' +
-    portals.enl.health +
-    '</td>' +
-    '<td>' +
-    portals.res.health +
-    '</td>' +
-    '<td>' +
-    portals.mac.health +
-    '</td>' +
-    '</tr>' +
-    '<tr><td>Level 8</td>' +
-    '<td>' +
-    portals.enl.level8 +
-    '</td>' +
-    '<td>' +
-    portals.res.level8 +
-    '</td>' +
-    '<td>' +
-    portals.mac.level8 +
-    '</td>' +
-    '</tr>' +
-    '<tr><td>Max Level</td>' +
-    '<td>' +
-    portals.enl.maxLevel +
-    '</td>' +
-    '<td>' +
-    portals.res.maxLevel +
-    '</td>' +
-    '<td>' +
-    portals.mac.maxLevel +
-    '</td>' +
-    '</tr>' +
-    '<tr><td>Links</td>' +
-    '<td>' +
-    linksCount.enl +
-    '</td>' +
-    '<td>' +
-    linksCount.res +
-    '</td>' +
-    '<td>' +
-    linksCount.mac +
-    '</td>' +
-    '</tr>' +
-    '<tr><td>Fields</td>' +
-    '<td>' +
-    fieldsCount.enl +
-    '</td>' +
-    '<td>' +
-    fieldsCount.res +
-    '</td>' +
-    '<td>' +
-    fieldsCount.mac +
-    '</td>' +
-    '</tr>';
+  const lines = [
+    ['Portals', portals.enl.total, portals.res.total, portals.mac.total],
+    ['avg Level', portals.enl.levels, portals.res.levels, portals.mac.levels],
+    ['avg Health', portals.enl.health, portals.res.health, portals.mac.health],
+    ['Level 8', portals.enl.level8, portals.res.level8, portals.mac.level8],
+    ['Max Level', portals.enl.maxLevel, portals.res.maxLevel, portals.mac.maxLevel],
+    ['Links', linksCount.enl, linksCount.res, linksCount.mac],
+    ['Fields', fieldsCount.enl, fieldsCount.res, fieldsCount.mac],
+  ];
+
+  html += lines.map((line) => {
+    const cells = line.map((cell) => `<td>${cell}</td>`);
+    return `<tr>${cells}</tr>`;
+  });
 
   html += '</table>';
   return html;
