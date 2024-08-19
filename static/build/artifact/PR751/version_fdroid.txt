@@ -1,0 +1,2 @@
+versionName=0.38.0-test-2024.08.19-16:53
+versionCode=1724086389
