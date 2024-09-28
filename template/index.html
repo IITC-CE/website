@@ -40,10 +40,12 @@
                         Your contributions will help pay for the domain and server costs.
                     </p>
                 </div>
+                {% if telegram_widget %}
                 <div class="section">
                     <h4>Latest from IITC News <a href="https://t.me/s/iitc_news" class="btn telegram-see-more" target="_blank">see more</a></h4>
                     {{ telegram_widget }}
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

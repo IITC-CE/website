@@ -21,7 +21,6 @@ def generate_page(page):
         widget = page_index.get_telegram_widget("iitc_news")
         if widget is None:
             print("Error updating telegram")
-            return
         markers['telegram_widget'] = widget
         markers['screenshots_carousel'] = page_index.get_screenshots_carousel()
 
