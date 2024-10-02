@@ -2,7 +2,7 @@
 // @author         3ch01c
 // @name           IITC plugin: Uniques
 // @category       Misc
-// @version        0.2.5.20240917.191202
+// @version        0.2.5.20241002.120504
 // @description    Allow manual entry of portals visited/captured. Use the 'highlighter-uniques' plugin to show the uniques on the map, and 'sync' to share between multiple browsers or desktop/mobile. It will try and guess which portals you have captured from COMM/portal details, but this will not catch every case.
 // @id             uniques
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-09-17-191202';
+plugin_info.dateTimeVersion = '2024-10-02-120504';
 plugin_info.pluginId = 'uniques';
 //END PLUGIN AUTHORS NOTE
 

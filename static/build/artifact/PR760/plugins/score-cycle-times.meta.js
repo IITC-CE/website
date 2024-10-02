@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Scoring cycle / checkpoint times
 // @category       Info
-// @version        0.2.1.20240917.191202
+// @version        0.2.1.20241002.120504
 // @description    Show the times used for the septicycle and checkpoints for regional scoreboards.
 // @id             score-cycle-times
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
