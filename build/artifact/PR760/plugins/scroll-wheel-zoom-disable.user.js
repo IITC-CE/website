@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Disable mouse wheel zoom
 // @category       Tweaks
-// @version        0.1.1.20240917.191202
+// @version        0.1.1.20241002.120504
 // @description    Disable the use of mouse wheel to zoom. The map zoom controls or keyboard are still available.
 // @id             scroll-wheel-zoom-disable
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-09-17-191202';
+plugin_info.dateTimeVersion = '2024-10-02-120504';
 plugin_info.pluginId = 'scroll-wheel-zoom-disable';
 //END PLUGIN AUTHORS NOTE
 
