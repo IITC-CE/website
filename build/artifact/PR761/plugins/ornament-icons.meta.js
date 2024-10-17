@@ -2,7 +2,7 @@
 // @author         johtata
 // @name           IITC plugin: Ornament icons basic
 // @category       Layer
-// @version        0.1.1.20241009.103105
+// @version        0.1.1.20241017.133833
 // @description    Add own icons and names for ornaments
 // @id             ornament-icons
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

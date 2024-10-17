@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.3.20241009.103105
+// @version        0.4.3.20241017.133833
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-09-103105';
+plugin_info.dateTimeVersion = '2024-10-17-133833';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 

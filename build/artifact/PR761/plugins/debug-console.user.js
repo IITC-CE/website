@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.1.1.20241009.103105
+// @version        0.2.0.20241017.133833
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-09-103105';
+plugin_info.dateTimeVersion = '2024-10-17-133833';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -31,7 +31,7 @@ plugin_info.pluginId = 'debug-console';
 var changelog = [
   {
     version: '0.2.0',
-    changes: ['Use channel new API', 'Handle multiline messages'],
+    changes: ['Use channel new API', 'Handle multiline messages', 'Handle errors when serializing logged objects'],
   },
   {
     version: '0.1.1',
@@ -68,56 +68,71 @@ debugTab.create = function () {
 };
 
 debugTab.renderLine = function (errorType, args) {
+  // Convert arguments to an array
   args = Array.prototype.slice.call(args);
   var text = [];
-  args.forEach(function (v) {
-    if (typeof v !== 'string' && typeof v !== 'number') {
-      var cache = [];
-      v = JSON.stringify(v, function (key, value) {
-        if (typeof value === 'object' && value !== null) {
-          if (cache.indexOf(value) !== -1) {
-            // Circular reference found, discard key
-            return;
-          }
-          // Store value in our collection
-          cache.push(value);
+
+  // Function to safely stringify objects with depth limitation
+  function safeStringify(obj, depth = 5) {
+    let cache = [];
+    return JSON.stringify(obj, function (key, value) {
+      if (typeof value === 'object' && value !== null) {
+        // Detect circular references or if the depth exceeds the limit
+        if (cache.indexOf(value) !== -1 || cache.length > depth) {
+          return '[Circular]'; // Return a placeholder for circular references
         }
-        return value;
-      });
-      cache = null;
+        // Store object in cache for future reference
+        cache.push(value);
+      }
+      return value;
+    });
+  }
+
+  args.forEach(function (v) {
+    // If v is not a string or number, attempt to stringify
+    if (typeof v !== 'string' && typeof v !== 'number') {
+      try {
+        v = safeStringify(v);
+      } catch {
+        // In case of error, return error message with the object's string representation
+        v = 'error rendering: ' + String(v);
+      }
     }
+    // Add the value to the text array
     text.push(v);
   });
+
+  // Join text array into a single string with spaces between values
   text = text.join(' ');
 
-  // Time
+  // Time element creation
   var time = document.createElement('time');
   var d = new Date();
   time.textContent = d.toLocaleTimeString();
   time.title = d.toLocaleString();
   time.dataset.timestamp = d.getTime();
 
-  // Type
+  // Type element creation (for log type)
   var type = document.createElement('mark');
   type.textContent = errorType;
   type.className = errorType;
 
-  // Text
+  // Text element creation (for the log message)
   var pre = document.createElement('pre');
   pre.textContent = text;
 
-  // Check if the last message is visible
+  // Check if the last message is visible (scroll position)
   var debugContainer = document.getElementById('chatdebug');
   var isAtBottom = debugContainer.scrollTop >= debugContainer.scrollTopMax;
 
-  // Insert Row
+  // Insert a new row in the debug table
   var table = document.querySelector('#chatdebug table');
   var row = table.insertRow();
   row.insertCell().append(time);
   row.insertCell().append(type);
   row.insertCell().append(pre);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to the bottom if the user was at the bottom
   if (isAtBottom) debugContainer.scrollTo(0, debugContainer.scrollTopMax);
 };
 

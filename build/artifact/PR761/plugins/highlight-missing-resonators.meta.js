@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals missing resonators
 // @category       Highlighter
-// @version        0.2.2.20241009.103105
+// @version        0.2.2.20241017.133833
 // @description    Use the portal fill color to denote if the portal is missing resonators.
 // @id             highlight-missing-resonators
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
