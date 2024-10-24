@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight inactive portals
 // @category       Highlighter
-// @version        0.2.2.20241001.095400
+// @version        0.2.3.20241024.123711
 // @description    Use the portal fill color to denote if the portal is unclaimed with no recent activity. Shades of red from one week to one month, then tinted to purple for longer. May also highlight captured portals that are stuck and fail to decay every 24 hours.
 // @id             highlight-forgotten
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-01-095400';
+plugin_info.dateTimeVersion = '2024-10-24-123711';
 plugin_info.pluginId = 'highlight-forgotten';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,8 +29,12 @@ plugin_info.pluginId = 'highlight-forgotten';
 
 var changelog = [
   {
-    version: '0.2.2',
+    version: '0.2.3',
     changes: ['Refactoring: fix eslint'],
+  },
+  {
+    version: '0.2.2',
+    changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
   },
   {
     version: '0.2.1',

@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight portals with ornaments
 // @category       Highlighter
-// @version        0.2.3.20241001.095400
+// @version        0.2.4.20241024.123711
 // @description    Use the portal fill color to denote portals with additional 'ornament' markers. e.g. Anomaly portals
 // @id             highlight-ornaments
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-01-095400';
+plugin_info.dateTimeVersion = '2024-10-24-123711';
 plugin_info.pluginId = 'highlight-ornaments';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,8 +29,12 @@ plugin_info.pluginId = 'highlight-ornaments';
 
 var changelog = [
   {
-    version: '0.2.3',
+    version: '0.2.4',
     changes: ['Refactoring: fix eslint'],
+  },
+  {
+    version: '0.2.3',
+    changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
   },
   {
     version: '0.2.2',
