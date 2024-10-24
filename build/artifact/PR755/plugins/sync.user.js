@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.5.2.20241001.095400
+// @version        0.5.3.20241024.123711
 // @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-01-095400';
+plugin_info.dateTimeVersion = '2024-10-24-123711';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,8 +30,12 @@ plugin_info.pluginId = 'sync';
 
 var changelog = [
   {
-    version: '0.5.2',
+    version: '0.5.3',
     changes: ['Refactoring: fix eslint'],
+  },
+  {
+    version: '0.5.2',
+    changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
   },
   {
     version: '0.5.1',

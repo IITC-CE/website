@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.38.1.20241001.095400
+// @version        0.39.1.20241024.123711
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-01-095400';
+plugin_info.dateTimeVersion = '2024-10-24-123711';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,6 +33,20 @@ window.IITC = IITC;
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.39.1',
+    changes: ['Fix Machina color in chat'],
+  },
+  {
+    version: '0.39.0',
+    changes: [
+      'Add favicon.ico for Intel page',
+      'Fix accessKey and mouseover in Toolbox API (fix permalink)',
+      'Refactored comm tab code, added Comm API and proxy between chat and Comm API',
+      'Artifact code refactoring',
+      'Add conditional check for String.prototype.capitalize polyfill',
+    ],
+  },
   {
     version: '0.38.1',
     changes: ['Fix toolbar for some deprecated plugins', 'Fix dialogs on iitc boot'],
@@ -107,7 +121,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-10-01-095400';
+window.iitcBuildDate = '2024-10-24-123711';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -3981,7 +3995,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-10-01-095400');
+  log.log('loading done, booting. Built: ' + '2024-10-24-123711');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -21398,9 +21412,10 @@ function renderMsgRow(data) {
   var timeCell = IITC.comm.renderTimeCell(data.time, timeClass);
 
   var nickClasses = ['nickname'];
-  if (data.player.team === window.TEAM_ENL || data.player.team === window.TEAM_RES) {
+  if (window.TEAM_TO_CSS[data.player.team]) {
     nickClasses.push(window.TEAM_TO_CSS[data.player.team]);
   }
+
   // highlight things said/done by the player in a unique colour
   // (similar to @player mentions from others in the chat text itself)
   if (data.player.name === window.PLAYER.nickname) {
