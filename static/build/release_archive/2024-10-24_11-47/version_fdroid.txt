@@ -1,0 +1,2 @@
+versionName=0.39.1
+versionCode=1729769456
