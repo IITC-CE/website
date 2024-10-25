@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Debug: Raw portal JSON data
 // @category       Portal Info
-// @version        0.2.6.20241023.122913
+// @version        0.2.7.20241025.071630
 // @description    Developer debugging aid: Add a link to the portal details to show the raw data of a portal.
 // @id             debug-raw-portal-data
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'debug-raw-portal-data';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.2.7',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.6',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -39,22 +43,23 @@ var changelog = [
 ];
 
 // use own namespace for plugin
-window.plugin.rawdata = function() {};
+window.plugin.rawdata = function () {};
 
-window.plugin.rawdata.setupCallback = function() {
-    addHook('portalDetailsUpdated', window.plugin.rawdata.addLink);
-}
+window.plugin.rawdata.setupCallback = function () {
+  window.addHook('portalDetailsUpdated', window.plugin.rawdata.addLink);
+};
 
-window.plugin.rawdata.addLink = function(d) {
-  $('.linkdetails').append('<aside><a onclick="window.plugin.rawdata.showPortalData(\''+window.selectedPortal+'\')" title="Display raw data of the portal">Raw Data</a></aside>');
-}
+window.plugin.rawdata.addLink = function () {
+  $('.linkdetails').append(
+    `<aside><a onclick="window.plugin.rawdata.showPortalData('${window.selectedPortal}')" title="Display raw data of the portal">Raw Data</a></aside>`
+  );
+};
 
-window.plugin.rawdata.showPortalData = function(guid) {
+window.plugin.rawdata.showPortalData = function (guid) {
   if (!window.portals[guid]) {
-    console.warn ('Error: failed to find portal details for guid '+guid+' - failed to show debug data');
+    console.warn('Error: failed to find portal details for guid ' + guid + ' - failed to show debug data');
     return;
   }
-
 
   var data = window.portals[guid].options.data;
   var ts = window.portals[guid].options.timestamp;
@@ -65,16 +70,15 @@ window.plugin.rawdata.showPortalData = function(guid) {
               <b>Entity timestamp</b>: <code>${ts}</code> - ${window.unixTimeToDateTimeString(ts, true)}<br />
               <b>Portal map data</b>: <pre>${JSON.stringify(data, null, 2)}</pre>`;
 
-  var details = portalDetail.get(guid);
+  var details = window.portalDetail.get(guid);
   if (details) {
-    body += '<b>Portal details:</b><pre>'+JSON.stringify(details,null,2)+'</pre>';
+    body += '<b>Portal details:</b><pre>' + JSON.stringify(details, null, 2) + '</pre>';
   }
-
 
   body += '<p><b>Links referencing this portal</b></p>';
   var haslinks = false;
-  var linkGuids = getPortalLinks(guid);
-  $.each(linkGuids.in.concat(linkGuids.out), function(i,lguid) {
+  var linkGuids = window.getPortalLinks(guid);
+  $.each(linkGuids.in.concat(linkGuids.out), function (i, lguid) {
     var l = window.links[lguid];
     var ld = l.options.data;
     body += `<b>Link GUID</b>: <code>${l.options.guid}</code><br />
@@ -87,8 +91,8 @@ window.plugin.rawdata.showPortalData = function(guid) {
 
   body += '<p><b>Fields referencing this portal</b></p>';
   var hasfields = false;
-  var fieldGuids = getPortalFields(guid);
-  $.each(fieldGuids, function(i,fguid) {
+  var fieldGuids = window.getPortalFields(guid);
+  $.each(fieldGuids, function (i, fguid) {
     var f = window.fields[fguid];
     var fd = f.options.data;
     body += `<b>Field guid</b>: <code>${f.options.guid}</code><br />
@@ -98,18 +102,18 @@ window.plugin.rawdata.showPortalData = function(guid) {
   });
   if (!hasfields) body += '<p>No fields linked to this portal</p>';
 
-  dialog({
+  window.dialog({
     title: title,
     html: body,
     id: 'dialog-rawdata',
     width: 'auto',
     dialogClass: 'ui-dialog-rawdata',
   });
-}
+};
 
 var setup = function () {
   window.plugin.rawdata.setupCallback();
-}
+};
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

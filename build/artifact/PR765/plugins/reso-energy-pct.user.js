@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Reso energy % in portal details
 // @category       Portal Info
-// @version        0.1.4.20241023.122913
+// @version        0.1.5.20241025.071630
 // @description    Show resonator energy percentage on resonator energy bar in portal details panel.
 // @id             reso-energy-pct
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'reso-energy-pct';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.1.5',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.4',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -39,28 +43,31 @@ var changelog = [
 ];
 
 // use own namespace for plugin
-window.plugin.resoEnergyPctInPortalDetail = function() {};
+window.plugin.resoEnergyPctInPortalDetail = function () {};
 
-window.plugin.resoEnergyPctInPortalDetail.updateMeter = function(data) {
-  $("span.meter-level")
+window.plugin.resoEnergyPctInPortalDetail.updateMeter = function () {
+  $('span.meter-level')
     .css({
-      "word-spacing": "-1px",
-      "text-align": "left",
-      "font-size": "90%",
-      "padding-left": "2px",
+      'word-spacing': '-1px',
+      'text-align': 'left',
+      'font-size': '90%',
+      'padding-left': '2px',
     })
-    .each(function() {
-      var matchResult = $(this).parent().attr('title').match(/\((\d*\%)\)/);
-      if(matchResult) {
+    .each(function () {
+      var matchResult = $(this)
+        .parent()
+        .attr('title')
+        .match(/\((\d*%)\)/);
+      if (matchResult) {
         var html = $(this).html() + '<div style="position:absolute;right:0;top:0">' + matchResult[1] + '</div>';
         $(this).html(html);
       }
     });
-}
+};
 
-var setup =  function() {
+var setup = function () {
   window.addHook('portalDetailsUpdated', window.plugin.resoEnergyPctInPortalDetail.updateMeter);
-}
+};
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

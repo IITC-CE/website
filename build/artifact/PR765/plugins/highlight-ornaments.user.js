@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight portals with ornaments
 // @category       Highlighter
-// @version        0.2.3.20241023.122913
+// @version        0.2.4.20241025.071630
 // @description    Use the portal fill color to denote portals with additional 'ornament' markers. e.g. Anomaly portals
 // @id             highlight-ornaments
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'highlight-ornaments';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.2.4',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.3',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -45,14 +49,13 @@ window.plugin.highlightOrnaments = highlightOrnaments;
 highlightOrnaments.styles = {
   common: {
     fillColor: 'red',
-    fillOpacity: 0.75
-  }
+    fillOpacity: 0.75,
+  },
 };
 
-function ornamentshighlight (data) {
+function ornamentshighlight(data) {
   var d = data.portal.options.data;
   if (d.ornaments && d.ornaments.length > 0) {
-
     // TODO? match specific cases of ornament name and/or portals with multiple ornaments, and highlight in different colours?
 
     var params = highlightOrnaments.styles.common;
@@ -60,7 +63,7 @@ function ornamentshighlight (data) {
   }
 }
 
-function setup () {
+function setup() {
   window.addPortalHighlighter('Ornaments (anomaly portals)', ornamentshighlight);
 }
 

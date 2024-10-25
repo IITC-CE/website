@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Scoring cycle / checkpoint times
 // @category       Info
-// @version        0.2.2.20241023.122913
+// @version        0.2.3.20241025.071630
 // @description    Show the times used for the septicycle and checkpoints for regional scoreboards.
 // @id             score-cycle-times
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'score-cycle-times';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.2.3',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.2',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -46,8 +50,11 @@ scoreCycleTimes.CHECKPOINT = 5 * 60 * 60 * 1000; // 5 hours per checkpoint
 scoreCycleTimes.CYCLE = 7 * 5 * scoreCycleTimes.CHECKPOINT; // 7 25-hour 'days' per cycle
 scoreCycleTimes.locale = navigator.languages;
 scoreCycleTimes.dateTimeFormat = {
-  year: 'numeric', month: '2-digit', day: '2-digit',
-  hour: '2-digit', minute: '2-digit'
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
 };
 
 scoreCycleTimes.formatRow = function (label, time) {
@@ -70,23 +77,22 @@ scoreCycleTimes.update = function () {
   var checkpointStart = Math.floor(now / scoreCycleTimes.CHECKPOINT) * scoreCycleTimes.CHECKPOINT;
   var checkpointEnd = checkpointStart + scoreCycleTimes.CHECKPOINT;
 
-  var html = '<table>'
-    + scoreCycleTimes.formatRow('Cycle start', cycleStart)
-    + scoreCycleTimes.formatRow('Previous checkpoint', checkpointStart)
-    + scoreCycleTimes.formatRow('Next checkpoint', checkpointEnd)
-    + scoreCycleTimes.formatRow('Cycle end', cycleEnd)
-    + '</table>';
+  var html =
+    '<table>' +
+    scoreCycleTimes.formatRow('Cycle start', cycleStart) +
+    scoreCycleTimes.formatRow('Previous checkpoint', checkpointStart) +
+    scoreCycleTimes.formatRow('Next checkpoint', checkpointEnd) +
+    scoreCycleTimes.formatRow('Cycle end', cycleEnd) +
+    '</table>';
 
   $('#score_cycle_times_display').html(html);
 
-  setTimeout(scoreCycleTimes.update, checkpointEnd-now);
+  setTimeout(scoreCycleTimes.update, checkpointEnd - now);
 };
 
-function setup () {
+function setup() {
   $('#sidebar').append('<div id="score_cycle_times_display"></div>');
-  $('<style>')
-    .html('#score_cycle_times_display { color: #ffce00; }')
-    .appendTo('head');
+  $('<style>').html('#score_cycle_times_display { color: #ffce00; }').appendTo('head');
 
   scoreCycleTimes.update();
 }

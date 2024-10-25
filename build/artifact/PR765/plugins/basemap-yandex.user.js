@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Yandex maps
 // @category       Map Tiles
-// @version        0.3.3.20241023.122913
+// @version        0.3.4.20241025.071630
 // @description    Add Yandex.com (Russian/Русский) map layers
 // @id             basemap-yandex
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-yandex';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.3.4',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.3.3',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -44,19 +48,19 @@ var mapYandex = {};
 
 mapYandex.types = {
   map: {
-    type: 'map'
+    type: 'map',
   },
   satellite: {
-    type: 'satellite'
+    type: 'satellite',
   },
   hybrid: {
-    type: 'hybrid'
+    type: 'hybrid',
   },
 };
 
 mapYandex.options = {
   // set this to your API key
-  apiParams: '<your API-key>'
+  apiParams: '<your API-key>',
 };
 
 function setup() {
@@ -64,12 +68,11 @@ function setup() {
 
   for (var name in mapYandex.types) {
     var options = L.extend({}, mapYandex.options, mapYandex.types[name]);
-    layerChooser.addBaseLayer(L.yandex(options), 'Yandex ' + name);
+    window.layerChooser.addBaseLayer(L.yandex(options), 'Yandex ' + name);
   }
 }
 
-function setupYandexLeaflet () {
-
+function setupYandexLeaflet() {
   try {
     // https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Yandex.js
     // *** included: external/Yandex.js ***

@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.13.1.20241023.122913
+// @version        0.13.2.20241025.071630
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'player-activity-tracker';
 /* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.13.2',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.13.1',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -47,16 +51,15 @@ var changelog = [
   },
 ];
 
-window.PLAYER_TRACKER_MAX_TIME = 3*60*60*1000; // in milliseconds
+window.PLAYER_TRACKER_MAX_TIME = 3 * 60 * 60 * 1000; // in milliseconds
 window.PLAYER_TRACKER_MIN_ZOOM = 9;
 window.PLAYER_TRACKER_MIN_OPACITY = 0.3;
 window.PLAYER_TRACKER_LINE_COLOUR = '#FF00FD';
 
-
 // use own namespace for plugin
-window.plugin.playerTracker = function() {};
+window.plugin.playerTracker = function () {};
 
-window.plugin.playerTracker.setup = function() {
+window.plugin.playerTracker.setup = function () {
   $('<style>').prop('type', 'text/css').html('\
 .plugin-player-tracker-popup a {\
 	color: inherit;\
@@ -72,128 +75,131 @@ window.plugin.playerTracker.setup = function() {
   var iconResImage = 'data:image/png;base64,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';
   var iconResRetImage = 'data:image/png;base64,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';
 
-  plugin.playerTracker.iconEnl = L.Icon.Default.extend({options: {
-    iconUrl: iconEnlImage,
-    iconRetinaUrl: iconEnlRetImage
-  }});
-  plugin.playerTracker.iconRes = L.Icon.Default.extend({options: {
-    iconUrl: iconResImage,
-    iconRetinaUrl: iconResRetImage
-  }});
+  window.plugin.playerTracker.iconEnl = L.Icon.Default.extend({
+    options: {
+      iconUrl: iconEnlImage,
+      iconRetinaUrl: iconEnlRetImage,
+    },
+  });
+  window.plugin.playerTracker.iconRes = L.Icon.Default.extend({
+    options: {
+      iconUrl: iconResImage,
+      iconRetinaUrl: iconResRetImage,
+    },
+  });
 
-  plugin.playerTracker.drawnTracesEnl = new L.LayerGroup();
-  plugin.playerTracker.drawnTracesRes = new L.LayerGroup();
+  window.plugin.playerTracker.drawnTracesEnl = new L.LayerGroup();
+  window.plugin.playerTracker.drawnTracesRes = new L.LayerGroup();
   // to avoid any favouritism, we'll put the player's own faction layer first
-  if (PLAYER.team == 'RESISTANCE') {
-    window.layerChooser.addOverlay(plugin.playerTracker.drawnTracesRes, 'Player Tracker Resistance');
-    window.layerChooser.addOverlay(plugin.playerTracker.drawnTracesEnl, 'Player Tracker Enlightened');
+  if (window.PLAYER.team === 'RESISTANCE') {
+    window.layerChooser.addOverlay(window.plugin.playerTracker.drawnTracesRes, 'Player Tracker Resistance');
+    window.layerChooser.addOverlay(window.plugin.playerTracker.drawnTracesEnl, 'Player Tracker Enlightened');
   } else {
-    window.layerChooser.addOverlay(plugin.playerTracker.drawnTracesEnl, 'Player Tracker Enlightened');
-    window.layerChooser.addOverlay(plugin.playerTracker.drawnTracesRes, 'Player Tracker Resistance');
+    window.layerChooser.addOverlay(window.plugin.playerTracker.drawnTracesEnl, 'Player Tracker Enlightened');
+    window.layerChooser.addOverlay(window.plugin.playerTracker.drawnTracesRes, 'Player Tracker Resistance');
   }
-  map.on('layeradd',function(obj) {
-    if(obj.layer === plugin.playerTracker.drawnTracesEnl || obj.layer === plugin.playerTracker.drawnTracesRes) {
-      obj.layer.eachLayer(function(marker) {
-        if(marker._icon) window.setupTooltips($(marker._icon));
+  window.map.on('layeradd', function (obj) {
+    if (obj.layer === window.plugin.playerTracker.drawnTracesEnl || obj.layer === window.plugin.playerTracker.drawnTracesRes) {
+      obj.layer.eachLayer(function (marker) {
+        if (marker._icon) window.setupTooltips($(marker._icon));
       });
     }
   });
 
-  plugin.playerTracker.playerPopup = new L.Popup({offset: L.point([1,-34])});
+  window.plugin.playerTracker.playerPopup = new L.Popup({ offset: L.point([1, -34]) });
 
-  addHook('publicChatDataAvailable', window.plugin.playerTracker.handleData);
+  window.addHook('publicChatDataAvailable', window.plugin.playerTracker.handleData);
 
-  window.map.on('zoomend', function() {
+  window.map.on('zoomend', function () {
     window.plugin.playerTracker.zoomListener();
   });
   window.plugin.playerTracker.zoomListener();
 
-  plugin.playerTracker.setupUserSearch();
-}
+  window.plugin.playerTracker.setupUserSearch();
+};
 
 window.plugin.playerTracker.stored = {};
 
-plugin.playerTracker.onClickListener = function(event) {
+window.plugin.playerTracker.onClickListener = function (event) {
   var marker = event.target;
 
   if (marker.options.desc) {
-    plugin.playerTracker.playerPopup.setContent(marker.options.desc);
-    plugin.playerTracker.playerPopup.setLatLng(marker.getLatLng());
-    map.openPopup(plugin.playerTracker.playerPopup);
+    window.plugin.playerTracker.playerPopup.setContent(marker.options.desc);
+    window.plugin.playerTracker.playerPopup.setLatLng(marker.getLatLng());
+    window.map.openPopup(window.plugin.playerTracker.playerPopup);
   }
 };
 
 // force close all open tooltips before markers are cleared
-window.plugin.playerTracker.closeIconTooltips = function() {
-  plugin.playerTracker.drawnTracesRes.eachLayer(function(layer) {
-    if ($(layer._icon)) { $(layer._icon).tooltip('close');}
+window.plugin.playerTracker.closeIconTooltips = function () {
+  window.plugin.playerTracker.drawnTracesRes.eachLayer(function (layer) {
+    if ($(layer._icon)) {
+      $(layer._icon).tooltip('close');
+    }
   });
-  plugin.playerTracker.drawnTracesEnl.eachLayer(function(layer) {
-    if ($(layer._icon)) { $(layer._icon).tooltip('close');}
+  window.plugin.playerTracker.drawnTracesEnl.eachLayer(function (layer) {
+    if ($(layer._icon)) {
+      $(layer._icon).tooltip('close');
+    }
   });
-}
+};
 
-window.plugin.playerTracker.zoomListener = function() {
+window.plugin.playerTracker.zoomListener = function () {
   var ctrl = $('.leaflet-control-layers-selector + span:contains("Player Tracker")').parent();
-  if(window.map.getZoom() < window.PLAYER_TRACKER_MIN_ZOOM) {
-    if (!window.isTouchDevice()) plugin.playerTracker.closeIconTooltips();
-    plugin.playerTracker.drawnTracesEnl.clearLayers();
-    plugin.playerTracker.drawnTracesRes.clearLayers();
+  if (window.map.getZoom() < window.PLAYER_TRACKER_MIN_ZOOM) {
+    if (!window.isTouchDevice()) window.plugin.playerTracker.closeIconTooltips();
+    window.plugin.playerTracker.drawnTracesEnl.clearLayers();
+    window.plugin.playerTracker.drawnTracesRes.clearLayers();
     ctrl.addClass('disabled').attr('title', 'Zoom in to show those.');
-    //note: zoomListener is also called at init time to set up things, so we only need to do this in here
-    window.chat.backgroundChannelData('plugin.playerTracker', 'all', false);   //disable this plugin's interest in 'all' COMM
+    // note: zoomListener is also called at init time to set up things, so we only need to do this in here
+    window.chat.backgroundChannelData('plugin.playerTracker', 'all', false); // disable this plugin's interest in 'all' COMM
   } else {
     ctrl.removeClass('disabled').attr('title', '');
-    //note: zoomListener is also called at init time to set up things, so we only need to do this in here
-    window.chat.backgroundChannelData('plugin.playerTracker', 'all', true);    //enable this plugin's interest in 'all' COMM
+    // note: zoomListener is also called at init time to set up things, so we only need to do this in here
+    window.chat.backgroundChannelData('plugin.playerTracker', 'all', true); // enable this plugin's interest in 'all' COMM
   }
-}
+};
 
-window.plugin.playerTracker.getLimit = function() {
- return Date.now() - window.PLAYER_TRACKER_MAX_TIME;
-}
+window.plugin.playerTracker.getLimit = function () {
+  return Date.now() - window.PLAYER_TRACKER_MAX_TIME;
+};
 
-window.plugin.playerTracker.discardOldData = function() {
-  var limit = plugin.playerTracker.getLimit();
-  $.each(plugin.playerTracker.stored, function(plrname, player) {
+window.plugin.playerTracker.discardOldData = function () {
+  var limit = window.plugin.playerTracker.getLimit();
+  $.each(window.plugin.playerTracker.stored, function (plrname, player) {
     var i;
     var ev = player.events;
-    for(i = 0; i < ev.length; i++) {
-      if(ev[i].time >= limit) break;
+    for (i = 0; i < ev.length; i++) {
+      if (ev[i].time >= limit) break;
     }
-    if(i === 0) return true;
-    if(i === ev.length) return delete plugin.playerTracker.stored[plrname];
-    plugin.playerTracker.stored[plrname].events.splice(0, i);
+    if (i === 0) return true;
+    if (i === ev.length) return delete window.plugin.playerTracker.stored[plrname];
+    window.plugin.playerTracker.stored[plrname].events.splice(0, i);
   });
-}
+};
 
-window.plugin.playerTracker.eventHasLatLng = function(ev, lat, lng) {
+window.plugin.playerTracker.eventHasLatLng = function (ev, lat, lng) {
   var hasLatLng = false;
-  $.each(ev.latlngs, function(ind, ll) {
-    if(ll[0] === lat && ll[1] === lng) {
+  $.each(ev.latlngs, function (ind, ll) {
+    if (ll[0] === lat && ll[1] === lng) {
       hasLatLng = true;
       return false;
     }
   });
   return hasLatLng;
-}
+};
 
-window.plugin.playerTracker.processNewData = function(data) {
-  var limit = plugin.playerTracker.getLimit();
-  $.each(data.result, function(ind, json) {
+window.plugin.playerTracker.processNewData = function (data) {
+  var limit = window.plugin.playerTracker.getLimit();
+  $.each(data.result, function (ind, json) {
     // skip old data
-    if(json[1] < limit) return true;
+    if (json[1] < limit) return true;
 
     // find player and portal information
-    var plrname,
-      plrteam,
-      lat,
-      lng,
-      name,
-      address;
+    var plrname, plrteam, lat, lng, name, address;
     var skipThisMessage = false;
-    $.each(json[2].plext.markup, function(ind, markup) {
-      switch(markup[0]) {
+    $.each(json[2].plext.markup, function (ind, markup) {
+      switch (markup[0]) {
         case 'TEXT':
           // Destroy link and field messages depend on where the link or
           // field was originally created. Therefore it’s not clear which
@@ -213,15 +219,15 @@ window.plugin.playerTracker.processNewData = function(data) {
           plrname = markup[1].plain;
           plrteam = markup[1].team;
           break;
-      case 'PORTAL':
-        // link messages are “player linked X to Y” and the player is at
-        // X.
-        lat = lat ? lat : markup[1].latE6/1E6;
-        lng = lng ? lng : markup[1].lngE6/1E6;
+        case 'PORTAL':
+          // link messages are “player linked X to Y” and the player is at
+          // X.
+          lat = lat ? lat : markup[1].latE6 / 1e6;
+          lng = lng ? lng : markup[1].lngE6 / 1e6;
 
-        name = name ? name : markup[1].name;
-        address = address ? address : markup[1].address;
-        break;
+          name = name ? name : markup[1].name;
+          address = address ? address : markup[1].address;
+          break;
       }
     });
 
@@ -234,16 +240,16 @@ window.plugin.playerTracker.processNewData = function(data) {
       latlngs: [[lat, lng]],
       time: json[1],
       name: name,
-      address: address
+      address: address,
     };
 
     var playerData = window.plugin.playerTracker.stored[plrname];
 
     // short-path if this is a new player
-    if(!playerData || playerData.events.length === 0) {
-      plugin.playerTracker.stored[plrname] = {
+    if (!playerData || playerData.events.length === 0) {
+      window.plugin.playerTracker.stored[plrname] = {
         team: plrteam,
-        events: [newEvent]
+        events: [newEvent],
       };
       return true;
     }
@@ -251,15 +257,15 @@ window.plugin.playerTracker.processNewData = function(data) {
     var evts = playerData.events;
     // there’s some data already. Need to find correct place to insert.
     var i;
-    for(i = 0; i < evts.length; i++) {
-      if(evts[i].time > json[1]) break;
+    for (i = 0; i < evts.length; i++) {
+      if (evts[i].time > json[1]) break;
     }
 
-    var cmp = Math.max(i-1, 0);
+    var cmp = Math.max(i - 1, 0);
 
     // so we have an event that happened at the same time. Most likely
     // this is multiple resos destroyed at the same time.
-    if(evts[cmp].time === json[1]) {
+    if (evts[cmp].time === json[1]) {
       evts[cmp].latlngs.push([lat, lng]);
       return true;
     }
@@ -270,166 +276,149 @@ window.plugin.playerTracker.processNewData = function(data) {
     // to look at the next item in the event list. If this event is the
     // newest one, there may not be a newer event so check for that. If
     // it really is an older event at the same location, then skip it.
-    if(evts[cmp+1] && plugin.playerTracker.eventHasLatLng(evts[cmp+1], lat, lng))
-      return true;
+    if (evts[cmp + 1] && window.plugin.playerTracker.eventHasLatLng(evts[cmp + 1], lat, lng)) return true;
 
     // if this event is newer, need to look at the previous one
-    var sameLocation = plugin.playerTracker.eventHasLatLng(evts[cmp], lat, lng);
+    var sameLocation = window.plugin.playerTracker.eventHasLatLng(evts[cmp], lat, lng);
 
     // if it’s the same location, just update the timestamp. Otherwise
     // push as new event.
-    if(sameLocation) {
+    if (sameLocation) {
       evts[cmp].time = json[1];
     } else {
-      evts.splice(i, 0,  newEvent);
+      evts.splice(i, 0, newEvent);
     }
-
   });
-}
+};
 
-window.plugin.playerTracker.getLatLngFromEvent = function(ev) {
-//TODO? add weight to certain events, or otherwise prefer them, to give better locations?
+window.plugin.playerTracker.getLatLngFromEvent = function (ev) {
+  // TODO? add weight to certain events, or otherwise prefer them, to give better locations?
   var lats = 0;
   var lngs = 0;
-  $.each(ev.latlngs, function(i, latlng) {
+  $.each(ev.latlngs, function (i, latlng) {
     lats += latlng[0];
     lngs += latlng[1];
   });
 
   return L.latLng(lats / ev.latlngs.length, lngs / ev.latlngs.length);
-}
+};
 
-window.plugin.playerTracker.ago = function(time, now) {
-  var s = (now-time) / 1000;
+window.plugin.playerTracker.ago = function (time, now) {
+  var s = (now - time) / 1000;
   var h = Math.floor(s / 3600);
   var m = Math.floor((s % 3600) / 60);
   var returnVal = m + 'm';
-  if(h > 0) {
+  if (h > 0) {
     returnVal = h + 'h' + returnVal;
   }
   return returnVal;
-}
+};
 
-window.plugin.playerTracker.drawData = function() {
+window.plugin.playerTracker.drawData = function () {
   var isTouchDev = window.isTouchDevice();
 
-  var gllfe = plugin.playerTracker.getLatLngFromEvent;
+  var gllfe = window.plugin.playerTracker.getLatLngFromEvent;
 
   var polyLineByAgeEnl = [[], [], [], []];
   var polyLineByAgeRes = [[], [], [], []];
 
-  var split = PLAYER_TRACKER_MAX_TIME / 4;
+  var split = window.PLAYER_TRACKER_MAX_TIME / 4;
   var now = Date.now();
-  $.each(plugin.playerTracker.stored, function(plrname, playerData) {
-    if(!playerData || playerData.events.length === 0) {
+  $.each(window.plugin.playerTracker.stored, function (plrname, playerData) {
+    if (!playerData || playerData.events.length === 0) {
       console.warn('broken player data for plrname=' + plrname);
       return true;
     }
 
     // gather line data and put them in buckets so we can color them by
     // their age
-    for(var i = 1; i < playerData.events.length; i++) {
+    for (let i = 1; i < playerData.events.length; i++) {
       var p = playerData.events[i];
-      var ageBucket = Math.min(parseInt((now - p.time) / split), 4-1);
-      var line = [gllfe(p), gllfe(playerData.events[i-1])];
+      var ageBucket = Math.min(Math.trunc((now - p.time) / split), 4 - 1);
+      var line = [gllfe(p), gllfe(playerData.events[i - 1])];
 
-      if(playerData.team === 'RESISTANCE')
-        polyLineByAgeRes[ageBucket].push(line);
-      else
-        polyLineByAgeEnl[ageBucket].push(line);
+      if (playerData.team === 'RESISTANCE') polyLineByAgeRes[ageBucket].push(line);
+      else polyLineByAgeEnl[ageBucket].push(line);
     }
 
     var evtsLength = playerData.events.length;
-    var last = playerData.events[evtsLength-1];
-    var ago = plugin.playerTracker.ago;
+    var last = playerData.events[evtsLength - 1];
+    var ago = window.plugin.playerTracker.ago;
 
     // tooltip for marker - no HTML - and not shown on touchscreen devices
     var tooltip = isTouchDev ? '' : plrname + ', ' + ago(last.time, now) + ' ago';
 
     // popup for marker
-    var popup = $('<div>')
-      .addClass('plugin-player-tracker-popup');
+    var popup = $('<div>').addClass('plugin-player-tracker-popup');
     $('<span>')
       .addClass('nickname ' + (playerData.team === 'RESISTANCE' ? 'res' : 'enl'))
       .css('font-weight', 'bold')
       .text(plrname)
       .appendTo(popup);
 
-    if(window.plugin.guessPlayerLevels !== undefined &&
-       window.plugin.guessPlayerLevels.fetchLevelDetailsByPlayer !== undefined) {
+    if (window.plugin.guessPlayerLevels !== undefined && window.plugin.guessPlayerLevels.fetchLevelDetailsByPlayer !== undefined) {
       function getLevel(lvl) {
         return $('<span>')
           .css({
             padding: '4px',
             color: 'white',
-            backgroundColor: COLORS_LVL[lvl],
+            backgroundColor: window.COLORS_LVL[lvl],
           })
           .text(lvl);
       }
 
-      var level = $('<span>')
-        .css({'font-weight': 'bold', 'margin-left': '10px'})
-        .appendTo(popup);
+      var level = $('<span>').css({ 'font-weight': 'bold', 'margin-left': '10px' }).appendTo(popup);
 
       var playerLevelDetails = window.plugin.guessPlayerLevels.fetchLevelDetailsByPlayer(plrname);
-      level
-        .text('Min level ')
-        .append(getLevel(playerLevelDetails.min));
-      if(playerLevelDetails.min != playerLevelDetails.guessed)
-        level
-          .append(document.createTextNode(', guessed level: '))
-          .append(getLevel(playerLevelDetails.guessed));
+      level.text('Min level ').append(getLevel(playerLevelDetails.min));
+      if (playerLevelDetails.min !== playerLevelDetails.guessed) {
+        level.append(document.createTextNode(', guessed level: ')).append(getLevel(playerLevelDetails.guessed));
+      }
     }
 
     popup
       .append('<br>')
       .append(document.createTextNode(ago(last.time, now)))
       .append('<br>')
-      .append(plugin.playerTracker.getPortalLink(last));
+      .append(window.plugin.playerTracker.getPortalLink(last));
 
     // show previous data in popup
-    if(evtsLength >= 2) {
-      popup
-        .append('<br>')
-        .append('<br>')
-        .append(document.createTextNode('previous locations:'))
-        .append('<br>');
+    if (evtsLength >= 2) {
+      popup.append('<br>').append('<br>').append(document.createTextNode('previous locations:')).append('<br>');
 
-      var table = $('<table>')
-        .appendTo(popup)
-        .css('border-spacing', '0');
-      for(var i = evtsLength - 2; i >= 0 && i >= evtsLength - 10; i--) {
+      var table = $('<table>').appendTo(popup).css('border-spacing', '0');
+      for (let i = evtsLength - 2; i >= 0 && i >= evtsLength - 10; i--) {
         var ev = playerData.events[i];
         $('<tr>')
-          .append($('<td>')
-            .text(ago(ev.time, now) + ' ago'))
-          .append($('<td>')
-            .append(plugin.playerTracker.getPortalLink(ev)))
+          .append($('<td>').text(ago(ev.time, now) + ' ago'))
+          .append($('<td>').append(window.plugin.playerTracker.getPortalLink(ev)))
           .appendTo(table);
       }
     }
 
     // marker opacity
-    var relOpacity = 1 - (now - last.time) / window.PLAYER_TRACKER_MAX_TIME
+    var relOpacity = 1 - (now - last.time) / window.PLAYER_TRACKER_MAX_TIME;
     var absOpacity = window.PLAYER_TRACKER_MIN_OPACITY + (1 - window.PLAYER_TRACKER_MIN_OPACITY) * relOpacity;
 
     // marker itself
-    var icon = playerData.team === 'RESISTANCE' ?  new plugin.playerTracker.iconRes() :  new plugin.playerTracker.iconEnl();
+    var icon = playerData.team === 'RESISTANCE' ? new window.plugin.playerTracker.iconRes() : new window.plugin.playerTracker.iconEnl();
     // as per OverlappingMarkerSpiderfier docs, click events (popups, etc) must be handled via it rather than the standard
     // marker click events. so store the popup text in the options, then display it in the oms click handler
     var m = L.marker(gllfe(last), { icon: icon, opacity: absOpacity, desc: popup[0], title: tooltip });
-    m.addEventListener('spiderfiedclick', plugin.playerTracker.onClickListener);
+    m.addEventListener('spiderfiedclick', window.plugin.playerTracker.onClickListener);
 
     // m.bindPopup(title);
 
     if (tooltip) {
       // ensure tooltips are closed, sometimes they linger
-      m.on('mouseout', function() { $(this._icon).tooltip('close'); });
+      m.on('mouseout', function () {
+        $(this._icon).tooltip('close');
+      });
     }
 
     playerData.marker = m;
 
-    m.addTo(playerData.team === 'RESISTANCE' ? plugin.playerTracker.drawnTracesRes : plugin.playerTracker.drawnTracesEnl);
+    m.addTo(playerData.team === 'RESISTANCE' ? window.plugin.playerTracker.drawnTracesRes : window.plugin.playerTracker.drawnTracesEnl);
     window.registerMarkerForOMS(m);
 
     // jQueryUI doesn’t automatically notice the new markers
@@ -439,39 +428,39 @@ window.plugin.playerTracker.drawData = function() {
   });
 
   // draw the poly lines to the map
-  $.each(polyLineByAgeEnl, function(i, polyLine) {
-    if(polyLine.length === 0) return true;
+  $.each(polyLineByAgeEnl, function (i, polyLine) {
+    if (polyLine.length === 0) return true;
 
     var opts = {
-      weight: 2-0.25*i,
-      color: PLAYER_TRACKER_LINE_COLOUR,
+      weight: 2 - 0.25 * i,
+      color: window.PLAYER_TRACKER_LINE_COLOUR,
       interactive: false,
-      opacity: 1-0.2*i,
-      dashArray: "5,8"
+      opacity: 1 - 0.2 * i,
+      dashArray: '5,8',
     };
 
-    $.each(polyLine,function(ind,poly) {
-      L.polyline(poly, opts).addTo(plugin.playerTracker.drawnTracesEnl);
+    $.each(polyLine, function (ind, poly) {
+      L.polyline(poly, opts).addTo(window.plugin.playerTracker.drawnTracesEnl);
     });
   });
-  $.each(polyLineByAgeRes, function(i, polyLine) {
-    if(polyLine.length === 0) return true;
+  $.each(polyLineByAgeRes, function (i, polyLine) {
+    if (polyLine.length === 0) return true;
 
     var opts = {
-      weight: 2-0.25*i,
-      color: PLAYER_TRACKER_LINE_COLOUR,
+      weight: 2 - 0.25 * i,
+      color: window.PLAYER_TRACKER_LINE_COLOUR,
       interactive: false,
-      opacity: 1-0.2*i,
-      dashArray: "5,8"
+      opacity: 1 - 0.2 * i,
+      dashArray: '5,8',
     };
 
-    $.each(polyLine, function(ind,poly) {
-      L.polyline(poly, opts).addTo(plugin.playerTracker.drawnTracesRes);
+    $.each(polyLine, function (ind, poly) {
+      L.polyline(poly, opts).addTo(window.plugin.playerTracker.drawnTracesRes);
     });
   });
-}
+};
 
-window.plugin.playerTracker.getPortalLink = function(data) {
+window.plugin.playerTracker.getPortalLink = function (data) {
   var position = data.latlngs[0];
   return $('<a>')
     .addClass('text-overflow-ellipsis')
@@ -479,116 +468,114 @@ window.plugin.playerTracker.getPortalLink = function(data) {
     .text(window.chat.getChatPortalName(data))
     .prop({
       title: window.chat.getChatPortalName(data),
-      href: window.makePermalink(position)
+      href: window.makePermalink(position),
     })
-    .click(function(event) {
+    .click(function (event) {
       window.selectPortalByLatLng(position);
       event.preventDefault();
       return false;
     })
-    .dblclick(function(event) {
-      map.setView(position, DEFAULT_ZOOM);
+    .dblclick(function (event) {
+      window.map.setView(position, window.DEFAULT_ZOOM);
       window.selectPortalByLatLng(position);
       event.preventDefault();
       return false;
     });
-}
+};
 
-window.plugin.playerTracker.handleData = function(data) {
-  if(window.map.getZoom() < window.PLAYER_TRACKER_MIN_ZOOM) return;
+window.plugin.playerTracker.handleData = function (data) {
+  if (window.map.getZoom() < window.PLAYER_TRACKER_MIN_ZOOM) return;
 
-  plugin.playerTracker.discardOldData();
-  plugin.playerTracker.processNewData(data);
-  if (!window.isTouchDevice()) plugin.playerTracker.closeIconTooltips();
+  window.plugin.playerTracker.discardOldData();
+  window.plugin.playerTracker.processNewData(data);
+  if (!window.isTouchDevice()) window.plugin.playerTracker.closeIconTooltips();
 
-  plugin.playerTracker.drawnTracesEnl.clearLayers();
-  plugin.playerTracker.drawnTracesRes.clearLayers();
-  plugin.playerTracker.drawData();
-}
+  window.plugin.playerTracker.drawnTracesEnl.clearLayers();
+  window.plugin.playerTracker.drawnTracesRes.clearLayers();
+  window.plugin.playerTracker.drawData();
+};
 
-window.plugin.playerTracker.findUser = function(nick) {
+window.plugin.playerTracker.findUser = function (nick) {
   nick = nick.toLowerCase();
   var foundPlayerData = false;
-  $.each(plugin.playerTracker.stored, function(plrname, playerData) {
+  $.each(window.plugin.playerTracker.stored, function (plrname, playerData) {
     if (plrname.toLowerCase() === nick) {
       foundPlayerData = playerData;
       return false;
     }
   });
   return foundPlayerData;
-}
+};
 
-window.plugin.playerTracker.centerMapOnUser = function(nick) {
-  var data = plugin.playerTracker.findUser(nick);
-  if(!data) return false;
+window.plugin.playerTracker.centerMapOnUser = function (nick) {
+  var data = window.plugin.playerTracker.findUser(nick);
+  if (!data) return false;
 
   var last = data.events[data.events.length - 1];
-  var position = plugin.playerTracker.getLatLngFromEvent(last);
+  var position = window.plugin.playerTracker.getLatLngFromEvent(last);
 
-  if(window.isSmartphone()) window.show('map');
-  window.map.setView(position, map.getZoom());
+  if (window.isSmartphone()) window.show('map');
+  window.map.setView(position, window.map.getZoom());
 
-  if(data.marker) {
-    window.plugin.playerTracker.onClickListener({target: data.marker});
+  if (data.marker) {
+    window.plugin.playerTracker.onClickListener({ target: data.marker });
   }
   return true;
-}
+};
 
-window.plugin.playerTracker.onNicknameClicked = function(info) {
+window.plugin.playerTracker.onNicknameClicked = function (info) {
   if (info.event.ctrlKey || info.event.metaKey) {
-    return !plugin.playerTracker.centerMapOnUser(info.nickname);
+    return !window.plugin.playerTracker.centerMapOnUser(info.nickname);
   }
   return true; // don't interrupt hook
-}
+};
 
-window.plugin.playerTracker.onSearchResultSelected = function(result, event) {
+window.plugin.playerTracker.onSearchResultSelected = function (result, event) {
   event.stopPropagation(); // prevent chat from handling the click
 
-  if(window.isSmartphone()) window.show('map');
+  if (window.isSmartphone()) window.show('map');
 
   // if the user moved since the search was started, check if we have a new set of data
-  if(false === window.plugin.playerTracker.centerMapOnUser(result.nickname))
-    map.setView(result.position);
+  if (false === window.plugin.playerTracker.centerMapOnUser(result.nickname)) window.map.setView(result.position);
 
-  if(event.type == 'dblclick')
-    map.setZoom(DEFAULT_ZOOM);
+  if (event.type === 'dblclick') window.map.setZoom(window.DEFAULT_ZOOM);
 
   return true;
 };
 
 window.plugin.playerTracker.locale = navigator.languages;
 
-window.plugin.playerTracker.dateTimeFormat = {
-};
+window.plugin.playerTracker.dateTimeFormat = {};
 
-window.plugin.playerTracker.onSearch = function(query) {
+window.plugin.playerTracker.onSearch = function (query) {
   var term = query.term.toLowerCase();
 
-  if (term.length && term[0] == '@') term = term.substr(1);
+  if (term.length && term[0] === '@') term = term.slice(1);
 
-  $.each(plugin.playerTracker.stored, function(nick, data) {
-    if(nick.toLowerCase().indexOf(term) === -1) return;
+  $.each(window.plugin.playerTracker.stored, function (nick, data) {
+    if (nick.toLowerCase().indexOf(term) === -1) return;
 
     var event = data.events[data.events.length - 1];
 
     query.addResult({
-      title: '<mark class="nickname help '+TEAM_TO_CSS[getTeam(data)]+'">' + nick + '</mark>',
+      title: `<mark class="nickname help ${window.TEAM_TO_CSS[window.getTeam(data)]}">${nick}</mark>`,
       nickname: nick,
-      description: data.team.substr(0,3) + ', last seen ' +
+      description:
+        data.team.slice(0, 3) +
+        ', last seen ' +
         new Date(event.time).toLocaleString(window.plugin.playerTracker.locale, window.plugin.playerTracker.dateTimeFormat),
-      position: plugin.playerTracker.getLatLngFromEvent(event),
+      position: window.plugin.playerTracker.getLatLngFromEvent(event),
       onSelected: window.plugin.playerTracker.onSearchResultSelected,
     });
   });
-}
+};
 
-window.plugin.playerTracker.setupUserSearch = function() {
-  addHook('nicknameClicked', window.plugin.playerTracker.onNicknameClicked);
-  addHook('search', window.plugin.playerTracker.onSearch);
-}
+window.plugin.playerTracker.setupUserSearch = function () {
+  window.addHook('nicknameClicked', window.plugin.playerTracker.onNicknameClicked);
+  window.addHook('search', window.plugin.playerTracker.onSearch);
+};
 
-
-var setup = plugin.playerTracker.setup;
+var setup = window.plugin.playerTracker.setup;
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

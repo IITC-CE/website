@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Zoom slider
 // @category       Controls
-// @version        0.2.3.20241023.122913
+// @version        0.2.4.20241025.071630
 // @description    Show a zoom slider on the map instead of the zoom buttons.
 // @id             zoom-slider
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'zoom-slider';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.4',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.3',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -44,15 +49,13 @@ window.plugin.zoomSlider = zoomSlider;
 
 zoomSlider.options = {
   // Height of zoom-slider.png in px
-  //stepHeight: 8,
-
+  // stepHeight: 8,
   // Height of the knob div in px (including border)
-  //knobHeight: 6,
-
-  //styleNS: 'leaflet-control-zoomslider'
+  // knobHeight: 6,
+  // styleNS: 'leaflet-control-zoomslider'
 };
 
-function setup () {
+function setup() {
   loadLeafletZoomslider();
 
   var map = window.map;
@@ -65,14 +68,13 @@ function setup () {
   // which makes zoomslider not aligning with other leaflet controls
   // Here we are trying to unset it (make the same as general `.leaflet-control`)
   // (adapted from https://github.com/kartena/Leaflet.zoomslider/pull/74)
-  $('<style>')
-    .html('.leaflet-touch .leaflet-control-zoomslider { border: 2px solid rgba(0,0,0,0.2) }')
-    .appendTo('head');
+  $('<style>').html('.leaflet-touch .leaflet-control-zoomslider { border: 2px solid rgba(0,0,0,0.2) }').appendTo('head');
 }
 
-function loadLeafletZoomslider () {
+function loadLeafletZoomslider() {
   try {
     // https://github.com/kartena/Leaflet.zoomslider
+    // eslint-disable-next-line
     // *** included: external/L.Control.Zoomslider.js ***
 (function (factory) {
 	// Packaging/modules magic dance
@@ -422,7 +424,6 @@ function loadLeafletZoomslider () {
 	*zoom: expression( this.runtimeStyle[\'zoom\'] = \'1\', this.innerHTML = \'\\u2212\');\
 }\
 ').appendTo('head');
-
   } catch (e) {
     console.error('L.Control.Zoomslider.js loading failed');
     throw e;

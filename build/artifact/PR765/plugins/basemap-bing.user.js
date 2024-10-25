@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Bing maps
 // @category       Map Tiles
-// @version        0.3.3.20241023.122913
+// @version        0.3.4.20241025.071630
 // @description    Add the bing.com map layers.
 // @id             basemap-bing
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-bing';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.3.4',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.3.3',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -44,34 +48,34 @@ var mapBing = {};
 
 mapBing.sets = {
   Road: {
-    imagerySet: 'RoadOnDemand'
+    imagerySet: 'RoadOnDemand',
   },
   Dark: {
-    imagerySet: 'CanvasDark'
+    imagerySet: 'CanvasDark',
   },
   Aerial: {
-    imagerySet: 'Aerial'
+    imagerySet: 'Aerial',
   },
   Hybrid: {
-    imagerySet: 'AerialWithLabelsOnDemand'
-  }
+    imagerySet: 'AerialWithLabelsOnDemand',
+  },
 };
 
 mapBing.options = {
   // set this to your API key
-  key: 'ArR2hTa2C9cRQZT-RmgrDkfvh3PwEVRl0gB34OO4wJI7vQNElg3DDWvbo5lfUs3p'
+  key: 'ArR2hTa2C9cRQZT-RmgrDkfvh3PwEVRl0gB34OO4wJI7vQNElg3DDWvbo5lfUs3p',
 };
 
-function setup () {
+function setup() {
   setupBingLeaflet();
 
   for (var name in mapBing.sets) {
     var options = L.extend({}, mapBing.options, mapBing.sets[name]);
-    layerChooser.addBaseLayer(L.bingLayer(options), 'Bing ' + name);
+    window.layerChooser.addBaseLayer(L.bingLayer(options), 'Bing ' + name);
   }
 }
 
-function setupBingLeaflet () {
+function setupBingLeaflet() {
   try {
     // https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js
     // *** included: external/Bing.js ***
@@ -267,7 +271,6 @@ L.bingLayer = function (key, options) {
 
 ; // eslint-disable-line
 
-
     // https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.addon.applyMaxNativeZoom.js
     // *** included: external/Bing.addon.applyMaxNativeZoom.js ***
 /*
@@ -361,7 +364,6 @@ L.BingLayer.include({
 
 
 ; // eslint-disable-line
-
   } catch (e) {
     console.error('Bing.js loading failed');
     throw e;

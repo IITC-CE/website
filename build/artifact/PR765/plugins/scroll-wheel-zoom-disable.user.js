@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Disable mouse wheel zoom
 // @category       Tweaks
-// @version        0.1.2.20241023.122913
+// @version        0.1.3.20241025.071630
 // @description    Disable the use of mouse wheel to zoom. The map zoom controls or keyboard are still available.
 // @id             scroll-wheel-zoom-disable
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'scroll-wheel-zoom-disable';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.1.3',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.2',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -39,15 +43,13 @@ var changelog = [
 ];
 
 // use own namespace for plugin
-window.plugin.scrollWheelZoomDisable = function() {};
+window.plugin.scrollWheelZoomDisable = function () {};
 
-window.plugin.scrollWheelZoomDisable.setup = function() {
-
+window.plugin.scrollWheelZoomDisable.setup = function () {
   window.map.scrollWheelZoom.disable();
-
 };
 
-var setup =  window.plugin.scrollWheelZoomDisable.setup;
+var setup = window.plugin.scrollWheelZoomDisable.setup;
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

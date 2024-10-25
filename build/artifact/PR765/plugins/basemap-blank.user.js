@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Blank map
 // @category       Map Tiles
-// @version        0.1.5.20241023.122913
+// @version        0.1.6.20241025.071630
 // @description    Add a blank map layer - no roads or other features.
 // @id             basemap-blank
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-blank';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.1.6',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.5',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -43,13 +47,12 @@ var changelog = [
 var mapTileBlank = {};
 
 mapTileBlank.addLayer = function () {
-
-  var blankOpt = {attribution: '', maxNativeZoom: 18, maxZoom: 21};
+  var blankOpt = { attribution: '', maxNativeZoom: 18, maxZoom: 21 };
   var blankWhite = new L.TileLayer('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gEFCSU6z3A8pwAAAA1JREFUCNdj+P///38ACfsD/dGDjPAAAAAASUVORK5CYII=', blankOpt);
   var blankBlack = new L.TileLayer('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gEFCQkJSZE2HwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==', blankOpt);
 
-  layerChooser.addBaseLayer(blankWhite, 'Blank Map (White)');
-  layerChooser.addBaseLayer(blankBlack, 'Blank Map (Black)');
+  window.layerChooser.addBaseLayer(blankWhite, 'Blank Map (White)');
+  window.layerChooser.addBaseLayer(blankBlack, 'Blank Map (Black)');
 };
 
 function setup() {

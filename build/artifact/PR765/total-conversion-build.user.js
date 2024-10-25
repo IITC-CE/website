@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.0.20241023.122913
+// @version        0.39.1.20241025.071630
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,16 +21,22 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
+/* global plugin_info, PLAYER -- eslint */
+
 // create IITC scope
-var IITC = {};
+const IITC = {};
 window.IITC = IITC;
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.39.1',
+    changes: ['Fix Machina color in chat'],
+  },
   {
     version: '0.39.0',
     changes: [
@@ -115,14 +121,14 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-10-23-122913';
+window.iitcBuildDate = '2024-10-25-071630';
 
 // disable vanilla JS
-window.onload = function() {};
-document.body.onload = function() {};
+window.onload = function () {};
+document.body.onload = function () {};
 
-//originally code here parsed the <Script> tags from the page to find the one that defined the PLAYER object
-//however, that's already been executed, so we can just access PLAYER - no messing around needed!
+// originally code here parsed the <Script> tags from the page to find the one that defined the PLAYER object
+// however, that's already been executed, so we can just access PLAYER - no messing around needed!
 
 if (!window.PLAYER || !PLAYER.nickname) {
   // page doesn’t have a script tag with player information.
@@ -137,8 +143,7 @@ if (!window.PLAYER || !PLAYER.nickname) {
   // FIXME: handle nia takedown in progress
 
   // add login form stylesheet
-  var style = document.createElement('style');
-  style.type = 'text/css';
+  const style = document.createElement('style');
   style.appendChild(document.createTextNode('\
 html, body {\
     background: #0b303e;\
@@ -2389,7 +2394,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\
 }\
 ' +
   '</style>' +
-//note: smartphone.css injection moved into code/smartphone.js
+  // note: smartphone.css injection moved into code/smartphone.js
   '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>';
 
 // remove body element entirely to remove event listeners
@@ -2887,9 +2892,6 @@ window.portalRangeIndicator = null;
  */
 window.portalAccessIndicator = null;
 
-// var portalsLayers, linksLayer, fieldsLayer;
-var portalsFactionLayers, linksFactionLayers, fieldsFactionLayers;
-
 /**
  * References to Leaflet objects representing portals, indexed by entity ID.
  * This object stores the mapping in the format `{ id1: feature1, ... }`.
@@ -2924,16 +2926,18 @@ window.fields = {};
 
 // plugin framework. Plugins may load earlier than iitc, so don’t
 // overwrite data
-if (typeof window.plugin !== 'function') window.plugin = function() {};
+if (typeof window.plugin !== 'function') window.plugin = function () {};
 
-var ulog = (function (module) {
+// eslint-disable-next-line no-unused-vars
+const ulog = (function (module) {
   // *** included: external/ulog.min.js ***
 !function(e,n,t){"function"==typeof define&&define.amd?define(n,[],t):e[n]=t()}(this,"ulog",function(){"use strict";function l(e){return e?a[e]||(a[e]=n(function(e,n){n=new Function("n","log","return {'"+e+"':function(){log.invoke(n,[].slice.call(arguments))}}[n]")(e,l);try{Object.defineProperty(n,"name",{get:function(){return e}})}catch(e){}return n}(e),l)):n(l)}l.formats=[],l.extends=[],l.enable=function(e){var n,t=(e||"").split(/[\s,]+/);for(n=0;n<t.length;n++)t[n]&&("-"===(e=t[n].replace(/\*/g,".*?"))[0]?o.push(new RegExp("^"+e.substr(1)+"$")):r.push(new RegExp("^"+e+"$")));for(n in a)f(a[n])},l.enabled=function(e){var n;for(n=0;n<o.length;n++)if(o[n].test(e))return;for(n=0;n<r.length;n++)if(r[n].test(e))return!0},l.invoke=function(e,n){for(var t=1<n.length&&i[n[0]]?n.shift():"debug",r=0;r<l.formats.length;r++)l.formats[r](a[e],t,n);a[e][t].apply(a[e],n)},l.disable=l.enable.bind(l,"");var t={ERROR:1,WARN:2,INFO:3,LOG:4,DEBUG:5,TRACE:6},i={error:1,warn:2,info:3,log:4,verbose:4,debug:5,trace:6,silly:6,dir:0,table:0,time:0,timeEnd:0,assert:0},a={},r=[],o=[];function n(r,o,i){if(!r.log){for(var e in r.NONE=0,r.ulog={version:"2.0.0-beta.7"},t)r[e]=t[e];Object.defineProperty(r,"level",{get:function(){return void 0!==i?i:o&&o.level},set:function(e){if(void 0===e&&o)i=void 0;else{var n=e&&(Number(e)!=Number(e)?r[e.toUpperCase()]:Number(e));0<=n&&n<=6&&(i=n)}if(f(r),!o)for(var t in a)f(a[t])}}),f(r);for(var n=0;n<l.extends.length;n++)l.extends[n](r,o);return r}}function f(e){var n,t,r=Math.max(e.name&&l.enabled(e.name)&&e.DEBUG||e.level,e.level);for(var o in i)e[o]=r<i[o]?u:(n=o,t=void 0,(t=l.con())&&(t[n]||t.log).bind(t)||"function"==typeof print&&print||u)}function u(){}module.exports=l;var e,c,s,g,d=location.search.substring(1),v=d&&d.split("&");try{e=localStorage.getItem("log"),c=localStorage.getItem("debug")}catch(e){}for(s=0;g=v&&v[s]&&v[s].split("=");s++)"log"==g[0]&&(e=g[1]),"debug"==g[0]&&(c=g[1]);return l.con=function(){return window.console},c&&l.enable(c),l(),l.level=e||l.WARN,l});
 
 ;
   return module;
-}({})).exports;
+})({}).exports;
 
+// eslint-disable-next-line
 
 // *** module: _deprecated.js ***
 (function () {
@@ -3110,7 +3114,7 @@ window.findPortalLatLng = function (guid) {
 // *** module: app.js ***
 (function () {
 var log = ulog('app');
-/* global android, app -- eslint */
+/* global L -- eslint */
 
 /**
  * @file This file contains the main JavaScript code for the app, including utility functions,
@@ -3134,22 +3138,23 @@ window.isApp = isApp;
  */
 window.useAppPanes = function () {
   // isSmartphone is important to disable panes in desktop mode
-  return isApp && app.addPane && window.isSmartphone();
+  return isApp && window.app.addPane && window.isSmartphone();
 };
 window.useAndroidPanes = window.useAppPanes; // compatibility
 
 if (isApp) {
-  if (typeof app === 'undefined') { // compatibility
-    window.app = android;
+  if (typeof app === 'undefined') {
+    // compatibility
+    window.app = window.android;
   } else {
-    window.android = app;
+    window.android = window.app;
   }
 
-  window.requestFile = function (callback) { // deprecated
-    L.FileListLoader.loadFiles()
-      .on('load', function (e) {
-        callback(e.file.name, e.reader.result);
-      });
+  window.requestFile = function (callback) {
+    // deprecated
+    L.FileListLoader.loadFiles().on('load', function (e) {
+      callback(e.file.name, e.reader.result);
+    });
   };
 }
 
@@ -3178,13 +3183,13 @@ function debounce(callback, time) {
   };
 }
 
-function extendLayerChooser () {
-  if (app.setLayers) {
+function extendLayerChooser() {
+  if (window.app.setLayers) {
     // hook some additional code into the LayerControl so it's easy for the mobile app to interface with it
     window.LayerChooser.include({
       _setAppLayers: debounce(function () {
         var l = this.getLayers();
-        app.setLayers(JSON.stringify(l.baseLayers), JSON.stringify(l.overlayLayers));
+        window.app.setLayers(JSON.stringify(l.baseLayers), JSON.stringify(l.overlayLayers));
       }, 1000),
 
       setLabel: (function (setLabel) {
@@ -3197,69 +3202,72 @@ function extendLayerChooser () {
       _update: function () {
         this._setAppLayers();
         return L.Control.Layers.prototype._update.apply(this, arguments);
-      }
+      },
     });
   }
 }
 
 window.runOnAppBeforeBoot = function () {
-  if (!isApp) { return; }
+  if (!isApp) {
+    return;
+  }
 
-  if (app.showZoom) {
-    window.mapOptions.zoomControl = app.showZoom();
+  if (window.app.showZoom) {
+    window.mapOptions.zoomControl = window.app.showZoom();
   }
 
   extendLayerChooser();
 
   // add jquery listeners ******************************************************
-  if (app.dialogOpened && app.dialogFocused) {
+  if (window.app.dialogOpened && window.app.dialogFocused) {
     $(document.body).on({
       // hints for iitc mobile
       dialogopen: function (e) {
         var id = $(e.target).data('id');
-        app.dialogOpened(id, true);
+        window.app.dialogOpened(id, true);
       },
       dialogclose: function (e) {
         var id = $(e.target).data('id');
-        app.dialogOpened(id, false);
+        window.app.dialogOpened(id, false);
       },
       dialogfocus: function (e) {
         var id = $(e.target).data('id');
-        app.dialogFocused(id);
-      }
+        window.app.dialogFocused(id);
+      },
     });
   }
   // notify app that a select spinner is enabled.
   // this disables javascript injection on app's side.
   // if app is not notified, the spinner closes on the next JS call
-  if (app.spinnerEnabled) {
+  if (window.app.spinnerEnabled) {
     $(document.body).on('click', 'select', function () {
-      app.spinnerEnabled(true);
+      window.app.spinnerEnabled(true);
     });
   }
 
   // add iitc hooks ************************************************************
-  if (app.switchToPane) {
-    window.addHook('paneChanged', function (name) { // https://stackoverflow.com/a/59158952/2520247
-      app.switchToPane(name);
+  if (window.app.switchToPane) {
+    window.addHook('paneChanged', function (name) {
+      // https://stackoverflow.com/a/59158952/2520247
+      window.app.switchToPane(name);
     });
   }
 
   // overwrite some functions **************************************************
-  if (app.copy) {
+  if (window.app.copy) {
     window.androidCopy = function (text) {
-      app.copy(text);
+      window.app.copy(text);
       return false;
     };
   }
 
-  if (app.saveFile) {
+  if (window.app.saveFile) {
     window.saveFile = function (data, filename, dataType) {
-      app.saveFile(filename || '', dataType || '*/*', data);
+      window.app.saveFile(filename || '', dataType || '*/*', data);
     };
   }
 
-  if (app.intentPosLink) {
+  if (window.app.intentPosLink) {
     window.renderPortalUrl = function (lat, lng, title, guid) {
       // one share link option - and the app provides an interface to share the URL,
       // share as a geo: intent (navigation via google maps), etc
@@ -3275,25 +3283,27 @@ window.runOnAppBeforeBoot = function () {
 };
 
 window.runOnAppAfterBoot = function () {
-  if (!isApp) { return; }
+  if (!isApp) {
+    return;
+  }
 
-  if (app.intentPosLink) {
+  if (window.app.intentPosLink) {
     $('#permalink').click(function (e) {
       e.preventDefault();
       var center = window.map.getCenter();
-      app.intentPosLink(center.lat, center.lng, window.map.getZoom(), 'Selected map view', false);
+      window.app.intentPosLink(center.lat, center.lng, window.map.getZoom(), 'Selected map view', false);
     });
   }
 
   // add leaflet listeners *****************************************************
-  if (app.setPermalink) {
+  if (window.app.setPermalink) {
     var setAppPermalink = function () {
       var p = window.selectedPortal && window.portals[window.selectedPortal];
       var href = window.makePermalink(p && p.getLatLng(), {
         fullURL: true,
-        includeMapView: true
+        includeMapView: true,
       });
-      app.setPermalink(href);
+      window.app.setPermalink(href);
     };
 
     window.map.on('moveend', setAppPermalink);
@@ -3301,7 +3311,7 @@ window.runOnAppAfterBoot = function () {
   }
 
   // hide layer chooser if booted with the iitcm app
-  if (app.setLayers) {
+  if (window.app.setLayers) {
     $('.leaflet-control-layers').hide();
   }
 
@@ -3312,7 +3322,9 @@ window.runOnAppAfterBoot = function () {
   setTimeout(function () { map.invalidateSize(); }, 0.2*1000);
   */
 
-  if (app.bootFinished) { app.bootFinished(); }
+  if (window.app.bootFinished) {
+    window.app.bootFinished();
+  }
 };
 
 
@@ -3322,7 +3334,7 @@ window.runOnAppAfterBoot = function () {
 // *** module: artifact.js ***
 (function () {
 var log = ulog('artifact');
-/* global IITC -- eslint */
+/* global IITC, L, log -- eslint */
 
 /**
  * @file Provides functions related to Ingress artifacts, including setup, data request, and processing functions.
@@ -3339,27 +3351,27 @@ var log = ulog('artifact');
  * @namespace window.artifact
  */
 
-window.artifact = function() {}
+window.artifact = function () {};
 
 /**
  * Sets up artifact data fetching, layer creation, and UI elements.
  * @function window.artifact.setup
  */
-window.artifact.setup = function() {
-  artifact.REFRESH_JITTER = 2*60;  // 2 minute random period so not all users refresh at once
-  artifact.REFRESH_SUCCESS = 60*60;  // 60 minutes on success
-  artifact.REFRESH_FAILURE = 2*60;  // 2 minute retry on failure
+window.artifact.setup = function () {
+  window.artifact.REFRESH_JITTER = 2 * 60; // 2 minute random period so not all users refresh at once
+  window.artifact.REFRESH_SUCCESS = 60 * 60; // 60 minutes on success
+  window.artifact.REFRESH_FAILURE = 2 * 60; // 2 minute retry on failure
 
-  artifact.idle = false;
-  artifact.clearData();
+  window.artifact.idle = false;
+  window.artifact.clearData();
 
-  addResumeFunction(artifact.idleResume);
+  window.addResumeFunction(window.artifact.idleResume);
 
   // move the initial data request onto a very short timer. prevents thrown exceptions causing IITC boot failures
-  setTimeout (artifact.requestData, 1);
+  setTimeout(window.artifact.requestData, 1);
 
-  artifact._layer = new L.LayerGroup();
-  window.layerChooser.addOverlay(artifact._layer, 'Artifacts');
+  window.artifact._layer = new L.LayerGroup();
+  window.layerChooser.addOverlay(window.artifact._layer, 'Artifacts');
 
   IITC.toolbox.addButton({
     id: 'artifacts-toolbox-link',
@@ -3369,90 +3381,87 @@ window.artifact.setup = function() {
   });
 
   window.addHook('mapDataEntityInject', window.artifact.entityInject);
-}
+};
 
 /**
  * Requests artifact data from the server. If the map is in idle mode, sets a flag instead of sending a request.
  * @function window.artifact.requestData
  */
-window.artifact.requestData = function() {
-  if (isIdle()) {
-    artifact.idle = true;
+window.artifact.requestData = function () {
+  if (window.isIdle()) {
+    window.artifact.idle = true;
   } else {
-    window.postAjax('getArtifactPortals', {}, artifact.handleSuccess, artifact.handleError);
+    window.postAjax('getArtifactPortals', {}, window.artifact.handleSuccess, window.artifact.handleFailure);
   }
-}
+};
 
 /**
  * Resumes artifact data requests when coming out of idle mode.
  * @function window.artifact.idleResume
  */
-window.artifact.idleResume = function() {
-  if (artifact.idle) {
-    artifact.idle = false;
-    artifact.requestData();
+window.artifact.idleResume = function () {
+  if (window.artifact.idle) {
+    window.artifact.idle = false;
+    window.artifact.requestData();
   }
-}
+};
 
 /**
  * Handles successful artifact data response from the server.
  * @function window.artifact.handleSuccess
  * @param {Object} data - Artifact data received from the server.
  */
-window.artifact.handleSuccess = function(data) {
-  artifact.processData (data);
+window.artifact.handleSuccess = function (data) {
+  window.artifact.processData(data);
 
   // start the next refresh at a multiple of REFRESH_SUCCESS seconds, plus a random REFRESH_JITTER amount to prevent excessive server hits at one time
   var now = Date.now();
-  var nextTime = Math.ceil(now/(artifact.REFRESH_SUCCESS*1000))*(artifact.REFRESH_SUCCESS*1000) + Math.floor(Math.random()*artifact.REFRESH_JITTER*1000);
+  var nextTime =
+    Math.ceil(now / (window.artifact.REFRESH_SUCCESS * 1000)) * (window.artifact.REFRESH_SUCCESS * 1000) +
+    Math.floor(Math.random() * window.artifact.REFRESH_JITTER * 1000);
 
-  setTimeout (artifact.requestData, nextTime - now);
-}
+  setTimeout(window.artifact.requestData, nextTime - now);
+};
 
 /**
  * Handles failure in artifact data request. Schedules a new request after a short delay.
  * @function window.artifact.handleFailure
- * @param {Object} data - Response data from the failed request.
  */
-window.artifact.handleFailure = function(data) {
-  // no useful data on failure - do nothing
-
-  setTimeout (artifact.requestData, artifact.REFRESH_FAILURE*1000);
-}
+window.artifact.handleFailure = function () {
+  setTimeout(window.artifact.requestData, window.artifact.REFRESH_FAILURE * 1000);
+};
 
 /**
  * Processes artifact data. Clears previous data, processes new results, runs hooks, and updates the artifact layer.
  * @function window.artifact.processData
  * @param {Object} data - Artifact data to process.
  */
-window.artifact.processData = function(data) {
-
+window.artifact.processData = function (data) {
   if (data.error || !data.result) {
     log.warn('Failed to find result in getArtifactPortals response');
     return;
   }
 
-  var oldArtifacts = artifact.entities;
-  artifact.clearData();
+  var oldArtifacts = window.artifact.entities;
+  window.artifact.clearData();
 
-  artifact.processResult(data.result);
-  runHooks('artifactsUpdated', {old: oldArtifacts, 'new': artifact.entities});
+  window.artifact.processResult(data.result);
+  window.runHooks('artifactsUpdated', { old: oldArtifacts, new: window.artifact.entities });
 
   // redraw the artifact layer
-  artifact.updateLayer();
-
-}
+  window.artifact.updateLayer();
+};
 
 /**
  * Clears all stored artifact data.
  * @function window.artifact.clearData
  */
-window.artifact.clearData = function() {
-  artifact.portalInfo = {};
-  artifact.artifactTypes = {};
+window.artifact.clearData = function () {
+  window.artifact.portalInfo = {};
+  window.artifact.artifactTypes = {};
 
-  artifact.entities = [];
-}
+  window.artifact.entities = [];
+};
 
 /**
  * Processes the results from artifact portal data. Extracts and stores portal data for each artifact type.
@@ -3464,7 +3473,7 @@ window.artifact.processResult = function (portals) {
 
   for (var guid in portals) {
     var ent = portals[guid];
-    var data = decodeArray.portal(ent, 'summary');
+    var data = window.decodeArray.portal(ent, 'summary');
 
     if (!data.artifactBrief) {
       // 2/12/2017 - Shard removed from a portal leaves it in artifact results but has no artifactBrief
@@ -3476,43 +3485,40 @@ window.artifact.processResult = function (portals) {
     // - a target portal or not - no idea for which faction
     // - has one (or more) fragments, or not
 
-    if (!artifact.portalInfo[guid]) artifact.portalInfo[guid] = {};
+    if (!window.artifact.portalInfo[guid]) window.artifact.portalInfo[guid] = {};
 
     // store the decoded data - needed for lat/lng for layer markers
-    artifact.portalInfo[guid]._data = data;
+    window.artifact.portalInfo[guid]._data = data;
 
-    for(var type in data.artifactBrief.target) {
-      if (!artifact.artifactTypes[type]) artifact.artifactTypes[type] = {};
+    for (let type in data.artifactBrief.target) {
+      if (!window.artifact.artifactTypes[type]) window.artifact.artifactTypes[type] = {};
 
-      if (!artifact.portalInfo[guid][type]) artifact.portalInfo[guid][type] = {};
+      if (!window.artifact.portalInfo[guid][type]) window.artifact.portalInfo[guid][type] = {};
 
-      artifact.portalInfo[guid][type].target = TEAM_NONE;  // as we no longer know the team...
+      window.artifact.portalInfo[guid][type].target = window.TEAM_NONE; // as we no longer know the team...
     }
 
-    for(var type in data.artifactBrief.fragment) {
-      if (!artifact.artifactTypes[type]) artifact.artifactTypes[type] = {};
+    for (let type in data.artifactBrief.fragment) {
+      if (!window.artifact.artifactTypes[type]) window.artifact.artifactTypes[type] = {};
 
-      if (!artifact.portalInfo[guid][type]) artifact.portalInfo[guid][type] = {};
+      if (!window.artifact.portalInfo[guid][type]) window.artifact.portalInfo[guid][type] = {};
 
-      artifact.portalInfo[guid][type].fragments = true; //as we no longer have a list of the fragments there
+      window.artifact.portalInfo[guid][type].fragments = true; // as we no longer have a list of the fragments there
     }
-
 
     // let's pre-generate the entities needed to render the map - array of [guid, timestamp, ent_array]
-    artifact.entities.push ( [guid, data.timestamp, ent] );
-
+    window.artifact.entities.push([guid, data.timestamp, ent]);
   }
-
-}
+};
 
 /**
  * Returns the types of artifacts currently known.
  * @function window.artifact.getArtifactTypes
  * @returns {Array} An array of artifact type strings.
  */
-window.artifact.getArtifactTypes = function() {
-  return Object.keys(artifact.artifactTypes);
-}
+window.artifact.getArtifactTypes = function () {
+  return Object.keys(window.artifact.artifactTypes);
+};
 
 /**
  * Determines if a given type is a knowable artifact.
@@ -3520,9 +3526,9 @@ window.artifact.getArtifactTypes = function() {
  * @param {string} type - The type to check.
  * @returns {boolean} True if the type is an artifact, false otherwise.
  */
-window.artifact.isArtifact = function(type) {
-  return type in artifact.artifactTypes;
-}
+window.artifact.isArtifact = function (type) {
+  return type in window.artifact.artifactTypes;
+};
 
 /**
  * Used to render portals that would otherwise be below the visible level.
@@ -3532,12 +3538,12 @@ window.artifact.isArtifact = function(type) {
  * unused by IITC
  */
 window.artifact.getArtifactEntities = function () {
-  return artifact.entities;
-}
+  return window.artifact.entities;
+};
 
 /**
  * Inject artifact portals into render process
- * @param {hookdata} data
+ * @param {Object} data
  */
 window.artifact.entityInject = function (data) {
   data.callback(window.artifact.entities, 'summary');
@@ -3548,9 +3554,9 @@ window.artifact.entityInject = function (data) {
  * @function window.artifact.getInterestingPortals
  * @returns {Array} An array of portal GUIDs.
  */
-window.artifact.getInterestingPortals = function() {
-  return Object.keys(artifact.portalInfo);
-}
+window.artifact.getInterestingPortals = function () {
+  return Object.keys(window.artifact.portalInfo);
+};
 
 /**
  * Quickly checks if a portal is relevant to any type of artifacts.
@@ -3558,9 +3564,9 @@ window.artifact.getInterestingPortals = function() {
  * @param {string} guid - The GUID of the portal to check.
  * @returns {boolean} True if the portal is involved in artifacts, false otherwise.
  */
-window.artifact.isInterestingPortal = function(guid) {
-  return guid in artifact.portalInfo;
-}
+window.artifact.isInterestingPortal = function (guid) {
+  return guid in window.artifact.portalInfo;
+};
 
 /**
  * Retrieves the artifact data for a specified artifact id (e.g. 'jarvis'), if available.
@@ -3572,105 +3578,101 @@ window.artifact.isInterestingPortal = function(guid) {
  * unused by IITC
  */
 window.artifact.getPortalData = function (guid, artifactId) {
-  return artifact.portalInfo[guid] && artifact.portalInfo[guid][artifactId];
-}
+  return window.artifact.portalInfo[guid] && window.artifact.portalInfo[guid][artifactId];
+};
 
 /**
  * Updates the artifact layer on the map based on the current artifact data.
  * @function window.artifact.updateLayer
  */
-window.artifact.updateLayer = function() {
-  artifact._layer.clearLayers();
+window.artifact.updateLayer = function () {
+  window.artifact._layer.clearLayers();
 
-  $.each(artifact.portalInfo, function(guid,data) {
-    var latlng = L.latLng ([data._data.latE6/1E6, data._data.lngE6/1E6]);
+  $.each(window.artifact.portalInfo, function (guid, data) {
+    var latlng = L.latLng([data._data.latE6 / 1e6, data._data.lngE6 / 1e6]);
 
-    $.each(data, function(type,detail) {
-
+    $.each(data, function (type) {
       // we'll construct the URL form the type - stock seems to do that now
 
-      var iconUrl;
+      let iconUrl, iconSize, opacity;
       if (data[type].target !== undefined) {
         // target portal
-        var iconUrl = '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/'+type+'_shard_target.png'
-        var iconSize = 100/2;
-        var opacity = 1.0;
+        iconUrl = '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/' + type + '_shard_target.png';
+        iconSize = 100 / 2;
+        opacity = 1.0;
 
-        var icon = L.icon({
+        const icon = L.icon({
           iconUrl: iconUrl,
-          iconSize: [iconSize,iconSize],
-          iconAnchor: [iconSize/2,iconSize/2]
+          iconSize: [iconSize, iconSize],
+          iconAnchor: [iconSize / 2, iconSize / 2],
         });
 
-        var marker = L.marker (latlng, {icon: icon, interactive: false, keyboard: false, opacity: opacity });
+        const marker = L.marker(latlng, { icon: icon, interactive: false, keyboard: false, opacity: opacity });
 
-        artifact._layer.addLayer(marker);
-
+        window.artifact._layer.addLayer(marker);
       } else if (data[type].fragments) {
         // fragment(s) at portal
 
-        var iconUrl = '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/'+type+'_shard.png'
-        var iconSize = 60/2;
-        var opacity = 0.6;
+        iconUrl = '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/' + type + '_shard.png';
+        iconSize = 60 / 2;
+        opacity = 0.6;
 
-        var icon = L.icon({
+        const icon = L.icon({
           iconUrl: iconUrl,
-          iconSize: [iconSize,iconSize],
-          iconAnchor: [iconSize/2,iconSize/2],
+          iconSize: [iconSize, iconSize],
+          iconAnchor: [iconSize / 2, iconSize / 2],
         });
 
-        var marker = L.marker (latlng, {icon: icon, interactive: false, keyboard: false, opacity: opacity });
+        const marker = L.marker(latlng, { icon: icon, interactive: false, keyboard: false, opacity: opacity });
 
-        artifact._layer.addLayer(marker);
-
+        window.artifact._layer.addLayer(marker);
       }
-
-    });  //end $.each(data, function(type,detail)
-
-  }); //end $.each(artifact.portalInfo, function(guid,data)
-
-}
+    }); // end $.each(data, function(type,detail)
+  }); // end $.each(artifact.portalInfo, function(guid,data)
+};
 
 /**
  * Displays a dialog listing all portals involved with artifacts, organized by artifact types.
  * @function window.artifact.showArtifactList
  */
-window.artifact.showArtifactList = function() {
+window.artifact.showArtifactList = function () {
   var html = '';
 
-  if (Object.keys(artifact.artifactTypes).length == 0) {
+  if (Object.keys(window.artifact.artifactTypes).length === 0) {
     html += '<i>No artifacts at this time</i>';
   }
 
   var first = true;
-  $.each(artifact.artifactTypes, function(type,type2) {
+  $.each(window.artifact.artifactTypes, function (type) {
     // no nice way to convert the Niantic internal name into the correct display name
     // (we do get the description string once a portal with that shard type is selected - could cache that somewhere?)
     var name = type.capitalize() + ' shards';
 
     if (!first) html += '<hr>';
     first = false;
-    html += '<div><b>'+name+'</b></div>';
+    html += '<div><b>' + name + '</b></div>';
 
-    html += '<table class="artifact artifact-'+type+'">';
+    html += '<table class="artifact artifact-' + type + '">';
     html += '<tr><th>Portal</th><th>Details</th></tr>';
 
     var tableRows = [];
 
-    $.each(artifact.portalInfo, function(guid, data) {
+    $.each(window.artifact.portalInfo, function (guid, data) {
       if (type in data) {
         // this portal has data for this artifact type - add it to the table
 
-        var onclick = 'zoomToAndShowPortal(\''+guid+'\',['+data._data.latE6/1E6+','+data._data.lngE6/1E6+'])';
-        var row = '<tr><td class="portal"><a onclick="'+onclick+'">'+escapeHtmlSpecialChars(data._data.title)+'</a></td>';
+        var onclick = "zoomToAndShowPortal('" + guid + "',[" + data._data.latE6 / 1e6 + ',' + data._data.lngE6 / 1e6 + '])';
+        var row = '<tr><td class="portal"><a onclick="' + onclick + '">' + window.escapeHtmlSpecialChars(data._data.title) + '</a></td>';
 
         row += '<td class="info">';
 
         if (data[type].target !== undefined) {
-          if (data[type].target == TEAM_NONE) {
+          if (data[type].target === window.TEAM_NONE) {
             row += '<span class="target">Target Portal</span> ';
           } else {
-            row += '<span class="target '+TEAM_TO_CSS[data[type].target]+'">'+(data[type].target==TEAM_RES?'Resistance':'Enlightened')+' target</span> ';
+            row += `<span class="target ${window.TEAM_TO_CSS[data[type].target]}">${
+              data[type].target === window.TEAM_RES ? 'Resistance' : 'Enlightened'
+            } target</span> `;
           }
         }
 
@@ -3679,8 +3681,8 @@ window.artifact.showArtifactList = function() {
             row += '<br>';
           }
           var fragmentName = 'shard';
-//          row += '<span class="fragments'+(data[type].target?' '+TEAM_TO_CSS[data[type].target]:'')+'">'+fragmentName+': #'+data[type].fragments.join(', #')+'</span> ';
-          row += '<span class="fragments'+(data[type].target?' '+TEAM_TO_CSS[data[type].target]:'')+'">'+fragmentName+': yes</span> ';
+          // row += '<span class="fragments'+(data[type].target?' '+TEAM_TO_CSS[data[type].target]:'')+'">'+fragmentName+': #'+data[type].fragments.join(', #')+'</span> ';
+          row += '<span class="fragments' + (data[type].target ? ' ' + window.TEAM_TO_CSS[data[type].target] : '') + '">' + fragmentName + ': yes</span> ';
         }
 
         row += '</td></tr>';
@@ -3688,25 +3690,28 @@ window.artifact.showArtifactList = function() {
         // sort by target portals first, then by portal GUID
         var sortVal = (data[type].target !== undefined ? 'A' : 'Z') + guid;
 
-        tableRows.push ( [sortVal, row] );
+        tableRows.push([sortVal, row]);
       }
     });
 
     // check for no rows, and add a note to the table instead
-    if (tableRows.length == 0) {
+    if (tableRows.length === 0) {
       html += '<tr><td colspan="2"><i>No portals at this time</i></td></tr>';
     }
 
     // sort the rows
-    tableRows.sort(function(a,b) {
-      if (a[0] == b[0]) return 0;
+    tableRows.sort(function (a, b) {
+      if (a[0] === b[0]) return 0;
       else if (a[0] < b[0]) return -1;
       else return 1;
     });
 
     // and add them to the table
-    html += tableRows.map(function(a){return a[1];}).join('');
-
+    html += tableRows
+      .map(function (a) {
+        return a[1];
+      })
+      .join('');
 
     html += '</table>';
   });
@@ -3717,15 +3722,14 @@ window.artifact.showArtifactList = function() {
   // You can select a portal and the detailed data contains the list of shard numbers, but there's still no
   // more information on targets
 
-  dialog({
+  window.dialog({
     title: 'Artifacts',
     id: 'iitc-artifacts',
     html: html,
     width: 400,
-    position: {my: 'right center', at: 'center-60 center', of: window, collision: 'fit'}
+    position: { my: 'right center', at: 'center-60 center', of: window, collision: 'fit' },
   });
-
-}
+};
 
 
 })();
@@ -3734,7 +3738,7 @@ window.artifact.showArtifactList = function() {
 // *** module: boot.js ***
 (function () {
 var log = ulog('boot');
-/* global L, dialog -- eslint */
+/* global L, log -- eslint */
 
 /**
  * @file These functions set up specific areas after the boot function created a basic framework.
@@ -3769,12 +3773,14 @@ window.setupTooltips = function (element) {
     content: function () {
       var title = $(this).attr('title');
       return window.convertTextToTableMagic(title);
-    }
+    },
   });
 
   if (!window.tooltipClearerHasBeenSetup) {
     window.tooltipClearerHasBeenSetup = true;
-    $(document).on('click', '.ui-tooltip', function () { $(this).remove(); });
+    $(document).on('click', '.ui-tooltip', function () {
+      $(this).remove();
+    });
   }
 };
 
@@ -3782,44 +3788,47 @@ window.setupTooltips = function (element) {
  * Initializes Ingress markers with custom icons.
  * @function setupIngressMarkers
  */
-function setupIngressMarkers () {
+function setupIngressMarkers() {
   L.Icon.Default.mergeOptions({
     iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAApCAYAAADAk4LOAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAocSURBVHjanNRbUFN3Hgfwv9Pdzu5sZ7cP3d1eprP7sC/bPvSls9MmB5CLcg2IIAhSWwS8rFqrpbVbu3Vdd2ov04qJgGBESAJJCOR2AiFcEpKT+wkhiIiCoCJKkQhCIEgEvvsQcaoVdffhM+fMOf///3v+5/c7h8S8lk64f0wkH7/9LZGnsUSczBBREkNESRaieM9JOg6fJzUJljckPGajhMfsF6dYjolTLMV16bZMxRbnW2KehUhSGSJKtBBlvptIM+2kJt5CRIkWIkljiCSVIWS1EHEyQ6SZtrdVBe5jomRLd126dVa6ybZYn+OAbJN9qS7dOidJYy6Iki3fS3gM5/8J+bMo0VJZm2pdaHjPiaZ9XrR+dg6tn59D26FetB06h9Z/nEPzvm4ot7lRl25drI43Vzd+4PrLM4WIkpjImkRmWJHnQktxD9o+70XLJz7o9nWD3uMFvdsLeo8Xug+7oS/23b/fg4b3XBClMNfFyUx8TeIjIWtfTSPv/iGeHHj7GyLnseniJGZGs8ODtkO9aP6oG9qdXdDs8EC3x4s+5SjujMzhIn0DTfu6odnhgXZnF5o+6kbboV5odnZBlMQEaxIsuQ+FJLy+mUS/toF88vb3f5Mlu+9od3XBcPActDu7oC70QF3kgbP0Mu5cD2LOv4DFhSXM+Rcwc3MebMUQ1EUeqAs90OwMz6N3e1GTYJkVJVooSSpDalNthFTEtJKKmNbfnonruKDaxsJwsAfq7R6oClmYjl7Arb5p3J25hz7lKFo/78XsrbswHu7DOekI5qdCmLg4A/OxfqgKWai3e2D4tAfKAjeq15sHqtebf3c6ro2QmnUMqY61HJJutMPwaQ80OzzQ7/dhqGMc94KLuO68jdbPzkFVwEJ/wIfQ3CLaDvVCVcDC8GkPrjITuBdcxBXzLbQU9zwIkmU4ULHW8GX869mEnI0z//5snHlcu6sLur1euMuHMHvrLvwDAZi/7odymxvKfBbKfBa6vd0Y892B/uMeKLexYfn3d9w/jTn/ArqEw9Dt9YL+uxfCGOPE/re+e5lUxXTmSVKt0B8It+P0aBCDhh+hKmShzHdDXchCs90D7Y4welfXg3PNdg80RR405ruhKmTRr72B6dEglNvcaD7gQ22aFeI4x1ZyJsokVuQ5odvrhSLPhduDAdiOD6D9n+H3Hxibx/RoEJPDs5geDWL6ehDTo0FMXZnF9PUgAmPzmPMvwHT0Asxf9cM/GIAizwXdXi8a8pw4E2WSEGGUyakqYKHZ4YFiSzjEXX4ZjVtdGD8/DQBYureMPuUoTEf6YDx8HqYjfeiVj+De3SUAgH8wgMb33bAfH8DtwQAUW1zQbPdAVcBCGGV0E+Fa41X1/QsNueEQtnwIDVtcaP/iPEL3ix8Ym8c16wSMh/swbBzH7PhdjDj8uDe/CNO/L0CR54KjZBC3BwNoyHVBVRDuNuFa4zUiXGu8odnugTLfDflmB/yDAbjKLkOR64Qi14mhjnGMspPQfdiNUddtLC8t46Z3Cvr9PlxlJjBi80OR60R9jhO245fgHwxAvtkBZb4bmnDIDVIZ2e5uzHdDuc0NWbYD/oFwSP1mB+Q5TqiLWCwE7sHyzUU05LkwPxWCusgD4+E+hIKLoHd7Ic9xQr7ZAdsPl+AfCECW7YAyn0XjB25URrazpJwyyGTZdqiLPJBussM/GIC9ZACybDtMR/qgL/bBW3MFMzeC0O31IjA2j+b9PkwOz6K3fgRNH3aj8z8XIM92gPn6IvwDAUg3hdeTZdtRTrU2kNPR7Xuqkzqh2d4FWZYdE/0z8ImvYkA/hsW7S3CfGoIs246pa3MYNPwI/2AAg/oxzIwGUZ/jhP34AELBRQx1jMNbdQUT/TOQZdmh2dGF6qROnI5p30fKI/R/rYhqDakKWNTnOnH7cgAAMMpOoqW4B9JMO2SZdpi/6sfy0jJCwUUAgO2HS5BtskOaaYd+vw8jdj+wDExemUV9rhPqAhanogyh8gjDm6SMal5zkqNrrctkoMxn4au9hqXQEi63/whlgRvSDBvqNtohzbBhxOEHANzsnoI0w/6A8gM3LjXdxPLSMnrlI1BtY1GbweDku7qW8gj9GlIWoScCLp1TEWuAqsADaYYN+mIfxnqmEJxcgE98FfU5TtSl29C0rxvzd0IwHOxB3UYbZFl2dFVdwZx/AePnp2E42ANppg3qQg8qYw3gc+iMk5SOkBMcNSnhqF8QcOgheY4Dii1OiHkMJKkMLN/0487IHKauzcF8rB+1G6zQ7e5C3QYrOo/2YXJoFjM3grD9cAkSHgMxj4EizwX5Zgf4HLr/BFfzqxNcDSF8Skv4lJac4GiOnEnogDKfhSQtHCJJZSDLssMnuYb5qRBueCZhPNKHEYcfd6dDOF9/HYocZ3gsj4EkjYEqn4Uwvh18jvZgKdVESqkmQkojmsOopj8JKN1teY4D8mwHxCnhJxPzGIhTGKiLWAybbmH+TgjXrBPQ7OqCmGeFhGeFOIWBKIVBfY4D8s0OCLj0mICiXxZQNBFQNCHlES0P8DnaY8L4djRudYcnJjEQJTMQr0j6OVFyeJyYx6DxfTdOr2sDn0N/sbKLUqqJkJW0+14RcOlxaZYdsk121CRYIEp8upoES7idN9kg4NLXS6mmlx4K4XO1DznB0Xx5el0bFHkuiJLCCzyNKNkCRZ4LlXGtEHDo4p8GPDaEz9W+JODSo9JMG6QZdpyNM6N63erOxpkhzbSjLsMKAVc3LKDoFwWUjvwUeTS1lGoiAg79SWVsKxS5TlSvt+BsbHixn4k1ozreAkWOExUxBgi4ur1lEXryqEdrsuJFAYcelqQzqNtgQ1VMJ6pif+5MTCfq0m0Qb2DA52gvlXBUL5SEv7uHkEe3toLP1e6uiDZAnuVA9TozqqI7w2ErojtRvd4MebYDp6INKOGoi0o4KvI4pDzSsIqW3/A52osingW1qVYIo4w4E2V6QBhlRG2qFSKeGXwufZ7P1f76MfUlfK72sYX/aacVnFrbAmmGHVWxnRBGGiGMMkIYaURVbCekGXaURelRRjVvPR3ZTioj2x6LnKR0T/IrPofuqUnuhIRnRWVkB05HdaAysgMSnhU1yZ3gc7TeEo76+RMcNVkNWe09rjjBUeeWR+lRt8EGYYwRp6hWCGOMqNtgQ3mUHgKKzlr5/62GPG0An9L+UsCl2eoEE0RJFpRTBoiSLDibYMJJSuesjjf/oibBTJ6EVMd3PlFNgplURBvSSyOaIE5hUBVngjiFQVlkM757pz7t23dk5GnIqUjDs3iOz9UyZ9Z1hL+b9SZ8/26Def3rWc+tfYVHol9Ne6KnFf4BPleTWBbZDFGSBWWRehznqBJ2v3mU7HzjMNn1xr+e6Ikt/Ig1AopuK4vQQ0DRrXyudk15RAs5FWF4qtV+K6uJE1DaUPj47PP+15DnBRRdeP/4zPP+OwCV955x/18hzAAAAABJRU5ErkJggg==',
     iconRetinaUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABSCAYAAAAWy4frAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAABHQSURBVHja3Jt7UFtXfseVbqbbyex22kmnM9vMtjvTaaadyc7+0W5may7IjimFQkTwgsExIdixF8cxsR2yJN7N5NFMM82j2ZgbwCyYh5BAgECgixAP85Cu0FtCYIOxwbyMDcbYYGOMeenbP67O0RUvEwcn9p6Z7z9X957z+5zfef7OkQSA5E9BW56U0aafKGT8L5UxphhltOlNhYz/TCHj/6CQ8WkKGb9bGWPapow2/bTxRNcPJI9Sulg/9oQy2vQrhYz/QhltGlTIeGxSk8poU65CxocpZPyT3xuAQsb/nULGf6mQ8SMrjVRGm1Cyqx1lCRaok2yoTLajfI8VqjgzlNGmtaBuKGR8njLa9I/fGYA8wviUQsZ/oJDxs2JjyhIsqElxouHdLpx5/+yGajzRhdpUN9SJtpVg88VR/BfyCONfPVSI4ij+1eIo/kpxFI/iKB4lu9qhPeQSjH/v7Co1/T5Q673DHXFDFWcGybc4ir+ukPFvbHk/Kgo3/rk8ks+XR/KQRwq1V33QicYTgQAN6Z2oO+6B7mgHuCNuaA+7AsQdcaM21Y26Yx1oSO9cBVeT4oQy2gRSjjyS15XGmn+8VaPQ0/JI3kAyVyfZqBFNvxeaSd1xz5qG30/cER/Uu100v4Z3u1C1zy6G6ZJHGP/+2/aHf5ZH8v3yCCPkEUbUpDhXAWgPudZV28c9GO+cxvULt8F/2rvhuyuBuCNuAUQoe0weyT//YBCR/M/kkfyEPMIIhYyH7mgHLUSf5oH2sAs1Kc41Vf/bTvQ1jGF5YRkkeZe9GDJeR+OJrnW/0x52oe64h5ZTd6xDaGoRRsgj+TvyCOPPv+nQ+iN5hLGTQOjTPGg80YXGE13QHe1A9UHnmqpJccFTPIy5qQWsl+bvLKJbPQruDfe6+dSmutHwrlBe/dudUMaYiGcGCkINT28K4oVnYp4oCjdqisKF5qQ7Kri8Ib0T2sOudQs3/+EiJi/OUIPnphdwUT+GxbkleJe96G8cx51r9+jv08OzsGX3r5uf9rALDemdaHhXaMLySB5F4UYUhRtbNjWBFoUbP/J9QOeFhvROaA+tDdH8/jmMWG5QA5eXvBhsm0D9b7ugfd2NxXtC82p8pwu6NzvQVz+OpXv+JjfmmULb/5xfG+aQH4Y74iYgkEcYv9wQoiDU8GxhmGGxMMyAymS7kEl6J7gjbmgOOAJUm+pGL3cVi3NL1KiJnlswfHIemtcc0LzmgP4tDzW65aNuaA44oTngRMuH3bjqmgqA728aR91bnlXlUM+kd6Iy2Y7CMAMKwwxLhWGGf9nIG1WFYQYoZDz9WHe0Y1XmrvwBzIzNUUNuj83BmTtAAdYE+bB71e9Wtg9TQ7M0n7s35tFZMozq3zhXVRqxRxljQmGYAUXhxtr1vBFUEGpAQahBaFLpndCneaDZ76DiP+3FRM9tWvDC7BJ6qkZRm+oOeI9If1wE8kG3/zcRjPZ1F7pKhjE37R8gbl66A8vJvoC86o57aD8ldhaEGl5YC8RSEGpAya521L/difq3O1GT4kTVPjv0aR4MGScAr3/0GbFMovHEWVTtd6yruuMe+n7Lh90bvqtP68RAyzV4l/2FjNpvoPGEMEFWH3RSu0pjzQTE/cIzMU+IIf6NUNamulH/ttCkqvbZ4fjjJdy7vUgzv9E3A/7TXlTts6+QY5W4N9wYNk3isvUG6t/uXOMd+yq1/nc3xrumaXmLc0twFw6iap+d2lab6hZ7ZZsY5JOCUAOdM/RpQqerTLZjiL9Oh1Nn3gCq9gvPK5PtqNoiVa4hC9uHOxPCcD1ivYHKZDs0BxzUPoWMR0GoAfk72z6nIPk72y7k72yDOtEGfZqw6CMZDrRcAwAMtk0Iz14Var/yVXugkrdG4orqqb4CABjir9NnuqMd0Kd5UJlsR/7ONuTvbOsj3nguf0cb8ne0oTbVDX2aBzUpTqiTbFAn2XCpWQAZaJugm6QR8ySmBu/g5kCgpga/mdb6fqxzGpoDDqiTbDhfI4AMGieoPTUpTujTPKhNdYPYXRBqeE5yentrWv6ONsgjedQd96DuuEf4KFEQARlsmxCevWKDLasfDyt1lY7Qss/7PDJomKDP1Ek2amdxFE9g0iWnt7dmnN7eitJYM+qOdUB3tMP/0Tog6ldsGD87HWCA1wtccd6ELasfFrYP9pxLcKyQPecSrF/3wfp1H4bbJ+Fd8gbkMTU8i8pk+8YgiTa6p1HFmXF6eytOb289JTm9vbUqT9qCsgQL6o4JG6INQXxq+t1ZLK8wZHnRiyH+OhrSOynwSumOdqC/aRxL88urvGH8tFd4L2ljELKPKUuwIE/aglxps1aSK22250lbBJcd6xD6xyZA1Ik29DeOAwCW5peFIdPrX3Jc1I9Bl+r3rvaQCz1VowFLmmtnp7Ewu0TnjIoV+a8HUpPiRN2xDqiTbMiTtiBP2uKS5ElbruZKm1G1z06X6BV7rVSXzvg6e+uE8CzRhoq9grSvu3Dv1iLgBborR9HyUTdu9N/xr4CnFuAuGIQ9+xJmxv0r31uX74L/rBfugkF4vUJF6NM8AeVW7LWip3qUgoifaw446DyXK21GrrR5TJIrbb6dK22GZr+DrqvK91ip+pv8IOV7rKh42Sdfph2Fg4JXFpaFYTvJBnfBIO7enF+9F5lZRFfpMF2ezM8IE+35mis033KiPVb0aEZpaxDbREA0+x0E5LYkV9rcnStthjrJRj1SlmCh6m8Sms9AyzWUJViEzEQFql+xYWpYWPhd7Ziiz7WHXbioH4PX19wGDRPQH/dQgwdaJ+hCUfOagxpPVJZgQU/VKK1EsU3VB53CoJRkIyA9klxpsy5X2gxVvGVTIAKMJaBQwyfnaa2bPr9An1cl22mfqDvmoc/PvHeOrqlsWf2rAIjuB6KKtxCQeklOSFNWTkgTlDEm1Ka6UZNyfxCxyn1gV5w3aftXJwmRRe0hFwVpSO+ixk703AIATF6cQcUeK8oTrGvmvR5ITYqwHVbIeOSENCEnpOmPkpyQpndyQppQGGYAd8QN7ogbZQkWqOIFkZHpUss1qOItKBNLlHndWx46pHbIh2iBYpCyBCvMJ/t8Ew/Q/ME5fx7xq9UtAiH2qOIt1M7CMANyQppwKqTxPUl2cH3IqZBG5IQ0CaGZwy6oE21QxZmhijP7QZqvCc92C9IedmHYdB3na67QgslwOX9nEdUHnaja76Ag+rc8qEi00YXgkPE6/a5DPoRRx03UHfdAtdtC1V05SlsDsadir9D/tIdcBAKnQhojJPII45OnQhqnT4U0CuP9YRc0BxyrQc4ImVUkWuEuHMS9W/6NUG1qB1S7Laja56CjVV/9OCr22igI97oLHsWwsDS/uwTusBtluy3QiGAX7y7hbPllVO2zQxVnxjn15VUgZPurTrQRiNniKP4vJBKJRJIdXK8+FdKI4iieBhnWAmn7uBvTI/6t6ezkPFynB6B+xe9Bsg5bXliG8X/PY256Ad4lL/jPejHv29d0qUZorZfvscL6dT9uX7lL850Zn4Pp8146/IpBalKEoERxFE9AOLqMzw6ufy07uB650mYa+SvfY0VprBl9DQLIwl3/jLy0sIxe7iqq9tlRGmtGaZwgVZwZZbvNNCw0PTKL+ZlFLM0v0735zNgcKhKt1DAidZINZ8tG6EwvLnOg5RpKY810ANEeciFX2ozs4HpkBesPUZCsYP0zWcF6b1awni4BKpMFI/t9MzsAeJeEaKHet91cT2fePxewLRan9i8vQBVrhmqdb2tT3ehrCFyLDRomUBprhma/gy6hsoL1yArWL58KafxpwJ49O7i+LpPRoTBMCD5UH3SiNNbfTgFg8d4SnHkDKI1tR8mv/SqlMlMNGa+vghjvmg54Z221w5xxkc76ANCrvYLSWDMNrRaEGpDJ6JDJ6GpWBR8yGV2k70dKXrFXGN8duZcCooRTQ7PgP+tFya72NVW6qx3aQ04sipqjd8krBA5WGr7LjFLfd60fd+N67+2AtZpHMYyKvVa6qaraZycQyGR0oatAsoPr/4xluEGW4ej5h2a/A8oYE5QxJqhfteG89gqWFwOjHPq3PCiJafdLBNRVOkLf7WscXxe89oh7lQf7G8dRfdBfPok+KmQ8WIZDJqPrWTdAlxGkfYdlOJwKaaQfknM/In2aB5etk/6OP7+MC7VXodnvCASKaUfFy1bMTs5jcW5pzd/ViTacq7iM+TuLASHUxt+dhULmL1MVb6H2ZAfXg2U4sAz3xrogX23T/A3LcPdYhoMqzozqg8LeXQxCZPikBzf6ZwKGYmfeAEp/3Q7lS35ZMvrQUTSEkpfaA2Rl+3D7qj9aeWv0Ltq/vACFzBRwqKqMNqEy2U77rA/i1smgmh9tGP9lGU7OMhzyd7YJzeuA4N61jphL48xw5Q8ETI6TF2fQ8sG5NeGV0SY0vNOJ8c7AuNVZ1QgqXrYKEC/ygnxllOxqp97IlTaDZThkBGlP3jcazzLcr3zUUCfaUH3QifI91g3PzDWvOYQlu2jrO9w+Ce4NFwWoPuDApTOBkcRBwwS4wy6fF3yVtQJEbIPPLm8mo/unTZ2RsAznYhkOhWEGGnvdzCUAfZoHV91TgbVdfhkd8qEAr02cv40mXz/YCEIZY6Ll5+9sIyD6TZ9YsQz3MvFKxV4rNPsd63ql+MVAKV7kYfqiF7dG766aR+5M3IMtqx/Kl9qheNEkkuh7Ud6k7LIEC4EAy3AvbBrENxSfZRkOBaEGGpdVyHjxWfiGKoszo1MxjNnJecxNLaCnahQVL1s3/b0yxkTLzd/RRvpGyzc+DM0I0saQWijfY0Vlsh2qeIv42HiVih9EPsNX5lWx118msSOT0QU90Mkuy3AO4hUSe1XI+A1h5JE8iv9r81rre2WMiZaXJ20hIHUPfM7OMtx/ktpQxVv8XvGduz8slSVY6KJV5I1//VaXBliG41mGQ/6ONhpIVsj4hwahkPG0HDJvsAxX9a2vcGQEaUOoV3z7BlW8hZ6wbrXI1aiSXe0EYjmT0T23JfdRWIZrYBkOJLSqTrKhOIrfcoh1vFGyZbeDMoK0vyReKY31e8V3VLxlIt5QRpsIxBLLcM9u6VUnluGqWYZDrrSZBpOLo3jxWd63UnEUT/PNCWkiIPlbfuksk9H9nGU4L8twwv7EFzLaKhBVvAXqRBvdb7AMt5AdXP+zh3KDjmW4EpbhkBPStKVeId6o2GsV7zeyHtpVQJbhnvW1WyhkPL1w6TuUfGCp4oQIiTySemPuq22aZx7qvcaMIO1psosksVx5hPGBIYqjeBq8Fnnjy4d+y5RluH9gGW6eZThhcZhg+VZeUcWZUZZgEXvjzlfbNH/7nVyZZRnua5bhkB1cLwS2E4RlCzku3qxoRcRbkBWsJyCffGd3f0+FNP6EZbi7LMNBHslDFScE13wnrJtS/o42GmUsCjcSiOmTQTV//Z3exM4I0n7GMhyygvUBBvkOJ++ronAj/S6T0ZH9xvvf+ZXyk0E1T2cEaW+zDEeNKtnVjtPbW+8LQc71yTzk88ZkrrT5x5LvI7EM9xHxCjFsM14RgxNvsAyX/r1d9M9kdH/JMtwNsvkixvkO8ddUnrQFJbva6Ujngxj7apvmqe/1bxckOpnJ6IS4b6zglfVAisKNKI1d5Y03v/f/j3y1TfMUy3DjZPNF4rm50mZyUEmVK22mv5OAAstwIyeDan74SPwZhmW4N4lXlDHCf0fIQaVYReFGlOxqhzLaJPbGbx6Zf/WcDKr5IctwI2KvKKNN4sNK5IQ00T/InN7eSiAuySOMT0oepcQy3EHiFRKzLQwzUJDCMOHip2iZDpbhkiSPWpJHGJ9kGa6PbInJP3VIsyLRdVF45/z//bv6B5JHMbEMt5fUdnEUTy9QkoufxVF+b2QEaXdLHtXkC7WeI1vilXFiUUDBE3Bf9xH1yi5S6+RvTCQ6KeobMsnjkFiGc670isgbNsnjkk4G1YST2icxK1Hf+A/J45RYhjORQIUovGOQPG6JZTipqE8Qb4RIHsfEMlyjCKRB8rgmluGeF4E8L3mcE8twNSzD1Uge98Qy3C9YhvvFwy7n/wcA9Id9o31Mi8EAAAAASUVORK5CYII=',
-    shadowUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAApCAQAAAACach9AAACMUlEQVR4Ae3ShY7jQBAE0Aoz/f9/HTMzhg1zrdKUrJbdx+Kd2nD8VNudfsL/Th///dyQN2TH6f3y/BGpC379rV+S+qqetBOxImNQXL8JCAr2V4iMQXHGNJxeCfZXhSRBcQMfvkOWUdtfzlLgAENmZDcmo2TVmt8OSM2eXxBp3DjHSMFutqS7SbmemzBiR+xpKCNUIRkdkkYxhAkyGoBvyQFEJEefwSmmvBfJuJ6aKqKWnAkvGZOaZXTUgFqYULWNSHUckZuR1HIIimUExutRxwzOLROIG4vKmCKQt364mIlhSyzAf1m9lHZHJZrlAOMMztRRiKimp/rpdJDc9Awry5xTZCte7FHtuS8wJgeYGrex28xNTd086Dik7vUMscQOa8y4DoGtCCSkAKlNwpgNtphjrC6MIHUkR6YWxxs6Sc5xqn222mmCRFzIt8lEdKx+ikCtg91qS2WpwVfBelJCiQJwvzixfI9cxZQWgiSJelKnwBElKYtDOb2MFbhmUigbReQBV0Cg4+qMXSxXSyGUn4UbF8l+7qdSGnTC0XLCmahIgUHLhLOhpVCtw4CzYXvLQWQbJNmxoCsOKAxSgBJno75avolkRw8iIAFcsdc02e9iyCd8tHwmeSSoKTowIgvscSGZUOA7PuCN5b2BX9mQM7S0wYhMNU74zgsPBj3HU7wguAfnxxjFQGBE6pwN+GjME9zHY7zGp8wVxMShYX9NXvEWD3HbwJf4giO4CFIQxXScH1/TM+04kkBiAAAAAElFTkSuQmCC'
+    shadowUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAApCAQAAAACach9AAACMUlEQVR4Ae3ShY7jQBAE0Aoz/f9/HTMzhg1zrdKUrJbdx+Kd2nD8VNudfsL/Th///dyQN2TH6f3y/BGpC379rV+S+qqetBOxImNQXL8JCAr2V4iMQXHGNJxeCfZXhSRBcQMfvkOWUdtfzlLgAENmZDcmo2TVmt8OSM2eXxBp3DjHSMFutqS7SbmemzBiR+xpKCNUIRkdkkYxhAkyGoBvyQFEJEefwSmmvBfJuJ6aKqKWnAkvGZOaZXTUgFqYULWNSHUckZuR1HIIimUExutRxwzOLROIG4vKmCKQt364mIlhSyzAf1m9lHZHJZrlAOMMztRRiKimp/rpdJDc9Awry5xTZCte7FHtuS8wJgeYGrex28xNTd086Dik7vUMscQOa8y4DoGtCCSkAKlNwpgNtphjrC6MIHUkR6YWxxs6Sc5xqn222mmCRFzIt8lEdKx+ikCtg91qS2WpwVfBelJCiQJwvzixfI9cxZQWgiSJelKnwBElKYtDOb2MFbhmUigbReQBV0Cg4+qMXSxXSyGUn4UbF8l+7qdSGnTC0XLCmahIgUHLhLOhpVCtw4CzYXvLQWQbJNmxoCsOKAxSgBJno75avolkRw8iIAFcsdc02e9iyCd8tHwmeSSoKTowIgvscSGZUOA7PuCN5b2BX9mQM7S0wYhMNU74zgsPBj3HU7wguAfnxxjFQGBE6pwN+GjME9zHY7zGp8wVxMShYX9NXvEWD3HbwJf4giO4CFIQxXScH1/TM+04kkBiAAAAAElFTkSuQmCC',
   });
   L.Icon.Default.imagePath = ' '; // in order to suppress _detectIconPath (it fails with data-urls)
 
-  $(['<svg>',
+  $(
+    [
+      '<svg>',
       // search.js, distance-to-portal.user.js, draw-tools.user.js
       '<symbol id="marker-icon" viewBox="0 0 25 41">',
-        '<path d="M1.36241844765,18.67488124675 A12.5,12.5 0 1,1 23.63758155235,18.67488124675 L12.5,40.5336158073 Z" style="stroke:none;" />',
-        '<path d="M1.80792170975,18.44788599685 A12,12 0 1,1 23.19207829025,18.44788599685 L12.5,39.432271175 Z" style="stroke:#000000; stroke-width:1px; stroke-opacity: 0.15; fill: none;" />',
-        '<path d="M2.921679865,17.8803978722 A10.75,10.75 0 1,1 22.078320135,17.8803978722 L12.5,36.6789095943 Z" style="stroke:#ffffff; stroke-width:1.5px; stroke-opacity: 0.35; fill: none;" />',
-        '<path d="M19.86121593215,17.25 L12.5,21.5 L5.13878406785,17.25 L5.13878406785,8.75 L12.5,4.5 L19.86121593215,8.75 Z M7.7368602792,10.25 L17.2631397208,10.25 L12.5,18.5 Z M12.5,13 L7.7368602792,10.25 M12.5,13 L17.2631397208,10.25 M12.5,13 L12.5,18.5 M19.86121593215,17.25 L16.39711431705,15.25 M5.13878406785,17.25 L8.60288568295,15.25 M12.5,4.5 L12.5,8.5" style="stroke:#ffffff; stroke-width:1.25px; stroke-opacity: 1; fill: none;" />',
+      '<path d="M1.36241844765,18.67488124675 A12.5,12.5 0 1,1 23.63758155235,18.67488124675 L12.5,40.5336158073 Z" style="stroke:none;" />',
+      '<path d="M1.80792170975,18.44788599685 A12,12 0 1,1 23.19207829025,18.44788599685 L12.5,39.432271175 Z" style="stroke:#000000; stroke-width:1px; stroke-opacity: 0.15; fill: none;" />',
+      '<path d="M2.921679865,17.8803978722 A10.75,10.75 0 1,1 22.078320135,17.8803978722 L12.5,36.6789095943 Z" style="stroke:#ffffff; stroke-width:1.5px; stroke-opacity: 0.35; fill: none;" />',
+      '<path d="M19.86121593215,17.25 L12.5,21.5 L5.13878406785,17.25 L5.13878406785,8.75 L12.5,4.5 L19.86121593215,8.75 Z M7.7368602792,10.25 L17.2631397208,10.25 L12.5,18.5 Z M12.5,13 L7.7368602792,10.25 M12.5,13 L17.2631397208,10.25 M12.5,13 L12.5,18.5 M19.86121593215,17.25 L16.39711431705,15.25 M5.13878406785,17.25 L8.60288568295,15.25 M12.5,4.5 L12.5,8.5" style="stroke:#ffffff; stroke-width:1.25px; stroke-opacity: 1; fill: none;" />',
       '</symbol>',
-    '</svg>'].join('\\n')).appendTo('body');
+      '</svg>',
+    ].join('\\n')
+  ).appendTo('body');
 
   L.DivIcon.ColoredSvg = L.DivIcon.extend({
     options: {
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       className: 'leaflet-div-icon-iitc-generic-marker',
-               // ^ actually any name, just to prevent default
-               // ^ (as it's inappropriately styled)
+      // ^ actually any name, just to prevent default
+      // ^ (as it's inappropriately styled)
       svgTemplate: '<svg style="fill: {color}"><use xlink:href="#marker-icon"/></svg>',
-      color: '#a24ac3' // for draw-tools:
+      color: '#a24ac3', // for draw-tools:
       // L.divIcon does not use the option `color`, but we store it here to
       // be able to simply retrieve the color for serializing markers
     },
     initialize: function (color, options) {
       L.DivIcon.prototype.initialize.call(this, options);
-      if (color) { this.options.color = color; }
-      this.options.html = L.Util.template(
-        this.options.svgTemplate,
-        { color: this.options.color }
-      );
-    }
+      if (color) {
+        this.options.color = color;
+      }
+      this.options.html = L.Util.template(this.options.svgTemplate, { color: this.options.color });
+    },
   });
   L.divIcon.coloredSvg = function (color, options) {
     return new L.DivIcon.ColoredSvg(color, options);
@@ -3832,7 +3841,7 @@ function setupIngressMarkers () {
  */
 function checkingIntelURL() {
   if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
-    dialog({
+    window.dialog({
       title: 'IITC Warning',
       html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
       dialogClass: 'ui-dialog-non-standard-intel',
@@ -3856,28 +3865,33 @@ function checkingIntelURL() {
  * for each marker.
  * @function setupOMS
  */
-window.setupOMS = function() {
-  window.oms = new OverlappingMarkerSpiderfier(map, {
+window.setupOMS = function () {
+  window.oms = new window.OverlappingMarkerSpiderfier(window.map, {
     keepSpiderfied: true,
     legWeight: 3.5,
     legColors: {
       usual: '#FFFF00',
-      highlighted: '#FF0000'
-    }
+      highlighted: '#FF0000',
+    },
   });
 
   window.oms.addListener('click', function (marker) {
-    map.closePopup();
-    marker.fireEvent('spiderfiedclick', {target: marker});
+    window.map.closePopup();
+    marker.fireEvent('spiderfiedclick', { target: marker });
   });
   window.oms.addListener('spiderfy', function () {
-    map.closePopup();
+    window.map.closePopup();
   });
-  map._container.addEventListener('keypress', function (ev) {
-    if (ev.keyCode === 27) { // Esc
-      window.oms.unspiderfy();
-    }
-  }, false);
+  window.map._container.addEventListener(
+    'keypress',
+    function (ev) {
+      if (ev.keyCode === 27) {
+        // Esc
+        window.oms.unspiderfy();
+      }
+    },
+    false
+  );
 };
 
 /**
@@ -3892,7 +3906,8 @@ window.registerMarkerForOMS = function (marker) {
   marker.on('remove', function () {
     window.oms.removeMarker(marker);
   });
-  if (marker._map) { // marker has already been added
+  if (marker._map) {
+    // marker has already been added
     window.oms.addMarker(marker);
   }
 };
@@ -3904,19 +3919,18 @@ window.registerMarkerForOMS = function (marker) {
  * @function prepPluginsToLoad
  * @returns {Function} A loader function that loads plugins up to a specified priority.
  */
-function prepPluginsToLoad () {
-
+function prepPluginsToLoad() {
   var priorities = {
     lowest: 100,
     low: 75,
     normal: 50,
     high: 25,
     highest: 0,
-    boot: -100
+    boot: -100,
   };
 
-  function getPriority (data) {
-    var v = data && data.priority || 'normal';
+  function getPriority(data) {
+    var v = (data && data.priority) || 'normal';
     var prio = v in priorities ? priorities[v] : v;
     if (typeof prio !== 'number') {
       log.warn('wrong plugin priority specified: ', v);
@@ -3925,37 +3939,35 @@ function prepPluginsToLoad () {
     return prio;
   }
 
-  if (!script_info.script) {
+  if (!window.script_info.script) {
     log.warn('GM_info is not provided (improper userscript manager?)'); // IITC-Mobile for iOS
   }
 
   // executes setup function of plugin
   // and collects info for About IITC
-  function safeSetup (setup) {
+  function safeSetup(setup) {
     if (!setup) {
       log.warn('plugin must provide setup function');
       return;
     }
     var info = setup.info;
     if (typeof info !== 'object') {
-      log.warn('plugin does not have proper wrapper:',setup);
+      log.warn('plugin does not have proper wrapper:', setup);
       info = {};
     }
     try {
       setup.call(this);
     } catch (err) {
-      var name = info.script && info.script.name || info.pluginId;
-      log.error('error starting plugin: ' + name,
-        '\n' + err,
-        '\nsetup: ', setup
-      );
+      var name = (info.script && info.script.name) || info.pluginId;
+      log.error('error starting plugin: ' + name, '\n' + err, '\nsetup: ', setup);
       info.error = err;
     }
     pluginsInfo.push(info);
   }
 
-  if (window.bootPlugins) { // sort plugins by priority
-    bootPlugins.sort(function (a,b) {
+  if (window.bootPlugins) {
+    // sort plugins by priority
+    window.bootPlugins.sort(function (a, b) {
       return getPriority(a) - getPriority(b);
     });
   } else {
@@ -3963,14 +3975,16 @@ function prepPluginsToLoad () {
   }
 
   var pluginsInfo = []; // for About IITC
-  bootPlugins.info = pluginsInfo;
+  window.bootPlugins.info = pluginsInfo;
 
   // loader function returned
   // if called with parameter then load plugins with priorities up to specified
   return function (prio) {
-    while (bootPlugins[0]) {
-      if (prio && getPriority(bootPlugins[0]) > priorities[prio]) { break; }
-      safeSetup(bootPlugins.shift());
+    while (window.bootPlugins[0]) {
+      if (prio && getPriority(window.bootPlugins[0]) > priorities[prio]) {
+        break;
+      }
+      safeSetup(window.bootPlugins.shift());
     }
   };
 }
@@ -3981,7 +3995,7 @@ function prepPluginsToLoad () {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: '+'2024-10-23-122913');
+  log.log('loading done, booting. Built: ' + '2024-10-25-071630');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -4000,7 +4014,7 @@ function boot() {
   window.setupMap();
   window.setupOMS();
   window.ornaments.setup();
-  layerChooser._lastPriority = 1000; // plugins overlays have priority >1000
+  window.layerChooser._lastPriority = 1000; // plugins overlays have priority >1000
   window.setupTooltips();
   window.chat.setup();
   window.updateGameScore();
@@ -4022,6 +4036,7 @@ function boot() {
 }
 
 try {
+  // eslint-disable-next-line
   // *** included: external/autolink-min.js ***
 (function(){var k=[].slice;String.prototype.autoLink=function(){var d,b,g,a,e,f,h;e=1<=arguments.length?k.call(arguments,0):[];f=/(^|[\s\n]|<[A-Za-z]*\/?>)((?:https?|ftp):\/\/[\-A-Z0-9+\u0026\u2019@#\/%?=()~_|!:,.;]*[\-A-Z0-9+\u0026@#\/%=~()_|])/gi;if(!(0<e.length))return this.replace(f,"$1<a href='$2'>$2</a>");a=e[0];d=a.callback;g=function(){var c;c=[];for(b in a)h=a[b],"callback"!==b&&c.push(" "+b+"='"+h+"'");return c}().join("");return this.replace(f,function(c,b,a){c=("function"===typeof d?d(a):
 void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
@@ -4029,7 +4044,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
 ;
 
-  window.L_NO_TOUCH = navigator.maxTouchPoints===0; // prevent mobile style on desktop https://github.com/IITC-CE/ingress-intel-total-conversion/pull/189
+  window.L_NO_TOUCH = navigator.maxTouchPoints === 0; // prevent mobile style on desktop https://github.com/IITC-CE/ingress-intel-total-conversion/pull/189
+  // eslint-disable-next-line
   // *** included: external/leaflet-src.js ***
 /* @preserve
  * Leaflet 1.8.0, a JS library for interactive maps. https://leafletjs.com
@@ -18160,6 +18176,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
 
 ;
+  // eslint-disable-next-line
   // *** included: external/L.Geodesic.js ***
 (function () {
   // constants
@@ -18385,6 +18402,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
 
 ;
+  // eslint-disable-next-line
   // *** included: external/Leaflet.GoogleMutant.js ***
 (function () {
 	'use strict';
@@ -19186,6 +19204,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 
 
 ;
+  // eslint-disable-next-line
   // *** included: external/oms.min.js ***
 (function(){/*
  OverlappingMarkerSpiderfier
@@ -19679,14 +19698,16 @@ module.exports = layerFactory;
 
 ;
     return module;
-  }({})).exports(L);
+  })({}).exports(L);
 
+  // eslint-disable-next-line
   // *** included: external/jquery-3.6.0.min.js ***
 /*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
 !function(e,t){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error("jQuery requires a window with a document");return t(e)}:t(e)}("undefined"!=typeof window?window:this,function(C,e){"use strict";var t=[],r=Object.getPrototypeOf,s=t.slice,g=t.flat?function(e){return t.flat.call(e)}:function(e){return t.concat.apply([],e)},u=t.push,i=t.indexOf,n={},o=n.toString,v=n.hasOwnProperty,a=v.toString,l=a.call(Object),y={},m=function(e){return"function"==typeof e&&"number"!=typeof e.nodeType&&"function"!=typeof e.item},x=function(e){return null!=e&&e===e.window},E=C.document,c={type:!0,src:!0,nonce:!0,noModule:!0};function b(e,t,n){var r,i,o=(n=n||E).createElement("script");if(o.text=e,t)for(r in c)(i=t[r]||t.getAttribute&&t.getAttribute(r))&&o.setAttribute(r,i);n.head.appendChild(o).parentNode.removeChild(o)}function w(e){return null==e?e+"":"object"==typeof e||"function"==typeof e?n[o.call(e)]||"object":typeof e}var f="3.6.0",S=function(e,t){return new S.fn.init(e,t)};function p(e){var t=!!e&&"length"in e&&e.length,n=w(e);return!m(e)&&!x(e)&&("array"===n||0===t||"number"==typeof t&&0<t&&t-1 in e)}S.fn=S.prototype={jquery:f,constructor:S,length:0,toArray:function(){return s.call(this)},get:function(e){return null==e?s.call(this):e<0?this[e+this.length]:this[e]},pushStack:function(e){var t=S.merge(this.constructor(),e);return t.prevObject=this,t},each:function(e){return S.each(this,e)},map:function(n){return this.pushStack(S.map(this,function(e,t){return n.call(e,t,e)}))},slice:function(){return this.pushStack(s.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},even:function(){return this.pushStack(S.grep(this,function(e,t){return(t+1)%2}))},odd:function(){return this.pushStack(S.grep(this,function(e,t){return t%2}))},eq:function(e){var t=this.length,n=+e+(e<0?t:0);return this.pushStack(0<=n&&n<t?[this[n]]:[])},end:function(){return this.prevObject||this.constructor()},push:u,sort:t.sort,splice:t.splice},S.extend=S.fn.extend=function(){var e,t,n,r,i,o,a=arguments[0]||{},s=1,u=arguments.length,l=!1;for("boolean"==typeof a&&(l=a,a=arguments[s]||{},s++),"object"==typeof a||m(a)||(a={}),s===u&&(a=this,s--);s<u;s++)if(null!=(e=arguments[s]))for(t in e)r=e[t],"__proto__"!==t&&a!==r&&(l&&r&&(S.isPlainObject(r)||(i=Array.isArray(r)))?(n=a[t],o=i&&!Array.isArray(n)?[]:i||S.isPlainObject(n)?n:{},i=!1,a[t]=S.extend(l,o,r)):void 0!==r&&(a[t]=r));return a},S.extend({expando:"jQuery"+(f+Math.random()).replace(/\D/g,""),isReady:!0,error:function(e){throw new Error(e)},noop:function(){},isPlainObject:function(e){var t,n;return!(!e||"[object Object]"!==o.call(e))&&(!(t=r(e))||"function"==typeof(n=v.call(t,"constructor")&&t.constructor)&&a.call(n)===l)},isEmptyObject:function(e){var t;for(t in e)return!1;return!0},globalEval:function(e,t,n){b(e,{nonce:t&&t.nonce},n)},each:function(e,t){var n,r=0;if(p(e)){for(n=e.length;r<n;r++)if(!1===t.call(e[r],r,e[r]))break}else for(r in e)if(!1===t.call(e[r],r,e[r]))break;return e},makeArray:function(e,t){var n=t||[];return null!=e&&(p(Object(e))?S.merge(n,"string"==typeof e?[e]:e):u.call(n,e)),n},inArray:function(e,t,n){return null==t?-1:i.call(t,e,n)},merge:function(e,t){for(var n=+t.length,r=0,i=e.length;r<n;r++)e[i++]=t[r];return e.length=i,e},grep:function(e,t,n){for(var r=[],i=0,o=e.length,a=!n;i<o;i++)!t(e[i],i)!==a&&r.push(e[i]);return r},map:function(e,t,n){var r,i,o=0,a=[];if(p(e))for(r=e.length;o<r;o++)null!=(i=t(e[o],o,n))&&a.push(i);else for(o in e)null!=(i=t(e[o],o,n))&&a.push(i);return g(a)},guid:1,support:y}),"function"==typeof Symbol&&(S.fn[Symbol.iterator]=t[Symbol.iterator]),S.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "),function(e,t){n["[object "+t+"]"]=t.toLowerCase()});var d=function(n){var e,d,b,o,i,h,f,g,w,u,l,T,C,a,E,v,s,c,y,S="sizzle"+1*new Date,p=n.document,k=0,r=0,m=ue(),x=ue(),A=ue(),N=ue(),j=function(e,t){return e===t&&(l=!0),0},D={}.hasOwnProperty,t=[],q=t.pop,L=t.push,H=t.push,O=t.slice,P=function(e,t){for(var n=0,r=e.length;n<r;n++)if(e[n]===t)return n;return-1},R="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",M="[\\x20\\t\\r\\n\\f]",I="(?:\\\\[\\da-fA-F]{1,6}"+M+"?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+",W="\\["+M+"*("+I+")(?:"+M+"*([*^$|!~]?=)"+M+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+I+"))|)"+M+"*\\]",F=":("+I+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+W+")*)|.*)\\)|)",B=new RegExp(M+"+","g"),$=new RegExp("^"+M+"+|((?:^|[^\\\\])(?:\\\\.)*)"+M+"+$","g"),_=new RegExp("^"+M+"*,"+M+"*"),z=new RegExp("^"+M+"*([>+~]|"+M+")"+M+"*"),U=new RegExp(M+"|>"),X=new RegExp(F),V=new RegExp("^"+I+"$"),G={ID:new RegExp("^#("+I+")"),CLASS:new RegExp("^\\.("+I+")"),TAG:new RegExp("^("+I+"|[*])"),ATTR:new RegExp("^"+W),PSEUDO:new RegExp("^"+F),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\("+M+"*(even|odd|(([+-]|)(\\d*)n|)"+M+"*(?:([+-]|)"+M+"*(\\d+)|))"+M+"*\\)|)","i"),bool:new RegExp("^(?:"+R+")$","i"),needsContext:new RegExp("^"+M+"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\("+M+"*((?:-\\d)?\\d*)"+M+"*\\)|)(?=[^-]|$)","i")},Y=/HTML$/i,Q=/^(?:input|select|textarea|button)$/i,J=/^h\d$/i,K=/^[^{]+\{\s*\[native \w/,Z=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,ee=/[+~]/,te=new RegExp("\\\\[\\da-fA-F]{1,6}"+M+"?|\\\\([^\\r\\n\\f])","g"),ne=function(e,t){var n="0x"+e.slice(1)-65536;return t||(n<0?String.fromCharCode(n+65536):String.fromCharCode(n>>10|55296,1023&n|56320))},re=/([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,ie=function(e,t){return t?"\0"===e?"\ufffd":e.slice(0,-1)+"\\"+e.charCodeAt(e.length-1).toString(16)+" ":"\\"+e},oe=function(){T()},ae=be(function(e){return!0===e.disabled&&"fieldset"===e.nodeName.toLowerCase()},{dir:"parentNode",next:"legend"});try{H.apply(t=O.call(p.childNodes),p.childNodes),t[p.childNodes.length].nodeType}catch(e){H={apply:t.length?function(e,t){L.apply(e,O.call(t))}:function(e,t){var n=e.length,r=0;while(e[n++]=t[r++]);e.length=n-1}}}function se(t,e,n,r){var i,o,a,s,u,l,c,f=e&&e.ownerDocument,p=e?e.nodeType:9;if(n=n||[],"string"!=typeof t||!t||1!==p&&9!==p&&11!==p)return n;if(!r&&(T(e),e=e||C,E)){if(11!==p&&(u=Z.exec(t)))if(i=u[1]){if(9===p){if(!(a=e.getElementById(i)))return n;if(a.id===i)return n.push(a),n}else if(f&&(a=f.getElementById(i))&&y(e,a)&&a.id===i)return n.push(a),n}else{if(u[2])return H.apply(n,e.getElementsByTagName(t)),n;if((i=u[3])&&d.getElementsByClassName&&e.getElementsByClassName)return H.apply(n,e.getElementsByClassName(i)),n}if(d.qsa&&!N[t+" "]&&(!v||!v.test(t))&&(1!==p||"object"!==e.nodeName.toLowerCase())){if(c=t,f=e,1===p&&(U.test(t)||z.test(t))){(f=ee.test(t)&&ye(e.parentNode)||e)===e&&d.scope||((s=e.getAttribute("id"))?s=s.replace(re,ie):e.setAttribute("id",s=S)),o=(l=h(t)).length;while(o--)l[o]=(s?"#"+s:":scope")+" "+xe(l[o]);c=l.join(",")}try{return H.apply(n,f.querySelectorAll(c)),n}catch(e){N(t,!0)}finally{s===S&&e.removeAttribute("id")}}}return g(t.replace($,"$1"),e,n,r)}function ue(){var r=[];return function e(t,n){return r.push(t+" ")>b.cacheLength&&delete e[r.shift()],e[t+" "]=n}}function le(e){return e[S]=!0,e}function ce(e){var t=C.createElement("fieldset");try{return!!e(t)}catch(e){return!1}finally{t.parentNode&&t.parentNode.removeChild(t),t=null}}function fe(e,t){var n=e.split("|"),r=n.length;while(r--)b.attrHandle[n[r]]=t}function pe(e,t){var n=t&&e,r=n&&1===e.nodeType&&1===t.nodeType&&e.sourceIndex-t.sourceIndex;if(r)return r;if(n)while(n=n.nextSibling)if(n===t)return-1;return e?1:-1}function de(t){return function(e){return"input"===e.nodeName.toLowerCase()&&e.type===t}}function he(n){return function(e){var t=e.nodeName.toLowerCase();return("input"===t||"button"===t)&&e.type===n}}function ge(t){return function(e){return"form"in e?e.parentNode&&!1===e.disabled?"label"in e?"label"in e.parentNode?e.parentNode.disabled===t:e.disabled===t:e.isDisabled===t||e.isDisabled!==!t&&ae(e)===t:e.disabled===t:"label"in e&&e.disabled===t}}function ve(a){return le(function(o){return o=+o,le(function(e,t){var n,r=a([],e.length,o),i=r.length;while(i--)e[n=r[i]]&&(e[n]=!(t[n]=e[n]))})})}function ye(e){return e&&"undefined"!=typeof e.getElementsByTagName&&e}for(e in d=se.support={},i=se.isXML=function(e){var t=e&&e.namespaceURI,n=e&&(e.ownerDocument||e).documentElement;return!Y.test(t||n&&n.nodeName||"HTML")},T=se.setDocument=function(e){var t,n,r=e?e.ownerDocument||e:p;return r!=C&&9===r.nodeType&&r.documentElement&&(a=(C=r).documentElement,E=!i(C),p!=C&&(n=C.defaultView)&&n.top!==n&&(n.addEventListener?n.addEventListener("unload",oe,!1):n.attachEvent&&n.attachEvent("onunload",oe)),d.scope=ce(function(e){return a.appendChild(e).appendChild(C.createElement("div")),"undefined"!=typeof e.querySelectorAll&&!e.querySelectorAll(":scope fieldset div").length}),d.attributes=ce(function(e){return e.className="i",!e.getAttribute("className")}),d.getElementsByTagName=ce(function(e){return e.appendChild(C.createComment("")),!e.getElementsByTagName("*").length}),d.getElementsByClassName=K.test(C.getElementsByClassName),d.getById=ce(function(e){return a.appendChild(e).id=S,!C.getElementsByName||!C.getElementsByName(S).length}),d.getById?(b.filter.ID=function(e){var t=e.replace(te,ne);return function(e){return e.getAttribute("id")===t}},b.find.ID=function(e,t){if("undefined"!=typeof t.getElementById&&E){var n=t.getElementById(e);return n?[n]:[]}}):(b.filter.ID=function(e){var n=e.replace(te,ne);return function(e){var t="undefined"!=typeof e.getAttributeNode&&e.getAttributeNode("id");return t&&t.value===n}},b.find.ID=function(e,t){if("undefined"!=typeof t.getElementById&&E){var n,r,i,o=t.getElementById(e);if(o){if((n=o.getAttributeNode("id"))&&n.value===e)return[o];i=t.getElementsByName(e),r=0;while(o=i[r++])if((n=o.getAttributeNode("id"))&&n.value===e)return[o]}return[]}}),b.find.TAG=d.getElementsByTagName?function(e,t){return"undefined"!=typeof t.getElementsByTagName?t.getElementsByTagName(e):d.qsa?t.querySelectorAll(e):void 0}:function(e,t){var n,r=[],i=0,o=t.getElementsByTagName(e);if("*"===e){while(n=o[i++])1===n.nodeType&&r.push(n);return r}return o},b.find.CLASS=d.getElementsByClassName&&function(e,t){if("undefined"!=typeof t.getElementsByClassName&&E)return t.getElementsByClassName(e)},s=[],v=[],(d.qsa=K.test(C.querySelectorAll))&&(ce(function(e){var t;a.appendChild(e).innerHTML="<a id='"+S+"'></a><select id='"+S+"-\r\\' msallowcapture=''><option selected=''></option></select>",e.querySelectorAll("[msallowcapture^='']").length&&v.push("[*^$]="+M+"*(?:''|\"\")"),e.querySelectorAll("[selected]").length||v.push("\\["+M+"*(?:value|"+R+")"),e.querySelectorAll("[id~="+S+"-]").length||v.push("~="),(t=C.createElement("input")).setAttribute("name",""),e.appendChild(t),e.querySelectorAll("[name='']").length||v.push("\\["+M+"*name"+M+"*="+M+"*(?:''|\"\")"),e.querySelectorAll(":checked").length||v.push(":checked"),e.querySelectorAll("a#"+S+"+*").length||v.push(".#.+[+~]"),e.querySelectorAll("\\\f"),v.push("[\\r\\n\\f]")}),ce(function(e){e.innerHTML="<a href='' disabled='disabled'></a><select disabled='disabled'><option/></select>";var t=C.createElement("input");t.setAttribute("type","hidden"),e.appendChild(t).setAttribute("name","D"),e.querySelectorAll("[name=d]").length&&v.push("name"+M+"*[*^$|!~]?="),2!==e.querySelectorAll(":enabled").length&&v.push(":enabled",":disabled"),a.appendChild(e).disabled=!0,2!==e.querySelectorAll(":disabled").length&&v.push(":enabled",":disabled"),e.querySelectorAll("*,:x"),v.push(",.*:")})),(d.matchesSelector=K.test(c=a.matches||a.webkitMatchesSelector||a.mozMatchesSelector||a.oMatchesSelector||a.msMatchesSelector))&&ce(function(e){d.disconnectedMatch=c.call(e,"*"),c.call(e,"[s!='']:x"),s.push("!=",F)}),v=v.length&&new RegExp(v.join("|")),s=s.length&&new RegExp(s.join("|")),t=K.test(a.compareDocumentPosition),y=t||K.test(a.contains)?function(e,t){var n=9===e.nodeType?e.documentElement:e,r=t&&t.parentNode;return e===r||!(!r||1!==r.nodeType||!(n.contains?n.contains(r):e.compareDocumentPosition&&16&e.compareDocumentPosition(r)))}:function(e,t){if(t)while(t=t.parentNode)if(t===e)return!0;return!1},j=t?function(e,t){if(e===t)return l=!0,0;var n=!e.compareDocumentPosition-!t.compareDocumentPosition;return n||(1&(n=(e.ownerDocument||e)==(t.ownerDocument||t)?e.compareDocumentPosition(t):1)||!d.sortDetached&&t.compareDocumentPosition(e)===n?e==C||e.ownerDocument==p&&y(p,e)?-1:t==C||t.ownerDocument==p&&y(p,t)?1:u?P(u,e)-P(u,t):0:4&n?-1:1)}:function(e,t){if(e===t)return l=!0,0;var n,r=0,i=e.parentNode,o=t.parentNode,a=[e],s=[t];if(!i||!o)return e==C?-1:t==C?1:i?-1:o?1:u?P(u,e)-P(u,t):0;if(i===o)return pe(e,t);n=e;while(n=n.parentNode)a.unshift(n);n=t;while(n=n.parentNode)s.unshift(n);while(a[r]===s[r])r++;return r?pe(a[r],s[r]):a[r]==p?-1:s[r]==p?1:0}),C},se.matches=function(e,t){return se(e,null,null,t)},se.matchesSelector=function(e,t){if(T(e),d.matchesSelector&&E&&!N[t+" "]&&(!s||!s.test(t))&&(!v||!v.test(t)))try{var n=c.call(e,t);if(n||d.disconnectedMatch||e.document&&11!==e.document.nodeType)return n}catch(e){N(t,!0)}return 0<se(t,C,null,[e]).length},se.contains=function(e,t){return(e.ownerDocument||e)!=C&&T(e),y(e,t)},se.attr=function(e,t){(e.ownerDocument||e)!=C&&T(e);var n=b.attrHandle[t.toLowerCase()],r=n&&D.call(b.attrHandle,t.toLowerCase())?n(e,t,!E):void 0;return void 0!==r?r:d.attributes||!E?e.getAttribute(t):(r=e.getAttributeNode(t))&&r.specified?r.value:null},se.escape=function(e){return(e+"").replace(re,ie)},se.error=function(e){throw new Error("Syntax error, unrecognized expression: "+e)},se.uniqueSort=function(e){var t,n=[],r=0,i=0;if(l=!d.detectDuplicates,u=!d.sortStable&&e.slice(0),e.sort(j),l){while(t=e[i++])t===e[i]&&(r=n.push(i));while(r--)e.splice(n[r],1)}return u=null,e},o=se.getText=function(e){var t,n="",r=0,i=e.nodeType;if(i){if(1===i||9===i||11===i){if("string"==typeof e.textContent)return e.textContent;for(e=e.firstChild;e;e=e.nextSibling)n+=o(e)}else if(3===i||4===i)return e.nodeValue}else while(t=e[r++])n+=o(t);return n},(b=se.selectors={cacheLength:50,createPseudo:le,match:G,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(e){return e[1]=e[1].replace(te,ne),e[3]=(e[3]||e[4]||e[5]||"").replace(te,ne),"~="===e[2]&&(e[3]=" "+e[3]+" "),e.slice(0,4)},CHILD:function(e){return e[1]=e[1].toLowerCase(),"nth"===e[1].slice(0,3)?(e[3]||se.error(e[0]),e[4]=+(e[4]?e[5]+(e[6]||1):2*("even"===e[3]||"odd"===e[3])),e[5]=+(e[7]+e[8]||"odd"===e[3])):e[3]&&se.error(e[0]),e},PSEUDO:function(e){var t,n=!e[6]&&e[2];return G.CHILD.test(e[0])?null:(e[3]?e[2]=e[4]||e[5]||"":n&&X.test(n)&&(t=h(n,!0))&&(t=n.indexOf(")",n.length-t)-n.length)&&(e[0]=e[0].slice(0,t),e[2]=n.slice(0,t)),e.slice(0,3))}},filter:{TAG:function(e){var t=e.replace(te,ne).toLowerCase();return"*"===e?function(){return!0}:function(e){return e.nodeName&&e.nodeName.toLowerCase()===t}},CLASS:function(e){var t=m[e+" "];return t||(t=new RegExp("(^|"+M+")"+e+"("+M+"|$)"))&&m(e,function(e){return t.test("string"==typeof e.className&&e.className||"undefined"!=typeof e.getAttribute&&e.getAttribute("class")||"")})},ATTR:function(n,r,i){return function(e){var t=se.attr(e,n);return null==t?"!="===r:!r||(t+="","="===r?t===i:"!="===r?t!==i:"^="===r?i&&0===t.indexOf(i):"*="===r?i&&-1<t.indexOf(i):"$="===r?i&&t.slice(-i.length)===i:"~="===r?-1<(" "+t.replace(B," ")+" ").indexOf(i):"|="===r&&(t===i||t.slice(0,i.length+1)===i+"-"))}},CHILD:function(h,e,t,g,v){var y="nth"!==h.slice(0,3),m="last"!==h.slice(-4),x="of-type"===e;return 1===g&&0===v?function(e){return!!e.parentNode}:function(e,t,n){var r,i,o,a,s,u,l=y!==m?"nextSibling":"previousSibling",c=e.parentNode,f=x&&e.nodeName.toLowerCase(),p=!n&&!x,d=!1;if(c){if(y){while(l){a=e;while(a=a[l])if(x?a.nodeName.toLowerCase()===f:1===a.nodeType)return!1;u=l="only"===h&&!u&&"nextSibling"}return!0}if(u=[m?c.firstChild:c.lastChild],m&&p){d=(s=(r=(i=(o=(a=c)[S]||(a[S]={}))[a.uniqueID]||(o[a.uniqueID]={}))[h]||[])[0]===k&&r[1])&&r[2],a=s&&c.childNodes[s];while(a=++s&&a&&a[l]||(d=s=0)||u.pop())if(1===a.nodeType&&++d&&a===e){i[h]=[k,s,d];break}}else if(p&&(d=s=(r=(i=(o=(a=e)[S]||(a[S]={}))[a.uniqueID]||(o[a.uniqueID]={}))[h]||[])[0]===k&&r[1]),!1===d)while(a=++s&&a&&a[l]||(d=s=0)||u.pop())if((x?a.nodeName.toLowerCase()===f:1===a.nodeType)&&++d&&(p&&((i=(o=a[S]||(a[S]={}))[a.uniqueID]||(o[a.uniqueID]={}))[h]=[k,d]),a===e))break;return(d-=v)===g||d%g==0&&0<=d/g}}},PSEUDO:function(e,o){var t,a=b.pseudos[e]||b.setFilters[e.toLowerCase()]||se.error("unsupported pseudo: "+e);return a[S]?a(o):1<a.length?(t=[e,e,"",o],b.setFilters.hasOwnProperty(e.toLowerCase())?le(function(e,t){var n,r=a(e,o),i=r.length;while(i--)e[n=P(e,r[i])]=!(t[n]=r[i])}):function(e){return a(e,0,t)}):a}},pseudos:{not:le(function(e){var r=[],i=[],s=f(e.replace($,"$1"));return s[S]?le(function(e,t,n,r){var i,o=s(e,null,r,[]),a=e.length;while(a--)(i=o[a])&&(e[a]=!(t[a]=i))}):function(e,t,n){return r[0]=e,s(r,null,n,i),r[0]=null,!i.pop()}}),has:le(function(t){return function(e){return 0<se(t,e).length}}),contains:le(function(t){return t=t.replace(te,ne),function(e){return-1<(e.textContent||o(e)).indexOf(t)}}),lang:le(function(n){return V.test(n||"")||se.error("unsupported lang: "+n),n=n.replace(te,ne).toLowerCase(),function(e){var t;do{if(t=E?e.lang:e.getAttribute("xml:lang")||e.getAttribute("lang"))return(t=t.toLowerCase())===n||0===t.indexOf(n+"-")}while((e=e.parentNode)&&1===e.nodeType);return!1}}),target:function(e){var t=n.location&&n.location.hash;return t&&t.slice(1)===e.id},root:function(e){return e===a},focus:function(e){return e===C.activeElement&&(!C.hasFocus||C.hasFocus())&&!!(e.type||e.href||~e.tabIndex)},enabled:ge(!1),disabled:ge(!0),checked:function(e){var t=e.nodeName.toLowerCase();return"input"===t&&!!e.checked||"option"===t&&!!e.selected},selected:function(e){return e.parentNode&&e.parentNode.selectedIndex,!0===e.selected},empty:function(e){for(e=e.firstChild;e;e=e.nextSibling)if(e.nodeType<6)return!1;return!0},parent:function(e){return!b.pseudos.empty(e)},header:function(e){return J.test(e.nodeName)},input:function(e){return Q.test(e.nodeName)},button:function(e){var t=e.nodeName.toLowerCase();return"input"===t&&"button"===e.type||"button"===t},text:function(e){var t;return"input"===e.nodeName.toLowerCase()&&"text"===e.type&&(null==(t=e.getAttribute("type"))||"text"===t.toLowerCase())},first:ve(function(){return[0]}),last:ve(function(e,t){return[t-1]}),eq:ve(function(e,t,n){return[n<0?n+t:n]}),even:ve(function(e,t){for(var n=0;n<t;n+=2)e.push(n);return e}),odd:ve(function(e,t){for(var n=1;n<t;n+=2)e.push(n);return e}),lt:ve(function(e,t,n){for(var r=n<0?n+t:t<n?t:n;0<=--r;)e.push(r);return e}),gt:ve(function(e,t,n){for(var r=n<0?n+t:n;++r<t;)e.push(r);return e})}}).pseudos.nth=b.pseudos.eq,{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})b.pseudos[e]=de(e);for(e in{submit:!0,reset:!0})b.pseudos[e]=he(e);function me(){}function xe(e){for(var t=0,n=e.length,r="";t<n;t++)r+=e[t].value;return r}function be(s,e,t){var u=e.dir,l=e.next,c=l||u,f=t&&"parentNode"===c,p=r++;return e.first?function(e,t,n){while(e=e[u])if(1===e.nodeType||f)return s(e,t,n);return!1}:function(e,t,n){var r,i,o,a=[k,p];if(n){while(e=e[u])if((1===e.nodeType||f)&&s(e,t,n))return!0}else while(e=e[u])if(1===e.nodeType||f)if(i=(o=e[S]||(e[S]={}))[e.uniqueID]||(o[e.uniqueID]={}),l&&l===e.nodeName.toLowerCase())e=e[u]||e;else{if((r=i[c])&&r[0]===k&&r[1]===p)return a[2]=r[2];if((i[c]=a)[2]=s(e,t,n))return!0}return!1}}function we(i){return 1<i.length?function(e,t,n){var r=i.length;while(r--)if(!i[r](e,t,n))return!1;return!0}:i[0]}function Te(e,t,n,r,i){for(var o,a=[],s=0,u=e.length,l=null!=t;s<u;s++)(o=e[s])&&(n&&!n(o,r,i)||(a.push(o),l&&t.push(s)));return a}function Ce(d,h,g,v,y,e){return v&&!v[S]&&(v=Ce(v)),y&&!y[S]&&(y=Ce(y,e)),le(function(e,t,n,r){var i,o,a,s=[],u=[],l=t.length,c=e||function(e,t,n){for(var r=0,i=t.length;r<i;r++)se(e,t[r],n);return n}(h||"*",n.nodeType?[n]:n,[]),f=!d||!e&&h?c:Te(c,s,d,n,r),p=g?y||(e?d:l||v)?[]:t:f;if(g&&g(f,p,n,r),v){i=Te(p,u),v(i,[],n,r),o=i.length;while(o--)(a=i[o])&&(p[u[o]]=!(f[u[o]]=a))}if(e){if(y||d){if(y){i=[],o=p.length;while(o--)(a=p[o])&&i.push(f[o]=a);y(null,p=[],i,r)}o=p.length;while(o--)(a=p[o])&&-1<(i=y?P(e,a):s[o])&&(e[i]=!(t[i]=a))}}else p=Te(p===t?p.splice(l,p.length):p),y?y(null,t,p,r):H.apply(t,p)})}function Ee(e){for(var i,t,n,r=e.length,o=b.relative[e[0].type],a=o||b.relative[" "],s=o?1:0,u=be(function(e){return e===i},a,!0),l=be(function(e){return-1<P(i,e)},a,!0),c=[function(e,t,n){var r=!o&&(n||t!==w)||((i=t).nodeType?u(e,t,n):l(e,t,n));return i=null,r}];s<r;s++)if(t=b.relative[e[s].type])c=[be(we(c),t)];else{if((t=b.filter[e[s].type].apply(null,e[s].matches))[S]){for(n=++s;n<r;n++)if(b.relative[e[n].type])break;return Ce(1<s&&we(c),1<s&&xe(e.slice(0,s-1).concat({value:" "===e[s-2].type?"*":""})).replace($,"$1"),t,s<n&&Ee(e.slice(s,n)),n<r&&Ee(e=e.slice(n)),n<r&&xe(e))}c.push(t)}return we(c)}return me.prototype=b.filters=b.pseudos,b.setFilters=new me,h=se.tokenize=function(e,t){var n,r,i,o,a,s,u,l=x[e+" "];if(l)return t?0:l.slice(0);a=e,s=[],u=b.preFilter;while(a){for(o in n&&!(r=_.exec(a))||(r&&(a=a.slice(r[0].length)||a),s.push(i=[])),n=!1,(r=z.exec(a))&&(n=r.shift(),i.push({value:n,type:r[0].replace($," ")}),a=a.slice(n.length)),b.filter)!(r=G[o].exec(a))||u[o]&&!(r=u[o](r))||(n=r.shift(),i.push({value:n,type:o,matches:r}),a=a.slice(n.length));if(!n)break}return t?a.length:a?se.error(e):x(e,s).slice(0)},f=se.compile=function(e,t){var n,v,y,m,x,r,i=[],o=[],a=A[e+" "];if(!a){t||(t=h(e)),n=t.length;while(n--)(a=Ee(t[n]))[S]?i.push(a):o.push(a);(a=A(e,(v=o,m=0<(y=i).length,x=0<v.length,r=function(e,t,n,r,i){var o,a,s,u=0,l="0",c=e&&[],f=[],p=w,d=e||x&&b.find.TAG("*",i),h=k+=null==p?1:Math.random()||.1,g=d.length;for(i&&(w=t==C||t||i);l!==g&&null!=(o=d[l]);l++){if(x&&o){a=0,t||o.ownerDocument==C||(T(o),n=!E);while(s=v[a++])if(s(o,t||C,n)){r.push(o);break}i&&(k=h)}m&&((o=!s&&o)&&u--,e&&c.push(o))}if(u+=l,m&&l!==u){a=0;while(s=y[a++])s(c,f,t,n);if(e){if(0<u)while(l--)c[l]||f[l]||(f[l]=q.call(r));f=Te(f)}H.apply(r,f),i&&!e&&0<f.length&&1<u+y.length&&se.uniqueSort(r)}return i&&(k=h,w=p),c},m?le(r):r))).selector=e}return a},g=se.select=function(e,t,n,r){var i,o,a,s,u,l="function"==typeof e&&e,c=!r&&h(e=l.selector||e);if(n=n||[],1===c.length){if(2<(o=c[0]=c[0].slice(0)).length&&"ID"===(a=o[0]).type&&9===t.nodeType&&E&&b.relative[o[1].type]){if(!(t=(b.find.ID(a.matches[0].replace(te,ne),t)||[])[0]))return n;l&&(t=t.parentNode),e=e.slice(o.shift().value.length)}i=G.needsContext.test(e)?0:o.length;while(i--){if(a=o[i],b.relative[s=a.type])break;if((u=b.find[s])&&(r=u(a.matches[0].replace(te,ne),ee.test(o[0].type)&&ye(t.parentNode)||t))){if(o.splice(i,1),!(e=r.length&&xe(o)))return H.apply(n,r),n;break}}}return(l||f(e,c))(r,t,!E,n,!t||ee.test(e)&&ye(t.parentNode)||t),n},d.sortStable=S.split("").sort(j).join("")===S,d.detectDuplicates=!!l,T(),d.sortDetached=ce(function(e){return 1&e.compareDocumentPosition(C.createElement("fieldset"))}),ce(function(e){return e.innerHTML="<a href='#'></a>","#"===e.firstChild.getAttribute("href")})||fe("type|href|height|width",function(e,t,n){if(!n)return e.getAttribute(t,"type"===t.toLowerCase()?1:2)}),d.attributes&&ce(function(e){return e.innerHTML="<input/>",e.firstChild.setAttribute("value",""),""===e.firstChild.getAttribute("value")})||fe("value",function(e,t,n){if(!n&&"input"===e.nodeName.toLowerCase())return e.defaultValue}),ce(function(e){return null==e.getAttribute("disabled")})||fe(R,function(e,t,n){var r;if(!n)return!0===e[t]?t.toLowerCase():(r=e.getAttributeNode(t))&&r.specified?r.value:null}),se}(C);S.find=d,S.expr=d.selectors,S.expr[":"]=S.expr.pseudos,S.uniqueSort=S.unique=d.uniqueSort,S.text=d.getText,S.isXMLDoc=d.isXML,S.contains=d.contains,S.escapeSelector=d.escape;var h=function(e,t,n){var r=[],i=void 0!==n;while((e=e[t])&&9!==e.nodeType)if(1===e.nodeType){if(i&&S(e).is(n))break;r.push(e)}return r},T=function(e,t){for(var n=[];e;e=e.nextSibling)1===e.nodeType&&e!==t&&n.push(e);return n},k=S.expr.match.needsContext;function A(e,t){return e.nodeName&&e.nodeName.toLowerCase()===t.toLowerCase()}var N=/^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i;function j(e,n,r){return m(n)?S.grep(e,function(e,t){return!!n.call(e,t,e)!==r}):n.nodeType?S.grep(e,function(e){return e===n!==r}):"string"!=typeof n?S.grep(e,function(e){return-1<i.call(n,e)!==r}):S.filter(n,e,r)}S.filter=function(e,t,n){var r=t[0];return n&&(e=":not("+e+")"),1===t.length&&1===r.nodeType?S.find.matchesSelector(r,e)?[r]:[]:S.find.matches(e,S.grep(t,function(e){return 1===e.nodeType}))},S.fn.extend({find:function(e){var t,n,r=this.length,i=this;if("string"!=typeof e)return this.pushStack(S(e).filter(function(){for(t=0;t<r;t++)if(S.contains(i[t],this))return!0}));for(n=this.pushStack([]),t=0;t<r;t++)S.find(e,i[t],n);return 1<r?S.uniqueSort(n):n},filter:function(e){return this.pushStack(j(this,e||[],!1))},not:function(e){return this.pushStack(j(this,e||[],!0))},is:function(e){return!!j(this,"string"==typeof e&&k.test(e)?S(e):e||[],!1).length}});var D,q=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/;(S.fn.init=function(e,t,n){var r,i;if(!e)return this;if(n=n||D,"string"==typeof e){if(!(r="<"===e[0]&&">"===e[e.length-1]&&3<=e.length?[null,e,null]:q.exec(e))||!r[1]&&t)return!t||t.jquery?(t||n).find(e):this.constructor(t).find(e);if(r[1]){if(t=t instanceof S?t[0]:t,S.merge(this,S.parseHTML(r[1],t&&t.nodeType?t.ownerDocument||t:E,!0)),N.test(r[1])&&S.isPlainObject(t))for(r in t)m(this[r])?this[r](t[r]):this.attr(r,t[r]);return this}return(i=E.getElementById(r[2]))&&(this[0]=i,this.length=1),this}return e.nodeType?(this[0]=e,this.length=1,this):m(e)?void 0!==n.ready?n.ready(e):e(S):S.makeArray(e,this)}).prototype=S.fn,D=S(E);var L=/^(?:parents|prev(?:Until|All))/,H={children:!0,contents:!0,next:!0,prev:!0};function O(e,t){while((e=e[t])&&1!==e.nodeType);return e}S.fn.extend({has:function(e){var t=S(e,this),n=t.length;return this.filter(function(){for(var e=0;e<n;e++)if(S.contains(this,t[e]))return!0})},closest:function(e,t){var n,r=0,i=this.length,o=[],a="string"!=typeof e&&S(e);if(!k.test(e))for(;r<i;r++)for(n=this[r];n&&n!==t;n=n.parentNode)if(n.nodeType<11&&(a?-1<a.index(n):1===n.nodeType&&S.find.matchesSelector(n,e))){o.push(n);break}return this.pushStack(1<o.length?S.uniqueSort(o):o)},index:function(e){return e?"string"==typeof e?i.call(S(e),this[0]):i.call(this,e.jquery?e[0]:e):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(e,t){return this.pushStack(S.uniqueSort(S.merge(this.get(),S(e,t))))},addBack:function(e){return this.add(null==e?this.prevObject:this.prevObject.filter(e))}}),S.each({parent:function(e){var t=e.parentNode;return t&&11!==t.nodeType?t:null},parents:function(e){return h(e,"parentNode")},parentsUntil:function(e,t,n){return h(e,"parentNode",n)},next:function(e){return O(e,"nextSibling")},prev:function(e){return O(e,"previousSibling")},nextAll:function(e){return h(e,"nextSibling")},prevAll:function(e){return h(e,"previousSibling")},nextUntil:function(e,t,n){return h(e,"nextSibling",n)},prevUntil:function(e,t,n){return h(e,"previousSibling",n)},siblings:function(e){return T((e.parentNode||{}).firstChild,e)},children:function(e){return T(e.firstChild)},contents:function(e){return null!=e.contentDocument&&r(e.contentDocument)?e.contentDocument:(A(e,"template")&&(e=e.content||e),S.merge([],e.childNodes))}},function(r,i){S.fn[r]=function(e,t){var n=S.map(this,i,e);return"Until"!==r.slice(-5)&&(t=e),t&&"string"==typeof t&&(n=S.filter(t,n)),1<this.length&&(H[r]||S.uniqueSort(n),L.test(r)&&n.reverse()),this.pushStack(n)}});var P=/[^\x20\t\r\n\f]+/g;function R(e){return e}function M(e){throw e}function I(e,t,n,r){var i;try{e&&m(i=e.promise)?i.call(e).done(t).fail(n):e&&m(i=e.then)?i.call(e,t,n):t.apply(void 0,[e].slice(r))}catch(e){n.apply(void 0,[e])}}S.Callbacks=function(r){var e,n;r="string"==typeof r?(e=r,n={},S.each(e.match(P)||[],function(e,t){n[t]=!0}),n):S.extend({},r);var i,t,o,a,s=[],u=[],l=-1,c=function(){for(a=a||r.once,o=i=!0;u.length;l=-1){t=u.shift();while(++l<s.length)!1===s[l].apply(t[0],t[1])&&r.stopOnFalse&&(l=s.length,t=!1)}r.memory||(t=!1),i=!1,a&&(s=t?[]:"")},f={add:function(){return s&&(t&&!i&&(l=s.length-1,u.push(t)),function n(e){S.each(e,function(e,t){m(t)?r.unique&&f.has(t)||s.push(t):t&&t.length&&"string"!==w(t)&&n(t)})}(arguments),t&&!i&&c()),this},remove:function(){return S.each(arguments,function(e,t){var n;while(-1<(n=S.inArray(t,s,n)))s.splice(n,1),n<=l&&l--}),this},has:function(e){return e?-1<S.inArray(e,s):0<s.length},empty:function(){return s&&(s=[]),this},disable:function(){return a=u=[],s=t="",this},disabled:function(){return!s},lock:function(){return a=u=[],t||i||(s=t=""),this},locked:function(){return!!a},fireWith:function(e,t){return a||(t=[e,(t=t||[]).slice?t.slice():t],u.push(t),i||c()),this},fire:function(){return f.fireWith(this,arguments),this},fired:function(){return!!o}};return f},S.extend({Deferred:function(e){var o=[["notify","progress",S.Callbacks("memory"),S.Callbacks("memory"),2],["resolve","done",S.Callbacks("once memory"),S.Callbacks("once memory"),0,"resolved"],["reject","fail",S.Callbacks("once memory"),S.Callbacks("once memory"),1,"rejected"]],i="pending",a={state:function(){return i},always:function(){return s.done(arguments).fail(arguments),this},"catch":function(e){return a.then(null,e)},pipe:function(){var i=arguments;return S.Deferred(function(r){S.each(o,function(e,t){var n=m(i[t[4]])&&i[t[4]];s[t[1]](function(){var e=n&&n.apply(this,arguments);e&&m(e.promise)?e.promise().progress(r.notify).done(r.resolve).fail(r.reject):r[t[0]+"With"](this,n?[e]:arguments)})}),i=null}).promise()},then:function(t,n,r){var u=0;function l(i,o,a,s){return function(){var n=this,r=arguments,e=function(){var e,t;if(!(i<u)){if((e=a.apply(n,r))===o.promise())throw new TypeError("Thenable self-resolution");t=e&&("object"==typeof e||"function"==typeof e)&&e.then,m(t)?s?t.call(e,l(u,o,R,s),l(u,o,M,s)):(u++,t.call(e,l(u,o,R,s),l(u,o,M,s),l(u,o,R,o.notifyWith))):(a!==R&&(n=void 0,r=[e]),(s||o.resolveWith)(n,r))}},t=s?e:function(){try{e()}catch(e){S.Deferred.exceptionHook&&S.Deferred.exceptionHook(e,t.stackTrace),u<=i+1&&(a!==M&&(n=void 0,r=[e]),o.rejectWith(n,r))}};i?t():(S.Deferred.getStackHook&&(t.stackTrace=S.Deferred.getStackHook()),C.setTimeout(t))}}return S.Deferred(function(e){o[0][3].add(l(0,e,m(r)?r:R,e.notifyWith)),o[1][3].add(l(0,e,m(t)?t:R)),o[2][3].add(l(0,e,m(n)?n:M))}).promise()},promise:function(e){return null!=e?S.extend(e,a):a}},s={};return S.each(o,function(e,t){var n=t[2],r=t[5];a[t[1]]=n.add,r&&n.add(function(){i=r},o[3-e][2].disable,o[3-e][3].disable,o[0][2].lock,o[0][3].lock),n.add(t[3].fire),s[t[0]]=function(){return s[t[0]+"With"](this===s?void 0:this,arguments),this},s[t[0]+"With"]=n.fireWith}),a.promise(s),e&&e.call(s,s),s},when:function(e){var n=arguments.length,t=n,r=Array(t),i=s.call(arguments),o=S.Deferred(),a=function(t){return function(e){r[t]=this,i[t]=1<arguments.length?s.call(arguments):e,--n||o.resolveWith(r,i)}};if(n<=1&&(I(e,o.done(a(t)).resolve,o.reject,!n),"pending"===o.state()||m(i[t]&&i[t].then)))return o.then();while(t--)I(i[t],a(t),o.reject);return o.promise()}});var W=/^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;S.Deferred.exceptionHook=function(e,t){C.console&&C.console.warn&&e&&W.test(e.name)&&C.console.warn("jQuery.Deferred exception: "+e.message,e.stack,t)},S.readyException=function(e){C.setTimeout(function(){throw e})};var F=S.Deferred();function B(){E.removeEventListener("DOMContentLoaded",B),C.removeEventListener("load",B),S.ready()}S.fn.ready=function(e){return F.then(e)["catch"](function(e){S.readyException(e)}),this},S.extend({isReady:!1,readyWait:1,ready:function(e){(!0===e?--S.readyWait:S.isReady)||(S.isReady=!0)!==e&&0<--S.readyWait||F.resolveWith(E,[S])}}),S.ready.then=F.then,"complete"===E.readyState||"loading"!==E.readyState&&!E.documentElement.doScroll?C.setTimeout(S.ready):(E.addEventListener("DOMContentLoaded",B),C.addEventListener("load",B));var $=function(e,t,n,r,i,o,a){var s=0,u=e.length,l=null==n;if("object"===w(n))for(s in i=!0,n)$(e,t,s,n[s],!0,o,a);else if(void 0!==r&&(i=!0,m(r)||(a=!0),l&&(a?(t.call(e,r),t=null):(l=t,t=function(e,t,n){return l.call(S(e),n)})),t))for(;s<u;s++)t(e[s],n,a?r:r.call(e[s],s,t(e[s],n)));return i?e:l?t.call(e):u?t(e[0],n):o},_=/^-ms-/,z=/-([a-z])/g;function U(e,t){return t.toUpperCase()}function X(e){return e.replace(_,"ms-").replace(z,U)}var V=function(e){return 1===e.nodeType||9===e.nodeType||!+e.nodeType};function G(){this.expando=S.expando+G.uid++}G.uid=1,G.prototype={cache:function(e){var t=e[this.expando];return t||(t={},V(e)&&(e.nodeType?e[this.expando]=t:Object.defineProperty(e,this.expando,{value:t,configurable:!0}))),t},set:function(e,t,n){var r,i=this.cache(e);if("string"==typeof t)i[X(t)]=n;else for(r in t)i[X(r)]=t[r];return i},get:function(e,t){return void 0===t?this.cache(e):e[this.expando]&&e[this.expando][X(t)]},access:function(e,t,n){return void 0===t||t&&"string"==typeof t&&void 0===n?this.get(e,t):(this.set(e,t,n),void 0!==n?n:t)},remove:function(e,t){var n,r=e[this.expando];if(void 0!==r){if(void 0!==t){n=(t=Array.isArray(t)?t.map(X):(t=X(t))in r?[t]:t.match(P)||[]).length;while(n--)delete r[t[n]]}(void 0===t||S.isEmptyObject(r))&&(e.nodeType?e[this.expando]=void 0:delete e[this.expando])}},hasData:function(e){var t=e[this.expando];return void 0!==t&&!S.isEmptyObject(t)}};var Y=new G,Q=new G,J=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,K=/[A-Z]/g;function Z(e,t,n){var r,i;if(void 0===n&&1===e.nodeType)if(r="data-"+t.replace(K,"-$&").toLowerCase(),"string"==typeof(n=e.getAttribute(r))){try{n="true"===(i=n)||"false"!==i&&("null"===i?null:i===+i+""?+i:J.test(i)?JSON.parse(i):i)}catch(e){}Q.set(e,t,n)}else n=void 0;return n}S.extend({hasData:function(e){return Q.hasData(e)||Y.hasData(e)},data:function(e,t,n){return Q.access(e,t,n)},removeData:function(e,t){Q.remove(e,t)},_data:function(e,t,n){return Y.access(e,t,n)},_removeData:function(e,t){Y.remove(e,t)}}),S.fn.extend({data:function(n,e){var t,r,i,o=this[0],a=o&&o.attributes;if(void 0===n){if(this.length&&(i=Q.get(o),1===o.nodeType&&!Y.get(o,"hasDataAttrs"))){t=a.length;while(t--)a[t]&&0===(r=a[t].name).indexOf("data-")&&(r=X(r.slice(5)),Z(o,r,i[r]));Y.set(o,"hasDataAttrs",!0)}return i}return"object"==typeof n?this.each(function(){Q.set(this,n)}):$(this,function(e){var t;if(o&&void 0===e)return void 0!==(t=Q.get(o,n))?t:void 0!==(t=Z(o,n))?t:void 0;this.each(function(){Q.set(this,n,e)})},null,e,1<arguments.length,null,!0)},removeData:function(e){return this.each(function(){Q.remove(this,e)})}}),S.extend({queue:function(e,t,n){var r;if(e)return t=(t||"fx")+"queue",r=Y.get(e,t),n&&(!r||Array.isArray(n)?r=Y.access(e,t,S.makeArray(n)):r.push(n)),r||[]},dequeue:function(e,t){t=t||"fx";var n=S.queue(e,t),r=n.length,i=n.shift(),o=S._queueHooks(e,t);"inprogress"===i&&(i=n.shift(),r--),i&&("fx"===t&&n.unshift("inprogress"),delete o.stop,i.call(e,function(){S.dequeue(e,t)},o)),!r&&o&&o.empty.fire()},_queueHooks:function(e,t){var n=t+"queueHooks";return Y.get(e,n)||Y.access(e,n,{empty:S.Callbacks("once memory").add(function(){Y.remove(e,[t+"queue",n])})})}}),S.fn.extend({queue:function(t,n){var e=2;return"string"!=typeof t&&(n=t,t="fx",e--),arguments.length<e?S.queue(this[0],t):void 0===n?this:this.each(function(){var e=S.queue(this,t,n);S._queueHooks(this,t),"fx"===t&&"inprogress"!==e[0]&&S.dequeue(this,t)})},dequeue:function(e){return this.each(function(){S.dequeue(this,e)})},clearQueue:function(e){return this.queue(e||"fx",[])},promise:function(e,t){var n,r=1,i=S.Deferred(),o=this,a=this.length,s=function(){--r||i.resolveWith(o,[o])};"string"!=typeof e&&(t=e,e=void 0),e=e||"fx";while(a--)(n=Y.get(o[a],e+"queueHooks"))&&n.empty&&(r++,n.empty.add(s));return s(),i.promise(t)}});var ee=/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,te=new RegExp("^(?:([+-])=|)("+ee+")([a-z%]*)$","i"),ne=["Top","Right","Bottom","Left"],re=E.documentElement,ie=function(e){return S.contains(e.ownerDocument,e)},oe={composed:!0};re.getRootNode&&(ie=function(e){return S.contains(e.ownerDocument,e)||e.getRootNode(oe)===e.ownerDocument});var ae=function(e,t){return"none"===(e=t||e).style.display||""===e.style.display&&ie(e)&&"none"===S.css(e,"display")};function se(e,t,n,r){var i,o,a=20,s=r?function(){return r.cur()}:function(){return S.css(e,t,"")},u=s(),l=n&&n[3]||(S.cssNumber[t]?"":"px"),c=e.nodeType&&(S.cssNumber[t]||"px"!==l&&+u)&&te.exec(S.css(e,t));if(c&&c[3]!==l){u/=2,l=l||c[3],c=+u||1;while(a--)S.style(e,t,c+l),(1-o)*(1-(o=s()/u||.5))<=0&&(a=0),c/=o;c*=2,S.style(e,t,c+l),n=n||[]}return n&&(c=+c||+u||0,i=n[1]?c+(n[1]+1)*n[2]:+n[2],r&&(r.unit=l,r.start=c,r.end=i)),i}var ue={};function le(e,t){for(var n,r,i,o,a,s,u,l=[],c=0,f=e.length;c<f;c++)(r=e[c]).style&&(n=r.style.display,t?("none"===n&&(l[c]=Y.get(r,"display")||null,l[c]||(r.style.display="")),""===r.style.display&&ae(r)&&(l[c]=(u=a=o=void 0,a=(i=r).ownerDocument,s=i.nodeName,(u=ue[s])||(o=a.body.appendChild(a.createElement(s)),u=S.css(o,"display"),o.parentNode.removeChild(o),"none"===u&&(u="block"),ue[s]=u)))):"none"!==n&&(l[c]="none",Y.set(r,"display",n)));for(c=0;c<f;c++)null!=l[c]&&(e[c].style.display=l[c]);return e}S.fn.extend({show:function(){return le(this,!0)},hide:function(){return le(this)},toggle:function(e){return"boolean"==typeof e?e?this.show():this.hide():this.each(function(){ae(this)?S(this).show():S(this).hide()})}});var ce,fe,pe=/^(?:checkbox|radio)$/i,de=/<([a-z][^\/\0>\x20\t\r\n\f]*)/i,he=/^$|^module$|\/(?:java|ecma)script/i;ce=E.createDocumentFragment().appendChild(E.createElement("div")),(fe=E.createElement("input")).setAttribute("type","radio"),fe.setAttribute("checked","checked"),fe.setAttribute("name","t"),ce.appendChild(fe),y.checkClone=ce.cloneNode(!0).cloneNode(!0).lastChild.checked,ce.innerHTML="<textarea>x</textarea>",y.noCloneChecked=!!ce.cloneNode(!0).lastChild.defaultValue,ce.innerHTML="<option></option>",y.option=!!ce.lastChild;var ge={thead:[1,"<table>","</table>"],col:[2,"<table><colgroup>","</colgroup></table>"],tr:[2,"<table><tbody>","</tbody></table>"],td:[3,"<table><tbody><tr>","</tr></tbody></table>"],_default:[0,"",""]};function ve(e,t){var n;return n="undefined"!=typeof e.getElementsByTagName?e.getElementsByTagName(t||"*"):"undefined"!=typeof e.querySelectorAll?e.querySelectorAll(t||"*"):[],void 0===t||t&&A(e,t)?S.merge([e],n):n}function ye(e,t){for(var n=0,r=e.length;n<r;n++)Y.set(e[n],"globalEval",!t||Y.get(t[n],"globalEval"))}ge.tbody=ge.tfoot=ge.colgroup=ge.caption=ge.thead,ge.th=ge.td,y.option||(ge.optgroup=ge.option=[1,"<select multiple='multiple'>","</select>"]);var me=/<|&#?\w+;/;function xe(e,t,n,r,i){for(var o,a,s,u,l,c,f=t.createDocumentFragment(),p=[],d=0,h=e.length;d<h;d++)if((o=e[d])||0===o)if("object"===w(o))S.merge(p,o.nodeType?[o]:o);else if(me.test(o)){a=a||f.appendChild(t.createElement("div")),s=(de.exec(o)||["",""])[1].toLowerCase(),u=ge[s]||ge._default,a.innerHTML=u[1]+S.htmlPrefilter(o)+u[2],c=u[0];while(c--)a=a.lastChild;S.merge(p,a.childNodes),(a=f.firstChild).textContent=""}else p.push(t.createTextNode(o));f.textContent="",d=0;while(o=p[d++])if(r&&-1<S.inArray(o,r))i&&i.push(o);else if(l=ie(o),a=ve(f.appendChild(o),"script"),l&&ye(a),n){c=0;while(o=a[c++])he.test(o.type||"")&&n.push(o)}return f}var be=/^([^.]*)(?:\.(.+)|)/;function we(){return!0}function Te(){return!1}function Ce(e,t){return e===function(){try{return E.activeElement}catch(e){}}()==("focus"===t)}function Ee(e,t,n,r,i,o){var a,s;if("object"==typeof t){for(s in"string"!=typeof n&&(r=r||n,n=void 0),t)Ee(e,s,n,r,t[s],o);return e}if(null==r&&null==i?(i=n,r=n=void 0):null==i&&("string"==typeof n?(i=r,r=void 0):(i=r,r=n,n=void 0)),!1===i)i=Te;else if(!i)return e;return 1===o&&(a=i,(i=function(e){return S().off(e),a.apply(this,arguments)}).guid=a.guid||(a.guid=S.guid++)),e.each(function(){S.event.add(this,t,i,r,n)})}function Se(e,i,o){o?(Y.set(e,i,!1),S.event.add(e,i,{namespace:!1,handler:function(e){var t,n,r=Y.get(this,i);if(1&e.isTrigger&&this[i]){if(r.length)(S.event.special[i]||{}).delegateType&&e.stopPropagation();else if(r=s.call(arguments),Y.set(this,i,r),t=o(this,i),this[i](),r!==(n=Y.get(this,i))||t?Y.set(this,i,!1):n={},r!==n)return e.stopImmediatePropagation(),e.preventDefault(),n&&n.value}else r.length&&(Y.set(this,i,{value:S.event.trigger(S.extend(r[0],S.Event.prototype),r.slice(1),this)}),e.stopImmediatePropagation())}})):void 0===Y.get(e,i)&&S.event.add(e,i,we)}S.event={global:{},add:function(t,e,n,r,i){var o,a,s,u,l,c,f,p,d,h,g,v=Y.get(t);if(V(t)){n.handler&&(n=(o=n).handler,i=o.selector),i&&S.find.matchesSelector(re,i),n.guid||(n.guid=S.guid++),(u=v.events)||(u=v.events=Object.create(null)),(a=v.handle)||(a=v.handle=function(e){return"undefined"!=typeof S&&S.event.triggered!==e.type?S.event.dispatch.apply(t,arguments):void 0}),l=(e=(e||"").match(P)||[""]).length;while(l--)d=g=(s=be.exec(e[l])||[])[1],h=(s[2]||"").split(".").sort(),d&&(f=S.event.special[d]||{},d=(i?f.delegateType:f.bindType)||d,f=S.event.special[d]||{},c=S.extend({type:d,origType:g,data:r,handler:n,guid:n.guid,selector:i,needsContext:i&&S.expr.match.needsContext.test(i),namespace:h.join(".")},o),(p=u[d])||((p=u[d]=[]).delegateCount=0,f.setup&&!1!==f.setup.call(t,r,h,a)||t.addEventListener&&t.addEventListener(d,a)),f.add&&(f.add.call(t,c),c.handler.guid||(c.handler.guid=n.guid)),i?p.splice(p.delegateCount++,0,c):p.push(c),S.event.global[d]=!0)}},remove:function(e,t,n,r,i){var o,a,s,u,l,c,f,p,d,h,g,v=Y.hasData(e)&&Y.get(e);if(v&&(u=v.events)){l=(t=(t||"").match(P)||[""]).length;while(l--)if(d=g=(s=be.exec(t[l])||[])[1],h=(s[2]||"").split(".").sort(),d){f=S.event.special[d]||{},p=u[d=(r?f.delegateType:f.bindType)||d]||[],s=s[2]&&new RegExp("(^|\\.)"+h.join("\\.(?:.*\\.|)")+"(\\.|$)"),a=o=p.length;while(o--)c=p[o],!i&&g!==c.origType||n&&n.guid!==c.guid||s&&!s.test(c.namespace)||r&&r!==c.selector&&("**"!==r||!c.selector)||(p.splice(o,1),c.selector&&p.delegateCount--,f.remove&&f.remove.call(e,c));a&&!p.length&&(f.teardown&&!1!==f.teardown.call(e,h,v.handle)||S.removeEvent(e,d,v.handle),delete u[d])}else for(d in u)S.event.remove(e,d+t[l],n,r,!0);S.isEmptyObject(u)&&Y.remove(e,"handle events")}},dispatch:function(e){var t,n,r,i,o,a,s=new Array(arguments.length),u=S.event.fix(e),l=(Y.get(this,"events")||Object.create(null))[u.type]||[],c=S.event.special[u.type]||{};for(s[0]=u,t=1;t<arguments.length;t++)s[t]=arguments[t];if(u.delegateTarget=this,!c.preDispatch||!1!==c.preDispatch.call(this,u)){a=S.event.handlers.call(this,u,l),t=0;while((i=a[t++])&&!u.isPropagationStopped()){u.currentTarget=i.elem,n=0;while((o=i.handlers[n++])&&!u.isImmediatePropagationStopped())u.rnamespace&&!1!==o.namespace&&!u.rnamespace.test(o.namespace)||(u.handleObj=o,u.data=o.data,void 0!==(r=((S.event.special[o.origType]||{}).handle||o.handler).apply(i.elem,s))&&!1===(u.result=r)&&(u.preventDefault(),u.stopPropagation()))}return c.postDispatch&&c.postDispatch.call(this,u),u.result}},handlers:function(e,t){var n,r,i,o,a,s=[],u=t.delegateCount,l=e.target;if(u&&l.nodeType&&!("click"===e.type&&1<=e.button))for(;l!==this;l=l.parentNode||this)if(1===l.nodeType&&("click"!==e.type||!0!==l.disabled)){for(o=[],a={},n=0;n<u;n++)void 0===a[i=(r=t[n]).selector+" "]&&(a[i]=r.needsContext?-1<S(i,this).index(l):S.find(i,this,null,[l]).length),a[i]&&o.push(r);o.length&&s.push({elem:l,handlers:o})}return l=this,u<t.length&&s.push({elem:l,handlers:t.slice(u)}),s},addProp:function(t,e){Object.defineProperty(S.Event.prototype,t,{enumerable:!0,configurable:!0,get:m(e)?function(){if(this.originalEvent)return e(this.originalEvent)}:function(){if(this.originalEvent)return this.originalEvent[t]},set:function(e){Object.defineProperty(this,t,{enumerable:!0,configurable:!0,writable:!0,value:e})}})},fix:function(e){return e[S.expando]?e:new S.Event(e)},special:{load:{noBubble:!0},click:{setup:function(e){var t=this||e;return pe.test(t.type)&&t.click&&A(t,"input")&&Se(t,"click",we),!1},trigger:function(e){var t=this||e;return pe.test(t.type)&&t.click&&A(t,"input")&&Se(t,"click"),!0},_default:function(e){var t=e.target;return pe.test(t.type)&&t.click&&A(t,"input")&&Y.get(t,"click")||A(t,"a")}},beforeunload:{postDispatch:function(e){void 0!==e.result&&e.originalEvent&&(e.originalEvent.returnValue=e.result)}}}},S.removeEvent=function(e,t,n){e.removeEventListener&&e.removeEventListener(t,n)},S.Event=function(e,t){if(!(this instanceof S.Event))return new S.Event(e,t);e&&e.type?(this.originalEvent=e,this.type=e.type,this.isDefaultPrevented=e.defaultPrevented||void 0===e.defaultPrevented&&!1===e.returnValue?we:Te,this.target=e.target&&3===e.target.nodeType?e.target.parentNode:e.target,this.currentTarget=e.currentTarget,this.relatedTarget=e.relatedTarget):this.type=e,t&&S.extend(this,t),this.timeStamp=e&&e.timeStamp||Date.now(),this[S.expando]=!0},S.Event.prototype={constructor:S.Event,isDefaultPrevented:Te,isPropagationStopped:Te,isImmediatePropagationStopped:Te,isSimulated:!1,preventDefault:function(){var e=this.originalEvent;this.isDefaultPrevented=we,e&&!this.isSimulated&&e.preventDefault()},stopPropagation:function(){var e=this.originalEvent;this.isPropagationStopped=we,e&&!this.isSimulated&&e.stopPropagation()},stopImmediatePropagation:function(){var e=this.originalEvent;this.isImmediatePropagationStopped=we,e&&!this.isSimulated&&e.stopImmediatePropagation(),this.stopPropagation()}},S.each({altKey:!0,bubbles:!0,cancelable:!0,changedTouches:!0,ctrlKey:!0,detail:!0,eventPhase:!0,metaKey:!0,pageX:!0,pageY:!0,shiftKey:!0,view:!0,"char":!0,code:!0,charCode:!0,key:!0,keyCode:!0,button:!0,buttons:!0,clientX:!0,clientY:!0,offsetX:!0,offsetY:!0,pointerId:!0,pointerType:!0,screenX:!0,screenY:!0,targetTouches:!0,toElement:!0,touches:!0,which:!0},S.event.addProp),S.each({focus:"focusin",blur:"focusout"},function(e,t){S.event.special[e]={setup:function(){return Se(this,e,Ce),!1},trigger:function(){return Se(this,e),!0},_default:function(){return!0},delegateType:t}}),S.each({mouseenter:"mouseover",mouseleave:"mouseout",pointerenter:"pointerover",pointerleave:"pointerout"},function(e,i){S.event.special[e]={delegateType:i,bindType:i,handle:function(e){var t,n=e.relatedTarget,r=e.handleObj;return n&&(n===this||S.contains(this,n))||(e.type=r.origType,t=r.handler.apply(this,arguments),e.type=i),t}}}),S.fn.extend({on:function(e,t,n,r){return Ee(this,e,t,n,r)},one:function(e,t,n,r){return Ee(this,e,t,n,r,1)},off:function(e,t,n){var r,i;if(e&&e.preventDefault&&e.handleObj)return r=e.handleObj,S(e.delegateTarget).off(r.namespace?r.origType+"."+r.namespace:r.origType,r.selector,r.handler),this;if("object"==typeof e){for(i in e)this.off(i,t,e[i]);return this}return!1!==t&&"function"!=typeof t||(n=t,t=void 0),!1===n&&(n=Te),this.each(function(){S.event.remove(this,e,n,t)})}});var ke=/<script|<style|<link/i,Ae=/checked\s*(?:[^=]|=\s*.checked.)/i,Ne=/^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;function je(e,t){return A(e,"table")&&A(11!==t.nodeType?t:t.firstChild,"tr")&&S(e).children("tbody")[0]||e}function De(e){return e.type=(null!==e.getAttribute("type"))+"/"+e.type,e}function qe(e){return"true/"===(e.type||"").slice(0,5)?e.type=e.type.slice(5):e.removeAttribute("type"),e}function Le(e,t){var n,r,i,o,a,s;if(1===t.nodeType){if(Y.hasData(e)&&(s=Y.get(e).events))for(i in Y.remove(t,"handle events"),s)for(n=0,r=s[i].length;n<r;n++)S.event.add(t,i,s[i][n]);Q.hasData(e)&&(o=Q.access(e),a=S.extend({},o),Q.set(t,a))}}function He(n,r,i,o){r=g(r);var e,t,a,s,u,l,c=0,f=n.length,p=f-1,d=r[0],h=m(d);if(h||1<f&&"string"==typeof d&&!y.checkClone&&Ae.test(d))return n.each(function(e){var t=n.eq(e);h&&(r[0]=d.call(this,e,t.html())),He(t,r,i,o)});if(f&&(t=(e=xe(r,n[0].ownerDocument,!1,n,o)).firstChild,1===e.childNodes.length&&(e=t),t||o)){for(s=(a=S.map(ve(e,"script"),De)).length;c<f;c++)u=e,c!==p&&(u=S.clone(u,!0,!0),s&&S.merge(a,ve(u,"script"))),i.call(n[c],u,c);if(s)for(l=a[a.length-1].ownerDocument,S.map(a,qe),c=0;c<s;c++)u=a[c],he.test(u.type||"")&&!Y.access(u,"globalEval")&&S.contains(l,u)&&(u.src&&"module"!==(u.type||"").toLowerCase()?S._evalUrl&&!u.noModule&&S._evalUrl(u.src,{nonce:u.nonce||u.getAttribute("nonce")},l):b(u.textContent.replace(Ne,""),u,l))}return n}function Oe(e,t,n){for(var r,i=t?S.filter(t,e):e,o=0;null!=(r=i[o]);o++)n||1!==r.nodeType||S.cleanData(ve(r)),r.parentNode&&(n&&ie(r)&&ye(ve(r,"script")),r.parentNode.removeChild(r));return e}S.extend({htmlPrefilter:function(e){return e},clone:function(e,t,n){var r,i,o,a,s,u,l,c=e.cloneNode(!0),f=ie(e);if(!(y.noCloneChecked||1!==e.nodeType&&11!==e.nodeType||S.isXMLDoc(e)))for(a=ve(c),r=0,i=(o=ve(e)).length;r<i;r++)s=o[r],u=a[r],void 0,"input"===(l=u.nodeName.toLowerCase())&&pe.test(s.type)?u.checked=s.checked:"input"!==l&&"textarea"!==l||(u.defaultValue=s.defaultValue);if(t)if(n)for(o=o||ve(e),a=a||ve(c),r=0,i=o.length;r<i;r++)Le(o[r],a[r]);else Le(e,c);return 0<(a=ve(c,"script")).length&&ye(a,!f&&ve(e,"script")),c},cleanData:function(e){for(var t,n,r,i=S.event.special,o=0;void 0!==(n=e[o]);o++)if(V(n)){if(t=n[Y.expando]){if(t.events)for(r in t.events)i[r]?S.event.remove(n,r):S.removeEvent(n,r,t.handle);n[Y.expando]=void 0}n[Q.expando]&&(n[Q.expando]=void 0)}}}),S.fn.extend({detach:function(e){return Oe(this,e,!0)},remove:function(e){return Oe(this,e)},text:function(e){return $(this,function(e){return void 0===e?S.text(this):this.empty().each(function(){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||(this.textContent=e)})},null,e,arguments.length)},append:function(){return He(this,arguments,function(e){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||je(this,e).appendChild(e)})},prepend:function(){return He(this,arguments,function(e){if(1===this.nodeType||11===this.nodeType||9===this.nodeType){var t=je(this,e);t.insertBefore(e,t.firstChild)}})},before:function(){return He(this,arguments,function(e){this.parentNode&&this.parentNode.insertBefore(e,this)})},after:function(){return He(this,arguments,function(e){this.parentNode&&this.parentNode.insertBefore(e,this.nextSibling)})},empty:function(){for(var e,t=0;null!=(e=this[t]);t++)1===e.nodeType&&(S.cleanData(ve(e,!1)),e.textContent="");return this},clone:function(e,t){return e=null!=e&&e,t=null==t?e:t,this.map(function(){return S.clone(this,e,t)})},html:function(e){return $(this,function(e){var t=this[0]||{},n=0,r=this.length;if(void 0===e&&1===t.nodeType)return t.innerHTML;if("string"==typeof e&&!ke.test(e)&&!ge[(de.exec(e)||["",""])[1].toLowerCase()]){e=S.htmlPrefilter(e);try{for(;n<r;n++)1===(t=this[n]||{}).nodeType&&(S.cleanData(ve(t,!1)),t.innerHTML=e);t=0}catch(e){}}t&&this.empty().append(e)},null,e,arguments.length)},replaceWith:function(){var n=[];return He(this,arguments,function(e){var t=this.parentNode;S.inArray(this,n)<0&&(S.cleanData(ve(this)),t&&t.replaceChild(e,this))},n)}}),S.each({appendTo:"append",prependTo:"prepend",insertBefore:"before",insertAfter:"after",replaceAll:"replaceWith"},function(e,a){S.fn[e]=function(e){for(var t,n=[],r=S(e),i=r.length-1,o=0;o<=i;o++)t=o===i?this:this.clone(!0),S(r[o])[a](t),u.apply(n,t.get());return this.pushStack(n)}});var Pe=new RegExp("^("+ee+")(?!px)[a-z%]+$","i"),Re=function(e){var t=e.ownerDocument.defaultView;return t&&t.opener||(t=C),t.getComputedStyle(e)},Me=function(e,t,n){var r,i,o={};for(i in t)o[i]=e.style[i],e.style[i]=t[i];for(i in r=n.call(e),t)e.style[i]=o[i];return r},Ie=new RegExp(ne.join("|"),"i");function We(e,t,n){var r,i,o,a,s=e.style;return(n=n||Re(e))&&(""!==(a=n.getPropertyValue(t)||n[t])||ie(e)||(a=S.style(e,t)),!y.pixelBoxStyles()&&Pe.test(a)&&Ie.test(t)&&(r=s.width,i=s.minWidth,o=s.maxWidth,s.minWidth=s.maxWidth=s.width=a,a=n.width,s.width=r,s.minWidth=i,s.maxWidth=o)),void 0!==a?a+"":a}function Fe(e,t){return{get:function(){if(!e())return(this.get=t).apply(this,arguments);delete this.get}}}!function(){function e(){if(l){u.style.cssText="position:absolute;left:-11111px;width:60px;margin-top:1px;padding:0;border:0",l.style.cssText="position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%",re.appendChild(u).appendChild(l);var e=C.getComputedStyle(l);n="1%"!==e.top,s=12===t(e.marginLeft),l.style.right="60%",o=36===t(e.right),r=36===t(e.width),l.style.position="absolute",i=12===t(l.offsetWidth/3),re.removeChild(u),l=null}}function t(e){return Math.round(parseFloat(e))}var n,r,i,o,a,s,u=E.createElement("div"),l=E.createElement("div");l.style&&(l.style.backgroundClip="content-box",l.cloneNode(!0).style.backgroundClip="",y.clearCloneStyle="content-box"===l.style.backgroundClip,S.extend(y,{boxSizingReliable:function(){return e(),r},pixelBoxStyles:function(){return e(),o},pixelPosition:function(){return e(),n},reliableMarginLeft:function(){return e(),s},scrollboxSize:function(){return e(),i},reliableTrDimensions:function(){var e,t,n,r;return null==a&&(e=E.createElement("table"),t=E.createElement("tr"),n=E.createElement("div"),e.style.cssText="position:absolute;left:-11111px;border-collapse:separate",t.style.cssText="border:1px solid",t.style.height="1px",n.style.height="9px",n.style.display="block",re.appendChild(e).appendChild(t).appendChild(n),r=C.getComputedStyle(t),a=parseInt(r.height,10)+parseInt(r.borderTopWidth,10)+parseInt(r.borderBottomWidth,10)===t.offsetHeight,re.removeChild(e)),a}}))}();var Be=["Webkit","Moz","ms"],$e=E.createElement("div").style,_e={};function ze(e){var t=S.cssProps[e]||_e[e];return t||(e in $e?e:_e[e]=function(e){var t=e[0].toUpperCase()+e.slice(1),n=Be.length;while(n--)if((e=Be[n]+t)in $e)return e}(e)||e)}var Ue=/^(none|table(?!-c[ea]).+)/,Xe=/^--/,Ve={position:"absolute",visibility:"hidden",display:"block"},Ge={letterSpacing:"0",fontWeight:"400"};function Ye(e,t,n){var r=te.exec(t);return r?Math.max(0,r[2]-(n||0))+(r[3]||"px"):t}function Qe(e,t,n,r,i,o){var a="width"===t?1:0,s=0,u=0;if(n===(r?"border":"content"))return 0;for(;a<4;a+=2)"margin"===n&&(u+=S.css(e,n+ne[a],!0,i)),r?("content"===n&&(u-=S.css(e,"padding"+ne[a],!0,i)),"margin"!==n&&(u-=S.css(e,"border"+ne[a]+"Width",!0,i))):(u+=S.css(e,"padding"+ne[a],!0,i),"padding"!==n?u+=S.css(e,"border"+ne[a]+"Width",!0,i):s+=S.css(e,"border"+ne[a]+"Width",!0,i));return!r&&0<=o&&(u+=Math.max(0,Math.ceil(e["offset"+t[0].toUpperCase()+t.slice(1)]-o-u-s-.5))||0),u}function Je(e,t,n){var r=Re(e),i=(!y.boxSizingReliable()||n)&&"border-box"===S.css(e,"boxSizing",!1,r),o=i,a=We(e,t,r),s="offset"+t[0].toUpperCase()+t.slice(1);if(Pe.test(a)){if(!n)return a;a="auto"}return(!y.boxSizingReliable()&&i||!y.reliableTrDimensions()&&A(e,"tr")||"auto"===a||!parseFloat(a)&&"inline"===S.css(e,"display",!1,r))&&e.getClientRects().length&&(i="border-box"===S.css(e,"boxSizing",!1,r),(o=s in e)&&(a=e[s])),(a=parseFloat(a)||0)+Qe(e,t,n||(i?"border":"content"),o,r,a)+"px"}function Ke(e,t,n,r,i){return new Ke.prototype.init(e,t,n,r,i)}S.extend({cssHooks:{opacity:{get:function(e,t){if(t){var n=We(e,"opacity");return""===n?"1":n}}}},cssNumber:{animationIterationCount:!0,columnCount:!0,fillOpacity:!0,flexGrow:!0,flexShrink:!0,fontWeight:!0,gridArea:!0,gridColumn:!0,gridColumnEnd:!0,gridColumnStart:!0,gridRow:!0,gridRowEnd:!0,gridRowStart:!0,lineHeight:!0,opacity:!0,order:!0,orphans:!0,widows:!0,zIndex:!0,zoom:!0},cssProps:{},style:function(e,t,n,r){if(e&&3!==e.nodeType&&8!==e.nodeType&&e.style){var i,o,a,s=X(t),u=Xe.test(t),l=e.style;if(u||(t=ze(s)),a=S.cssHooks[t]||S.cssHooks[s],void 0===n)return a&&"get"in a&&void 0!==(i=a.get(e,!1,r))?i:l[t];"string"===(o=typeof n)&&(i=te.exec(n))&&i[1]&&(n=se(e,t,i),o="number"),null!=n&&n==n&&("number"!==o||u||(n+=i&&i[3]||(S.cssNumber[s]?"":"px")),y.clearCloneStyle||""!==n||0!==t.indexOf("background")||(l[t]="inherit"),a&&"set"in a&&void 0===(n=a.set(e,n,r))||(u?l.setProperty(t,n):l[t]=n))}},css:function(e,t,n,r){var i,o,a,s=X(t);return Xe.test(t)||(t=ze(s)),(a=S.cssHooks[t]||S.cssHooks[s])&&"get"in a&&(i=a.get(e,!0,n)),void 0===i&&(i=We(e,t,r)),"normal"===i&&t in Ge&&(i=Ge[t]),""===n||n?(o=parseFloat(i),!0===n||isFinite(o)?o||0:i):i}}),S.each(["height","width"],function(e,u){S.cssHooks[u]={get:function(e,t,n){if(t)return!Ue.test(S.css(e,"display"))||e.getClientRects().length&&e.getBoundingClientRect().width?Je(e,u,n):Me(e,Ve,function(){return Je(e,u,n)})},set:function(e,t,n){var r,i=Re(e),o=!y.scrollboxSize()&&"absolute"===i.position,a=(o||n)&&"border-box"===S.css(e,"boxSizing",!1,i),s=n?Qe(e,u,n,a,i):0;return a&&o&&(s-=Math.ceil(e["offset"+u[0].toUpperCase()+u.slice(1)]-parseFloat(i[u])-Qe(e,u,"border",!1,i)-.5)),s&&(r=te.exec(t))&&"px"!==(r[3]||"px")&&(e.style[u]=t,t=S.css(e,u)),Ye(0,t,s)}}}),S.cssHooks.marginLeft=Fe(y.reliableMarginLeft,function(e,t){if(t)return(parseFloat(We(e,"marginLeft"))||e.getBoundingClientRect().left-Me(e,{marginLeft:0},function(){return e.getBoundingClientRect().left}))+"px"}),S.each({margin:"",padding:"",border:"Width"},function(i,o){S.cssHooks[i+o]={expand:function(e){for(var t=0,n={},r="string"==typeof e?e.split(" "):[e];t<4;t++)n[i+ne[t]+o]=r[t]||r[t-2]||r[0];return n}},"margin"!==i&&(S.cssHooks[i+o].set=Ye)}),S.fn.extend({css:function(e,t){return $(this,function(e,t,n){var r,i,o={},a=0;if(Array.isArray(t)){for(r=Re(e),i=t.length;a<i;a++)o[t[a]]=S.css(e,t[a],!1,r);return o}return void 0!==n?S.style(e,t,n):S.css(e,t)},e,t,1<arguments.length)}}),((S.Tween=Ke).prototype={constructor:Ke,init:function(e,t,n,r,i,o){this.elem=e,this.prop=n,this.easing=i||S.easing._default,this.options=t,this.start=this.now=this.cur(),this.end=r,this.unit=o||(S.cssNumber[n]?"":"px")},cur:function(){var e=Ke.propHooks[this.prop];return e&&e.get?e.get(this):Ke.propHooks._default.get(this)},run:function(e){var t,n=Ke.propHooks[this.prop];return this.options.duration?this.pos=t=S.easing[this.easing](e,this.options.duration*e,0,1,this.options.duration):this.pos=t=e,this.now=(this.end-this.start)*t+this.start,this.options.step&&this.options.step.call(this.elem,this.now,this),n&&n.set?n.set(this):Ke.propHooks._default.set(this),this}}).init.prototype=Ke.prototype,(Ke.propHooks={_default:{get:function(e){var t;return 1!==e.elem.nodeType||null!=e.elem[e.prop]&&null==e.elem.style[e.prop]?e.elem[e.prop]:(t=S.css(e.elem,e.prop,""))&&"auto"!==t?t:0},set:function(e){S.fx.step[e.prop]?S.fx.step[e.prop](e):1!==e.elem.nodeType||!S.cssHooks[e.prop]&&null==e.elem.style[ze(e.prop)]?e.elem[e.prop]=e.now:S.style(e.elem,e.prop,e.now+e.unit)}}}).scrollTop=Ke.propHooks.scrollLeft={set:function(e){e.elem.nodeType&&e.elem.parentNode&&(e.elem[e.prop]=e.now)}},S.easing={linear:function(e){return e},swing:function(e){return.5-Math.cos(e*Math.PI)/2},_default:"swing"},S.fx=Ke.prototype.init,S.fx.step={};var Ze,et,tt,nt,rt=/^(?:toggle|show|hide)$/,it=/queueHooks$/;function ot(){et&&(!1===E.hidden&&C.requestAnimationFrame?C.requestAnimationFrame(ot):C.setTimeout(ot,S.fx.interval),S.fx.tick())}function at(){return C.setTimeout(function(){Ze=void 0}),Ze=Date.now()}function st(e,t){var n,r=0,i={height:e};for(t=t?1:0;r<4;r+=2-t)i["margin"+(n=ne[r])]=i["padding"+n]=e;return t&&(i.opacity=i.width=e),i}function ut(e,t,n){for(var r,i=(lt.tweeners[t]||[]).concat(lt.tweeners["*"]),o=0,a=i.length;o<a;o++)if(r=i[o].call(n,t,e))return r}function lt(o,e,t){var n,a,r=0,i=lt.prefilters.length,s=S.Deferred().always(function(){delete u.elem}),u=function(){if(a)return!1;for(var e=Ze||at(),t=Math.max(0,l.startTime+l.duration-e),n=1-(t/l.duration||0),r=0,i=l.tweens.length;r<i;r++)l.tweens[r].run(n);return s.notifyWith(o,[l,n,t]),n<1&&i?t:(i||s.notifyWith(o,[l,1,0]),s.resolveWith(o,[l]),!1)},l=s.promise({elem:o,props:S.extend({},e),opts:S.extend(!0,{specialEasing:{},easing:S.easing._default},t),originalProperties:e,originalOptions:t,startTime:Ze||at(),duration:t.duration,tweens:[],createTween:function(e,t){var n=S.Tween(o,l.opts,e,t,l.opts.specialEasing[e]||l.opts.easing);return l.tweens.push(n),n},stop:function(e){var t=0,n=e?l.tweens.length:0;if(a)return this;for(a=!0;t<n;t++)l.tweens[t].run(1);return e?(s.notifyWith(o,[l,1,0]),s.resolveWith(o,[l,e])):s.rejectWith(o,[l,e]),this}}),c=l.props;for(!function(e,t){var n,r,i,o,a;for(n in e)if(i=t[r=X(n)],o=e[n],Array.isArray(o)&&(i=o[1],o=e[n]=o[0]),n!==r&&(e[r]=o,delete e[n]),(a=S.cssHooks[r])&&"expand"in a)for(n in o=a.expand(o),delete e[r],o)n in e||(e[n]=o[n],t[n]=i);else t[r]=i}(c,l.opts.specialEasing);r<i;r++)if(n=lt.prefilters[r].call(l,o,c,l.opts))return m(n.stop)&&(S._queueHooks(l.elem,l.opts.queue).stop=n.stop.bind(n)),n;return S.map(c,ut,l),m(l.opts.start)&&l.opts.start.call(o,l),l.progress(l.opts.progress).done(l.opts.done,l.opts.complete).fail(l.opts.fail).always(l.opts.always),S.fx.timer(S.extend(u,{elem:o,anim:l,queue:l.opts.queue})),l}S.Animation=S.extend(lt,{tweeners:{"*":[function(e,t){var n=this.createTween(e,t);return se(n.elem,e,te.exec(t),n),n}]},tweener:function(e,t){m(e)?(t=e,e=["*"]):e=e.match(P);for(var n,r=0,i=e.length;r<i;r++)n=e[r],lt.tweeners[n]=lt.tweeners[n]||[],lt.tweeners[n].unshift(t)},prefilters:[function(e,t,n){var r,i,o,a,s,u,l,c,f="width"in t||"height"in t,p=this,d={},h=e.style,g=e.nodeType&&ae(e),v=Y.get(e,"fxshow");for(r in n.queue||(null==(a=S._queueHooks(e,"fx")).unqueued&&(a.unqueued=0,s=a.empty.fire,a.empty.fire=function(){a.unqueued||s()}),a.unqueued++,p.always(function(){p.always(function(){a.unqueued--,S.queue(e,"fx").length||a.empty.fire()})})),t)if(i=t[r],rt.test(i)){if(delete t[r],o=o||"toggle"===i,i===(g?"hide":"show")){if("show"!==i||!v||void 0===v[r])continue;g=!0}d[r]=v&&v[r]||S.style(e,r)}if((u=!S.isEmptyObject(t))||!S.isEmptyObject(d))for(r in f&&1===e.nodeType&&(n.overflow=[h.overflow,h.overflowX,h.overflowY],null==(l=v&&v.display)&&(l=Y.get(e,"display")),"none"===(c=S.css(e,"display"))&&(l?c=l:(le([e],!0),l=e.style.display||l,c=S.css(e,"display"),le([e]))),("inline"===c||"inline-block"===c&&null!=l)&&"none"===S.css(e,"float")&&(u||(p.done(function(){h.display=l}),null==l&&(c=h.display,l="none"===c?"":c)),h.display="inline-block")),n.overflow&&(h.overflow="hidden",p.always(function(){h.overflow=n.overflow[0],h.overflowX=n.overflow[1],h.overflowY=n.overflow[2]})),u=!1,d)u||(v?"hidden"in v&&(g=v.hidden):v=Y.access(e,"fxshow",{display:l}),o&&(v.hidden=!g),g&&le([e],!0),p.done(function(){for(r in g||le([e]),Y.remove(e,"fxshow"),d)S.style(e,r,d[r])})),u=ut(g?v[r]:0,r,p),r in v||(v[r]=u.start,g&&(u.end=u.start,u.start=0))}],prefilter:function(e,t){t?lt.prefilters.unshift(e):lt.prefilters.push(e)}}),S.speed=function(e,t,n){var r=e&&"object"==typeof e?S.extend({},e):{complete:n||!n&&t||m(e)&&e,duration:e,easing:n&&t||t&&!m(t)&&t};return S.fx.off?r.duration=0:"number"!=typeof r.duration&&(r.duration in S.fx.speeds?r.duration=S.fx.speeds[r.duration]:r.duration=S.fx.speeds._default),null!=r.queue&&!0!==r.queue||(r.queue="fx"),r.old=r.complete,r.complete=function(){m(r.old)&&r.old.call(this),r.queue&&S.dequeue(this,r.queue)},r},S.fn.extend({fadeTo:function(e,t,n,r){return this.filter(ae).css("opacity",0).show().end().animate({opacity:t},e,n,r)},animate:function(t,e,n,r){var i=S.isEmptyObject(t),o=S.speed(e,n,r),a=function(){var e=lt(this,S.extend({},t),o);(i||Y.get(this,"finish"))&&e.stop(!0)};return a.finish=a,i||!1===o.queue?this.each(a):this.queue(o.queue,a)},stop:function(i,e,o){var a=function(e){var t=e.stop;delete e.stop,t(o)};return"string"!=typeof i&&(o=e,e=i,i=void 0),e&&this.queue(i||"fx",[]),this.each(function(){var e=!0,t=null!=i&&i+"queueHooks",n=S.timers,r=Y.get(this);if(t)r[t]&&r[t].stop&&a(r[t]);else for(t in r)r[t]&&r[t].stop&&it.test(t)&&a(r[t]);for(t=n.length;t--;)n[t].elem!==this||null!=i&&n[t].queue!==i||(n[t].anim.stop(o),e=!1,n.splice(t,1));!e&&o||S.dequeue(this,i)})},finish:function(a){return!1!==a&&(a=a||"fx"),this.each(function(){var e,t=Y.get(this),n=t[a+"queue"],r=t[a+"queueHooks"],i=S.timers,o=n?n.length:0;for(t.finish=!0,S.queue(this,a,[]),r&&r.stop&&r.stop.call(this,!0),e=i.length;e--;)i[e].elem===this&&i[e].queue===a&&(i[e].anim.stop(!0),i.splice(e,1));for(e=0;e<o;e++)n[e]&&n[e].finish&&n[e].finish.call(this);delete t.finish})}}),S.each(["toggle","show","hide"],function(e,r){var i=S.fn[r];S.fn[r]=function(e,t,n){return null==e||"boolean"==typeof e?i.apply(this,arguments):this.animate(st(r,!0),e,t,n)}}),S.each({slideDown:st("show"),slideUp:st("hide"),slideToggle:st("toggle"),fadeIn:{opacity:"show"},fadeOut:{opacity:"hide"},fadeToggle:{opacity:"toggle"}},function(e,r){S.fn[e]=function(e,t,n){return this.animate(r,e,t,n)}}),S.timers=[],S.fx.tick=function(){var e,t=0,n=S.timers;for(Ze=Date.now();t<n.length;t++)(e=n[t])()||n[t]!==e||n.splice(t--,1);n.length||S.fx.stop(),Ze=void 0},S.fx.timer=function(e){S.timers.push(e),S.fx.start()},S.fx.interval=13,S.fx.start=function(){et||(et=!0,ot())},S.fx.stop=function(){et=null},S.fx.speeds={slow:600,fast:200,_default:400},S.fn.delay=function(r,e){return r=S.fx&&S.fx.speeds[r]||r,e=e||"fx",this.queue(e,function(e,t){var n=C.setTimeout(e,r);t.stop=function(){C.clearTimeout(n)}})},tt=E.createElement("input"),nt=E.createElement("select").appendChild(E.createElement("option")),tt.type="checkbox",y.checkOn=""!==tt.value,y.optSelected=nt.selected,(tt=E.createElement("input")).value="t",tt.type="radio",y.radioValue="t"===tt.value;var ct,ft=S.expr.attrHandle;S.fn.extend({attr:function(e,t){return $(this,S.attr,e,t,1<arguments.length)},removeAttr:function(e){return this.each(function(){S.removeAttr(this,e)})}}),S.extend({attr:function(e,t,n){var r,i,o=e.nodeType;if(3!==o&&8!==o&&2!==o)return"undefined"==typeof e.getAttribute?S.prop(e,t,n):(1===o&&S.isXMLDoc(e)||(i=S.attrHooks[t.toLowerCase()]||(S.expr.match.bool.test(t)?ct:void 0)),void 0!==n?null===n?void S.removeAttr(e,t):i&&"set"in i&&void 0!==(r=i.set(e,n,t))?r:(e.setAttribute(t,n+""),n):i&&"get"in i&&null!==(r=i.get(e,t))?r:null==(r=S.find.attr(e,t))?void 0:r)},attrHooks:{type:{set:function(e,t){if(!y.radioValue&&"radio"===t&&A(e,"input")){var n=e.value;return e.setAttribute("type",t),n&&(e.value=n),t}}}},removeAttr:function(e,t){var n,r=0,i=t&&t.match(P);if(i&&1===e.nodeType)while(n=i[r++])e.removeAttribute(n)}}),ct={set:function(e,t,n){return!1===t?S.removeAttr(e,n):e.setAttribute(n,n),n}},S.each(S.expr.match.bool.source.match(/\w+/g),function(e,t){var a=ft[t]||S.find.attr;ft[t]=function(e,t,n){var r,i,o=t.toLowerCase();return n||(i=ft[o],ft[o]=r,r=null!=a(e,t,n)?o:null,ft[o]=i),r}});var pt=/^(?:input|select|textarea|button)$/i,dt=/^(?:a|area)$/i;function ht(e){return(e.match(P)||[]).join(" ")}function gt(e){return e.getAttribute&&e.getAttribute("class")||""}function vt(e){return Array.isArray(e)?e:"string"==typeof e&&e.match(P)||[]}S.fn.extend({prop:function(e,t){return $(this,S.prop,e,t,1<arguments.length)},removeProp:function(e){return this.each(function(){delete this[S.propFix[e]||e]})}}),S.extend({prop:function(e,t,n){var r,i,o=e.nodeType;if(3!==o&&8!==o&&2!==o)return 1===o&&S.isXMLDoc(e)||(t=S.propFix[t]||t,i=S.propHooks[t]),void 0!==n?i&&"set"in i&&void 0!==(r=i.set(e,n,t))?r:e[t]=n:i&&"get"in i&&null!==(r=i.get(e,t))?r:e[t]},propHooks:{tabIndex:{get:function(e){var t=S.find.attr(e,"tabindex");return t?parseInt(t,10):pt.test(e.nodeName)||dt.test(e.nodeName)&&e.href?0:-1}}},propFix:{"for":"htmlFor","class":"className"}}),y.optSelected||(S.propHooks.selected={get:function(e){var t=e.parentNode;return t&&t.parentNode&&t.parentNode.selectedIndex,null},set:function(e){var t=e.parentNode;t&&(t.selectedIndex,t.parentNode&&t.parentNode.selectedIndex)}}),S.each(["tabIndex","readOnly","maxLength","cellSpacing","cellPadding","rowSpan","colSpan","useMap","frameBorder","contentEditable"],function(){S.propFix[this.toLowerCase()]=this}),S.fn.extend({addClass:function(t){var e,n,r,i,o,a,s,u=0;if(m(t))return this.each(function(e){S(this).addClass(t.call(this,e,gt(this)))});if((e=vt(t)).length)while(n=this[u++])if(i=gt(n),r=1===n.nodeType&&" "+ht(i)+" "){a=0;while(o=e[a++])r.indexOf(" "+o+" ")<0&&(r+=o+" ");i!==(s=ht(r))&&n.setAttribute("class",s)}return this},removeClass:function(t){var e,n,r,i,o,a,s,u=0;if(m(t))return this.each(function(e){S(this).removeClass(t.call(this,e,gt(this)))});if(!arguments.length)return this.attr("class","");if((e=vt(t)).length)while(n=this[u++])if(i=gt(n),r=1===n.nodeType&&" "+ht(i)+" "){a=0;while(o=e[a++])while(-1<r.indexOf(" "+o+" "))r=r.replace(" "+o+" "," ");i!==(s=ht(r))&&n.setAttribute("class",s)}return this},toggleClass:function(i,t){var o=typeof i,a="string"===o||Array.isArray(i);return"boolean"==typeof t&&a?t?this.addClass(i):this.removeClass(i):m(i)?this.each(function(e){S(this).toggleClass(i.call(this,e,gt(this),t),t)}):this.each(function(){var e,t,n,r;if(a){t=0,n=S(this),r=vt(i);while(e=r[t++])n.hasClass(e)?n.removeClass(e):n.addClass(e)}else void 0!==i&&"boolean"!==o||((e=gt(this))&&Y.set(this,"__className__",e),this.setAttribute&&this.setAttribute("class",e||!1===i?"":Y.get(this,"__className__")||""))})},hasClass:function(e){var t,n,r=0;t=" "+e+" ";while(n=this[r++])if(1===n.nodeType&&-1<(" "+ht(gt(n))+" ").indexOf(t))return!0;return!1}});var yt=/\r/g;S.fn.extend({val:function(n){var r,e,i,t=this[0];return arguments.length?(i=m(n),this.each(function(e){var t;1===this.nodeType&&(null==(t=i?n.call(this,e,S(this).val()):n)?t="":"number"==typeof t?t+="":Array.isArray(t)&&(t=S.map(t,function(e){return null==e?"":e+""})),(r=S.valHooks[this.type]||S.valHooks[this.nodeName.toLowerCase()])&&"set"in r&&void 0!==r.set(this,t,"value")||(this.value=t))})):t?(r=S.valHooks[t.type]||S.valHooks[t.nodeName.toLowerCase()])&&"get"in r&&void 0!==(e=r.get(t,"value"))?e:"string"==typeof(e=t.value)?e.replace(yt,""):null==e?"":e:void 0}}),S.extend({valHooks:{option:{get:function(e){var t=S.find.attr(e,"value");return null!=t?t:ht(S.text(e))}},select:{get:function(e){var t,n,r,i=e.options,o=e.selectedIndex,a="select-one"===e.type,s=a?null:[],u=a?o+1:i.length;for(r=o<0?u:a?o:0;r<u;r++)if(((n=i[r]).selected||r===o)&&!n.disabled&&(!n.parentNode.disabled||!A(n.parentNode,"optgroup"))){if(t=S(n).val(),a)return t;s.push(t)}return s},set:function(e,t){var n,r,i=e.options,o=S.makeArray(t),a=i.length;while(a--)((r=i[a]).selected=-1<S.inArray(S.valHooks.option.get(r),o))&&(n=!0);return n||(e.selectedIndex=-1),o}}}}),S.each(["radio","checkbox"],function(){S.valHooks[this]={set:function(e,t){if(Array.isArray(t))return e.checked=-1<S.inArray(S(e).val(),t)}},y.checkOn||(S.valHooks[this].get=function(e){return null===e.getAttribute("value")?"on":e.value})}),y.focusin="onfocusin"in C;var mt=/^(?:focusinfocus|focusoutblur)$/,xt=function(e){e.stopPropagation()};S.extend(S.event,{trigger:function(e,t,n,r){var i,o,a,s,u,l,c,f,p=[n||E],d=v.call(e,"type")?e.type:e,h=v.call(e,"namespace")?e.namespace.split("."):[];if(o=f=a=n=n||E,3!==n.nodeType&&8!==n.nodeType&&!mt.test(d+S.event.triggered)&&(-1<d.indexOf(".")&&(d=(h=d.split(".")).shift(),h.sort()),u=d.indexOf(":")<0&&"on"+d,(e=e[S.expando]?e:new S.Event(d,"object"==typeof e&&e)).isTrigger=r?2:3,e.namespace=h.join("."),e.rnamespace=e.namespace?new RegExp("(^|\\.)"+h.join("\\.(?:.*\\.|)")+"(\\.|$)"):null,e.result=void 0,e.target||(e.target=n),t=null==t?[e]:S.makeArray(t,[e]),c=S.event.special[d]||{},r||!c.trigger||!1!==c.trigger.apply(n,t))){if(!r&&!c.noBubble&&!x(n)){for(s=c.delegateType||d,mt.test(s+d)||(o=o.parentNode);o;o=o.parentNode)p.push(o),a=o;a===(n.ownerDocument||E)&&p.push(a.defaultView||a.parentWindow||C)}i=0;while((o=p[i++])&&!e.isPropagationStopped())f=o,e.type=1<i?s:c.bindType||d,(l=(Y.get(o,"events")||Object.create(null))[e.type]&&Y.get(o,"handle"))&&l.apply(o,t),(l=u&&o[u])&&l.apply&&V(o)&&(e.result=l.apply(o,t),!1===e.result&&e.preventDefault());return e.type=d,r||e.isDefaultPrevented()||c._default&&!1!==c._default.apply(p.pop(),t)||!V(n)||u&&m(n[d])&&!x(n)&&((a=n[u])&&(n[u]=null),S.event.triggered=d,e.isPropagationStopped()&&f.addEventListener(d,xt),n[d](),e.isPropagationStopped()&&f.removeEventListener(d,xt),S.event.triggered=void 0,a&&(n[u]=a)),e.result}},simulate:function(e,t,n){var r=S.extend(new S.Event,n,{type:e,isSimulated:!0});S.event.trigger(r,null,t)}}),S.fn.extend({trigger:function(e,t){return this.each(function(){S.event.trigger(e,t,this)})},triggerHandler:function(e,t){var n=this[0];if(n)return S.event.trigger(e,t,n,!0)}}),y.focusin||S.each({focus:"focusin",blur:"focusout"},function(n,r){var i=function(e){S.event.simulate(r,e.target,S.event.fix(e))};S.event.special[r]={setup:function(){var e=this.ownerDocument||this.document||this,t=Y.access(e,r);t||e.addEventListener(n,i,!0),Y.access(e,r,(t||0)+1)},teardown:function(){var e=this.ownerDocument||this.document||this,t=Y.access(e,r)-1;t?Y.access(e,r,t):(e.removeEventListener(n,i,!0),Y.remove(e,r))}}});var bt=C.location,wt={guid:Date.now()},Tt=/\?/;S.parseXML=function(e){var t,n;if(!e||"string"!=typeof e)return null;try{t=(new C.DOMParser).parseFromString(e,"text/xml")}catch(e){}return n=t&&t.getElementsByTagName("parsererror")[0],t&&!n||S.error("Invalid XML: "+(n?S.map(n.childNodes,function(e){return e.textContent}).join("\n"):e)),t};var Ct=/\[\]$/,Et=/\r?\n/g,St=/^(?:submit|button|image|reset|file)$/i,kt=/^(?:input|select|textarea|keygen)/i;function At(n,e,r,i){var t;if(Array.isArray(e))S.each(e,function(e,t){r||Ct.test(n)?i(n,t):At(n+"["+("object"==typeof t&&null!=t?e:"")+"]",t,r,i)});else if(r||"object"!==w(e))i(n,e);else for(t in e)At(n+"["+t+"]",e[t],r,i)}S.param=function(e,t){var n,r=[],i=function(e,t){var n=m(t)?t():t;r[r.length]=encodeURIComponent(e)+"="+encodeURIComponent(null==n?"":n)};if(null==e)return"";if(Array.isArray(e)||e.jquery&&!S.isPlainObject(e))S.each(e,function(){i(this.name,this.value)});else for(n in e)At(n,e[n],t,i);return r.join("&")},S.fn.extend({serialize:function(){return S.param(this.serializeArray())},serializeArray:function(){return this.map(function(){var e=S.prop(this,"elements");return e?S.makeArray(e):this}).filter(function(){var e=this.type;return this.name&&!S(this).is(":disabled")&&kt.test(this.nodeName)&&!St.test(e)&&(this.checked||!pe.test(e))}).map(function(e,t){var n=S(this).val();return null==n?null:Array.isArray(n)?S.map(n,function(e){return{name:t.name,value:e.replace(Et,"\r\n")}}):{name:t.name,value:n.replace(Et,"\r\n")}}).get()}});var Nt=/%20/g,jt=/#.*$/,Dt=/([?&])_=[^&]*/,qt=/^(.*?):[ \t]*([^\r\n]*)$/gm,Lt=/^(?:GET|HEAD)$/,Ht=/^\/\//,Ot={},Pt={},Rt="*/".concat("*"),Mt=E.createElement("a");function It(o){return function(e,t){"string"!=typeof e&&(t=e,e="*");var n,r=0,i=e.toLowerCase().match(P)||[];if(m(t))while(n=i[r++])"+"===n[0]?(n=n.slice(1)||"*",(o[n]=o[n]||[]).unshift(t)):(o[n]=o[n]||[]).push(t)}}function Wt(t,i,o,a){var s={},u=t===Pt;function l(e){var r;return s[e]=!0,S.each(t[e]||[],function(e,t){var n=t(i,o,a);return"string"!=typeof n||u||s[n]?u?!(r=n):void 0:(i.dataTypes.unshift(n),l(n),!1)}),r}return l(i.dataTypes[0])||!s["*"]&&l("*")}function Ft(e,t){var n,r,i=S.ajaxSettings.flatOptions||{};for(n in t)void 0!==t[n]&&((i[n]?e:r||(r={}))[n]=t[n]);return r&&S.extend(!0,e,r),e}Mt.href=bt.href,S.extend({active:0,lastModified:{},etag:{},ajaxSettings:{url:bt.href,type:"GET",isLocal:/^(?:about|app|app-storage|.+-extension|file|res|widget):$/.test(bt.protocol),global:!0,processData:!0,async:!0,contentType:"application/x-www-form-urlencoded; charset=UTF-8",accepts:{"*":Rt,text:"text/plain",html:"text/html",xml:"application/xml, text/xml",json:"application/json, text/javascript"},contents:{xml:/\bxml\b/,html:/\bhtml/,json:/\bjson\b/},responseFields:{xml:"responseXML",text:"responseText",json:"responseJSON"},converters:{"* text":String,"text html":!0,"text json":JSON.parse,"text xml":S.parseXML},flatOptions:{url:!0,context:!0}},ajaxSetup:function(e,t){return t?Ft(Ft(e,S.ajaxSettings),t):Ft(S.ajaxSettings,e)},ajaxPrefilter:It(Ot),ajaxTransport:It(Pt),ajax:function(e,t){"object"==typeof e&&(t=e,e=void 0),t=t||{};var c,f,p,n,d,r,h,g,i,o,v=S.ajaxSetup({},t),y=v.context||v,m=v.context&&(y.nodeType||y.jquery)?S(y):S.event,x=S.Deferred(),b=S.Callbacks("once memory"),w=v.statusCode||{},a={},s={},u="canceled",T={readyState:0,getResponseHeader:function(e){var t;if(h){if(!n){n={};while(t=qt.exec(p))n[t[1].toLowerCase()+" "]=(n[t[1].toLowerCase()+" "]||[]).concat(t[2])}t=n[e.toLowerCase()+" "]}return null==t?null:t.join(", ")},getAllResponseHeaders:function(){return h?p:null},setRequestHeader:function(e,t){return null==h&&(e=s[e.toLowerCase()]=s[e.toLowerCase()]||e,a[e]=t),this},overrideMimeType:function(e){return null==h&&(v.mimeType=e),this},statusCode:function(e){var t;if(e)if(h)T.always(e[T.status]);else for(t in e)w[t]=[w[t],e[t]];return this},abort:function(e){var t=e||u;return c&&c.abort(t),l(0,t),this}};if(x.promise(T),v.url=((e||v.url||bt.href)+"").replace(Ht,bt.protocol+"//"),v.type=t.method||t.type||v.method||v.type,v.dataTypes=(v.dataType||"*").toLowerCase().match(P)||[""],null==v.crossDomain){r=E.createElement("a");try{r.href=v.url,r.href=r.href,v.crossDomain=Mt.protocol+"//"+Mt.host!=r.protocol+"//"+r.host}catch(e){v.crossDomain=!0}}if(v.data&&v.processData&&"string"!=typeof v.data&&(v.data=S.param(v.data,v.traditional)),Wt(Ot,v,t,T),h)return T;for(i in(g=S.event&&v.global)&&0==S.active++&&S.event.trigger("ajaxStart"),v.type=v.type.toUpperCase(),v.hasContent=!Lt.test(v.type),f=v.url.replace(jt,""),v.hasContent?v.data&&v.processData&&0===(v.contentType||"").indexOf("application/x-www-form-urlencoded")&&(v.data=v.data.replace(Nt,"+")):(o=v.url.slice(f.length),v.data&&(v.processData||"string"==typeof v.data)&&(f+=(Tt.test(f)?"&":"?")+v.data,delete v.data),!1===v.cache&&(f=f.replace(Dt,"$1"),o=(Tt.test(f)?"&":"?")+"_="+wt.guid+++o),v.url=f+o),v.ifModified&&(S.lastModified[f]&&T.setRequestHeader("If-Modified-Since",S.lastModified[f]),S.etag[f]&&T.setRequestHeader("If-None-Match",S.etag[f])),(v.data&&v.hasContent&&!1!==v.contentType||t.contentType)&&T.setRequestHeader("Content-Type",v.contentType),T.setRequestHeader("Accept",v.dataTypes[0]&&v.accepts[v.dataTypes[0]]?v.accepts[v.dataTypes[0]]+("*"!==v.dataTypes[0]?", "+Rt+"; q=0.01":""):v.accepts["*"]),v.headers)T.setRequestHeader(i,v.headers[i]);if(v.beforeSend&&(!1===v.beforeSend.call(y,T,v)||h))return T.abort();if(u="abort",b.add(v.complete),T.done(v.success),T.fail(v.error),c=Wt(Pt,v,t,T)){if(T.readyState=1,g&&m.trigger("ajaxSend",[T,v]),h)return T;v.async&&0<v.timeout&&(d=C.setTimeout(function(){T.abort("timeout")},v.timeout));try{h=!1,c.send(a,l)}catch(e){if(h)throw e;l(-1,e)}}else l(-1,"No Transport");function l(e,t,n,r){var i,o,a,s,u,l=t;h||(h=!0,d&&C.clearTimeout(d),c=void 0,p=r||"",T.readyState=0<e?4:0,i=200<=e&&e<300||304===e,n&&(s=function(e,t,n){var r,i,o,a,s=e.contents,u=e.dataTypes;while("*"===u[0])u.shift(),void 0===r&&(r=e.mimeType||t.getResponseHeader("Content-Type"));if(r)for(i in s)if(s[i]&&s[i].test(r)){u.unshift(i);break}if(u[0]in n)o=u[0];else{for(i in n){if(!u[0]||e.converters[i+" "+u[0]]){o=i;break}a||(a=i)}o=o||a}if(o)return o!==u[0]&&u.unshift(o),n[o]}(v,T,n)),!i&&-1<S.inArray("script",v.dataTypes)&&S.inArray("json",v.dataTypes)<0&&(v.converters["text script"]=function(){}),s=function(e,t,n,r){var i,o,a,s,u,l={},c=e.dataTypes.slice();if(c[1])for(a in e.converters)l[a.toLowerCase()]=e.converters[a];o=c.shift();while(o)if(e.responseFields[o]&&(n[e.responseFields[o]]=t),!u&&r&&e.dataFilter&&(t=e.dataFilter(t,e.dataType)),u=o,o=c.shift())if("*"===o)o=u;else if("*"!==u&&u!==o){if(!(a=l[u+" "+o]||l["* "+o]))for(i in l)if((s=i.split(" "))[1]===o&&(a=l[u+" "+s[0]]||l["* "+s[0]])){!0===a?a=l[i]:!0!==l[i]&&(o=s[0],c.unshift(s[1]));break}if(!0!==a)if(a&&e["throws"])t=a(t);else try{t=a(t)}catch(e){return{state:"parsererror",error:a?e:"No conversion from "+u+" to "+o}}}return{state:"success",data:t}}(v,s,T,i),i?(v.ifModified&&((u=T.getResponseHeader("Last-Modified"))&&(S.lastModified[f]=u),(u=T.getResponseHeader("etag"))&&(S.etag[f]=u)),204===e||"HEAD"===v.type?l="nocontent":304===e?l="notmodified":(l=s.state,o=s.data,i=!(a=s.error))):(a=l,!e&&l||(l="error",e<0&&(e=0))),T.status=e,T.statusText=(t||l)+"",i?x.resolveWith(y,[o,l,T]):x.rejectWith(y,[T,l,a]),T.statusCode(w),w=void 0,g&&m.trigger(i?"ajaxSuccess":"ajaxError",[T,v,i?o:a]),b.fireWith(y,[T,l]),g&&(m.trigger("ajaxComplete",[T,v]),--S.active||S.event.trigger("ajaxStop")))}return T},getJSON:function(e,t,n){return S.get(e,t,n,"json")},getScript:function(e,t){return S.get(e,void 0,t,"script")}}),S.each(["get","post"],function(e,i){S[i]=function(e,t,n,r){return m(t)&&(r=r||n,n=t,t=void 0),S.ajax(S.extend({url:e,type:i,dataType:r,data:t,success:n},S.isPlainObject(e)&&e))}}),S.ajaxPrefilter(function(e){var t;for(t in e.headers)"content-type"===t.toLowerCase()&&(e.contentType=e.headers[t]||"")}),S._evalUrl=function(e,t,n){return S.ajax({url:e,type:"GET",dataType:"script",cache:!0,async:!1,global:!1,converters:{"text script":function(){}},dataFilter:function(e){S.globalEval(e,t,n)}})},S.fn.extend({wrapAll:function(e){var t;return this[0]&&(m(e)&&(e=e.call(this[0])),t=S(e,this[0].ownerDocument).eq(0).clone(!0),this[0].parentNode&&t.insertBefore(this[0]),t.map(function(){var e=this;while(e.firstElementChild)e=e.firstElementChild;return e}).append(this)),this},wrapInner:function(n){return m(n)?this.each(function(e){S(this).wrapInner(n.call(this,e))}):this.each(function(){var e=S(this),t=e.contents();t.length?t.wrapAll(n):e.append(n)})},wrap:function(t){var n=m(t);return this.each(function(e){S(this).wrapAll(n?t.call(this,e):t)})},unwrap:function(e){return this.parent(e).not("body").each(function(){S(this).replaceWith(this.childNodes)}),this}}),S.expr.pseudos.hidden=function(e){return!S.expr.pseudos.visible(e)},S.expr.pseudos.visible=function(e){return!!(e.offsetWidth||e.offsetHeight||e.getClientRects().length)},S.ajaxSettings.xhr=function(){try{return new C.XMLHttpRequest}catch(e){}};var Bt={0:200,1223:204},$t=S.ajaxSettings.xhr();y.cors=!!$t&&"withCredentials"in $t,y.ajax=$t=!!$t,S.ajaxTransport(function(i){var o,a;if(y.cors||$t&&!i.crossDomain)return{send:function(e,t){var n,r=i.xhr();if(r.open(i.type,i.url,i.async,i.username,i.password),i.xhrFields)for(n in i.xhrFields)r[n]=i.xhrFields[n];for(n in i.mimeType&&r.overrideMimeType&&r.overrideMimeType(i.mimeType),i.crossDomain||e["X-Requested-With"]||(e["X-Requested-With"]="XMLHttpRequest"),e)r.setRequestHeader(n,e[n]);o=function(e){return function(){o&&(o=a=r.onload=r.onerror=r.onabort=r.ontimeout=r.onreadystatechange=null,"abort"===e?r.abort():"error"===e?"number"!=typeof r.status?t(0,"error"):t(r.status,r.statusText):t(Bt[r.status]||r.status,r.statusText,"text"!==(r.responseType||"text")||"string"!=typeof r.responseText?{binary:r.response}:{text:r.responseText},r.getAllResponseHeaders()))}},r.onload=o(),a=r.onerror=r.ontimeout=o("error"),void 0!==r.onabort?r.onabort=a:r.onreadystatechange=function(){4===r.readyState&&C.setTimeout(function(){o&&a()})},o=o("abort");try{r.send(i.hasContent&&i.data||null)}catch(e){if(o)throw e}},abort:function(){o&&o()}}}),S.ajaxPrefilter(function(e){e.crossDomain&&(e.contents.script=!1)}),S.ajaxSetup({accepts:{script:"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"},contents:{script:/\b(?:java|ecma)script\b/},converters:{"text script":function(e){return S.globalEval(e),e}}}),S.ajaxPrefilter("script",function(e){void 0===e.cache&&(e.cache=!1),e.crossDomain&&(e.type="GET")}),S.ajaxTransport("script",function(n){var r,i;if(n.crossDomain||n.scriptAttrs)return{send:function(e,t){r=S("<script>").attr(n.scriptAttrs||{}).prop({charset:n.scriptCharset,src:n.url}).on("load error",i=function(e){r.remove(),i=null,e&&t("error"===e.type?404:200,e.type)}),E.head.appendChild(r[0])},abort:function(){i&&i()}}});var _t,zt=[],Ut=/(=)\?(?=&|$)|\?\?/;S.ajaxSetup({jsonp:"callback",jsonpCallback:function(){var e=zt.pop()||S.expando+"_"+wt.guid++;return this[e]=!0,e}}),S.ajaxPrefilter("json jsonp",function(e,t,n){var r,i,o,a=!1!==e.jsonp&&(Ut.test(e.url)?"url":"string"==typeof e.data&&0===(e.contentType||"").indexOf("application/x-www-form-urlencoded")&&Ut.test(e.data)&&"data");if(a||"jsonp"===e.dataTypes[0])return r=e.jsonpCallback=m(e.jsonpCallback)?e.jsonpCallback():e.jsonpCallback,a?e[a]=e[a].replace(Ut,"$1"+r):!1!==e.jsonp&&(e.url+=(Tt.test(e.url)?"&":"?")+e.jsonp+"="+r),e.converters["script json"]=function(){return o||S.error(r+" was not called"),o[0]},e.dataTypes[0]="json",i=C[r],C[r]=function(){o=arguments},n.always(function(){void 0===i?S(C).removeProp(r):C[r]=i,e[r]&&(e.jsonpCallback=t.jsonpCallback,zt.push(r)),o&&m(i)&&i(o[0]),o=i=void 0}),"script"}),y.createHTMLDocument=((_t=E.implementation.createHTMLDocument("").body).innerHTML="<form></form><form></form>",2===_t.childNodes.length),S.parseHTML=function(e,t,n){return"string"!=typeof e?[]:("boolean"==typeof t&&(n=t,t=!1),t||(y.createHTMLDocument?((r=(t=E.implementation.createHTMLDocument("")).createElement("base")).href=E.location.href,t.head.appendChild(r)):t=E),o=!n&&[],(i=N.exec(e))?[t.createElement(i[1])]:(i=xe([e],t,o),o&&o.length&&S(o).remove(),S.merge([],i.childNodes)));var r,i,o},S.fn.load=function(e,t,n){var r,i,o,a=this,s=e.indexOf(" ");return-1<s&&(r=ht(e.slice(s)),e=e.slice(0,s)),m(t)?(n=t,t=void 0):t&&"object"==typeof t&&(i="POST"),0<a.length&&S.ajax({url:e,type:i||"GET",dataType:"html",data:t}).done(function(e){o=arguments,a.html(r?S("<div>").append(S.parseHTML(e)).find(r):e)}).always(n&&function(e,t){a.each(function(){n.apply(this,o||[e.responseText,t,e])})}),this},S.expr.pseudos.animated=function(t){return S.grep(S.timers,function(e){return t===e.elem}).length},S.offset={setOffset:function(e,t,n){var r,i,o,a,s,u,l=S.css(e,"position"),c=S(e),f={};"static"===l&&(e.style.position="relative"),s=c.offset(),o=S.css(e,"top"),u=S.css(e,"left"),("absolute"===l||"fixed"===l)&&-1<(o+u).indexOf("auto")?(a=(r=c.position()).top,i=r.left):(a=parseFloat(o)||0,i=parseFloat(u)||0),m(t)&&(t=t.call(e,n,S.extend({},s))),null!=t.top&&(f.top=t.top-s.top+a),null!=t.left&&(f.left=t.left-s.left+i),"using"in t?t.using.call(e,f):c.css(f)}},S.fn.extend({offset:function(t){if(arguments.length)return void 0===t?this:this.each(function(e){S.offset.setOffset(this,t,e)});var e,n,r=this[0];return r?r.getClientRects().length?(e=r.getBoundingClientRect(),n=r.ownerDocument.defaultView,{top:e.top+n.pageYOffset,left:e.left+n.pageXOffset}):{top:0,left:0}:void 0},position:function(){if(this[0]){var e,t,n,r=this[0],i={top:0,left:0};if("fixed"===S.css(r,"position"))t=r.getBoundingClientRect();else{t=this.offset(),n=r.ownerDocument,e=r.offsetParent||n.documentElement;while(e&&(e===n.body||e===n.documentElement)&&"static"===S.css(e,"position"))e=e.parentNode;e&&e!==r&&1===e.nodeType&&((i=S(e).offset()).top+=S.css(e,"borderTopWidth",!0),i.left+=S.css(e,"borderLeftWidth",!0))}return{top:t.top-i.top-S.css(r,"marginTop",!0),left:t.left-i.left-S.css(r,"marginLeft",!0)}}},offsetParent:function(){return this.map(function(){var e=this.offsetParent;while(e&&"static"===S.css(e,"position"))e=e.offsetParent;return e||re})}}),S.each({scrollLeft:"pageXOffset",scrollTop:"pageYOffset"},function(t,i){var o="pageYOffset"===i;S.fn[t]=function(e){return $(this,function(e,t,n){var r;if(x(e)?r=e:9===e.nodeType&&(r=e.defaultView),void 0===n)return r?r[i]:e[t];r?r.scrollTo(o?r.pageXOffset:n,o?n:r.pageYOffset):e[t]=n},t,e,arguments.length)}}),S.each(["top","left"],function(e,n){S.cssHooks[n]=Fe(y.pixelPosition,function(e,t){if(t)return t=We(e,n),Pe.test(t)?S(e).position()[n]+"px":t})}),S.each({Height:"height",Width:"width"},function(a,s){S.each({padding:"inner"+a,content:s,"":"outer"+a},function(r,o){S.fn[o]=function(e,t){var n=arguments.length&&(r||"boolean"!=typeof e),i=r||(!0===e||!0===t?"margin":"border");return $(this,function(e,t,n){var r;return x(e)?0===o.indexOf("outer")?e["inner"+a]:e.document.documentElement["client"+a]:9===e.nodeType?(r=e.documentElement,Math.max(e.body["scroll"+a],r["scroll"+a],e.body["offset"+a],r["offset"+a],r["client"+a])):void 0===n?S.css(e,t,i):S.style(e,t,n,i)},s,n?e:void 0,n)}})}),S.each(["ajaxStart","ajaxStop","ajaxComplete","ajaxError","ajaxSuccess","ajaxSend"],function(e,t){S.fn[t]=function(e){return this.on(t,e)}}),S.fn.extend({bind:function(e,t,n){return this.on(e,null,t,n)},unbind:function(e,t){return this.off(e,null,t)},delegate:function(e,t,n,r){return this.on(t,e,n,r)},undelegate:function(e,t,n){return 1===arguments.length?this.off(e,"**"):this.off(t,e||"**",n)},hover:function(e,t){return this.mouseenter(e).mouseleave(t||e)}}),S.each("blur focus focusin focusout resize scroll click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup contextmenu".split(" "),function(e,n){S.fn[n]=function(e,t){return 0<arguments.length?this.on(n,null,e,t):this.trigger(n)}});var Xt=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;S.proxy=function(e,t){var n,r,i;if("string"==typeof t&&(n=e[t],t=e,e=n),m(e))return r=s.call(arguments,2),(i=function(){return e.apply(t||this,r.concat(s.call(arguments)))}).guid=e.guid=e.guid||S.guid++,i},S.holdReady=function(e){e?S.readyWait++:S.ready(!0)},S.isArray=Array.isArray,S.parseJSON=JSON.parse,S.nodeName=A,S.isFunction=m,S.isWindow=x,S.camelCase=X,S.type=w,S.now=Date.now,S.isNumeric=function(e){var t=S.type(e);return("number"===t||"string"===t)&&!isNaN(e-parseFloat(e))},S.trim=function(e){return null==e?"":(e+"").replace(Xt,"")},"function"==typeof define&&define.amd&&define("jquery",[],function(){return S});var Vt=C.jQuery,Gt=C.$;return S.noConflict=function(e){return C.$===S&&(C.$=Gt),e&&C.jQuery===S&&(C.jQuery=Vt),S},"undefined"==typeof e&&(C.jQuery=C.$=S),S});
 
 
 ;
+  // eslint-disable-next-line
   // *** included: external/jquery-ui-1.12.1.min.js ***
 /*! jQuery UI - v1.12.1 - 2016-09-14
 * http://jqueryui.com
@@ -19703,6 +19724,7 @@ this.isMultiLine=o||!a&&this._isContentEditable(this.element),this.valueMethod=t
 this._delay(function(){n===this.counter&&this.refreshPositions(!s)})},_clear:function(t,e){function i(t,e,i){return function(s){i._trigger(t,s,e._uiHash(e))}}this.reverting=!1;var s,n=[];if(!this._noFinalSort&&this.currentItem.parent().length&&this.placeholder.before(this.currentItem),this._noFinalSort=null,this.helper[0]===this.currentItem[0]){for(s in this._storedCSS)("auto"===this._storedCSS[s]||"static"===this._storedCSS[s])&&(this._storedCSS[s]="");this.currentItem.css(this._storedCSS),this._removeClass(this.currentItem,"ui-sortable-helper")}else this.currentItem.show();for(this.fromOutside&&!e&&n.push(function(t){this._trigger("receive",t,this._uiHash(this.fromOutside))}),!this.fromOutside&&this.domPosition.prev===this.currentItem.prev().not(".ui-sortable-helper")[0]&&this.domPosition.parent===this.currentItem.parent()[0]||e||n.push(function(t){this._trigger("update",t,this._uiHash())}),this!==this.currentContainer&&(e||(n.push(function(t){this._trigger("remove",t,this._uiHash())}),n.push(function(t){return function(e){t._trigger("receive",e,this._uiHash(this))}}.call(this,this.currentContainer)),n.push(function(t){return function(e){t._trigger("update",e,this._uiHash(this))}}.call(this,this.currentContainer)))),s=this.containers.length-1;s>=0;s--)e||n.push(i("deactivate",this,this.containers[s])),this.containers[s].containerCache.over&&(n.push(i("out",this,this.containers[s])),this.containers[s].containerCache.over=0);if(this.storedCursor&&(this.document.find("body").css("cursor",this.storedCursor),this.storedStylesheet.remove()),this._storedOpacity&&this.helper.css("opacity",this._storedOpacity),this._storedZIndex&&this.helper.css("zIndex","auto"===this._storedZIndex?"":this._storedZIndex),this.dragging=!1,e||this._trigger("beforeStop",t,this._uiHash()),this.placeholder[0].parentNode.removeChild(this.placeholder[0]),this.cancelHelperRemoval||(this.helper[0]!==this.currentItem[0]&&this.helper.remove(),this.helper=null),!e){for(s=0;n.length>s;s++)n[s].call(this,t);this._trigger("stop",t,this._uiHash())}return this.fromOutside=!1,!this.cancelHelperRemoval},_trigger:function(){t.Widget.prototype._trigger.apply(this,arguments)===!1&&this.cancel()},_uiHash:function(e){var i=e||this;return{helper:i.helper,placeholder:i.placeholder||t([]),position:i.position,originalPosition:i.originalPosition,offset:i.positionAbs,item:i.currentItem,sender:e?e.element:null}}}),t.widget("ui.spinner",{version:"1.12.1",defaultElement:"<input>",widgetEventPrefix:"spin",options:{classes:{"ui-spinner":"ui-corner-all","ui-spinner-down":"ui-corner-br","ui-spinner-up":"ui-corner-tr"},culture:null,icons:{down:"ui-icon-triangle-1-s",up:"ui-icon-triangle-1-n"},incremental:!0,max:null,min:null,numberFormat:null,page:10,step:1,change:null,spin:null,start:null,stop:null},_create:function(){this._setOption("max",this.options.max),this._setOption("min",this.options.min),this._setOption("step",this.options.step),""!==this.value()&&this._value(this.element.val(),!0),this._draw(),this._on(this._events),this._refresh(),this._on(this.window,{beforeunload:function(){this.element.removeAttr("autocomplete")}})},_getCreateOptions:function(){var e=this._super(),i=this.element;return t.each(["min","max","step"],function(t,s){var n=i.attr(s);null!=n&&n.length&&(e[s]=n)}),e},_events:{keydown:function(t){this._start(t)&&this._keydown(t)&&t.preventDefault()},keyup:"_stop",focus:function(){this.previous=this.element.val()},blur:function(t){return this.cancelBlur?(delete this.cancelBlur,void 0):(this._stop(),this._refresh(),this.previous!==this.element.val()&&this._trigger("change",t),void 0)},mousewheel:function(t,e){if(e){if(!this.spinning&&!this._start(t))return!1;this._spin((e>0?1:-1)*this.options.step,t),clearTimeout(this.mousewheelTimer),this.mousewheelTimer=this._delay(function(){this.spinning&&this._stop(t)},100),t.preventDefault()}},"mousedown .ui-spinner-button":function(e){function i(){var e=this.element[0]===t.ui.safeActiveElement(this.document[0]);e||(this.element.trigger("focus"),this.previous=s,this._delay(function(){this.previous=s}))}var s;s=this.element[0]===t.ui.safeActiveElement(this.document[0])?this.previous:this.element.val(),e.preventDefault(),i.call(this),this.cancelBlur=!0,this._delay(function(){delete this.cancelBlur,i.call(this)}),this._start(e)!==!1&&this._repeat(null,t(e.currentTarget).hasClass("ui-spinner-up")?1:-1,e)},"mouseup .ui-spinner-button":"_stop","mouseenter .ui-spinner-button":function(e){return t(e.currentTarget).hasClass("ui-state-active")?this._start(e)===!1?!1:(this._repeat(null,t(e.currentTarget).hasClass("ui-spinner-up")?1:-1,e),void 0):void 0},"mouseleave .ui-spinner-button":"_stop"},_enhance:function(){this.uiSpinner=this.element.attr("autocomplete","off").wrap("<span>").parent().append("<a></a><a></a>")},_draw:function(){this._enhance(),this._addClass(this.uiSpinner,"ui-spinner","ui-widget ui-widget-content"),this._addClass("ui-spinner-input"),this.element.attr("role","spinbutton"),this.buttons=this.uiSpinner.children("a").attr("tabIndex",-1).attr("aria-hidden",!0).button({classes:{"ui-button":""}}),this._removeClass(this.buttons,"ui-corner-all"),this._addClass(this.buttons.first(),"ui-spinner-button ui-spinner-up"),this._addClass(this.buttons.last(),"ui-spinner-button ui-spinner-down"),this.buttons.first().button({icon:this.options.icons.up,showLabel:!1}),this.buttons.last().button({icon:this.options.icons.down,showLabel:!1}),this.buttons.height()>Math.ceil(.5*this.uiSpinner.height())&&this.uiSpinner.height()>0&&this.uiSpinner.height(this.uiSpinner.height())},_keydown:function(e){var i=this.options,s=t.ui.keyCode;switch(e.keyCode){case s.UP:return this._repeat(null,1,e),!0;case s.DOWN:return this._repeat(null,-1,e),!0;case s.PAGE_UP:return this._repeat(null,i.page,e),!0;case s.PAGE_DOWN:return this._repeat(null,-i.page,e),!0}return!1},_start:function(t){return this.spinning||this._trigger("start",t)!==!1?(this.counter||(this.counter=1),this.spinning=!0,!0):!1},_repeat:function(t,e,i){t=t||500,clearTimeout(this.timer),this.timer=this._delay(function(){this._repeat(40,e,i)},t),this._spin(e*this.options.step,i)},_spin:function(t,e){var i=this.value()||0;this.counter||(this.counter=1),i=this._adjustValue(i+t*this._increment(this.counter)),this.spinning&&this._trigger("spin",e,{value:i})===!1||(this._value(i),this.counter++)},_increment:function(e){var i=this.options.incremental;return i?t.isFunction(i)?i(e):Math.floor(e*e*e/5e4-e*e/500+17*e/200+1):1},_precision:function(){var t=this._precisionOf(this.options.step);return null!==this.options.min&&(t=Math.max(t,this._precisionOf(this.options.min))),t},_precisionOf:function(t){var e=""+t,i=e.indexOf(".");return-1===i?0:e.length-i-1},_adjustValue:function(t){var e,i,s=this.options;return e=null!==s.min?s.min:0,i=t-e,i=Math.round(i/s.step)*s.step,t=e+i,t=parseFloat(t.toFixed(this._precision())),null!==s.max&&t>s.max?s.max:null!==s.min&&s.min>t?s.min:t},_stop:function(t){this.spinning&&(clearTimeout(this.timer),clearTimeout(this.mousewheelTimer),this.counter=0,this.spinning=!1,this._trigger("stop",t))},_setOption:function(t,e){var i,s,n;return"culture"===t||"numberFormat"===t?(i=this._parse(this.element.val()),this.options[t]=e,this.element.val(this._format(i)),void 0):(("max"===t||"min"===t||"step"===t)&&"string"==typeof e&&(e=this._parse(e)),"icons"===t&&(s=this.buttons.first().find(".ui-icon"),this._removeClass(s,null,this.options.icons.up),this._addClass(s,null,e.up),n=this.buttons.last().find(".ui-icon"),this._removeClass(n,null,this.options.icons.down),this._addClass(n,null,e.down)),this._super(t,e),void 0)},_setOptionDisabled:function(t){this._super(t),this._toggleClass(this.uiSpinner,null,"ui-state-disabled",!!t),this.element.prop("disabled",!!t),this.buttons.button(t?"disable":"enable")},_setOptions:r(function(t){this._super(t)}),_parse:function(t){return"string"==typeof t&&""!==t&&(t=window.Globalize&&this.options.numberFormat?Globalize.parseFloat(t,10,this.options.culture):+t),""===t||isNaN(t)?null:t},_format:function(t){return""===t?"":window.Globalize&&this.options.numberFormat?Globalize.format(t,this.options.numberFormat,this.options.culture):t},_refresh:function(){this.element.attr({"aria-valuemin":this.options.min,"aria-valuemax":this.options.max,"aria-valuenow":this._parse(this.element.val())})},isValid:function(){var t=this.value();return null===t?!1:t===this._adjustValue(t)},_value:function(t,e){var i;""!==t&&(i=this._parse(t),null!==i&&(e||(i=this._adjustValue(i)),t=this._format(i))),this.element.val(t),this._refresh()},_destroy:function(){this.element.prop("disabled",!1).removeAttr("autocomplete role aria-valuemin aria-valuemax aria-valuenow"),this.uiSpinner.replaceWith(this.element)},stepUp:r(function(t){this._stepUp(t)}),_stepUp:function(t){this._start()&&(this._spin((t||1)*this.options.step),this._stop())},stepDown:r(function(t){this._stepDown(t)}),_stepDown:function(t){this._start()&&(this._spin((t||1)*-this.options.step),this._stop())},pageUp:r(function(t){this._stepUp((t||1)*this.options.page)}),pageDown:r(function(t){this._stepDown((t||1)*this.options.page)}),value:function(t){return arguments.length?(r(this._value).call(this,t),void 0):this._parse(this.element.val())},widget:function(){return this.uiSpinner}}),t.uiBackCompat!==!1&&t.widget("ui.spinner",t.ui.spinner,{_enhance:function(){this.uiSpinner=this.element.attr("autocomplete","off").wrap(this._uiSpinnerHtml()).parent().append(this._buttonHtml())},_uiSpinnerHtml:function(){return"<span>"},_buttonHtml:function(){return"<a></a><a></a>"}}),t.ui.spinner,t.widget("ui.tabs",{version:"1.12.1",delay:300,options:{active:null,classes:{"ui-tabs":"ui-corner-all","ui-tabs-nav":"ui-corner-all","ui-tabs-panel":"ui-corner-bottom","ui-tabs-tab":"ui-corner-top"},collapsible:!1,event:"click",heightStyle:"content",hide:null,show:null,activate:null,beforeActivate:null,beforeLoad:null,load:null},_isLocal:function(){var t=/#.*$/;return function(e){var i,s;i=e.href.replace(t,""),s=location.href.replace(t,"");try{i=decodeURIComponent(i)}catch(n){}try{s=decodeURIComponent(s)}catch(n){}return e.hash.length>1&&i===s}}(),_create:function(){var e=this,i=this.options;this.running=!1,this._addClass("ui-tabs","ui-widget ui-widget-content"),this._toggleClass("ui-tabs-collapsible",null,i.collapsible),this._processTabs(),i.active=this._initialActive(),t.isArray(i.disabled)&&(i.disabled=t.unique(i.disabled.concat(t.map(this.tabs.filter(".ui-state-disabled"),function(t){return e.tabs.index(t)}))).sort()),this.active=this.options.active!==!1&&this.anchors.length?this._findActive(i.active):t(),this._refresh(),this.active.length&&this.load(i.active)},_initialActive:function(){var e=this.options.active,i=this.options.collapsible,s=location.hash.substring(1);return null===e&&(s&&this.tabs.each(function(i,n){return t(n).attr("aria-controls")===s?(e=i,!1):void 0}),null===e&&(e=this.tabs.index(this.tabs.filter(".ui-tabs-active"))),(null===e||-1===e)&&(e=this.tabs.length?0:!1)),e!==!1&&(e=this.tabs.index(this.tabs.eq(e)),-1===e&&(e=i?!1:0)),!i&&e===!1&&this.anchors.length&&(e=0),e},_getCreateEventData:function(){return{tab:this.active,panel:this.active.length?this._getPanelForTab(this.active):t()}},_tabKeydown:function(e){var i=t(t.ui.safeActiveElement(this.document[0])).closest("li"),s=this.tabs.index(i),n=!0;if(!this._handlePageNav(e)){switch(e.keyCode){case t.ui.keyCode.RIGHT:case t.ui.keyCode.DOWN:s++;break;case t.ui.keyCode.UP:case t.ui.keyCode.LEFT:n=!1,s--;break;case t.ui.keyCode.END:s=this.anchors.length-1;break;case t.ui.keyCode.HOME:s=0;break;case t.ui.keyCode.SPACE:return e.preventDefault(),clearTimeout(this.activating),this._activate(s),void 0;case t.ui.keyCode.ENTER:return e.preventDefault(),clearTimeout(this.activating),this._activate(s===this.options.active?!1:s),void 0;default:return}e.preventDefault(),clearTimeout(this.activating),s=this._focusNextTab(s,n),e.ctrlKey||e.metaKey||(i.attr("aria-selected","false"),this.tabs.eq(s).attr("aria-selected","true"),this.activating=this._delay(function(){this.option("active",s)},this.delay))}},_panelKeydown:function(e){this._handlePageNav(e)||e.ctrlKey&&e.keyCode===t.ui.keyCode.UP&&(e.preventDefault(),this.active.trigger("focus"))},_handlePageNav:function(e){return e.altKey&&e.keyCode===t.ui.keyCode.PAGE_UP?(this._activate(this._focusNextTab(this.options.active-1,!1)),!0):e.altKey&&e.keyCode===t.ui.keyCode.PAGE_DOWN?(this._activate(this._focusNextTab(this.options.active+1,!0)),!0):void 0},_findNextTab:function(e,i){function s(){return e>n&&(e=0),0>e&&(e=n),e}for(var n=this.tabs.length-1;-1!==t.inArray(s(),this.options.disabled);)e=i?e+1:e-1;return e},_focusNextTab:function(t,e){return t=this._findNextTab(t,e),this.tabs.eq(t).trigger("focus"),t},_setOption:function(t,e){return"active"===t?(this._activate(e),void 0):(this._super(t,e),"collapsible"===t&&(this._toggleClass("ui-tabs-collapsible",null,e),e||this.options.active!==!1||this._activate(0)),"event"===t&&this._setupEvents(e),"heightStyle"===t&&this._setupHeightStyle(e),void 0)},_sanitizeSelector:function(t){return t?t.replace(/[!"$%&'()*+,.\/:;<=>?@\[\]\^`{|}~]/g,"\\$&"):""},refresh:function(){var e=this.options,i=this.tablist.children(":has(a[href])");e.disabled=t.map(i.filter(".ui-state-disabled"),function(t){return i.index(t)}),this._processTabs(),e.active!==!1&&this.anchors.length?this.active.length&&!t.contains(this.tablist[0],this.active[0])?this.tabs.length===e.disabled.length?(e.active=!1,this.active=t()):this._activate(this._findNextTab(Math.max(0,e.active-1),!1)):e.active=this.tabs.index(this.active):(e.active=!1,this.active=t()),this._refresh()},_refresh:function(){this._setOptionDisabled(this.options.disabled),this._setupEvents(this.options.event),this._setupHeightStyle(this.options.heightStyle),this.tabs.not(this.active).attr({"aria-selected":"false","aria-expanded":"false",tabIndex:-1}),this.panels.not(this._getPanelForTab(this.active)).hide().attr({"aria-hidden":"true"}),this.active.length?(this.active.attr({"aria-selected":"true","aria-expanded":"true",tabIndex:0}),this._addClass(this.active,"ui-tabs-active","ui-state-active"),this._getPanelForTab(this.active).show().attr({"aria-hidden":"false"})):this.tabs.eq(0).attr("tabIndex",0)},_processTabs:function(){var e=this,i=this.tabs,s=this.anchors,n=this.panels;this.tablist=this._getList().attr("role","tablist"),this._addClass(this.tablist,"ui-tabs-nav","ui-helper-reset ui-helper-clearfix ui-widget-header"),this.tablist.on("mousedown"+this.eventNamespace,"> li",function(e){t(this).is(".ui-state-disabled")&&e.preventDefault()}).on("focus"+this.eventNamespace,".ui-tabs-anchor",function(){t(this).closest("li").is(".ui-state-disabled")&&this.blur()}),this.tabs=this.tablist.find("> li:has(a[href])").attr({role:"tab",tabIndex:-1}),this._addClass(this.tabs,"ui-tabs-tab","ui-state-default"),this.anchors=this.tabs.map(function(){return t("a",this)[0]}).attr({role:"presentation",tabIndex:-1}),this._addClass(this.anchors,"ui-tabs-anchor"),this.panels=t(),this.anchors.each(function(i,s){var n,o,a,r=t(s).uniqueId().attr("id"),h=t(s).closest("li"),l=h.attr("aria-controls");e._isLocal(s)?(n=s.hash,a=n.substring(1),o=e.element.find(e._sanitizeSelector(n))):(a=h.attr("aria-controls")||t({}).uniqueId()[0].id,n="#"+a,o=e.element.find(n),o.length||(o=e._createPanel(a),o.insertAfter(e.panels[i-1]||e.tablist)),o.attr("aria-live","polite")),o.length&&(e.panels=e.panels.add(o)),l&&h.data("ui-tabs-aria-controls",l),h.attr({"aria-controls":a,"aria-labelledby":r}),o.attr("aria-labelledby",r)}),this.panels.attr("role","tabpanel"),this._addClass(this.panels,"ui-tabs-panel","ui-widget-content"),i&&(this._off(i.not(this.tabs)),this._off(s.not(this.anchors)),this._off(n.not(this.panels)))},_getList:function(){return this.tablist||this.element.find("ol, ul").eq(0)},_createPanel:function(e){return t("<div>").attr("id",e).data("ui-tabs-destroy",!0)},_setOptionDisabled:function(e){var i,s,n;for(t.isArray(e)&&(e.length?e.length===this.anchors.length&&(e=!0):e=!1),n=0;s=this.tabs[n];n++)i=t(s),e===!0||-1!==t.inArray(n,e)?(i.attr("aria-disabled","true"),this._addClass(i,null,"ui-state-disabled")):(i.removeAttr("aria-disabled"),this._removeClass(i,null,"ui-state-disabled"));this.options.disabled=e,this._toggleClass(this.widget(),this.widgetFullName+"-disabled",null,e===!0)},_setupEvents:function(e){var i={};e&&t.each(e.split(" "),function(t,e){i[e]="_eventHandler"}),this._off(this.anchors.add(this.tabs).add(this.panels)),this._on(!0,this.anchors,{click:function(t){t.preventDefault()}}),this._on(this.anchors,i),this._on(this.tabs,{keydown:"_tabKeydown"}),this._on(this.panels,{keydown:"_panelKeydown"}),this._focusable(this.tabs),this._hoverable(this.tabs)},_setupHeightStyle:function(e){var i,s=this.element.parent();"fill"===e?(i=s.height(),i-=this.element.outerHeight()-this.element.height(),this.element.siblings(":visible").each(function(){var e=t(this),s=e.css("position");"absolute"!==s&&"fixed"!==s&&(i-=e.outerHeight(!0))}),this.element.children().not(this.panels).each(function(){i-=t(this).outerHeight(!0)}),this.panels.each(function(){t(this).height(Math.max(0,i-t(this).innerHeight()+t(this).height()))}).css("overflow","auto")):"auto"===e&&(i=0,this.panels.each(function(){i=Math.max(i,t(this).height("").height())}).height(i))},_eventHandler:function(e){var i=this.options,s=this.active,n=t(e.currentTarget),o=n.closest("li"),a=o[0]===s[0],r=a&&i.collapsible,h=r?t():this._getPanelForTab(o),l=s.length?this._getPanelForTab(s):t(),c={oldTab:s,oldPanel:l,newTab:r?t():o,newPanel:h};e.preventDefault(),o.hasClass("ui-state-disabled")||o.hasClass("ui-tabs-loading")||this.running||a&&!i.collapsible||this._trigger("beforeActivate",e,c)===!1||(i.active=r?!1:this.tabs.index(o),this.active=a?t():o,this.xhr&&this.xhr.abort(),l.length||h.length||t.error("jQuery UI Tabs: Mismatching fragment identifier."),h.length&&this.load(this.tabs.index(o),e),this._toggle(e,c))},_toggle:function(e,i){function s(){o.running=!1,o._trigger("activate",e,i)}function n(){o._addClass(i.newTab.closest("li"),"ui-tabs-active","ui-state-active"),a.length&&o.options.show?o._show(a,o.options.show,s):(a.show(),s())}var o=this,a=i.newPanel,r=i.oldPanel;this.running=!0,r.length&&this.options.hide?this._hide(r,this.options.hide,function(){o._removeClass(i.oldTab.closest("li"),"ui-tabs-active","ui-state-active"),n()}):(this._removeClass(i.oldTab.closest("li"),"ui-tabs-active","ui-state-active"),r.hide(),n()),r.attr("aria-hidden","true"),i.oldTab.attr({"aria-selected":"false","aria-expanded":"false"}),a.length&&r.length?i.oldTab.attr("tabIndex",-1):a.length&&this.tabs.filter(function(){return 0===t(this).attr("tabIndex")}).attr("tabIndex",-1),a.attr("aria-hidden","false"),i.newTab.attr({"aria-selected":"true","aria-expanded":"true",tabIndex:0})},_activate:function(e){var i,s=this._findActive(e);s[0]!==this.active[0]&&(s.length||(s=this.active),i=s.find(".ui-tabs-anchor")[0],this._eventHandler({target:i,currentTarget:i,preventDefault:t.noop}))},_findActive:function(e){return e===!1?t():this.tabs.eq(e)},_getIndex:function(e){return"string"==typeof e&&(e=this.anchors.index(this.anchors.filter("[href$='"+t.ui.escapeSelector(e)+"']"))),e},_destroy:function(){this.xhr&&this.xhr.abort(),this.tablist.removeAttr("role").off(this.eventNamespace),this.anchors.removeAttr("role tabIndex").removeUniqueId(),this.tabs.add(this.panels).each(function(){t.data(this,"ui-tabs-destroy")?t(this).remove():t(this).removeAttr("role tabIndex aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded")}),this.tabs.each(function(){var e=t(this),i=e.data("ui-tabs-aria-controls");i?e.attr("aria-controls",i).removeData("ui-tabs-aria-controls"):e.removeAttr("aria-controls")}),this.panels.show(),"content"!==this.options.heightStyle&&this.panels.css("height","")},enable:function(e){var i=this.options.disabled;i!==!1&&(void 0===e?i=!1:(e=this._getIndex(e),i=t.isArray(i)?t.map(i,function(t){return t!==e?t:null}):t.map(this.tabs,function(t,i){return i!==e?i:null})),this._setOptionDisabled(i))},disable:function(e){var i=this.options.disabled;if(i!==!0){if(void 0===e)i=!0;else{if(e=this._getIndex(e),-1!==t.inArray(e,i))return;i=t.isArray(i)?t.merge([e],i).sort():[e]}this._setOptionDisabled(i)}},load:function(e,i){e=this._getIndex(e);var s=this,n=this.tabs.eq(e),o=n.find(".ui-tabs-anchor"),a=this._getPanelForTab(n),r={tab:n,panel:a},h=function(t,e){"abort"===e&&s.panels.stop(!1,!0),s._removeClass(n,"ui-tabs-loading"),a.removeAttr("aria-busy"),t===s.xhr&&delete s.xhr};this._isLocal(o[0])||(this.xhr=t.ajax(this._ajaxSettings(o,i,r)),this.xhr&&"canceled"!==this.xhr.statusText&&(this._addClass(n,"ui-tabs-loading"),a.attr("aria-busy","true"),this.xhr.done(function(t,e,n){setTimeout(function(){a.html(t),s._trigger("load",i,r),h(n,e)},1)}).fail(function(t,e){setTimeout(function(){h(t,e)},1)})))},_ajaxSettings:function(e,i,s){var n=this;return{url:e.attr("href").replace(/#.*$/,""),beforeSend:function(e,o){return n._trigger("beforeLoad",i,t.extend({jqXHR:e,ajaxSettings:o},s))}}},_getPanelForTab:function(e){var i=t(e).attr("aria-controls");return this.element.find(this._sanitizeSelector("#"+i))}}),t.uiBackCompat!==!1&&t.widget("ui.tabs",t.ui.tabs,{_processTabs:function(){this._superApply(arguments),this._addClass(this.tabs,"ui-tab")}}),t.ui.tabs,t.widget("ui.tooltip",{version:"1.12.1",options:{classes:{"ui-tooltip":"ui-corner-all ui-widget-shadow"},content:function(){var e=t(this).attr("title")||"";return t("<a>").text(e).html()},hide:!0,items:"[title]:not([disabled])",position:{my:"left top+15",at:"left bottom",collision:"flipfit flip"},show:!0,track:!1,close:null,open:null},_addDescribedBy:function(e,i){var s=(e.attr("aria-describedby")||"").split(/\s+/);s.push(i),e.data("ui-tooltip-id",i).attr("aria-describedby",t.trim(s.join(" ")))},_removeDescribedBy:function(e){var i=e.data("ui-tooltip-id"),s=(e.attr("aria-describedby")||"").split(/\s+/),n=t.inArray(i,s);-1!==n&&s.splice(n,1),e.removeData("ui-tooltip-id"),s=t.trim(s.join(" ")),s?e.attr("aria-describedby",s):e.removeAttr("aria-describedby")},_create:function(){this._on({mouseover:"open",focusin:"open"}),this.tooltips={},this.parents={},this.liveRegion=t("<div>").attr({role:"log","aria-live":"assertive","aria-relevant":"additions"}).appendTo(this.document[0].body),this._addClass(this.liveRegion,null,"ui-helper-hidden-accessible"),this.disabledTitles=t([])},_setOption:function(e,i){var s=this;this._super(e,i),"content"===e&&t.each(this.tooltips,function(t,e){s._updateContent(e.element)})},_setOptionDisabled:function(t){this[t?"_disable":"_enable"]()},_disable:function(){var e=this;t.each(this.tooltips,function(i,s){var n=t.Event("blur");n.target=n.currentTarget=s.element[0],e.close(n,!0)}),this.disabledTitles=this.disabledTitles.add(this.element.find(this.options.items).addBack().filter(function(){var e=t(this);return e.is("[title]")?e.data("ui-tooltip-title",e.attr("title")).removeAttr("title"):void 0}))},_enable:function(){this.disabledTitles.each(function(){var e=t(this);e.data("ui-tooltip-title")&&e.attr("title",e.data("ui-tooltip-title"))}),this.disabledTitles=t([])},open:function(e){var i=this,s=t(e?e.target:this.element).closest(this.options.items);s.length&&!s.data("ui-tooltip-id")&&(s.attr("title")&&s.data("ui-tooltip-title",s.attr("title")),s.data("ui-tooltip-open",!0),e&&"mouseover"===e.type&&s.parents().each(function(){var e,s=t(this);s.data("ui-tooltip-open")&&(e=t.Event("blur"),e.target=e.currentTarget=this,i.close(e,!0)),s.attr("title")&&(s.uniqueId(),i.parents[this.id]={element:this,title:s.attr("title")},s.attr("title",""))}),this._registerCloseHandlers(e,s),this._updateContent(s,e))},_updateContent:function(t,e){var i,s=this.options.content,n=this,o=e?e.type:null;return"string"==typeof s||s.nodeType||s.jquery?this._open(e,t,s):(i=s.call(t[0],function(i){n._delay(function(){t.data("ui-tooltip-open")&&(e&&(e.type=o),this._open(e,t,i))})}),i&&this._open(e,t,i),void 0)},_open:function(e,i,s){function n(t){l.of=t,a.is(":hidden")||a.position(l)}var o,a,r,h,l=t.extend({},this.options.position);if(s){if(o=this._find(i))return o.tooltip.find(".ui-tooltip-content").html(s),void 0;i.is("[title]")&&(e&&"mouseover"===e.type?i.attr("title",""):i.removeAttr("title")),o=this._tooltip(i),a=o.tooltip,this._addDescribedBy(i,a.attr("id")),a.find(".ui-tooltip-content").html(s),this.liveRegion.children().hide(),h=t("<div>").html(a.find(".ui-tooltip-content").html()),h.removeAttr("name").find("[name]").removeAttr("name"),h.removeAttr("id").find("[id]").removeAttr("id"),h.appendTo(this.liveRegion),this.options.track&&e&&/^mouse/.test(e.type)?(this._on(this.document,{mousemove:n}),n(e)):a.position(t.extend({of:i},this.options.position)),a.hide(),this._show(a,this.options.show),this.options.track&&this.options.show&&this.options.show.delay&&(r=this.delayedShow=setInterval(function(){a.is(":visible")&&(n(l.of),clearInterval(r))},t.fx.interval)),this._trigger("open",e,{tooltip:a})}},_registerCloseHandlers:function(e,i){var s={keyup:function(e){if(e.keyCode===t.ui.keyCode.ESCAPE){var s=t.Event(e);s.currentTarget=i[0],this.close(s,!0)}}};i[0]!==this.element[0]&&(s.remove=function(){this._removeTooltip(this._find(i).tooltip)}),e&&"mouseover"!==e.type||(s.mouseleave="close"),e&&"focusin"!==e.type||(s.focusout="close"),this._on(!0,i,s)},close:function(e){var i,s=this,n=t(e?e.currentTarget:this.element),o=this._find(n);return o?(i=o.tooltip,o.closing||(clearInterval(this.delayedShow),n.data("ui-tooltip-title")&&!n.attr("title")&&n.attr("title",n.data("ui-tooltip-title")),this._removeDescribedBy(n),o.hiding=!0,i.stop(!0),this._hide(i,this.options.hide,function(){s._removeTooltip(t(this))}),n.removeData("ui-tooltip-open"),this._off(n,"mouseleave focusout keyup"),n[0]!==this.element[0]&&this._off(n,"remove"),this._off(this.document,"mousemove"),e&&"mouseleave"===e.type&&t.each(this.parents,function(e,i){t(i.element).attr("title",i.title),delete s.parents[e]}),o.closing=!0,this._trigger("close",e,{tooltip:i}),o.hiding||(o.closing=!1)),void 0):(n.removeData("ui-tooltip-open"),void 0)},_tooltip:function(e){var i=t("<div>").attr("role","tooltip"),s=t("<div>").appendTo(i),n=i.uniqueId().attr("id");return this._addClass(s,"ui-tooltip-content"),this._addClass(i,"ui-tooltip","ui-widget ui-widget-content"),i.appendTo(this._appendTo(e)),this.tooltips[n]={element:e,tooltip:i}},_find:function(t){var e=t.data("ui-tooltip-id");return e?this.tooltips[e]:null},_removeTooltip:function(t){t.remove(),delete this.tooltips[t.attr("id")]},_appendTo:function(t){var e=t.closest(".ui-front, dialog");return e.length||(e=this.document[0].body),e},_destroy:function(){var e=this;t.each(this.tooltips,function(i,s){var n=t.Event("blur"),o=s.element;n.target=n.currentTarget=o[0],e.close(n,!0),t("#"+i).remove(),o.data("ui-tooltip-title")&&(o.attr("title")||o.attr("title",o.data("ui-tooltip-title")),o.removeData("ui-tooltip-title"))}),this.liveRegion.remove()}}),t.uiBackCompat!==!1&&t.widget("ui.tooltip",t.ui.tooltip,{options:{tooltipClass:null},_tooltip:function(){var t=this._superApply(arguments);return this.options.tooltipClass&&t.tooltip.addClass(this.options.tooltipClass),t}}),t.ui.tooltip});
 
 ;
+  // eslint-disable-next-line
   // *** included: external/taphold.js ***
 (function ($) {
   function namespaced (name, ns) {
@@ -19789,6 +19811,7 @@ this._delay(function(){n===this.counter&&this.refreshPositions(!s)})},_clear:fun
 
 
 ;
+  // eslint-disable-next-line
   // *** included: external/jquery.qrcode.min.js ***
 (function(r){r.fn.qrcode=function(h){var s;function u(a){this.mode=s;this.data=a}function o(a,c){this.typeNumber=a;this.errorCorrectLevel=c;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[]}function q(a,c){if(void 0==a.length)throw Error(a.length+"/"+c);for(var d=0;d<a.length&&0==a[d];)d++;this.num=Array(a.length-d+c);for(var b=0;b<a.length-d;b++)this.num[b]=a[b+d]}function p(a,c){this.totalCount=a;this.dataCount=c}function t(){this.buffer=[];this.length=0}u.prototype={getLength:function(){return this.data.length},
 write:function(a){for(var c=0;c<this.data.length;c++)a.put(this.data.charCodeAt(c),8)}};o.prototype={addData:function(a){this.dataList.push(new u(a));this.dataCache=null},isDark:function(a,c){if(0>a||this.moduleCount<=a||0>c||this.moduleCount<=c)throw Error(a+","+c);return this.modules[a][c]},getModuleCount:function(){return this.moduleCount},make:function(){if(1>this.typeNumber){for(var a=1,a=1;40>a;a++){for(var c=p.getRSBlocks(a,this.errorCorrectLevel),d=new t,b=0,e=0;e<c.length;e++)b+=c[e].dataCount;
@@ -19821,13 +19844,13 @@ d+"px").css("background-color",a.isDark(e,i)?h.foreground:h.background).appendTo
 
 
 ;
-
 } catch (e) {
   log.error("External's js loading failed");
   throw e;
 }
 
-if (document.readyState === 'complete') { // IITCm
+if (document.readyState === 'complete') {
+  // IITCm
   setTimeout(boot);
 } else {
   window.addEventListener('load', function () {
@@ -20314,7 +20337,6 @@ chat.addChannel = function (channelDesc) {
  * Sets up all channels starting from intel COMM
  *
  * @function setupTabs
- * @param {ChannelDescription} channelDesc - channel description
  */
 chat.setupTabs = function () {
   isTabsSetup = true;
@@ -21708,34 +21730,35 @@ IITC.comm.declarativeMessageFilter = {
 // *** module: data_cache.js ***
 (function () {
 var log = ulog('data_cache');
+/* global L -- eslint */
+
 /**
  * DataCache constructor.
  * Manages a cache for map data tiles. The cache has a maximum age and size limit,
  * and these limits can vary for mobile and desktop environments.
  * @class DataCache
  */
-window.DataCache = function() {
-  this.REQUEST_CACHE_FRESH_AGE = 3*60;  // if younger than this, use data in the cache rather than fetching from the server
+window.DataCache = function () {
+  this.REQUEST_CACHE_FRESH_AGE = 3 * 60; // if younger than this, use data in the cache rather than fetching from the server
 
-  this.REQUEST_CACHE_MAX_AGE = 5*60;  // maximum cache age. entries are deleted from the cache after this time
+  this.REQUEST_CACHE_MAX_AGE = 5 * 60; // maximum cache age. entries are deleted from the cache after this time
 
-  //NOTE: characters are 16 bits (ECMAScript standard), so divide byte size by two for correct limit
+  // NOTE: characters are 16 bits (ECMAScript standard), so divide byte size by two for correct limit
   if (L.Browser.mobile) {
     // on mobile devices, smaller cache size
-    this.REQUEST_CACHE_MAX_ITEMS = 300;  // if more than this many entries, expire early
-    this.REQUEST_CACHE_MAX_CHARS = 5000000/2; // or more than this total size
+    this.REQUEST_CACHE_MAX_ITEMS = 300; // if more than this many entries, expire early
+    this.REQUEST_CACHE_MAX_CHARS = 5000000 / 2; // or more than this total size
   } else {
     // but on desktop, allow more
-    this.REQUEST_CACHE_MAX_ITEMS = 1000;  // if more than this many entries, expire early
-    this.REQUEST_CACHE_MAX_CHARS = 20000000/2; // or more than this total size
+    this.REQUEST_CACHE_MAX_ITEMS = 1000; // if more than this many entries, expire early
+    this.REQUEST_CACHE_MAX_CHARS = 20000000 / 2; // or more than this total size
   }
 
   this._cache = {};
   this._cacheCharSize = 0;
 
   this._interval = undefined;
-
-}
+};
 
 /**
  * Stores data in the cache.
@@ -21757,7 +21780,7 @@ window.DataCache.prototype.store = function (qk, data) {
 
   this._cacheCharSize += dataStr.length;
   this._cache[qk] = { time: time, expire: expire, dataStr: dataStr };
-}
+};
 
 /**
  * Removes a specific entry from the cache based on its key.
@@ -21766,12 +21789,12 @@ window.DataCache.prototype.store = function (qk, data) {
  * @memberof DataCache
  * @param {string} qk - The key of the data to remove from the cache.
  */
-window.DataCache.prototype.remove = function(qk) {
+window.DataCache.prototype.remove = function (qk) {
   if (qk in this._cache) {
     this._cacheCharSize -= this._cache[qk].dataStr.length;
     delete this._cache[qk];
   }
-}
+};
 
 /**
  * Retrieves the data for a given key from the cache.
@@ -21781,10 +21804,10 @@ window.DataCache.prototype.remove = function(qk) {
  * @param {string} qk - The key of the data to retrieve.
  * @returns {object|undefined} The cached data if it exists, otherwise undefined.
  */
-window.DataCache.prototype.get = function(qk) {
+window.DataCache.prototype.get = function (qk) {
   if (qk in this._cache) return JSON.parse(this._cache[qk].dataStr);
   else return undefined;
-}
+};
 
 /**
  * Retrieves the timestamp for the given key from the cache.
@@ -21794,10 +21817,10 @@ window.DataCache.prototype.get = function(qk) {
  * @param {string} qk - The key of the data to check.
  * @returns {number} The timestamp of the data if it exists, otherwise 0.
  */
-window.DataCache.prototype.getTime = function(qk) {
+window.DataCache.prototype.getTime = function (qk) {
   if (qk in this._cache) return this._cache[qk].time;
   else return 0;
-}
+};
 
 /**
  * Checks if the data for the given key is fresh.
@@ -21807,7 +21830,7 @@ window.DataCache.prototype.getTime = function(qk) {
  * @param {string} qk - The key of the data to check.
  * @returns {boolean|undefined} True if the data is fresh, false if it's stale, undefined if data doesn't exist.
  */
-window.DataCache.prototype.isFresh = function(qk) {
+window.DataCache.prototype.isFresh = function (qk) {
   if (qk in this._cache) {
     var d = new Date();
     var t = d.getTime();
@@ -21816,7 +21839,7 @@ window.DataCache.prototype.isFresh = function(qk) {
   }
 
   return undefined;
-}
+};
 
 /**
  * Starts the interval to periodically run the cache expiration.
@@ -21825,12 +21848,14 @@ window.DataCache.prototype.isFresh = function(qk) {
  * @memberof DataCache
  * @param {number} period - The period in seconds between each expiration run.
  */
-window.DataCache.prototype.startExpireInterval = function(period) {
+window.DataCache.prototype.startExpireInterval = function (period) {
   if (this._interval === undefined) {
     var savedContext = this;
-    this._interval = setInterval (function() { savedContext.runExpire(); }, period*1000);
+    this._interval = setInterval(function () {
+      savedContext.runExpire();
+    }, period * 1000);
   }
-}
+};
 
 /**
  * Stops the interval that checks for cache expiration.
@@ -21840,12 +21865,12 @@ window.DataCache.prototype.startExpireInterval = function(period) {
  * @function
  * @memberof DataCache.prototype
  */
-window.DataCache.prototype.stopExpireInterval = function() {
+window.DataCache.prototype.stopExpireInterval = function () {
   if (this._interval !== undefined) {
     clearInterval(this._interval);
     this._interval = undefined;
   }
-}
+};
 
 /**
  * Runs the cache expiration process.
@@ -21855,9 +21880,9 @@ window.DataCache.prototype.stopExpireInterval = function() {
  * @function
  * @memberof DataCache.prototype
  */
-window.DataCache.prototype.runExpire = function() {
+window.DataCache.prototype.runExpire = function () {
   var d = new Date();
-  var t = d.getTime()-this.REQUEST_CACHE_MAX_AGE*1000;
+  var t = d.getTime() - this.REQUEST_CACHE_MAX_AGE * 1000;
 
   var cacheSize = Object.keys(this._cache).length;
 
@@ -21868,7 +21893,7 @@ window.DataCache.prototype.runExpire = function() {
       cacheSize--;
     }
   }
-}
+};
 
 
 })();
@@ -21877,6 +21902,8 @@ window.DataCache.prototype.runExpire = function() {
 // *** module: dialog.js ***
 (function () {
 var log = ulog('dialog');
+/* global log -- eslint */
+
 /**
  * @file Dialogs inspired by TES III: Morrowind. Long live House Telvanni.
  * @module dialog
@@ -21917,19 +21944,19 @@ window.DIALOG_ID = 0;
  * If you previously applied a class to your dialog after creating it with alert(),
  * dialogClass may be particularly useful.
  */
-window.dialog = function(options) {
+window.dialog = function (options) {
   // Override for smartphones. Preserve default behavior and create a modal dialog.
   options = options || {};
 
   // Build an identifier for this dialog
-  var id = 'dialog-' + (options.modal ? 'modal' : (options.id ? options.id : 'anon-' + window.DIALOG_ID++));
+  var id = 'dialog-' + (options.modal ? 'modal' : options.id ? options.id : 'anon-' + window.DIALOG_ID++);
   var jqID = '#' + id;
   var html = '';
 
   // Convert text to HTML if necessary
-  if(options.text) {
+  if (options.text) {
     html = window.convertTextToTableMagic(options.text);
-  } else if(options.html) {
+  } else if (options.html) {
     html = options.html;
   } else {
     log.error('window.dialog: warning: no text in dialog');
@@ -21937,25 +21964,25 @@ window.dialog = function(options) {
   }
 
   // Modal dialogs should not be draggable
-  if(options.modal) {
+  if (options.modal) {
     options.dialogClass = (options.dialogClass ? options.dialogClass + ' ' : '') + 'ui-dialog-modal';
     options.draggable = false;
   }
 
   // Close out existing dialogs.
-  if(window.DIALOGS[id]) {
+  if (window.DIALOGS[id]) {
     try {
       var selector = $(window.DIALOGS[id]);
       selector.dialog('close');
       selector.remove();
-    } catch (e) {
+    } catch {
       log.error('window.dialog: Tried to close nonexistent dialog ' + id);
     }
   }
 
   // there seems to be a bug where width/height are set to a fixed value after moving a dialog
   function sizeFix() {
-    if(dialog.data('collapsed')) return;
+    if (dialog.data('collapsed')) return;
 
     var options = dialog.dialog('option');
     dialog.dialog('option', 'height', options.height);
@@ -21964,135 +21991,141 @@ window.dialog = function(options) {
 
   // Create the window, appending a div to the body
   $('body').append('<div id="' + id + '"></div>');
-  var dialog = $(jqID).dialog($.extend(true, {
-    autoOpen: false,
-    modal: false,
-    draggable: true,
-    closeText: '',
-    title: '',
-    buttons: {
-      'OK': function() {
-        $(this).dialog('close');
-      }
-    },
-    open: function() {
-      var titlebar = $(this).closest('.ui-dialog').find('.ui-dialog-titlebar');
-      titlebar.find('.ui-dialog-title')
-        .addClass('ui-dialog-title-active')
-        .addClass('text-overflow-ellipsis');
-      var close = titlebar.find('.ui-dialog-titlebar-close');
+  var dialog = $(jqID).dialog(
+    $.extend(
+      true,
+      {
+        autoOpen: false,
+        modal: false,
+        draggable: true,
+        closeText: '',
+        title: '',
+        buttons: {
+          OK: function () {
+            $(this).dialog('close');
+          },
+        },
+        open: function () {
+          var titlebar = $(this).closest('.ui-dialog').find('.ui-dialog-titlebar');
+          titlebar.find('.ui-dialog-title').addClass('ui-dialog-title-active').addClass('text-overflow-ellipsis');
+          var close = titlebar.find('.ui-dialog-titlebar-close');
 
-      // Title should not show up on mouseover
-      close.removeAttr('title').addClass('ui-dialog-titlebar-button');
+          // Title should not show up on mouseover
+          close.removeAttr('title').addClass('ui-dialog-titlebar-button');
 
-      // re-center dialog on title dblclick
-      // jQuery-UI takes care about initial dialog position, but if content's height grows,
-      // then dialog's bottom may go beyond screen (e.g. 'Auto draw' with a bunch of bookmarks in folder).
-      // So this is just a nasty workaround for such issue.
-      // todo: watch height changes and adapt automatically
-      titlebar.dblclick(sizeFix);
+          // re-center dialog on title dblclick
+          // jQuery-UI takes care about initial dialog position, but if content's height grows,
+          // then dialog's bottom may go beyond screen (e.g. 'Auto draw' with a bunch of bookmarks in folder).
+          // So this is just a nasty workaround for such issue.
+          // todo: watch height changes and adapt automatically
+          titlebar.dblclick(sizeFix);
 
-      if(!$(this).dialog('option', 'modal')) {
-        // Start out with a cloned version of the close button
-        var collapse = close.clone();
+          if (!$(this).dialog('option', 'modal')) {
+            // Start out with a cloned version of the close button
+            var collapse = close.clone();
 
-        // Change it into a collapse button and set the click handler
-        collapse.addClass('ui-dialog-titlebar-button-collapse ui-dialog-titlebar-button-collapse-expanded');
-        collapse.click($.proxy(function() {
-          var collapsed = ($(this).data('collapsed') === true);
+            // Change it into a collapse button and set the click handler
+            collapse.addClass('ui-dialog-titlebar-button-collapse ui-dialog-titlebar-button-collapse-expanded');
+            collapse.click(
+              $.proxy(function () {
+                var collapsed = $(this).data('collapsed') === true;
 
-          // Toggle collapsed state
-          $(this).data('collapsed', !collapsed);
+                // Toggle collapsed state
+                $(this).data('collapsed', !collapsed);
 
-          // Run callbacks if we have them
-          if($(this).data('collapseExpandCallback')) {
-            $.proxy($(this).data('collapseExpandCallback'), this)(!collapsed);
-          } else {
-            if(!collapsed && $(this).data('collapseCallback')) {
-              $.proxy($(this).data('collapseCallback'), this)();
-            } else if (collapsed && $(this).data('expandCallback')) {
-              $.proxy($(this).data('expandCallback'), this)();
-            }
+                // Run callbacks if we have them
+                if ($(this).data('collapseExpandCallback')) {
+                  $.proxy($(this).data('collapseExpandCallback'), this)(!collapsed);
+                } else {
+                  if (!collapsed && $(this).data('collapseCallback')) {
+                    $.proxy($(this).data('collapseCallback'), this)();
+                  } else if (collapsed && $(this).data('expandCallback')) {
+                    $.proxy($(this).data('expandCallback'), this)();
+                  }
+                }
+
+                // Find the button pane and content dialog in this ui-dialog, and add or remove the 'hidden' class.
+                var dialog = $(this).closest('.ui-dialog');
+                var content = dialog.find('.ui-dialog-content');
+                var buttonpane = dialog.find('.ui-dialog-buttonpane');
+                var button = dialog.find('.ui-dialog-titlebar-button-collapse');
+
+                // Slide toggle
+                $(this).css('height', '');
+                $(content).slideToggle({
+                  duration: window.DIALOG_SLIDE_DURATION,
+                  complete: function () {
+                    $(buttonpane).slideToggle({
+                      duration: window.DIALOG_SLIDE_DURATION,
+                      complete: sizeFix,
+                    });
+                  },
+                });
+
+                if (collapsed) {
+                  $(button).removeClass('ui-dialog-titlebar-button-collapse-collapsed');
+                  $(button).addClass('ui-dialog-titlebar-button-collapse-expanded');
+                } else {
+                  $(button).removeClass('ui-dialog-titlebar-button-collapse-expanded');
+                  $(button).addClass('ui-dialog-titlebar-button-collapse-collapsed');
+                }
+              }, this)
+            );
+
+            // Put it into the titlebar
+            titlebar.prepend(collapse);
+            close.addClass('ui-dialog-titlebar-button-close');
           }
 
-          // Find the button pane and content dialog in this ui-dialog, and add or remove the 'hidden' class.
-          var dialog   = $(this).closest('.ui-dialog');
-          var content = dialog.find('.ui-dialog-content');
-          var buttonpane = dialog.find('.ui-dialog-buttonpane');
-          var button   = dialog.find('.ui-dialog-titlebar-button-collapse');
+          window.DIALOGS[$(this).data('id')] = this;
+          window.DIALOG_COUNT++;
 
-          // Slide toggle
-          $(this).css('height', '');
-          $(content).slideToggle({
-            duration: window.DIALOG_SLIDE_DURATION,
-            complete: function () {
-              $(buttonpane).slideToggle({
-                duration: window.DIALOG_SLIDE_DURATION,
-                complete: sizeFix
-              });
-            }
-          });
-
-          if(collapsed) {
-            $(button).removeClass('ui-dialog-titlebar-button-collapse-collapsed');
-            $(button).addClass('ui-dialog-titlebar-button-collapse-expanded');
-          } else {
-            $(button).removeClass('ui-dialog-titlebar-button-collapse-expanded');
-            $(button).addClass('ui-dialog-titlebar-button-collapse-collapsed');
-          }
-        }, this));
-
-        // Put it into the titlebar
-        titlebar.prepend(collapse);
-        close.addClass('ui-dialog-titlebar-button-close');
-      }
-
-      window.DIALOGS[$(this).data('id')] = this;
-      window.DIALOG_COUNT++;
-
-      log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') opened. ' + window.DIALOG_COUNT + ' remain.');
-    },
-    close: function() {
-      // Run the close callback if we have one
-      if($(this).data('closeCallback')) {
-        $.proxy($(this).data('closeCallback'), this)();
-      }
-
-      // Make sure that we don't keep a dead dialog in focus
-      if(window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') === $(this).data('id')) {
-        window.DIALOG_FOCUS = null;
-      }
-
-      // Finalize
-      delete window.DIALOGS[$(this).data('id')];
-
-      window.DIALOG_COUNT--;
-      log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') closed. ' + window.DIALOG_COUNT + ' remain.');
-
-      // remove from DOM and destroy
-      $(this).dialog('destroy').remove();
-    },
-    focus: function() {
-      if($(this).data('focusCallback')) {
-        $.proxy($(this).data('focusCallback'), this)();
-      }
-
-      // Blur the window currently in focus unless we're gaining focus
-      if(window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') !== $(this).data('id')) {
-        $.proxy(function(event, ui) {
-          if($(this).data('blurCallback')) {
-            $.proxy($(this).data('blurCallback'), this)();
+          log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') opened. ' + window.DIALOG_COUNT + ' remain.');
+        },
+        close: function () {
+          // Run the close callback if we have one
+          if ($(this).data('closeCallback')) {
+            $.proxy($(this).data('closeCallback'), this)();
           }
 
-          $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-active').addClass('ui-dialog-title-inactive');
-        }, window.DIALOG_FOCUS)();
-      }
+          // Make sure that we don't keep a dead dialog in focus
+          if (window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') === $(this).data('id')) {
+            window.DIALOG_FOCUS = null;
+          }
 
-      // This dialog is now in focus
-      window.DIALOG_FOCUS = this;
-      $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-inactive').addClass('ui-dialog-title-active');
-    }
-  }, options));
+          // Finalize
+          delete window.DIALOGS[$(this).data('id')];
+
+          window.DIALOG_COUNT--;
+          log.log('window.dialog: ' + $(this).data('id') + ' (' + $(this).dialog('option', 'title') + ') closed. ' + window.DIALOG_COUNT + ' remain.');
+
+          // remove from DOM and destroy
+          $(this).dialog('destroy').remove();
+        },
+        focus: function () {
+          if ($(this).data('focusCallback')) {
+            $.proxy($(this).data('focusCallback'), this)();
+          }
+
+          // Blur the window currently in focus unless we're gaining focus
+          if (window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') !== $(this).data('id')) {
+            $.proxy(function () {
+              if ($(this).data('blurCallback')) {
+                $.proxy($(this).data('blurCallback'), this)();
+              }
+
+              $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-active').addClass('ui-dialog-title-inactive');
+            }, window.DIALOG_FOCUS)();
+          }
+
+          // This dialog is now in focus
+          window.DIALOG_FOCUS = this;
+          $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-inactive').addClass('ui-dialog-title-active');
+        },
+      },
+      options
+    )
+  );
 
   dialog.on('dialogdragstop dialogresizestop', sizeFix);
 
@@ -22109,7 +22142,7 @@ window.dialog = function(options) {
   dialog.data('focusCallback', options.focusCallback);
   dialog.data('blurCallback', options.blurCallback);
 
-  if(options.modal) {
+  if (options.modal) {
     // ui-modal includes overrides for modal dialogs
     dialog.parent().addClass('ui-modal');
   } else {
@@ -22121,7 +22154,7 @@ window.dialog = function(options) {
   dialog.dialog('open');
 
   return dialog;
-}
+};
 
 /**
  * Creates an alert dialog with default settings. This function is a simplified wrapper around `window.dialog`.
@@ -22135,23 +22168,23 @@ window.dialog = function(options) {
  *
  * @returns {jQuery} The jQuery object representing the created alert dialog.
  */
-window.alert = function(text, isHTML, closeCallback) {
-  var obj = {closeCallback: closeCallback};
-  if(isHTML) {
+window.alert = function (text, isHTML, closeCallback) {
+  var obj = { closeCallback: closeCallback };
+  if (isHTML) {
     obj.html = text;
   } else {
     obj.text = text;
   }
 
-  return dialog(obj);
-}
+  return window.dialog(obj);
+};
 
-window.setupDialogs = function() {
+window.setupDialogs = function () {
   window.DIALOG_ID = 0;
-  window.DIALOGS   = {}
+  window.DIALOGS = {};
   window.DIALOG_COUNT = 0;
   window.DIALOG_FOCUS = null;
-}
+};
 
 
 })();
@@ -22160,7 +22193,8 @@ window.setupDialogs = function() {
 // *** module: dialog_about.js ***
 (function () {
 var log = ulog('dialog_about');
-/* global script_info, app, log, L */
+/* global L, log -- eslint */
+
 /**
  * @file This file contains functions related to the 'About IITC' dialog.
  * @module dialog_about
@@ -22172,17 +22206,17 @@ var log = ulog('dialog_about');
  *
  * @function
  */
-window.aboutIITC = function() {
+window.aboutIITC = function () {
   var html = createDialogContent();
 
-  dialog({
+  window.dialog({
     title: 'IITC ' + getIITCVersion(),
     id: 'iitc-about',
     html: html,
     width: 'auto',
-    dialogClass: 'ui-dialog-aboutIITC'
+    dialogClass: 'ui-dialog-aboutIITC',
   });
-}
+};
 
 /**
  * Creates the content for the 'About IITC' dialog.
@@ -22212,8 +22246,8 @@ function createDialogContent() {
     html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
   }
 
-  if (window.isApp && app.getVersionName) {
-    html += '<div>IITC Mobile ' + app.getVersionName() + '</div>';
+  if (window.isApp && window.app.getVersionName) {
+    html += '<div>IITC Mobile ' + window.app.getVersionName() + '</div>';
   }
 
   var plugins = getPlugins();
@@ -22240,9 +22274,14 @@ function getPlugins() {
 
   var extra = getIITCVersionAddition();
 
-  var plugins = pluginsInfo.map(convertPluginInfo)
-    .sort(function (a, b) { return a.name > b.name ? 1 : -1; })
-    .map(function (p) { return pluginInfoToString(p, extra); })
+  var plugins = pluginsInfo
+    .map(convertPluginInfo)
+    .sort(function (a, b) {
+      return a.name > b.name ? 1 : -1;
+    })
+    .map(function (p) {
+      return pluginInfoToString(p, extra);
+    })
     .join('\n');
 
   return plugins;
@@ -22271,7 +22310,7 @@ function convertPluginInfo(info, index) {
     date: info.dateTimeVersion,
     error: info.error,
     version: undefined,
-    description: undefined
+    description: undefined,
   };
 
   var script = info.script;
@@ -22284,10 +22323,12 @@ function convertPluginInfo(info, index) {
   }
 
   if (!result.name) {
-    if (script_info.script) { // check if GM_info is available
+    if (window.script_info.script) {
+      // check if GM_info is available
       result.name = '[unknown plugin: index ' + index + ']';
       result.description = "this plugin does not have proper wrapper; report to it's author";
-    } else { // userscript manager fault
+    } else {
+      // userscript manager fault
       result.name = '[3rd-party plugin: index ' + index + ']';
     }
   }
@@ -22340,7 +22381,7 @@ function pluginInfoToString(p, extra) {
     class: '',
     description: p.description || '',
     name: p.name,
-    verinfo: formatVerInfo(p, extra)
+    verinfo: formatVerInfo(p, extra),
   };
 
   if (isStandardPlugin(p)) {
@@ -22368,7 +22409,7 @@ function pluginInfoToString(p, extra) {
  * @returns {boolean} True if the plugin is standard, false otherwise.
  */
 function isStandardPlugin(plugin) {
-  return (plugin.build === script_info.buildName && plugin.date === script_info.dateTimeVersion);
+  return plugin.build === window.script_info.buildName && plugin.date === window.script_info.dateTimeVersion;
 }
 
 /**
@@ -22378,8 +22419,8 @@ function isStandardPlugin(plugin) {
  * @returns {string} The IITC version string.
  */
 function getIITCVersion() {
-  var iitc = script_info;
-  return (iitc.script && iitc.script.version || iitc.dateTimeVersion) + ' [' + iitc.buildName + ']';
+  var iitc = window.script_info;
+  return ((iitc.script && iitc.script.version) || iitc.dateTimeVersion) + ' [' + iitc.buildName + ']';
 }
 
 /**
@@ -22389,7 +22430,7 @@ function getIITCVersion() {
  * @returns {string} The additional version information, if any.
  */
 function getIITCVersionAddition() {
-  var extra = script_info.script && script_info.script.version.match(/^\d+\.\d+\.\d+(\..+)$/);
+  var extra = window.script_info.script && window.script_info.script.version.match(/^\d+\.\d+\.\d+(\..+)$/);
   return extra && extra[1];
 }
 
@@ -22409,18 +22450,22 @@ function formatVerInfo(p, extra) {
     var cutPos = p.version.length - extra.length;
     // cut extra version component (timestamp) if it is equal to main script's one
     if (p.version.substring(cutPos) === extra) {
-      p.version = p.version.substring(0,cutPos);
+      p.version = p.version.substring(0, cutPos);
     }
   }
 
   p.version = p.version || p.date;
   if (p.version) {
     var tooltip = [];
-    if (p.build) { tooltip.push('[' + p.build + ']'); }
-    if (p.date && p.date !== p.version) { tooltip.push(p.date); }
+    if (p.build) {
+      tooltip.push('[' + p.build + ']');
+    }
+    if (p.date && p.date !== p.version) {
+      tooltip.push(p.date);
+    }
     return L.Util.template(' - <code{title}>{version}</code>', {
       title: tooltip[0] ? ' title="' + tooltip.join(' ') + '"' : '',
-      version: p.version
+      version: p.version,
     });
   }
 
@@ -22455,6 +22500,8 @@ function isShortOnLocalStorage() {
 // *** module: entity_decode.js ***
 (function () {
 var log = ulog('entity_decode');
+/* global log -- eslint */
+
 /**
  * @file Decode the on-network array entity format into an object format closer to that used before
  * makes much more sense as an object, means that existing code didn't need to change, and it's what the
@@ -22466,7 +22513,7 @@ var log = ulog('entity_decode');
 /**
  * @namespace window.decodeArray
  */
-window.decodeArray = function(){};
+window.decodeArray = function () {};
 
 /**
  * Parses a mod array into an object.
@@ -22476,7 +22523,9 @@ window.decodeArray = function(){};
  * @returns {Object|null} Parsed mod object or null if the input is falsy.
  */
 function parseMod(arr) {
-  if (!arr) { return null; }
+  if (!arr) {
+    return null;
+  }
   return {
     owner: arr[0],
     name: arr[1],
@@ -22493,7 +22542,9 @@ function parseMod(arr) {
  * @returns {Object|null} Parsed resonator object or null if the input is falsy.
  */
 function parseResonator(arr) {
-  if (!arr) { return null; }
+  if (!arr) {
+    return null;
+  }
   return {
     owner: arr[0],
     level: arr[1],
@@ -22508,7 +22559,9 @@ function parseResonator(arr) {
  * @returns {Object|null} Parsed artifact brief object or null if the input is falsy.
  */
 function parseArtifactBrief(arr) {
-  if (!arr) { return null; }
+  if (!arr) {
+    return null;
+  }
 
   // array index 0 is for fragments at the portal. index 1 is for target portals
   // each of those is two dimensional - not sure why. part of this is to allow for multiple types of artifacts,
@@ -22519,7 +22572,7 @@ function parseArtifactBrief(arr) {
 
   function decodeArtifactArray(arr) {
     var result = {};
-    for (var i=0; i<arr.length; i++) {
+    for (var i = 0; i < arr.length; i++) {
       // we'll use the type as the key - and store any additional array values as the value
       // that will be an empty array for now, so only object keys are useful data
       result[arr[i][0]] = arr[i].slice(1);
@@ -22541,7 +22594,9 @@ function parseArtifactBrief(arr) {
  * @returns {Object|null} Parsed artifact detail object or null if the input is falsy.
  */
 function parseArtifactDetail(arr) {
-  if (!arr) { return null; }
+  if (!arr) {
+    return null;
+  }
   // empty artifact data is pointless - ignore it
   if (arr.length === 3 && arr[0] === '' && arr[1] === '' && arr[2].length === 0) {
     return null;
@@ -22563,14 +22618,13 @@ function parseArtifactDetail(arr) {
 function parseHistoryDetail(bitarray) {
   return {
     _raw: bitarray,
-    visited:  !!(bitarray & 1),
+    visited: !!(bitarray & 1),
     captured: !!(bitarray & 2),
-    scoutControlled:  !!(bitarray & 4),
+    scoutControlled: !!(bitarray & 4),
   };
 }
 
-
-//there's also a 'placeholder' portal - generated from the data in links/fields. only has team/lat/lng
+// there's also a 'placeholder' portal - generated from the data in links/fields. only has team/lat/lng
 
 var CORE_PORTAL_DATA_LENGTH = 4;
 
@@ -22584,15 +22638,15 @@ var CORE_PORTAL_DATA_LENGTH = 4;
 function corePortalData(a) {
   return {
     // a[0] == type (always 'p')
-    team:          a[1],
-    latE6:         a[2],
-    lngE6:         a[3]
-  }
+    team: a[1],
+    latE6: a[2],
+    lngE6: a[3],
+  };
 }
 
 var SUMMARY_PORTAL_DATA_LENGTH = 14;
-var DETAILED_PORTAL_DATA_LENGTH = SUMMARY_PORTAL_DATA_LENGTH+4;
-var EXTENDED_PORTAL_DATA_LENGTH = DETAILED_PORTAL_DATA_LENGTH+1;
+var DETAILED_PORTAL_DATA_LENGTH = SUMMARY_PORTAL_DATA_LENGTH + 4;
+var EXTENDED_PORTAL_DATA_LENGTH = DETAILED_PORTAL_DATA_LENGTH + 1;
 
 /**
  * Parses the summary portal data from an array.
@@ -22603,16 +22657,16 @@ var EXTENDED_PORTAL_DATA_LENGTH = DETAILED_PORTAL_DATA_LENGTH+1;
  */
 function summaryPortalData(a) {
   return {
-    level:         a[4],
-    health:        a[5],
-    resCount:      a[6],
-    image:         a[7],
-    title:         a[8],
-    ornaments:     a[9],
-    mission:       a[10],
+    level: a[4],
+    health: a[5],
+    resCount: a[6],
+    image: a[7],
+    title: a[8],
+    ornaments: a[9],
+    mission: a[10],
     mission50plus: a[11],
     artifactBrief: parseArtifactBrief(a[12]),
-    timestamp:     a[13]
+    timestamp: a[13],
   };
 }
 
@@ -22625,11 +22679,11 @@ function summaryPortalData(a) {
  */
 function detailsPortalData(a) {
   return {
-    mods:           a[SUMMARY_PORTAL_DATA_LENGTH+0].map(parseMod),
-    resonators:     a[SUMMARY_PORTAL_DATA_LENGTH+1].map(parseResonator),
-    owner:          a[SUMMARY_PORTAL_DATA_LENGTH+2],
-    artifactDetail: parseArtifactDetail(a[SUMMARY_PORTAL_DATA_LENGTH+3])
-  }
+    mods: a[SUMMARY_PORTAL_DATA_LENGTH].map(parseMod),
+    resonators: a[SUMMARY_PORTAL_DATA_LENGTH + 1].map(parseResonator),
+    owner: a[SUMMARY_PORTAL_DATA_LENGTH + 2],
+    artifactDetail: parseArtifactDetail(a[SUMMARY_PORTAL_DATA_LENGTH + 3]),
+  };
 }
 
 /**
@@ -22641,16 +22695,15 @@ function detailsPortalData(a) {
 function extendedPortalData(a) {
   return {
     history: parseHistoryDetail(a[DETAILED_PORTAL_DATA_LENGTH] || 0),
-  }
+  };
 }
-
 
 window.decodeArray.dataLen = {
   core: [CORE_PORTAL_DATA_LENGTH],
   summary: [SUMMARY_PORTAL_DATA_LENGTH],
   detailed: [EXTENDED_PORTAL_DATA_LENGTH, DETAILED_PORTAL_DATA_LENGTH],
   extended: [EXTENDED_PORTAL_DATA_LENGTH, SUMMARY_PORTAL_DATA_LENGTH],
-  anyknown: [CORE_PORTAL_DATA_LENGTH, SUMMARY_PORTAL_DATA_LENGTH, DETAILED_PORTAL_DATA_LENGTH, EXTENDED_PORTAL_DATA_LENGTH]
+  anyknown: [CORE_PORTAL_DATA_LENGTH, SUMMARY_PORTAL_DATA_LENGTH, DETAILED_PORTAL_DATA_LENGTH, EXTENDED_PORTAL_DATA_LENGTH],
 };
 
 /**
@@ -22662,7 +22715,7 @@ window.decodeArray.dataLen = {
  *                                        Can be 'core', 'summary', 'detailed', 'extended', or 'anyknown'.
  * @returns {Object} An object containing decoded portal data.
  */
-window.decodeArray.portal = function(a, details) {
+window.decodeArray.portal = function (a, details) {
   if (!a) {
     log.warn('Argument not specified');
     return;
@@ -22673,10 +22726,9 @@ window.decodeArray.portal = function(a, details) {
   }
 
   details = details || 'anyknown';
-  var expected = decodeArray.dataLen[details];
+  var expected = window.decodeArray.dataLen[details];
   if (expected.indexOf(a.length) === -1) {
     log.warn('Unexpected portal data length: ' + a.length + ' (' + details + ')');
-    debugger;
   }
 
   var data = corePortalData(a);
@@ -22690,7 +22742,6 @@ window.decodeArray.portal = function(a, details) {
       $.extend(data, detailsPortalData(a));
     } else if (details === 'detailed') {
       log.warn('Portal details missing');
-      debugger;
     }
   }
 
@@ -22704,11 +22755,13 @@ window.decodeArray.portal = function(a, details) {
   return data;
 };
 
-window.decodeArray.portalSummary = function(a) { // deprecated!!
+window.decodeArray.portalSummary = function (a) {
+  // deprecated!!
   return window.decodeArray.portal(a, 'summary');
 };
 
-window.decodeArray.portalDetail = function(a) { // deprecated!!
+window.decodeArray.portalDetail = function (a) {
+  // deprecated!!
   return window.decodeArray.portal(a, 'detailed');
 };
 
@@ -22761,6 +22814,8 @@ window.teamStringToId = function (teamStr) {
 // *** module: extract_niantic_parameters.js ***
 (function () {
 var log = ulog('extract_niantic_parameters');
+/* global log -- eslint */
+
 /**
  * Extract essential parameters and functions from the Ingress Intel site's minified JavaScript.
  * Necessary due to Niantic's minification and obfuscation of their Intel Map code.
@@ -22775,8 +22830,8 @@ var log = ulog('extract_niantic_parameters');
  * @function extractFromStock
  */
 
-window.extractFromStock = function() {
-  window.niantic_params = {}
+window.extractFromStock = function () {
+  window.niantic_params = {};
 
   // extract the former nemesis.dashboard.config.CURRENT_VERSION from the code
   var reVersion = new RegExp('"X-CSRFToken".*[a-z].v="([a-f0-9]{40})";');
@@ -22789,40 +22844,37 @@ window.extractFromStock = function() {
 
       var topObject = window[topLevel];
       if (topObject && topObject.prototype) {
-
         // the object has a prototype - iterate through the properties of that
         for (var secLevel in topObject.prototype) {
           if (minified.test(secLevel)) {
             // looks like we've found an object of the format "XX.prototype.YY"...
             var item = topObject.prototype[secLevel];
 
-            if (item && typeof(item) == "function") {
+            if (item && typeof item === 'function') {
               // a function - test it against the relevant regular expressions
               var funcStr = item.toString();
 
               var match = reVersion.exec(funcStr);
               if (match) {
-                log.log('Found former CURRENT_VERSION in '+topLevel+'.prototype.'+secLevel);
-                niantic_params.CURRENT_VERSION = match[1];
+                log.log('Found former CURRENT_VERSION in ' + topLevel + '.prototype.' + secLevel);
+                window.niantic_params.CURRENT_VERSION = match[1];
               }
             }
           }
         }
-
-      } //end 'if .prototype'
+      } // end 'if .prototype'
 
       if (topObject && Array.isArray && Array.isArray(topObject)) {
         // find all non-zero length arrays containing just numbers
-        if (topObject.length>0) {
+        if (topObject.length > 0) {
           var justInts = true;
-          for (var i=0; i<topObject.length; i++) {
-            if (typeof(topObject[i]) !== 'number' || topObject[i] != parseInt(topObject[i])) {
+          for (var i = 0; i < topObject.length; i++) {
+            if (typeof topObject[i] !== 'number' || topObject[i] !== parseInt(topObject[i])) {
               justInts = false;
               break;
             }
           }
           if (justInts) {
-
             // current lengths are: 17: ZOOM_TO_LEVEL, 14: TILES_PER_EDGE
             // however, slightly longer or shorter are a possibility in the future
 
@@ -22832,11 +22884,11 @@ window.extractFromStock = function() {
               // a. portal level limits. decreasing numbers, starting at 8
               // b. tiles per edge. increasing numbers. current max is 36000, 9000 was the previous value - 18000 is a likely possibility too
 
-              if (topObject[0] == 8) {
+              if (topObject[0] === 8) {
                 // check for tile levels
                 var decreasing = true;
-                for (var i=1; i<topObject.length; i++) {
-                  if (topObject[i-1] < topObject[i]) {
+                for (let i = 1; i < topObject.length; i++) {
+                  if (topObject[i - 1] < topObject[i]) {
                     decreasing = false;
                     break;
                   }
@@ -22847,10 +22899,10 @@ window.extractFromStock = function() {
               } // end if (topObject[0] == 8)
 
               // 2015-06-25 - changed to top value of 64000, then to 32000 - allow for them to restore it just in case
-              if (topObject[topObject.length-1] >= 9000 && topObject[topObject.length-1] <= 64000) {
+              if (topObject[topObject.length - 1] >= 9000 && topObject[topObject.length - 1] <= 64000) {
                 var increasing = true;
-                for (var i=1; i<topObject.length; i++) {
-                  if (topObject[i-1] > topObject[i]) {
+                for (let i = 1; i < topObject.length; i++) {
+                  if (topObject[i - 1] > topObject[i]) {
                     increasing = false;
                     break;
                   }
@@ -22858,34 +22910,28 @@ window.extractFromStock = function() {
                 if (increasing) {
                   window.niantic_params.TILES_PER_EDGE = topObject;
                 }
-
-              } //end if (topObject[topObject.length-1] == 9000) {
-
+              } // end if (topObject[topObject.length-1] == 9000) {
             }
           }
         }
       }
-
-
     }
   }
 
-
-  if (niantic_params.CURRENT_VERSION === undefined) {
-    dialog({
+  if (window.niantic_params.CURRENT_VERSION === undefined) {
+    window.dialog({
       title: 'IITC Broken',
-      html: '<p>IITC failed to extract the required parameters from the intel site</p>'
-           +'<p>This can happen after Niantic update the standard intel site. A fix will be needed from the IITC developers.</p>',
+      html:
+        '<p>IITC failed to extract the required parameters from the intel site</p>' +
+        '<p>This can happen after Niantic update the standard intel site. A fix will be needed from the IITC developers.</p>',
     });
 
     log.log('Discovered parameters');
-    log.log(JSON.stringify(window.niantic_params,null,2));
+    log.log(JSON.stringify(window.niantic_params, null, 2));
 
     throw new Error('Error: IITC failed to extract CURRENT_VERSION string - cannot continue');
   }
-
-}
-
+};
 
 
 })();
@@ -23231,6 +23277,8 @@ IITC.filters.FilterLayer = L.Layer.extend({
 // *** module: game_status.js ***
 (function () {
 var log = ulog('game_status');
+/* global log -- eslint */
+
 /**
  * @file Contains functions related to updating and displaying the current MindUnit scores in the game.
  * The MindUnit scores represent the current global score for each faction in Ingress.
@@ -23247,20 +23295,23 @@ var log = ulog('game_status');
  * @param {Object} [data] - The game score data retrieved from the Ingress servers.
  *                          If not provided, the function will make a server request to fetch the data.
  */
-window.updateGameScore = function(data) {
-  if(!data) {
+window.updateGameScore = function (data) {
+  if (!data) {
     // move the postAjax call onto a very short timer. this way, if it throws an exception, it won't prevent IITC booting
-    setTimeout (function() { window.postAjax('getGameScore', {}, window.updateGameScore); }, 1);
+    setTimeout(function () {
+      window.postAjax('getGameScore', {}, window.updateGameScore);
+    }, 1);
     return;
   }
 
   if (data && data.result) {
-
-    var e = parseInt(data.result[0]); //enlightened score in result[0]
-    var r = parseInt(data.result[1]); //resistance score in result[1]
-    var s = r+e;
-    var rp = r/s*100, ep = e/s*100;
-    r = digits(r), e = digits(e);
+    var e = parseInt(data.result[0]); // enlightened score in result[0]
+    var r = parseInt(data.result[1]); // resistance score in result[1]
+    var s = r + e;
+    var rp = (r / s) * 100,
+      ep = (e / s) * 100;
+    r = window.digits(r);
+    e = window.digits(e);
     var teamId = window.teamStringToId(window.PLAYER.team);
     var rs = '<span class="res" style="width:' + rp + '%;text-align: ' + (teamId === window.TEAM_RES ? 'right' : 'left') + ';">' + Math.round(rp) + '%</span>';
     var es = '<span class="enl" style="width:' + ep + '%;text-align: ' + (teamId === window.TEAM_ENL ? 'right' : 'left') + ';">' + Math.round(ep) + '%</span>';
@@ -23273,14 +23324,14 @@ window.updateGameScore = function(data) {
     var enlMu = 'Enlightened:\t' + e + ' MindUnits';
     gamestatElement.attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
   } else if (data && data.error) {
-    log.warn('game score failed to load: '+data.error);
+    log.warn('game score failed to load: ' + data.error);
   } else {
     log.warn('game score failed to load - unknown reason');
   }
 
   // TODO: idle handling - don't refresh when IITC is idle!
-  window.setTimeout('window.updateGameScore', REFRESH_GAME_SCORE*1000);
-}
+  window.setTimeout('window.updateGameScore', window.REFRESH_GAME_SCORE * 1000);
+};
 
 
 })();
@@ -23289,6 +23340,8 @@ window.updateGameScore = function(data) {
 // *** module: hooks.js ***
 (function () {
 var log = ulog('hooks');
+/* global log -- eslint */
+
 /**
  * @file Plugin hooks for IITC. This file defines the infrastructure for managing and executing hooks,
  * which are used to trigger custom plugin actions at specific points in the application lifecycle.
@@ -23357,29 +23410,27 @@ var isRunning = 0;
  * @param {Object} [data] - Additional data to pass to each callback.
  * @returns {boolean} Returns `false` if the execution of the callbacks was interrupted, otherwise `true`.
  */
-window.runHooks = function(event, data) {
-  if (!_hooks[event]) { return true; }
+window.runHooks = function (event, data) {
+  if (!window._hooks[event]) {
+    return true;
+  }
   var interrupted = false;
   isRunning++;
-  $.each(_hooks[event], function (ind, callback) {
+  $.each(window._hooks[event], function (ind, callback) {
     try {
       if (callback(data) === false) {
         interrupted = true;
         return false; // break from $.each
       }
     } catch (e) {
-      log.error('error running hook ' + event,
-        '\n' + e,
-        '\ncallback: ', callback,
-        '\ndata: ', data
-      );
+      log.error('error running hook ' + event, '\n' + e, '\ncallback: ', callback, '\ndata: ', data);
     }
   });
   isRunning--;
   return !interrupted;
 };
 
-window.pluginCreateHook = function() {}; // stub for compatibility
+window.pluginCreateHook = function () {}; // stub for compatibility
 
 /**
  * Registers a callback function for a specified hook event.
@@ -23388,15 +23439,15 @@ window.pluginCreateHook = function() {}; // stub for compatibility
  * @param {string} event - The name of the hook event.
  * @param {Function} callback - The callback function to be executed when the event is triggered.
  */
-window.addHook = function(event, callback) {
+window.addHook = function (event, callback) {
   if (typeof callback !== 'function') {
     throw new Error('Callback must be a function.');
   }
 
-  if (!_hooks[event]) {
-    _hooks[event] = [callback];
+  if (!window._hooks[event]) {
+    window._hooks[event] = [callback];
   } else {
-    _hooks[event].push(callback);
+    window._hooks[event].push(callback);
   }
 };
 
@@ -23408,12 +23459,12 @@ window.addHook = function(event, callback) {
  * @param {string} event - The name of the hook event.
  * @param {Function} callback - The callback function to be removed.
  */
-window.removeHook = function(event, callback) {
+window.removeHook = function (event, callback) {
   if (typeof callback !== 'function') {
     throw new Error('Callback must be a function.');
   }
 
-  var listeners = _hooks[event];
+  var listeners = window._hooks[event];
   if (listeners) {
     var index = listeners.indexOf(callback);
     if (index === -1) {
@@ -23421,7 +23472,7 @@ window.removeHook = function(event, callback) {
     } else {
       if (isRunning) {
         listeners[index] = $.noop;
-        _hooks[event] = listeners = listeners.slice();
+        window._hooks[event] = listeners = listeners.slice();
       }
       listeners.splice(index, 1);
     }
@@ -23435,6 +23486,8 @@ window.removeHook = function(event, callback) {
 // *** module: idle.js ***
 (function () {
 var log = ulog('idle');
+/* global log -- eslint */
+
 /**
  * @file Contains functions and logic to handle the idle state of the user.
  * @module idle
@@ -23447,24 +23500,24 @@ var log = ulog('idle');
  * @type {number}
  */
 window.idleTime = 0;
-window._idleTimeLimit = MAX_IDLE_TIME;
+window._idleTimeLimit = window.MAX_IDLE_TIME;
 
 var IDLE_POLL_TIME = 10;
 
-var idlePoll = function() {
-  var wasIdle = isIdle();
+var idlePoll = function () {
+  var wasIdle = window.isIdle();
   window.idleTime += IDLE_POLL_TIME;
 
-  var hidden = (document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || false);
+  var hidden = document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || false;
   if (hidden) {
     window._idleTimeLimit = window.REFRESH; // set a small time limit before entering idle mode
   }
-  if (!wasIdle && isIdle()) {
+  if (!wasIdle && window.isIdle()) {
     log.log('idlePoll: entering idle mode');
   }
-}
+};
 
-setInterval(idlePoll, IDLE_POLL_TIME*1000);
+setInterval(idlePoll, IDLE_POLL_TIME * 1000);
 
 /**
  * Resets the idle timer. This function is called when the user becomes active after being idle.
@@ -23473,15 +23526,15 @@ setInterval(idlePoll, IDLE_POLL_TIME*1000);
  */
 window.idleReset = function () {
   // update immediately when the user comes back
-  if(isIdle()) {
-    log.log ('idleReset: leaving idle mode');
+  if (window.isIdle()) {
+    log.log('idleReset: leaving idle mode');
     window.idleTime = 0;
-    $.each(window._onResumeFunctions, function(ind, f) {
+    $.each(window._onResumeFunctions, function (ind, f) {
       f();
     });
   }
   window.idleTime = 0;
-  window._idleTimeLimit = MAX_IDLE_TIME;
+  window._idleTimeLimit = window.MAX_IDLE_TIME;
 };
 
 /**
@@ -23489,41 +23542,41 @@ window.idleReset = function () {
  *
  * @function idleSet
  */
-window.idleSet = function() {
-  var wasIdle = isIdle();
+window.idleSet = function () {
+  var wasIdle = window.isIdle();
 
   window._idleTimeLimit = 0; // a zero time here will cause idle to start immediately
 
-  if (!wasIdle && isIdle()) {
-    log.log ('idleSet: entering idle mode');
+  if (!wasIdle && window.isIdle()) {
+    log.log('idleSet: entering idle mode');
   }
-}
-
+};
 
 // only reset idle on mouse move where the coordinates are actually different.
 // some browsers send the event when not moving!
-var _lastMouseX=-1, _lastMouseY=-1;
-var idleMouseMove = function(e) {
-  var dX = _lastMouseX-e.clientX;
-  var dY = _lastMouseY-e.clientY;
-  var deltaSquared = dX*dX + dY*dY;
+var _lastMouseX = -1,
+  _lastMouseY = -1;
+var idleMouseMove = function (e) {
+  var dX = _lastMouseX - e.clientX;
+  var dY = _lastMouseY - e.clientY;
+  var deltaSquared = dX * dX + dY * dY;
   // only treat movements over 3 pixels as enough to reset us
-  if (deltaSquared > 3*3) {
+  if (deltaSquared > 3 * 3) {
     _lastMouseX = e.clientX;
     _lastMouseY = e.clientY;
-    idleReset();
+    window.idleReset();
   }
-}
+};
 
 /**
  * Initializes the idle handling setup, attaching necessary event listeners.
  *
  * @function setupIdle
  */
-window.setupIdle = function() {
-  $('body').keypress(idleReset);
+window.setupIdle = function () {
+  $('body').keypress(window.idleReset);
   $('body').mousemove(idleMouseMove);
-}
+};
 
 /**
  * Checks if the user is currently idle.
@@ -23531,9 +23584,9 @@ window.setupIdle = function() {
  * @function isIdle
  * @returns {boolean} True if the user is idle, false otherwise.
  */
-window.isIdle = function() {
+window.isIdle = function () {
   return window.idleTime >= window._idleTimeLimit;
-}
+};
 
 window._onResumeFunctions = [];
 
@@ -23543,9 +23596,9 @@ window._onResumeFunctions = [];
  * @function addResumeFunction
  * @param {Function} f The function to be executed on resume.
  */
-window.addResumeFunction = function(f) {
+window.addResumeFunction = function (f) {
   window._onResumeFunctions.push(f);
-}
+};
 
 
 })();
@@ -23555,6 +23608,8 @@ window.addResumeFunction = function(f) {
 (function () {
 var log = ulog('layerchooser');
 'use strict';
+
+/* global L, log -- eslint */
 
 /**
  * Represents a control for selecting layers on the map. It extends the Leaflet's L.Control.Layers class.
@@ -23583,8 +23638,8 @@ var LayerChooser = L.Control.Layers.extend({
     sortFunction: function (A, B) {
       var a = A.sortPriority;
       var b = B.sortPriority;
-      return a < b ? -1 : (b < a ? 1 : 0);
-    }
+      return a < b ? -1 : b < a ? 1 : 0;
+    },
   },
 
   /**
@@ -23626,7 +23681,7 @@ var LayerChooser = L.Control.Layers.extend({
         name: name,
         // label: name,
         overlay: overlay,
-        persistent: 'persistent' in options ? options.persistent : true
+        persistent: 'persistent' in options ? options.persistent : true,
       };
     } else {
       delete layer._chooser;
@@ -23662,7 +23717,9 @@ var LayerChooser = L.Control.Layers.extend({
     }
     var map = this._map || this._mapToAdd;
     if (!data.persistent) {
-      if (!data.overlay) { return; }
+      if (!data.overlay) {
+        return;
+      }
       if ('enable' in options ? options.enable : data.default) {
         layer.addTo(map);
       }
@@ -23673,11 +23730,14 @@ var LayerChooser = L.Control.Layers.extend({
         this._storeOverlayState(data.name, e.type === 'add');
       };
       layer.on('add remove', data.statusTracking, this);
-      if ('enable' in options) { // do as explicitly specified
+      if ('enable' in options) {
+        // do as explicitly specified
         map[options.enable ? 'addLayer' : 'removeLayer'](layer);
-      } else if (layer._map) { // already on map, only store state
+      } else if (layer._map) {
+        // already on map, only store state
         this._storeOverlayState(data.name, true);
-      } else { // restore at recorded state
+      } else {
+        // restore at recorded state
         if (this._isOverlayDisplayed(data.name, data.default)) {
           layer.addTo(map);
         }
@@ -23694,7 +23754,7 @@ var LayerChooser = L.Control.Layers.extend({
     var labelEl = L.Control.Layers.prototype._addItem.call(this, {
       layer: obj.layer,
       overlay: obj.overlay,
-      name: obj.label || obj.name
+      name: obj.label || obj.name,
     });
     obj.labelEl = labelEl;
     // obj.inputEl = this._layerControlInputs[this._layerControlInputs.length-1];
@@ -23716,7 +23776,7 @@ var LayerChooser = L.Control.Layers.extend({
    */
   addBaseLayer: function (layer, name, options) {
     this._addLayer(layer, name, false, options);
-    return (this._map) ? this._update() : this;
+    return this._map ? this._update() : this;
   },
 
   /**
@@ -23738,7 +23798,7 @@ var LayerChooser = L.Control.Layers.extend({
    */
   addOverlay: function (layer, name, options) {
     this._addLayer(layer, name, true, options);
-    return (this._map) ? this._update() : this;
+    return this._map ? this._update() : this;
   },
 
   /**
@@ -23760,7 +23820,7 @@ var LayerChooser = L.Control.Layers.extend({
       }
       L.Control.Layers.prototype.removeLayer.apply(this, arguments);
       if (this._map && !options.keepOnMap) {
-        map.removeLayer(data.layer);
+        window.map.removeLayer(data.layer);
       }
       delete data.labelEl;
       // delete data.inputEl;
@@ -23785,8 +23845,7 @@ var LayerChooser = L.Control.Layers.extend({
 
   __byName: function (data) {
     var name = this.toString();
-    return data.name === name ||
-      data.label === name;
+    return data.name === name || data.label === name;
   },
 
   __byLayer: function (data) {
@@ -23812,9 +23871,7 @@ var LayerChooser = L.Control.Layers.extend({
    *                   `persistent`, `default`, `labelEl`, `inputEl`, `statusTracking`.
    */
   layerInfo: function (layer) {
-    var fn = layer instanceof L.Layer ? this.__byLayer
-      : layer instanceof HTMLElement ? this.__byLabelEl
-        : this.__byName;
+    var fn = layer instanceof L.Layer ? this.__byLayer : layer instanceof HTMLElement ? this.__byLabelEl : this.__byName;
     return this._layers.find(fn, layer);
   },
 
@@ -23908,11 +23965,11 @@ var LayerChooser = L.Control.Layers.extend({
     var obj = {
       control: this,
       data: data,
-      originalEvent: originalEvent || {type: 'taphold'},
+      originalEvent: originalEvent || { type: 'taphold' },
       preventDefault: function () {
         defaultPrevented = true;
         this.defaultPrevented = true;
-      }
+      },
     };
 
     // @namespace Layer
@@ -23932,19 +23989,22 @@ var LayerChooser = L.Control.Layers.extend({
   // adds listeners to the overlays list to make inputs toggleable.
   _initLayout: function () {
     L.Control.Layers.prototype._initLayout.call(this);
-    $(this._overlaysList).on('click taphold', 'label', function (e) {
-      if (!(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.type === 'taphold')) {
-        return;
-      }
-      // e.preventDefault(); // seems no effect
-      var labelEl = e.target.closest('label');
-      this._onLongClick(this.layerInfo(labelEl), e);
-    }.bind(this));
+    $(this._overlaysList).on(
+      'click taphold',
+      'label',
+      function (e) {
+        if (!(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.type === 'taphold')) {
+          return;
+        }
+        // e.preventDefault(); // seems no effect
+        var labelEl = e.target.closest('label');
+        this._onLongClick(this.layerInfo(labelEl), e);
+      }.bind(this)
+    );
   },
 
   _filterOverlays: function (data) {
-    return data.overlay &&
-      ['DEBUG Data Tiles', 'Resistance', 'Enlightened'].indexOf(data.name) === -1;
+    return data.overlay && ['DEBUG Data Tiles', 'Resistance', 'Enlightened'].indexOf(data.name) === -1;
   },
 
   // Hides all the control's overlays except given one,
@@ -23960,10 +24020,12 @@ var LayerChooser = L.Control.Layers.extend({
     var checked = 0;
     var overlays = this._layers.filter(this._filterOverlays);
     overlays.forEach(function (el) {
-      if (map.hasLayer(el.layer)) { checked++; }
+      if (map.hasLayer(el.layer)) {
+        checked++;
+      }
     });
 
-    if (checked === 0 || isChecked && checked === 1) {
+    if (checked === 0 || (isChecked && checked === 1)) {
       // if nothing is selected, or specified overlay is exclusive,
       // assume all boxes should be checked again
       overlays.forEach(function (el) {
@@ -24007,15 +24069,15 @@ var LayerChooser = L.Control.Layers.extend({
       (data.overlay ? overlayLayers : baseLayers).push({
         layerId: idx,
         name: this._stripHtmlTags(data.label || data.name), // IITCm does not support html in layers labels
-        active: this._map.hasLayer(data.layer)
+        active: this._map.hasLayer(data.layer),
       });
     }, this);
 
     return {
       baseLayers: baseLayers,
-      overlayLayers: overlayLayers
+      overlayLayers: overlayLayers,
     };
-  }
+  },
 });
 
 window.LayerChooser = LayerChooser;
@@ -24038,8 +24100,10 @@ LayerChooser.addInitHook(function () {
 
 // !!deprecated: use `layerChooser.addOverlay` directly
 window.addLayerGroup = function (name, layerGroup, defaultDisplay) {
-  var options = {default: defaultDisplay};
-  if (arguments.length < 3) { options = undefined; }
+  var options = { default: defaultDisplay };
+  if (arguments.length < 3) {
+    options = undefined;
+  }
   window.layerChooser.addOverlay(layerGroup, name, options);
 };
 
@@ -24057,15 +24121,14 @@ window.removeLayerGroup = function (layerGroup) {
 // *** module: map.js ***
 (function () {
 var log = ulog('map');
-/* global log, L, IITC, PLAYER -- eslint */
+/* global IITC, L, log -- eslint */
 
 /**
  * @file This file provides functions for working with maps.
  * @module map
  */
 
-function setupCRS () {
-
+function setupCRS() {
   // use the earth radius value from s2 geometry library
   // https://github.com/google/s2-geometry-library-java/blob/c28f287b996c0cedc5516a0426fbd49f6c9611ec/src/com/google/common/geometry/S2LatLng.java#L31
   var EARTH_RADIUS_METERS = 6367000.0;
@@ -24085,7 +24148,7 @@ function setupCRS () {
     bounds: (function () {
       var d = EARTH_RADIUS_METERS * Math.PI;
       return L.bounds([-d, -d], [d, d]);
-    })()
+    })(),
   });
 
   L.CRS.S2 = L.extend({}, L.CRS.Earth, {
@@ -24094,7 +24157,7 @@ function setupCRS () {
     transformation: (function () {
       var scale = 0.5 / (Math.PI * SphericalMercator.S2.R);
       return L.transformation(scale, 0.5, -scale, 0.5);
-    }())
+    })(),
   });
 }
 
@@ -24108,13 +24171,10 @@ function setupCRS () {
  * @param {number|string} zoom - Zoom level value or string that can be converted to a number.
  * @returns {Object} An object containing normalized center (latitude and longitude) and zoom level.
  */
-function normLL (lat, lng, zoom) {
+function normLL(lat, lng, zoom) {
   return {
-    center: [
-      parseFloat(lat) || 0,
-      parseFloat(lng) || 0
-    ],
-    zoom: parseInt(zoom) || window.DEFAULT_ZOOM
+    center: [parseFloat(lat) || 0, parseFloat(lng) || 0],
+    zoom: parseInt(zoom) || window.DEFAULT_ZOOM,
   };
 }
 
@@ -24125,7 +24185,7 @@ function normLL (lat, lng, zoom) {
  * @function getPosition
  * @returns {Object} An object containing the map's position and zoom level, or undefined if not found.
  */
-function getPosition () {
+function getPosition() {
   var url = window.getURLParam;
 
   var zoom = url('z');
@@ -24133,7 +24193,7 @@ function getPosition () {
   var lngE6 = url('lngE6');
   if (latE6 && lngE6) {
     log.log('mappos: reading email URL params');
-    return normLL(parseInt(latE6)/1E6, parseInt(lngE6)/1E6, zoom);
+    return normLL(parseInt(latE6) / 1e6, parseInt(lngE6) / 1e6, zoom);
   }
 
   var ll = url('ll') || url('pll');
@@ -24159,7 +24219,7 @@ function getPosition () {
  * @returns {Object.<String, Object>} An object containing different basemap layers ready to be added to a map. Each property of the
  *                   object is a named map layer, with its value being the corresponding Leaflet tile layer object.
  */
-function createDefaultBaseMapLayers () {
+function createDefaultBaseMapLayers() {
   var baseLayers = {};
 
   /*
@@ -24176,35 +24236,34 @@ function createDefaultBaseMapLayers () {
 
   // cartodb has some nice tiles too - both dark and light subtle maps - http://cartodb.com/basemaps/
   // (not available over https though - not on the right domain name anyway)
-  var cartoAttr = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
+  var cartoAttr =
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
   var cartoUrl = 'https://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png';
-  baseLayers['CartoDB Dark Matter'] = L.tileLayer(cartoUrl, {attribution: cartoAttr, theme: 'dark_all'});
-  baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl, {attribution: cartoAttr, theme: 'light_all'});
+  baseLayers['CartoDB Dark Matter'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'dark_all' });
+  baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'light_all' });
 
   // Google Maps - including ingress default (using the stock-intel API-key)
-  baseLayers['Google Default Ingress Map'] = L.gridLayer.googleMutant(
-    { type: 'roadmap',
-      backgroundColor: '#0e3d4e',
-      styles: [
-        { featureType: 'all', elementType: 'all',
-          stylers: [{visibility: 'on'}, {hue: '#131c1c'}, {saturation: '-50'}, {invert_lightness: true}] },
-        { featureType: 'water', elementType: 'all',
-          stylers: [{visibility: 'on'}, {hue: '#005eff'}, {invert_lightness: true}] },
-        { featureType: 'poi', stylers: [{visibility: 'off'}] },
-        { featureType: 'transit', elementType: 'all', stylers: [{visibility: 'off'}] },
-        { featureType: 'road', elementType: 'labels.icon', stylers: [{invert_lightness: !0}] }
-      ],
-    });
-  baseLayers['Google Roads'] = L.gridLayer.googleMutant({type: 'roadmap'});
-  var trafficMutant = L.gridLayer.googleMutant({type: 'roadmap'});
+  baseLayers['Google Default Ingress Map'] = L.gridLayer.googleMutant({
+    type: 'roadmap',
+    backgroundColor: '#0e3d4e',
+    styles: [
+      { featureType: 'all', elementType: 'all', stylers: [{ visibility: 'on' }, { hue: '#131c1c' }, { saturation: '-50' }, { invert_lightness: true }] },
+      { featureType: 'water', elementType: 'all', stylers: [{ visibility: 'on' }, { hue: '#005eff' }, { invert_lightness: true }] },
+      { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+      { featureType: 'transit', elementType: 'all', stylers: [{ visibility: 'off' }] },
+      { featureType: 'road', elementType: 'labels.icon', stylers: [{ invert_lightness: !0 }] },
+    ],
+  });
+  baseLayers['Google Roads'] = L.gridLayer.googleMutant({ type: 'roadmap' });
+  var trafficMutant = L.gridLayer.googleMutant({ type: 'roadmap' });
   trafficMutant.addGoogleLayer('TrafficLayer');
   baseLayers['Google Roads + Traffic'] = trafficMutant;
   var transitMutant = L.gridLayer.googleMutant({ type: 'roadmap' });
   transitMutant.addGoogleLayer('TransitLayer');
   baseLayers['Google Roads + Transit'] = transitMutant;
-  baseLayers['Google Satellite'] = L.gridLayer.googleMutant({type: 'satellite'});
-  baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({type: 'hybrid'});
-  baseLayers['Google Terrain'] = L.gridLayer.googleMutant({type: 'terrain'});
+  baseLayers['Google Satellite'] = L.gridLayer.googleMutant({ type: 'satellite' });
+  baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({ type: 'hybrid' });
+  baseLayers['Google Terrain'] = L.gridLayer.googleMutant({ type: 'terrain' });
 
   return baseLayers;
 }
@@ -24217,8 +24276,6 @@ function createDefaultBaseMapLayers () {
  * @returns {Object.<String, L.LayerGroup>} An object containing overlay layers for portals, links, fields, and factions
  */
 function createDefaultOverlays() {
-  /* eslint-disable dot-notation  */
-
   var addLayers = {};
 
   var l0Layer = new IITC.filters.FilterLayer({
@@ -24269,7 +24326,7 @@ function createDefaultOverlays() {
   });
 
   // to avoid any favouritism, we'll put the player's own faction layer first
-  if (PLAYER.team === 'RESISTANCE') {
+  if (window.PLAYER.team === 'RESISTANCE') {
     addLayers[resistanceLayer.options.name] = resistanceLayer;
     addLayers[enlightenedLayer.options.name] = enlightenedLayer;
   } else {
@@ -24286,9 +24343,7 @@ function createDefaultOverlays() {
 
 // to be extended in app.js (or by plugins: `setup.priority = 'boot';`)
 window.mapOptions = {
-  preferCanvas: 'PREFER_CANVAS' in window
-    ? window.PREFER_CANVAS
-    : true // default
+  preferCanvas: 'PREFER_CANVAS' in window ? window.PREFER_CANVAS : true, // default is TRUE
 };
 
 /**
@@ -24312,51 +24367,65 @@ window.setupMap = function () {
 
   $('#map').text(''); // clear 'Loading, please wait'
 
-  var map = L.map('map', L.extend({
-    // proper initial position is now delayed until all plugins are loaded and the base layer is set
-    center: [0, 0],
-    zoom: 1,
-    crs: L.CRS.S2,
-    minZoom: window.MIN_ZOOM,
-    // zoomAnimation: false,
-    markerZoomAnimation: false,
-    bounceAtZoomLimits: false,
-    maxBoundsViscosity: 0.7,
-    worldCopyJump: true,
-  }, window.mapOptions));
+  var map = L.map(
+    'map',
+    L.extend(
+      {
+        // proper initial position is now delayed until all plugins are loaded and the base layer is set
+        center: [0, 0],
+        zoom: 1,
+        crs: L.CRS.S2,
+        minZoom: window.MIN_ZOOM,
+        // zoomAnimation: false,
+        markerZoomAnimation: false,
+        bounceAtZoomLimits: false,
+        maxBoundsViscosity: 0.7,
+        worldCopyJump: true,
+      },
+      window.mapOptions
+    )
+  );
   var max_lat = map.options.crs.projection.MAX_LATITUDE;
-  map.setMaxBounds([[max_lat, 360], [-max_lat, -360]]);
+  map.setMaxBounds([
+    [max_lat, 360],
+    [-max_lat, -360],
+  ]);
 
   L.Renderer.mergeOptions({
-    padding: window.RENDERER_PADDING || 0.5
+    padding: window.RENDERER_PADDING || 0.5,
   });
 
   // add empty div to leaflet control areas - to force other leaflet controls to move around IITC UI elements
   // TODO? move the actual IITC DOM into the leaflet control areas, so dummy <div>s aren't needed
-  if (!isSmartphone()) {
+  if (!window.isSmartphone()) {
     // chat window area
-    $('<div>').addClass('leaflet-control')
-      .width(708).height(108)
+    $('<div>')
+      .addClass('leaflet-control')
+      .width(708)
+      .height(108)
       .css({
         'pointer-events': 'none',
-        'margin': '0'
-      }).appendTo(map._controlCorners.bottomleft);
+        margin: '0',
+      })
+      .appendTo(map._controlCorners.bottomleft);
   }
   var baseLayers = createDefaultBaseMapLayers();
   var overlays = createDefaultOverlays();
 
-  var layerChooser = window.layerChooser = new window.LayerChooser(baseLayers, overlays, {map: map})
-    .addTo(map);
+  var layerChooser = (window.layerChooser = new window.LayerChooser(baseLayers, overlays, { map: map }).addTo(map));
 
   $.each(overlays, function (_, layer) {
-    if (map.hasLayer(layer)) { return true; } // continue
+    if (map.hasLayer(layer)) {
+      return true;
+    } // continue
 
     // as users often become confused if they accidentally switch a standard layer off, display a warning in this case
-    $('#portaldetails')
-      .html('<div class="layer_off_warning">'
-         + '<p><b>Warning</b>: some of the standard layers are turned off. Some portals/links/fields will not be visible.</p>'
-         + '<a id="enable_standard_layers">Enable standard layers</a>'
-         + '</div>');
+    $('#portaldetails').html(
+      '<div class="layer_off_warning">' +
+        '<p><b>Warning</b>: some of the standard layers are turned off. Some portals/links/fields will not be visible.</p>' +
+        '<a id="enable_standard_layers">Enable standard layers</a>' +
+        '</div>'
+    );
     $('#enable_standard_layers').on('click', function () {
       $.each(overlays, function (ind, overlay) {
         if (!map.hasLayer(overlay)) {
@@ -24394,7 +24463,7 @@ window.setupMap = function () {
   map.on('moveend', window.idleReset);
 
   window.addResumeFunction(function () {
-    window.startRefreshTimeout(window.ON_MOVE_REFRESH*1000);
+    window.startRefreshTimeout(window.ON_MOVE_REFRESH * 1000);
   });
 
   // create the map data requester
@@ -24404,7 +24473,7 @@ window.setupMap = function () {
   // start the refresh process with a small timeout, so the first data request happens quickly
   // (the code originally called the request function directly, and triggered a normal delay for the next refresh.
   //  however, the moveend/zoomend gets triggered on map load, causing a duplicate refresh. this helps prevent that
-  window.startRefreshTimeout(window.ON_MOVE_REFRESH*1000);
+  window.startRefreshTimeout(window.ON_MOVE_REFRESH * 1000);
 
   // adds a base layer to the map. done separately from the above,
   // so that plugins that add base layers can be the default
@@ -24415,10 +24484,10 @@ window.setupMap = function () {
     // (setting an initial position, before a base layer is added, causes issues with leaflet) // todo check
     var pos = getPosition();
     if (!pos) {
-      pos = {center: [0, 0], zoom: 1};
-      map.locate({setView: true});
+      pos = { center: [0, 0], zoom: 1 };
+      map.locate({ setView: true });
     }
-    map.setView(pos.center, pos.zoom, {reset: true});
+    map.setView(pos.center, pos.zoom, { reset: true });
 
     // read here ONCE, so the URL is only evaluated one time after the
     // necessary data has been loaded.
@@ -24469,6 +24538,8 @@ window.setupMap = function () {
 // *** module: map_data_calc_tools.js ***
 (function () {
 var log = ulog('map_data_calc_tools');
+/* global log -- eslint */
+
 /**
  * @file Contains functions for calculating map data request parameters and converting between lat/lng and map tiles.
  * Ingress Intel splits up requests for map data (portals, links, fields) into tiles.
@@ -24486,41 +24557,37 @@ var log = ulog('map_data_calc_tools');
  *
  * @function setupDataTileParams
  */
-window.setupDataTileParams = function() {
+window.setupDataTileParams = function () {
   // default values - used to fall back to if we can't detect those used in stock intel
-  var DEFAULT_ZOOM_TO_TILES_PER_EDGE = [1,1,1,40,40,80,80,320,1000,2000,2000,4000,8000,16000,16000,32000];
-  var DEFAULT_ZOOM_TO_LEVEL = [8,8,8,8,7,7,7,6,6,5,4,4,3,2,2,1,1];
+  var DEFAULT_ZOOM_TO_TILES_PER_EDGE = [1, 1, 1, 40, 40, 80, 80, 320, 1000, 2000, 2000, 4000, 8000, 16000, 16000, 32000];
+  var DEFAULT_ZOOM_TO_LEVEL = [8, 8, 8, 8, 7, 7, 7, 6, 6, 5, 4, 4, 3, 2, 2, 1, 1];
 
   // stock intel doesn't have this array (they use a switch statement instead), but this is far neater
-  var DEFAULT_ZOOM_TO_LINK_LENGTH = [200000,200000,200000,200000,200000,60000,60000,10000,5000,2500,2500,800,300,0,0];
+  var DEFAULT_ZOOM_TO_LINK_LENGTH = [200000, 200000, 200000, 200000, 200000, 60000, 60000, 10000, 5000, 2500, 2500, 800, 300, 0, 0];
 
   window.TILE_PARAMS = {};
 
   // not in stock to detect - we'll have to assume the above values...
   window.TILE_PARAMS.ZOOM_TO_LINK_LENGTH = DEFAULT_ZOOM_TO_LINK_LENGTH;
 
-
-  if (niantic_params.ZOOM_TO_LEVEL && niantic_params.TILES_PER_EDGE) {
-    window.TILE_PARAMS.ZOOM_TO_LEVEL = niantic_params.ZOOM_TO_LEVEL;
-    window.TILE_PARAMS.TILES_PER_EDGE = niantic_params.TILES_PER_EDGE;
-
+  if (window.niantic_params.ZOOM_TO_LEVEL && window.niantic_params.TILES_PER_EDGE) {
+    window.TILE_PARAMS.ZOOM_TO_LEVEL = window.niantic_params.ZOOM_TO_LEVEL;
+    window.TILE_PARAMS.TILES_PER_EDGE = window.niantic_params.TILES_PER_EDGE;
 
     // lazy numerical array comparison
-    if (JSON.stringify(niantic_params.ZOOM_TO_LEVEL) !== JSON.stringify(DEFAULT_ZOOM_TO_LEVEL)) {
+    if (JSON.stringify(window.niantic_params.ZOOM_TO_LEVEL) !== JSON.stringify(DEFAULT_ZOOM_TO_LEVEL)) {
       log.warn('Tile parameter ZOOM_TO_LEVEL have changed in stock intel. Detected correct values, but code should be updated');
-      debugger;
     }
-    if (JSON.stringify(niantic_params.TILES_PER_EDGE) !== JSON.stringify(DEFAULT_ZOOM_TO_TILES_PER_EDGE)) {
+    if (JSON.stringify(window.niantic_params.TILES_PER_EDGE) !== JSON.stringify(DEFAULT_ZOOM_TO_TILES_PER_EDGE)) {
       log.warn('Tile parameter TILES_PER_EDGE have changed in stock intel. Detected correct values, but code should be updated');
-      debugger;
     }
-
   } else {
-    dialog({
+    window.dialog({
       title: 'IITC Warning',
-      html: "<p>IITC failed to detect the ZOOM_TO_LEVEL and/or TILES_PER_EDGE settings from the stock intel site.</p>"
-           +"<p>IITC is now using fallback default values. However, if detection has failed it's likely the values have changed."
-           +" IITC may not load the map if these default values are wrong.</p>",
+      html:
+        '<p>IITC failed to detect the ZOOM_TO_LEVEL and/or TILES_PER_EDGE settings from the stock intel site.</p>' +
+        "<p>IITC is now using fallback default values. However, if detection has failed it's likely the values have changed." +
+        ' IITC may not load the map if these default values are wrong.</p>',
     });
 
     window.TILE_PARAMS.ZOOM_TO_LEVEL = DEFAULT_ZOOM_TO_LEVEL;
@@ -24530,9 +24597,8 @@ window.setupDataTileParams = function() {
   // 2015-07-01: niantic added code to the stock site that overrides the min zoom level for unclaimed portals to 15 and above
   // instead of updating the zoom-to-level array. makes no sense really....
   // we'll just chop off the array at that point, so the code defaults to level 0 (unclaimed) everywhere...
-  window.TILE_PARAMS.ZOOM_TO_LEVEL = window.TILE_PARAMS.ZOOM_TO_LEVEL.slice(0,15); // deprecated
-
-}
+  window.TILE_PARAMS.ZOOM_TO_LEVEL = window.TILE_PARAMS.ZOOM_TO_LEVEL.slice(0, 15); // deprecated
+};
 
 /**
  * Gets the map zoom tile parameters for a specific zoom level. It calculates the tile level, number of tiles per edge,
@@ -24549,16 +24615,16 @@ window.getMapZoomTileParameters = function (zoom) {
     level: window.TILE_PARAMS.ZOOM_TO_LEVEL[zoom] || 0, // deprecated
     tilesPerEdge: window.TILE_PARAMS.TILES_PER_EDGE[zoom] || maxTilesPerEdge,
     minLinkLength: window.TILE_PARAMS.ZOOM_TO_LINK_LENGTH[zoom] || 0,
-    hasPortals: zoom >= window.TILE_PARAMS.ZOOM_TO_LINK_LENGTH.length,  // no portals returned at all when link length limits things
-    zoom: zoom  // include the zoom level, for reference
+    hasPortals: zoom >= window.TILE_PARAMS.ZOOM_TO_LINK_LENGTH.length, // no portals returned at all when link length limits things
+    zoom: zoom, // include the zoom level, for reference
   };
-}
+};
 
-window.getDataZoomTileParameters = function(zoom) {
-  zoom = arguments.length ? zoom : map.getZoom();
-  var dataZoom = getDataZoomForMapZoom(zoom);
-  return tileParams = getMapZoomTileParameters(dataZoom);
-}
+window.getDataZoomTileParameters = function (zoom) {
+  zoom = arguments.length ? zoom : window.map.getZoom();
+  var dataZoom = window.getDataZoomForMapZoom(zoom);
+  return window.getMapZoomTileParameters(dataZoom);
+};
 
 /**
  * Determines the data zoom level for a given map zoom level. This function adjusts the zoom level for
@@ -24568,10 +24634,10 @@ window.getDataZoomTileParameters = function(zoom) {
  * @param {number} zoom - The current map zoom level.
  * @returns {number} The adjusted zoom level for data requests.
  */
-window.getDataZoomForMapZoom = function(zoom) {
+window.getDataZoomForMapZoom = function (zoom) {
   // we can fetch data at a zoom level different to the map zoom.
 
-  //NOTE: the specifics of this are tightly coupled with the above ZOOM_TO_LEVEL and TILES_PER_EDGE arrays
+  // NOTE: the specifics of this are tightly coupled with the above ZOOM_TO_LEVEL and TILES_PER_EDGE arrays
 
   // firstly, some of IITCs zoom levels, depending on base map layer, can be higher than stock. limit zoom level
   // (stock site max zoom may vary depending on google maps detail in the area - 20 or 21 max is common)
@@ -24583,51 +24649,51 @@ window.getDataZoomForMapZoom = function(zoom) {
   // to avoid impacting server load, we keep ourselves restricted to a zoom level with the sane number
   // of tilesPerEdge and portal levels visible
 
-  var origTileParams = getMapZoomTileParameters(zoom);
+  var origTileParams = window.getMapZoomTileParameters(zoom);
 
-  while (zoom > MIN_ZOOM) {
-    var newTileParams = getMapZoomTileParameters(zoom-1);
+  while (zoom > window.MIN_ZOOM) {
+    var newTileParams = window.getMapZoomTileParameters(zoom - 1);
 
-    if ( newTileParams.tilesPerEdge != origTileParams.tilesPerEdge
-      || newTileParams.hasPortals != origTileParams.hasPortals
-      || newTileParams.level*newTileParams.hasPortals != origTileParams.level*origTileParams.hasPortals  // multiply by 'hasPortals' bool - so comparison does not matter when no portals available
+    if (
+      newTileParams.tilesPerEdge !== origTileParams.tilesPerEdge ||
+      newTileParams.hasPortals !== origTileParams.hasPortals ||
+      newTileParams.level * newTileParams.hasPortals !== origTileParams.level * origTileParams.hasPortals // multiply by 'hasPortals' bool - so comparison does not matter when no portals available
     ) {
       // switching to zoom-1 would result in a different detail level - so we abort changing things
       break;
     } else {
       // changing to zoom = zoom-1 results in identical tile parameters - so we can safely step back
       // with no increase in either server load or number of requests
-      zoom = zoom-1;
+      zoom = zoom - 1;
     }
   }
 
   return zoom;
-}
+};
 
-window.lngToTile = function(lng, params) {
-  return Math.floor((lng + 180) / 360 * params.tilesPerEdge);
-}
+window.lngToTile = function (lng, params) {
+  return Math.floor(((lng + 180) / 360) * params.tilesPerEdge);
+};
 
-window.latToTile = function(lat, params) {
-  return Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) +
-    1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * params.tilesPerEdge);
-}
+window.latToTile = function (lat, params) {
+  return Math.floor(((1 - Math.log(Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)) / Math.PI) / 2) * params.tilesPerEdge);
+};
 
-window.tileToLng = function(x, params) {
-  return x / params.tilesPerEdge * 360 - 180;
-}
+window.tileToLng = function (x, params) {
+  return (x / params.tilesPerEdge) * 360 - 180;
+};
 
-window.tileToLat = function(y, params) {
-  var n = Math.PI - 2 * Math.PI * y / params.tilesPerEdge;
-  return 180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
-}
+window.tileToLat = function (y, params) {
+  var n = Math.PI - (2 * Math.PI * y) / params.tilesPerEdge;
+  return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+};
 
-window.pointToTileId = function(params, x, y) {
-//change to quadkey construction
-//as of 2014-05-06: zoom_x_y_minlvl_maxlvl_maxhealth
+window.pointToTileId = function (params, x, y) {
+  // change to quadkey construction
+  // as of 2014-05-06: zoom_x_y_minlvl_maxlvl_maxhealth
 
-  return params.zoom + "_" + x + "_" + y + "_" + params.level + "_8_100";
-}
+  return params.zoom + '_' + x + '_' + y + '_' + params.level + '_8_100';
+};
 
 
 })();
@@ -24636,32 +24702,34 @@ window.pointToTileId = function(params, x, y) {
 // *** module: map_data_debug.js ***
 (function () {
 var log = ulog('map_data_debug');
+/* global L -- eslint */
+
 /**
  * Contains functions for rendering debug tiles on the map. These are used for debugging map data tiles.
  * @class RenderDebugTiles
  */
-window.RenderDebugTiles = function() {
+window.RenderDebugTiles = function () {
   this.CLEAR_CHECK_TIME = 0.1;
   this.FADE_TIME = 1.0;
 
   this.debugTileLayer = L.layerGroup();
-  window.layerChooser.addOverlay(this.debugTileLayer, 'DEBUG Data Tiles', {default: false});
+  window.layerChooser.addOverlay(this.debugTileLayer, 'DEBUG Data Tiles', { default: false });
 
   this.debugTileToRectangle = {};
   this.debugTileClearTimes = {};
   this.timer = undefined;
-}
+};
 
 /**
  * Resets the debug tiles by clearing all layers, rectangles and clear times.
  * @function
  * @memberof RenderDebugTiles
  */
-window.RenderDebugTiles.prototype.reset = function() {
+window.RenderDebugTiles.prototype.reset = function () {
   this.debugTileLayer.clearLayers();
   this.debugTileToRectangle = {};
   this.debugTileClearTimes = {};
-}
+};
 
 /**
  * Creates a new debug tile with the specified ID and bounds.
@@ -24671,20 +24739,20 @@ window.RenderDebugTiles.prototype.reset = function() {
  * @param {string} id - The ID of the debug tile.
  * @param {L.LatLngBounds} bounds - The geographical bounds of the tile.
  */
-window.RenderDebugTiles.prototype.create = function(id,bounds) {
-  var s = {color: '#666', weight: 1, opacity: 0.4, fillColor: '#666', fillOpacity: 0.1, interactive: false};
+window.RenderDebugTiles.prototype.create = function (id, bounds) {
+  var s = { color: '#666', weight: 1, opacity: 0.4, fillColor: '#666', fillOpacity: 0.1, interactive: false };
 
-  var bounds = new L.LatLngBounds(bounds);
+  bounds = new L.LatLngBounds(bounds);
   bounds = bounds.pad(-0.02);
 
-  var l = L.rectangle(bounds,s);
+  var l = L.rectangle(bounds, s);
   this.debugTileToRectangle[id] = l;
   this.debugTileLayer.addLayer(l);
-  if (map.hasLayer(this.debugTileLayer)) {
+  if (window.map.hasLayer(this.debugTileLayer)) {
     // only bring to back if we have the debug layer turned on
     l.bringToBack();
   }
-}
+};
 
 /**
  * Sets the color of the border and fill for a specific debug tile.
@@ -24695,13 +24763,13 @@ window.RenderDebugTiles.prototype.create = function(id,bounds) {
  * @param {string} bordercol - The color for the border.
  * @param {string} fillcol - The color for the fill.
  */
-window.RenderDebugTiles.prototype.setColour = function(id,bordercol,fillcol) {
+window.RenderDebugTiles.prototype.setColour = function (id, bordercol, fillcol) {
   var l = this.debugTileToRectangle[id];
   if (l) {
-    var s = {color: bordercol, fillColor: fillcol};
+    var s = { color: bordercol, fillColor: fillcol };
     l.setStyle(s);
   }
-}
+};
 
 /**
  * Sets the state of a specific debug tile. Changes its color based on the state.
@@ -24711,32 +24779,66 @@ window.RenderDebugTiles.prototype.setColour = function(id,bordercol,fillcol) {
  * @param {string} id - The ID of the debug tile.
  * @param {string} state - The state of the tile (e.g., 'ok', 'error', 'requested').
  */
-window.RenderDebugTiles.prototype.setState = function(id,state) {
+window.RenderDebugTiles.prototype.setState = function (id, state) {
   var col = '#f0f';
   var fill = '#f0f';
   var clearDelay = -1;
-  switch(state) {
-    case 'ok': col='#0f0'; fill='#0f0'; clearDelay = 2; break;
-    case 'error': col='#f00'; fill='#f00'; clearDelay = 30; break;
-    case 'cache-fresh': col='#0f0'; fill='#ff0'; clearDelay = 2; break;
-    case 'cache-stale': col='#f00'; fill='#ff0'; clearDelay = 10; break;
-    case 'requested': col='#66f'; fill='#66f'; break;
-    case 'retrying': col='#666'; fill='#666'; break;
-    case 'request-fail': col='#a00'; fill='#666'; break;
-    case 'tile-fail': col='#f00'; fill='#666'; break;
-    case 'tile-timeout': col='#ff0'; fill='#666'; break;
-    case 'render-queue': col='#f0f'; fill='#f0f'; break;
+  switch (state) {
+    case 'ok':
+      col = '#0f0';
+      fill = '#0f0';
+      clearDelay = 2;
+      break;
+    case 'error':
+      col = '#f00';
+      fill = '#f00';
+      clearDelay = 30;
+      break;
+    case 'cache-fresh':
+      col = '#0f0';
+      fill = '#ff0';
+      clearDelay = 2;
+      break;
+    case 'cache-stale':
+      col = '#f00';
+      fill = '#ff0';
+      clearDelay = 10;
+      break;
+    case 'requested':
+      col = '#66f';
+      fill = '#66f';
+      break;
+    case 'retrying':
+      col = '#666';
+      fill = '#666';
+      break;
+    case 'request-fail':
+      col = '#a00';
+      fill = '#666';
+      break;
+    case 'tile-fail':
+      col = '#f00';
+      fill = '#666';
+      break;
+    case 'tile-timeout':
+      col = '#ff0';
+      fill = '#666';
+      break;
+    case 'render-queue':
+      col = '#f0f';
+      fill = '#f0f';
+      break;
   }
-  this.setColour (id, col, fill);
+  this.setColour(id, col, fill);
   if (clearDelay >= 0) {
-    var clearAt = Date.now() + clearDelay*1000;
+    var clearAt = Date.now() + clearDelay * 1000;
     this.debugTileClearTimes[id] = clearAt;
 
     if (!this.timer) {
-      this.startTimer(clearDelay*1000);
+      this.startTimer(clearDelay * 1000);
     }
   }
-}
+};
 
 /**
  * Starts a timer to run the clear pass function after a specified wait time.
@@ -24745,15 +24847,18 @@ window.RenderDebugTiles.prototype.setState = function(id,state) {
  * @memberof RenderDebugTiles
  * @param {number} waitTime - The wait time in milliseconds before running the clear pass.
  */
-window.RenderDebugTiles.prototype.startTimer = function(waitTime) {
+window.RenderDebugTiles.prototype.startTimer = function (waitTime) {
   var _this = this;
   if (!_this.timer) {
     // a timeout of 0 firing the actual timeout - helps things run smoother
-    _this.timer = setTimeout ( function() {
-      _this.timer = setTimeout ( function() { _this.timer = undefined; _this.runClearPass(); }, waitTime );
+    _this.timer = setTimeout(function () {
+      _this.timer = setTimeout(function () {
+        _this.timer = undefined;
+        _this.runClearPass();
+      }, waitTime);
     }, 0);
   }
-}
+};
 
 /**
  * Executes a pass to clear debug tiles that have exceeded their fade time.
@@ -24762,27 +24867,26 @@ window.RenderDebugTiles.prototype.startTimer = function(waitTime) {
  * @function
  * @memberof RenderDebugTiles
  */
-window.RenderDebugTiles.prototype.runClearPass = function() {
-
+window.RenderDebugTiles.prototype.runClearPass = function () {
   var now = Date.now();
   for (var id in this.debugTileClearTimes) {
     var diff = now - this.debugTileClearTimes[id];
     if (diff > 0) {
-      if (diff > this.FADE_TIME*1000) {
+      if (diff > this.FADE_TIME * 1000) {
         this.debugTileLayer.removeLayer(this.debugTileToRectangle[id]);
         delete this.debugTileClearTimes[id];
       } else {
-        var fade = 1.0 - (diff / (this.FADE_TIME*1000));
+        var fade = 1.0 - diff / (this.FADE_TIME * 1000);
 
-        this.debugTileToRectangle[id].setStyle ({ opacity: 0.4*fade, fillOpacity: 0.1*fade });
+        this.debugTileToRectangle[id].setStyle({ opacity: 0.4 * fade, fillOpacity: 0.1 * fade });
       }
     }
   }
 
   if (Object.keys(this.debugTileClearTimes).length > 0) {
-    this.startTimer(this.CLEAR_CHECK_TIME*1000);
+    this.startTimer(this.CLEAR_CHECK_TIME * 1000);
   }
-}
+};
 
 
 })();
@@ -24791,7 +24895,7 @@ window.RenderDebugTiles.prototype.runClearPass = function() {
 // *** module: map_data_render.js ***
 (function () {
 var log = ulog('map_data_render');
-/* global L */
+/* global IITC, L, log -- eslint */
 
 /**
  * Manages rendering of map data (portals, links, fields) into Leaflet.
@@ -24799,7 +24903,7 @@ var log = ulog('map_data_render');
  */
 window.Render = function () {
   this.portalMarkerScale = undefined;
-}
+};
 
 /**
  * Initiates a render pass. It's called at the start of making a batch of data requests to the servers.
@@ -24809,7 +24913,7 @@ window.Render = function () {
  * @param {L.LatLngBounds} bounds - The bounds within which the render pass will occur.
  */
 window.Render.prototype.startRenderPass = function (bounds) {
-  this.deletedGuid = {};  // object - represents the set of all deleted game entity GUIDs seen in a render pass
+  this.deletedGuid = {}; // object - represents the set of all deleted game entity GUIDs seen in a render pass
 
   this.seenPortalsGuid = {};
   this.seenLinksGuid = {};
@@ -24824,9 +24928,8 @@ window.Render.prototype.startRenderPass = function (bounds) {
   this.clearLinksOutsideBounds(paddedBounds);
   this.clearFieldsOutsideBounds(paddedBounds);
 
-
   this.rescalePortalMarkers();
-}
+};
 
 /**
  * Clears portals outside the specified bounds.
@@ -24837,13 +24940,13 @@ window.Render.prototype.startRenderPass = function (bounds) {
  */
 window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
   for (var guid in window.portals) {
-    var p = portals[guid];
+    var p = window.portals[guid];
     // clear portals outside visible bounds - unless it's the selected portal, or it's relevant to artifacts
-    if (!bounds.contains(p.getLatLng()) && guid !== selectedPortal && !artifact.isInterestingPortal(guid)) {
+    if (!bounds.contains(p.getLatLng()) && guid !== window.selectedPortal && !window.artifact.isInterestingPortal(guid)) {
       this.deletePortalEntity(guid);
     }
   }
-}
+};
 
 /**
  * Clears links that are outside the specified bounds.
@@ -24854,7 +24957,7 @@ window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
  */
 window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
   for (var guid in window.links) {
-    var l = links[guid];
+    var l = window.links[guid];
 
     // NOTE: our geodesic lines can have lots of intermediate points. the bounds calculation hasn't been optimised for this
     // so can be particularly slow. a simple bounds check based on start+end point will be good enough for this check
@@ -24865,7 +24968,7 @@ window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
       this.deleteLinkEntity(guid);
     }
   }
-}
+};
 
 /**
  * Clears fields that are outside the specified bounds.
@@ -24876,7 +24979,7 @@ window.Render.prototype.clearLinksOutsideBounds = function (bounds) {
  */
 window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
   for (var guid in window.fields) {
-    var f = fields[guid];
+    var f = window.fields[guid];
 
     // NOTE: our geodesic polys can have lots of intermediate points. the bounds calculation hasn't been optimised for this
     // so can be particularly slow. a simple bounds check based on corner points will be good enough for this check
@@ -24887,7 +24990,7 @@ window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
       this.deleteFieldEntity(guid);
     }
   }
-}
+};
 
 /**
  * Processes tile data including deleted entity GUIDs and game entities.
@@ -24896,10 +24999,10 @@ window.Render.prototype.clearFieldsOutsideBounds = function (bounds) {
  * @memberof Render
  * @param {Object} tiledata - Data for a specific map tile.
  */
-window.Render.prototype.processTileData = function(tiledata) {
-  this.processDeletedGameEntityGuids(tiledata.deletedGameEntityGuids||[]);
-  this.processGameEntities(tiledata.gameEntities||[]);
-}
+window.Render.prototype.processTileData = function (tiledata) {
+  this.processDeletedGameEntityGuids(tiledata.deletedGameEntityGuids || []);
+  this.processGameEntities(tiledata.gameEntities || []);
+};
 
 /**
  * Processes deleted game entity GUIDs and removes them from the map.
@@ -24908,24 +25011,22 @@ window.Render.prototype.processTileData = function(tiledata) {
  * @memberof Render
  * @param {Array} deleted - Array of deleted game entity GUIDs.
  */
-window.Render.prototype.processDeletedGameEntityGuids = function(deleted) {
-  for(var i in deleted) {
+window.Render.prototype.processDeletedGameEntityGuids = function (deleted) {
+  for (var i in deleted) {
     var guid = deleted[i];
 
-    if ( !(guid in this.deletedGuid) ) {
-      this.deletedGuid[guid] = true;  // flag this guid as having being processed
+    if (!(guid in this.deletedGuid)) {
+      this.deletedGuid[guid] = true; // flag this guid as having being processed
 
-      if (guid == selectedPortal) {
+      if (guid === window.selectedPortal) {
         // the rare case of the selected portal being deleted. clear the details tab and deselect it
-        renderPortalDetails(null);
+        window.renderPortalDetails(null);
       }
 
       this.deleteEntity(guid);
-
     }
   }
-
-}
+};
 
 /**
  * Processes game entities (fields, links, portals) and creates them on the map.
@@ -24933,37 +25034,37 @@ window.Render.prototype.processDeletedGameEntityGuids = function(deleted) {
  * @function
  * @memberof Render
  * @param {Array} entities - Array of game entities.
- * @param {Object} details - Details for the {@link window.decodeArray.portal} function.
+ * @param {string} details - Details for the {@link window.decodeArray.portal} function.
  */
-window.Render.prototype.processGameEntities = function(entities, details) { // details expected in decodeArray.portal
+window.Render.prototype.processGameEntities = function (entities, details) {
+  // details expected in decodeArray.portal
 
   // we loop through the entities three times - for fields, links and portals separately
   // this is a reasonably efficient work-around for leafletjs limitations on svg render order
 
-
-  for (var i in entities) {
-    var ent = entities[i];
-    if (ent[2][0] == 'r' && !(ent[0] in this.deletedGuid)) {
+  for (const i in entities) {
+    const ent = entities[i];
+    if (ent[2][0] === 'r' && !(ent[0] in this.deletedGuid)) {
       this.createFieldEntity(ent);
     }
   }
 
-  for (var i in entities) {
-    var ent = entities[i];
+  for (const i in entities) {
+    const ent = entities[i];
 
-    if (ent[2][0] == 'e' && !(ent[0] in this.deletedGuid)) {
+    if (ent[2][0] === 'e' && !(ent[0] in this.deletedGuid)) {
       this.createLinkEntity(ent);
     }
   }
 
-  for (var i in entities) {
-    var ent = entities[i];
+  for (const i in entities) {
+    const ent = entities[i];
 
-    if (ent[2][0] == 'p' && !(ent[0] in this.deletedGuid)) {
+    if (ent[2][0] === 'p' && !(ent[0] in this.deletedGuid)) {
       this.createPortalEntity(ent, details);
     }
   }
-}
+};
 
 /**
  * Ends a render pass. This includes cleanup and processing of any remaining data.
@@ -24972,41 +25073,43 @@ window.Render.prototype.processGameEntities = function(entities, details) { // d
  * @function
  * @memberof Render
  */
-window.Render.prototype.endRenderPass = function() {
-  var countp=0,countl=0,countf=0;
+window.Render.prototype.endRenderPass = function () {
+  var countp = 0,
+    countl = 0,
+    countf = 0;
 
   // check to see if there are any entities we haven't seen. if so, delete them
-  for (var guid in window.portals) {
+  for (const guid in window.portals) {
     // special case for selected portal - it's kept even if not seen
     // artifact (e.g. jarvis shard) portals are also kept - but they're always 'seen'
-    if (!(guid in this.seenPortalsGuid) && guid !== selectedPortal) {
+    if (!(guid in this.seenPortalsGuid) && guid !== window.selectedPortal) {
       this.deletePortalEntity(guid);
       countp++;
     }
   }
-  for (var guid in window.links) {
+  for (const guid in window.links) {
     if (!(guid in this.seenLinksGuid)) {
       this.deleteLinkEntity(guid);
       countl++;
     }
   }
-  for (var guid in window.fields) {
+  for (const guid in window.fields) {
     if (!(guid in this.seenFieldsGuid)) {
       this.deleteFieldEntity(guid);
       countf++;
     }
   }
 
-  log.log('Render: end cleanup: removed '+countp+' portals, '+countl+' links, '+countf+' fields');
+  log.log('Render: end cleanup: removed ' + countp + ' portals, ' + countl + ' links, ' + countf + ' fields');
 
   // reorder portals to be after links/fields
   this.bringPortalsToFront();
 
   // re-select the selected portal, to re-render the side-bar. ensures that any data calculated from the map data is up to date
-  if (selectedPortal) {
-    renderPortalDetails (selectedPortal);
+  if (window.selectedPortal) {
+    window.renderPortalDetails(window.selectedPortal);
   }
-}
+};
 
 /**
  * Brings portal markers to the front of the map view, ensuring they are rendered above links and fields.
@@ -25014,18 +25117,18 @@ window.Render.prototype.endRenderPass = function() {
  * @function
  * @memberof Render
  */
-window.Render.prototype.bringPortalsToFront = function() {
+window.Render.prototype.bringPortalsToFront = function () {
   for (var guid in window.portals) {
     window.portals[guid].bringToFront();
   }
 
   // artifact portals are always brought to the front, above all others
-  $.each(artifact.getInterestingPortals(), function(i,guid) {
-    if (portals[guid] && portals[guid]._map) {
-      portals[guid].bringToFront();
+  $.each(window.artifact.getInterestingPortals(), function (i, guid) {
+    if (window.portals[guid] && window.portals[guid]._map) {
+      window.portals[guid].bringToFront();
     }
   });
-}
+};
 
 /**
  * Deletes an entity (portal, link, or field) from the map based on its GUID.
@@ -25034,11 +25137,11 @@ window.Render.prototype.bringPortalsToFront = function() {
  * @memberof Render
  * @param {string} guid - The globally unique identifier of the entity to delete.
  */
-window.Render.prototype.deleteEntity = function(guid) {
+window.Render.prototype.deleteEntity = function (guid) {
   this.deletePortalEntity(guid);
   this.deleteLinkEntity(guid);
   this.deleteFieldEntity(guid);
-}
+};
 
 /**
  * Deletes a portal entity from the map based on its GUID.
@@ -25047,15 +25150,15 @@ window.Render.prototype.deleteEntity = function(guid) {
  * @memberof Render
  * @param {string} guid - The globally unique identifier of the portal to delete.
  */
-window.Render.prototype.deletePortalEntity = function(guid) {
+window.Render.prototype.deletePortalEntity = function (guid) {
   if (guid in window.portals) {
     var p = window.portals[guid];
     window.ornaments.removePortal(p);
     this.removePortalFromMapLayer(p);
     delete window.portals[guid];
-    window.runHooks('portalRemoved', {portal: p, data: p.options.data });
+    window.runHooks('portalRemoved', { portal: p, data: p.options.data });
   }
-}
+};
 
 /**
  * Deletes a link entity from the map based on its GUID.
@@ -25064,14 +25167,14 @@ window.Render.prototype.deletePortalEntity = function(guid) {
  * @memberof Render
  * @param {string} guid - The globally unique identifier of the link to delete.
  */
-window.Render.prototype.deleteLinkEntity = function(guid) {
+window.Render.prototype.deleteLinkEntity = function (guid) {
   if (guid in window.links) {
     var l = window.links[guid];
     l.remove();
     delete window.links[guid];
-    window.runHooks('linkRemoved', {link: l, data: l.options.data });
+    window.runHooks('linkRemoved', { link: l, data: l.options.data });
   }
-}
+};
 
 /**
  * Deletes a field entity from the map based on its GUID.
@@ -25080,14 +25183,14 @@ window.Render.prototype.deleteLinkEntity = function(guid) {
  * @memberof Render
  * @param {string} guid - The globally unique identifier of the field to delete.
  */
-window.Render.prototype.deleteFieldEntity = function(guid) {
+window.Render.prototype.deleteFieldEntity = function (guid) {
   if (guid in window.fields) {
     var f = window.fields[guid];
     f.remove();
     delete window.fields[guid];
-    window.runHooks('fieldRemoved', {field: f, data: f.options.data });
+    window.runHooks('fieldRemoved', { field: f, data: f.options.data });
   }
-}
+};
 
 /**
  * Creates a placeholder portal entity. This is used when the portal is not fully loaded,
@@ -25139,8 +25242,7 @@ window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, l
   if (!portalMoved) {
     this.createPortalEntity(ent, 'core'); // placeholder
   }
-
-}
+};
 
 /**
  * Creates a portal entity from the provided game entity data.
@@ -25151,12 +25253,12 @@ window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, l
  * @param {Array} ent - An array representing the game entity.
  * @param {string} details - Detail level expected in {@link window.decodeArray.portal} (e.g., 'core', 'summary').
  */
-window.Render.prototype.createPortalEntity = function(ent, details) { // details expected in decodeArray.portal
-  this.seenPortalsGuid[ent[0]] = true;  // flag we've seen it
+window.Render.prototype.createPortalEntity = function (ent, details) {
+  this.seenPortalsGuid[ent[0]] = true; // flag we've seen it
 
   var previousData = undefined;
 
-  var data = decodeArray.portal(ent[2], details);
+  var data = window.decodeArray.portal(ent[2], details);
 
   // check if entity already exists
   if (ent[0] in window.portals) {
@@ -25184,34 +25286,34 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
     this.deletePortalEntity(ent[0]);
   }
 
-  var portalLevel = parseInt(data.level)||0;
-  var team = teamStringToId(data.team);
+  var portalLevel = parseInt(data.level) || 0;
+  var team = window.teamStringToId(data.team);
   // the data returns unclaimed portals as level 1 - but IITC wants them treated as level 0
-  if (team == TEAM_NONE) portalLevel = 0;
+  if (team === window.TEAM_NONE) portalLevel = 0;
 
-  var latlng = L.latLng(data.latE6/1E6, data.lngE6/1E6);
+  var latlng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
 
   var dataOptions = {
     level: portalLevel,
     team: team,
-    ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
+    ent: ent, // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
     guid: ent[0],
     timestamp: ent[1],
-    data: data
+    data: data,
   };
 
   window.pushPortalGuidPositionCache(ent[0], data.latE6, data.lngE6);
 
-  var marker = createMarker(latlng, dataOptions);
+  var marker = window.createMarker(latlng, dataOptions);
 
-  function handler_portal_click (e) {
+  function handler_portal_click(e) {
     window.renderPortalDetails(e.target.options.guid);
   }
-  function handler_portal_dblclick (e) {
+  function handler_portal_dblclick(e) {
     window.renderPortalDetails(e.target.options.guid);
-    window.map.setView(e.target.getLatLng(), DEFAULT_ZOOM);
+    window.map.setView(e.target.getLatLng(), window.DEFAULT_ZOOM);
   }
-  function handler_portal_contextmenu (e) {
+  function handler_portal_contextmenu(e) {
     window.renderPortalDetails(e.target.options.guid);
     if (window.isSmartphone()) {
       window.show('info');
@@ -25224,37 +25326,36 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
   marker.on('dblclick', handler_portal_dblclick);
   marker.on('contextmenu', handler_portal_contextmenu);
 
-  window.runHooks('portalAdded', {portal: marker, previousData: previousData});
+  window.runHooks('portalAdded', { portal: marker, previousData: previousData });
 
   window.portals[ent[0]] = marker;
 
   // check for URL links to portal, and select it if this is the one
-  if (urlPortalLL && urlPortalLL[0] == marker.getLatLng().lat && urlPortalLL[1] == marker.getLatLng().lng) {
+  if (window.urlPortalLL && window.urlPortalLL[0] === marker.getLatLng().lat && window.urlPortalLL[1] === marker.getLatLng().lng) {
     // URL-passed portal found via pll parameter - set the guid-based parameter
-    log.log('urlPortalLL '+urlPortalLL[0]+','+urlPortalLL[1]+' matches portal GUID '+ent[0]);
+    log.log('urlPortalLL ' + window.urlPortalLL[0] + ',' + window.urlPortalLL[1] + ' matches portal GUID ' + ent[0]);
 
-    urlPortal = ent[0];
-    urlPortalLL = undefined;  // clear the URL parameter so it's not matched again
+    window.urlPortal = ent[0];
+    window.urlPortalLL = undefined; // clear the URL parameter so it's not matched again
   }
-  if (urlPortal == ent[0]) {
+  if (window.urlPortal === ent[0]) {
     // URL-passed portal found via guid parameter - set it as the selected portal
-    log.log('urlPortal GUID '+urlPortal+' found - selecting...');
-    selectedPortal = ent[0];
-    urlPortal = undefined;  // clear the URL parameter so it's not matched again
+    log.log('urlPortal GUID ' + window.urlPortal + ' found - selecting...');
+    window.selectedPortal = ent[0];
+    window.urlPortal = undefined; // clear the URL parameter so it's not matched again
   }
 
   // (re-)select the portal, to refresh the sidebar on any changes
-  if (ent[0] == selectedPortal) {
-    log.log('portal guid '+ent[0]+' is the selected portal - re-rendering portal details');
-    renderPortalDetails (selectedPortal);
+  if (ent[0] === window.selectedPortal) {
+    log.log('portal guid ' + ent[0] + ' is the selected portal - re-rendering portal details');
+    window.renderPortalDetails(window.selectedPortal);
   }
 
   window.ornaments.addPortal(marker);
 
-  //TODO? postpone adding to the map layer
+  // TODO? postpone adding to the map layer
   this.addPortalToMapLayer(marker);
-
-}
+};
 
 /**
  * Creates a field entity from the provided game entity data.
@@ -25263,24 +25364,26 @@ window.Render.prototype.createPortalEntity = function(ent, details) { // details
  * @memberof Render
  * @param {Array} ent - An array representing the game entity.
  */
-window.Render.prototype.createFieldEntity = function(ent) {
-  this.seenFieldsGuid[ent[0]] = true;  // flag we've seen it
+window.Render.prototype.createFieldEntity = function (ent) {
+  this.seenFieldsGuid[ent[0]] = true; // flag we've seen it
 
   var data = {
-//    type: ent[2][0],
+    // type: ent[2][0],
     timestamp: ent[1],
     team: ent[2][1],
-    points: ent[2][2].map(function(arr) { return {guid: arr[0], latE6: arr[1], lngE6: arr[2] }; })
+    points: ent[2][2].map(function (arr) {
+      return { guid: arr[0], latE6: arr[1], lngE6: arr[2] };
+    }),
   };
 
-  //create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
-  for (var i=0; i<3; i++) {
-    var p=data.points[i];
+  // create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
+  for (var i = 0; i < 3; i++) {
+    var p = data.points[i];
     this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, data.timestamp);
   }
 
   // check if entity already exists
-  if(ent[0] in window.fields) {
+  if (ent[0] in window.fields) {
     // yes. in theory, we should never get updated data for an existing field. they're created, and they're destroyed - never changed
     // but theory and practice may not be the same thing...
     var f = window.fields[ent[0]];
@@ -25293,33 +25396,33 @@ window.Render.prototype.createFieldEntity = function(ent) {
     this.deleteFieldEntity(ent[0]); // option 2, for now
   }
 
-  var team = teamStringToId(ent[2][1]);
+  var team = window.teamStringToId(ent[2][1]);
   var latlngs = [
-    L.latLng(data.points[0].latE6/1E6, data.points[0].lngE6/1E6),
-    L.latLng(data.points[1].latE6/1E6, data.points[1].lngE6/1E6),
-    L.latLng(data.points[2].latE6/1E6, data.points[2].lngE6/1E6)
+    L.latLng(data.points[0].latE6 / 1e6, data.points[0].lngE6 / 1e6),
+    L.latLng(data.points[1].latE6 / 1e6, data.points[1].lngE6 / 1e6),
+    L.latLng(data.points[2].latE6 / 1e6, data.points[2].lngE6 / 1e6),
   ];
 
   var poly = L.geodesicPolygon(latlngs, {
-    fillColor: COLORS[team],
+    fillColor: window.COLORS[team],
     fillOpacity: 0.25,
     stroke: false,
     interactive: false,
 
     team: team,
-    ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
+    ent: ent, // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
     guid: ent[0],
     timestamp: data.timestamp,
     data: data,
   });
 
-  runHooks('fieldAdded',{field: poly});
+  window.runHooks('fieldAdded', { field: poly });
 
   window.fields[ent[0]] = poly;
 
   // TODO? postpone adding to the layer??
   if (!IITC.filters.filterField(poly)) poly.addTo(window.map);
-}
+};
 
 /**
  * Creates a link entity from the provided game entity data.
@@ -25332,22 +25435,22 @@ window.Render.prototype.createLinkEntity = function (ent) {
   // Niantic have been faking link entities, based on data from fields
   // these faked links are sent along with the real portal links, causing duplicates
   // the faked ones all have longer GUIDs, based on the field GUID (with _ab, _ac, _bc appended)
-  var fakedLink = new RegExp("^[0-9a-f]{32}\.b_[ab][bc]$"); //field GUIDs always end with ".b" - faked links append the edge identifier
+  var fakedLink = new RegExp('^[0-9a-f]{32}.b_[ab][bc]$'); // field GUIDs always end with ".b" - faked links append the edge identifier
   if (fakedLink.test(ent[0])) return;
 
+  this.seenLinksGuid[ent[0]] = true; // flag we've seen it
 
-  this.seenLinksGuid[ent[0]] = true;  // flag we've seen it
-
-  var data = { // TODO add other properties and check correction direction
-//    type:   ent[2][0],
+  var data = {
+    // TODO add other properties and check correction direction
+    //    type:   ent[2][0],
     timestamp: ent[1],
-    team:   ent[2][1],
-    oGuid:  ent[2][2],
+    team: ent[2][1],
+    oGuid: ent[2][2],
     oLatE6: ent[2][3],
     oLngE6: ent[2][4],
-    dGuid:  ent[2][5],
+    dGuid: ent[2][5],
     dLatE6: ent[2][6],
-    dLngE6: ent[2][7]
+    dLngE6: ent[2][7],
   };
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
@@ -25365,30 +25468,27 @@ window.Render.prototype.createLinkEntity = function (ent) {
     this.deleteLinkEntity(ent[0]); // option 2 - for now
   }
 
-  var team = teamStringToId(ent[2][1]);
-  var latlngs = [
-    L.latLng(data.oLatE6/1E6, data.oLngE6/1E6),
-    L.latLng(data.dLatE6/1E6, data.dLngE6/1E6)
-  ];
+  var team = window.teamStringToId(ent[2][1]);
+  var latlngs = [L.latLng(data.oLatE6 / 1e6, data.oLngE6 / 1e6), L.latLng(data.dLatE6 / 1e6, data.dLngE6 / 1e6)];
   var poly = L.geodesicPolyline(latlngs, {
-    color: COLORS[team],
+    color: window.COLORS[team],
     opacity: 1,
     weight: 2,
     interactive: false,
 
     team: team,
-    ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
+    ent: ent, // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
     guid: ent[0],
     timestamp: ent[1],
-    data: data
+    data: data,
   });
 
-  runHooks('linkAdded', {link: poly});
+  window.runHooks('linkAdded', { link: poly });
 
   window.links[ent[0]] = poly;
 
   if (!IITC.filters.filterLink(poly)) poly.addTo(window.map);
-}
+};
 
 /**
  * Rescales portal markers based on the current map zoom level.
@@ -25396,17 +25496,17 @@ window.Render.prototype.createLinkEntity = function (ent) {
  * @function
  * @memberof Render
  */
-window.Render.prototype.rescalePortalMarkers = function() {
-  if (this.portalMarkerScale === undefined || this.portalMarkerScale != portalMarkerScale()) {
-    this.portalMarkerScale = portalMarkerScale();
+window.Render.prototype.rescalePortalMarkers = function () {
+  if (this.portalMarkerScale === undefined || this.portalMarkerScale !== window.portalMarkerScale()) {
+    this.portalMarkerScale = window.portalMarkerScale();
 
-    log.log('Render: map zoom '+map.getZoom()+' changes portal scale to '+portalMarkerScale()+' - redrawing all portals');
+    log.log('Render: map zoom ' + window.map.getZoom() + ' changes portal scale to ' + window.portalMarkerScale() + ' - redrawing all portals');
 
-    //NOTE: we're not calling this because it resets highlights - we're calling it as it
+    // NOTE: we're not calling this because it resets highlights - we're calling it as it
     // resets the style (inc size) of all portal markers, applying the new scale
-    resetHighlightedPortals();
+    window.resetHighlightedPortals();
   }
-}
+};
 
 /**
  * Adds a portal to the visible map layer.
@@ -25415,9 +25515,9 @@ window.Render.prototype.rescalePortalMarkers = function() {
  * @memberof Render
  * @param {Object} portal - The portal object to add to the map layer.
  */
-window.Render.prototype.addPortalToMapLayer = function(portal) {
+window.Render.prototype.addPortalToMapLayer = function (portal) {
   if (!IITC.filters.filterPortal(portal)) portal.addTo(window.map);
-}
+};
 
 /**
  * Removes a portal from the visible map layer.
@@ -25426,12 +25526,10 @@ window.Render.prototype.addPortalToMapLayer = function(portal) {
  * @memberof Render
  * @param {Object} portal - The portal object to remove from the map layer.
  */
-window.Render.prototype.removePortalFromMapLayer = function(portal) {
-  //remove it from the portalsLevels layer
+window.Render.prototype.removePortalFromMapLayer = function (portal) {
+  // remove it from the portalsLevels layer
   portal.remove();
-}
-
-/* global IITC */
+};
 
 
 })();
@@ -25440,14 +25538,16 @@ window.Render.prototype.removePortalFromMapLayer = function(portal) {
 // *** module: map_data_request.js ***
 (function () {
 var log = ulog('map_data_request');
+/* global L, log -- eslint */
+
 /**
  * Class for managing map data requests from the Ingress servers, caching the data, and passing it to the renderer.
  * @class MapDataRequest
  */
-window.MapDataRequest = function() {
-  this.cache = new DataCache();
-  this.render = new Render();
-  this.debugTiles = new RenderDebugTiles();
+window.MapDataRequest = function () {
+  this.cache = new window.DataCache();
+  this.render = new window.Render();
+  this.debugTiles = new window.RenderDebugTiles();
 
   this.activeRequestCount = 0;
   this.requestedTiles = {};
@@ -25457,7 +25557,6 @@ window.MapDataRequest = function() {
   this.renderQueuePaused = false;
 
   this.idle = false;
-
 
   // no more than this many requests in parallel. stock site seems to rely on browser limits (6, usually), sending
   // many requests at once.
@@ -25472,14 +25571,13 @@ window.MapDataRequest = function() {
   this.MAX_TILE_RETRIES = 5;
 
   // refresh timers
-  this.MOVE_REFRESH = 3; //time, after a map move (pan/zoom) before starting the refresh processing
-  this.STARTUP_REFRESH = 3; //refresh time used on first load of IITC
-  this.IDLE_RESUME_REFRESH = 5; //refresh time used after resuming from idle
+  this.MOVE_REFRESH = 3; // time, after a map move (pan/zoom) before starting the refresh processing
+  this.STARTUP_REFRESH = 3; // refresh time used on first load of IITC
+  this.IDLE_RESUME_REFRESH = 5; // refresh time used after resuming from idle
 
   // after one of the above, there's an additional delay between preparing the refresh (clearing out of bounds,
   // processing cache, etc) and actually sending the first network requests
-  this.DOWNLOAD_DELAY = 1;  //delay after preparing the data download before tile requests are sent
-
+  this.DOWNLOAD_DELAY = 1; // delay after preparing the data download before tile requests are sent
 
   // a short delay between one request finishing and the queue being run for the next request.
   this.RUN_QUEUE_DELAY = 0;
@@ -25493,32 +25591,29 @@ window.MapDataRequest = function() {
   // delay before processing the queue after error==TIMEOUT requests. this is 'expected', so minimal extra delay over the regular RUN_QUEUE_DELAY
   this.TIMEOUT_REQUEST_RUN_QUEUE_DELAY = 0;
 
-
   // render queue
   // number of items to process in each render pass. there are pros and cons to smaller and larger values
   // (however, if using leaflet canvas rendering, it makes sense to push as much as possible through every time)
-  this.RENDER_BATCH_SIZE = window.map.options.preferCanvas ? 1E9 : 1500;
+  this.RENDER_BATCH_SIZE = window.map.options.preferCanvas ? 1e9 : 1500;
 
   // delay before repeating the render loop. this gives a better chance for user interaction
   this.RENDER_PAUSE = window.isApp ? 0.2 : 0.1; // 200ms mobile, 100ms desktop
 
-
-  this.REFRESH_CLOSE = 300;  // refresh time to use for close views z>12 when not idle and not moving
-  this.REFRESH_FAR = 900;  // refresh time for far views z <= 12
-  this.FETCH_TO_REFRESH_FACTOR = 2;  //minimum refresh time is based on the time to complete a data fetch, times this value
+  this.REFRESH_CLOSE = 300; // refresh time to use for close views z>12 when not idle and not moving
+  this.REFRESH_FAR = 900; // refresh time for far views z <= 12
+  this.FETCH_TO_REFRESH_FACTOR = 2; // minimum refresh time is based on the time to complete a data fetch, times this value
 
   // ensure we have some initial map status
-  this.setStatus ('startup', undefined, -1);
+  this.setStatus('startup', undefined, -1);
 
   // add a portalDetailLoaded hook, so we can use the extended details to update portals on the map
   var _this = this;
-  addHook('portalDetailLoaded', function(data){
-    if(data.success) {
+  window.addHook('portalDetailLoaded', function (data) {
+    if (data.success) {
       _this.render.createPortalEntity(data.ent, 'detailed');
     }
   });
-
-}
+};
 
 /**
  * Starts the data request process, setting up hooks and callbacks.
@@ -25526,23 +25621,24 @@ window.MapDataRequest = function() {
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.start = function() {
+window.MapDataRequest.prototype.start = function () {
   var savedContext = this;
 
   // setup idle resume function
-  window.addResumeFunction ( function() { savedContext.idleResume(); } );
+  window.addResumeFunction(function () {
+    savedContext.idleResume();
+  });
 
   // and map move start/end callbacks
   window.map.on('movestart', this.mapMoveStart, this);
   window.map.on('moveend', this.mapMoveEnd, this);
 
-
   // then set a timeout to start the first refresh
-  this.refreshOnTimeout (this.STARTUP_REFRESH);
-  this.setStatus ('refreshing', undefined, -1);
+  this.refreshOnTimeout(this.STARTUP_REFRESH);
+  this.setStatus('refreshing', undefined, -1);
 
-  this.cache && this.cache.startExpireInterval (15);
-}
+  this.cache?.startExpireInterval(15);
+};
 
 /**
  * Callback for map movement start. Pauses the rendering and data requests.
@@ -25550,13 +25646,13 @@ window.MapDataRequest.prototype.start = function() {
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.mapMoveStart = function() {
+window.MapDataRequest.prototype.mapMoveStart = function () {
   log.log('refresh map movestart');
 
   this.setStatus('paused');
   this.clearTimeout();
   this.pauseRenderQueue(true);
-}
+};
 
 /**
  * Handles map movement end. Determines whether new data needs to be fetched based on map bounds and zoom level.
@@ -25565,18 +25661,18 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
  * @memberof MapDataRequest
  */
 window.MapDataRequest.prototype.mapMoveEnd = function () {
-  var bounds = clampLatLngBounds(map.getBounds());
+  var bounds = window.clampLatLngBounds(window.map.getBounds());
 
   if (this.fetchedDataParams) {
     // we have fetched (or are fetching) data...
-    if (this.fetchedDataParams.mapZoom == map.getZoom() && this.fetchedDataParams.bounds.contains(bounds)) {
+    if (this.fetchedDataParams.mapZoom === window.map.getZoom() && this.fetchedDataParams.bounds.contains(bounds)) {
       // ... and the zoom level is the same and the current bounds is inside the fetched bounds
       // so, no need to fetch data. if there's time left, restore the original timeout
 
-      var remainingTime = (this.timerExpectedTimeoutTime - new Date().getTime())/1000;
+      var remainingTime = (this.timerExpectedTimeoutTime - new Date().getTime()) / 1000;
 
       if (remainingTime > this.MOVE_REFRESH) {
-        this.setStatus('done','Map moved, but no data updates needed');
+        this.setStatus('done', 'Map moved, but no data updates needed');
         this.refreshOnTimeout(remainingTime);
         this.pauseRenderQueue(false);
         return;
@@ -25586,7 +25682,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function () {
 
   this.setStatus('refreshing', undefined, -1);
   this.refreshOnTimeout(this.MOVE_REFRESH);
-}
+};
 
 /**
  * Resumes data fetching and rendering after being idle.
@@ -25594,7 +25690,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function () {
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.idleResume = function() {
+window.MapDataRequest.prototype.idleResume = function () {
   // if we have no timer set and there are no active requests, refresh has gone idle and the timer needs restarting
 
   if (this.idle) {
@@ -25603,7 +25699,7 @@ window.MapDataRequest.prototype.idleResume = function() {
     this.setStatus('idle restart', undefined, -1);
     this.refreshOnTimeout(this.IDLE_RESUME_REFRESH);
   }
-}
+};
 
 /**
  * Clears the current data refresh timeout.
@@ -25611,14 +25707,13 @@ window.MapDataRequest.prototype.idleResume = function() {
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.clearTimeout = function() {
-
+window.MapDataRequest.prototype.clearTimeout = function () {
   if (this.timer) {
     log.log('cancelling existing map refresh timer');
     clearTimeout(this.timer);
     this.timer = undefined;
   }
-}
+};
 
 /**
  * Sets a timeout to refresh the map data.
@@ -25627,19 +25722,22 @@ window.MapDataRequest.prototype.clearTimeout = function() {
  * @memberof MapDataRequest
  * @param {number} seconds - Time in seconds to wait before refreshing the map data.
  */
-window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
+window.MapDataRequest.prototype.refreshOnTimeout = function (seconds) {
   this.clearTimeout();
 
-  log.log('starting map refresh in '+seconds+' seconds');
+  log.log('starting map refresh in ' + seconds + ' seconds');
 
   // 'this' won't be right inside the callback, so save it
   // also, double setTimeout used to ensure the delay occurs after any browser-related rendering/updating/etc
   var _this = this;
-  this.timer = setTimeout ( function() {
-    _this.timer = setTimeout ( function() { _this.timer = undefined; _this.refresh(); }, seconds*1000);
+  this.timer = setTimeout(function () {
+    _this.timer = setTimeout(function () {
+      _this.timer = undefined;
+      _this.refresh();
+    }, seconds * 1000);
   }, 0);
-  this.timerExpectedTimeoutTime = new Date().getTime() + seconds*1000;
-}
+  this.timerExpectedTimeoutTime = new Date().getTime() + seconds * 1000;
+};
 
 /**
  * Sets the current status of the map data request, including a short description, long description, and progress.
@@ -25647,13 +25745,13 @@ window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
  * @function
  * @memberof MapDataRequest
  * @param {string} short - Short description of the current status.
- * @param {string} long - Long description of the current status.
- * @param {number} progress - Progress indicator, typically represented as a percentage.
+ * @param {string} [long] - Long description of the current status.
+ * @param {number} [progress] - Progress indicator, typically represented as a percentage.
  */
-window.MapDataRequest.prototype.setStatus = function(short,long,progress) {
+window.MapDataRequest.prototype.setStatus = function (short, long, progress) {
   this.status = { short: short, long: long, progress: progress };
   window.renderUpdateStatus();
-}
+};
 
 /**
  * Gets the current status of the map data request, including short description, long description, and progress.
@@ -25662,7 +25760,7 @@ window.MapDataRequest.prototype.setStatus = function(short,long,progress) {
  * @memberof MapDataRequest
  * @returns {Object} An object containing the current status of the map data request.
  */
-window.MapDataRequest.prototype.getStatus = function() {
+window.MapDataRequest.prototype.getStatus = function () {
   return this.status;
 };
 
@@ -25673,17 +25771,16 @@ window.MapDataRequest.prototype.getStatus = function() {
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.refresh = function() {
-
+window.MapDataRequest.prototype.refresh = function () {
   // if we're idle, don't refresh
   if (window.isIdle()) {
     log.log('suspending map refresh - is idle');
-    this.setStatus ('idle');
+    this.setStatus('idle');
     this.idle = true;
     return;
   }
 
-  //time the refresh cycle
+  // time the refresh cycle
   this.refreshStartTime = new Date().getTime();
 
   this.debugTiles.reset();
@@ -25698,50 +25795,46 @@ window.MapDataRequest.prototype.refresh = function() {
   // then fetch order isn't optimal, but it won't break things.
   this.queuedTiles = {};
 
+  var bounds = window.clampLatLngBounds(window.map.getBounds());
+  var mapZoom = window.map.getZoom();
 
-  var bounds = clampLatLngBounds(map.getBounds());
-  var mapZoom = map.getZoom();
+  var dataZoom = window.getDataZoomForMapZoom(mapZoom);
 
-  var dataZoom = getDataZoomForMapZoom(mapZoom);
+  var tileParams = window.getMapZoomTileParameters(dataZoom);
 
-  var tileParams = getMapZoomTileParameters(dataZoom);
+  // DEBUG: resize the bounds so we only retrieve some data
+  // bounds = bounds.pad(-0.4);
 
+  // var debugrect = L.rectangle(bounds,{color: 'red', fill: false, weight: 4, opacity: 0.8}).addTo(map);
+  // setTimeout (function(){ map.removeLayer(debugrect); }, 10*1000);
 
-//DEBUG: resize the bounds so we only retrieve some data
-//bounds = bounds.pad(-0.4);
-
-//var debugrect = L.rectangle(bounds,{color: 'red', fill: false, weight: 4, opacity: 0.8}).addTo(map);
-//setTimeout (function(){ map.removeLayer(debugrect); }, 10*1000);
-
-  var x1 = lngToTile(bounds.getWest(), tileParams);
-  var x2 = lngToTile(bounds.getEast(), tileParams);
-  var y1 = latToTile(bounds.getNorth(), tileParams);
-  var y2 = latToTile(bounds.getSouth(), tileParams);
+  var x1 = window.lngToTile(bounds.getWest(), tileParams);
+  var x2 = window.lngToTile(bounds.getEast(), tileParams);
+  var y1 = window.latToTile(bounds.getNorth(), tileParams);
+  var y2 = window.latToTile(bounds.getSouth(), tileParams);
 
   // calculate the full bounds for the data - including the part of the tiles off the screen edge
   var dataBounds = L.latLngBounds([
-    [tileToLat(y2+1,tileParams), tileToLng(x1,tileParams)],
-    [tileToLat(y1,tileParams), tileToLng(x2+1,tileParams)]
+    [window.tileToLat(y2 + 1, tileParams), window.tileToLng(x1, tileParams)],
+    [window.tileToLat(y1, tileParams), window.tileToLng(x2 + 1, tileParams)],
   ]);
-//var debugrect2 = L.rectangle(dataBounds,{color: 'magenta', fill: false, weight: 4, opacity: 0.8}).addTo(map);
-//setTimeout (function(){ map.removeLayer(debugrect2); }, 10*1000);
+  // var debugrect2 = L.rectangle(dataBounds,{color: 'magenta', fill: false, weight: 4, opacity: 0.8}).addTo(map);
+  // setTimeout (function(){ map.removeLayer(debugrect2); }, 10*1000);
 
   // store the parameters used for fetching the data. used to prevent unneeded refreshes after move/zoom
   this.fetchedDataParams = { bounds: dataBounds, mapZoom: mapZoom, dataZoom: dataZoom };
 
-
-  window.runHooks ('mapDataRefreshStart', {bounds: bounds, mapZoom: mapZoom, dataZoom: dataZoom, minPortalLevel: tileParams.level, tileBounds: dataBounds});
+  window.runHooks('mapDataRefreshStart', { bounds: bounds, mapZoom: mapZoom, dataZoom: dataZoom, minPortalLevel: tileParams.level, tileBounds: dataBounds });
 
   this.render.startRenderPass(dataBounds);
 
   window.runHooks('mapDataEntityInject', { callback: this.render.processGameEntities.bind(this.render) });
 
-  var logMessage = 'requesting data tiles at zoom '+dataZoom;
-  logMessage += ' (L'+tileParams.level+'+ portals';
-  logMessage += ', '+tileParams.tilesPerEdge+' tiles per global edge), map zoom is '+mapZoom;
+  var logMessage = 'requesting data tiles at zoom ' + dataZoom;
+  logMessage += ' (L' + tileParams.level + '+ portals';
+  logMessage += ', ' + tileParams.tilesPerEdge + ' tiles per global edge), map zoom is ' + mapZoom;
 
   log.log(logMessage);
-
 
   this.cachedTileCount = 0;
   this.requestedTileCount = 0;
@@ -25752,38 +25845,40 @@ window.MapDataRequest.prototype.refresh = function() {
   var tilesToFetchDistance = {};
 
   // map center point - for fetching center tiles first
-  var mapCenterPoint = map.project(map.getCenter(), mapZoom);
+  var mapCenterPoint = window.map.project(window.map.getCenter(), mapZoom);
 
   // y goes from left to right
   for (var y = y1; y <= y2; y++) {
     // x goes from bottom to top(?)
     for (var x = x1; x <= x2; x++) {
-      var tile_id = pointToTileId(tileParams, x, y);
-      var latNorth = tileToLat(y,tileParams);
-      var latSouth = tileToLat(y+1,tileParams);
-      var lngWest = tileToLng(x,tileParams);
-      var lngEast = tileToLng(x+1,tileParams);
+      var tile_id = window.pointToTileId(tileParams, x, y);
+      var latNorth = window.tileToLat(y, tileParams);
+      var latSouth = window.tileToLat(y + 1, tileParams);
+      var lngWest = window.tileToLng(x, tileParams);
+      var lngEast = window.tileToLng(x + 1, tileParams);
 
-      this.debugTiles.create(tile_id,[[latSouth,lngWest],[latNorth,lngEast]]);
+      this.debugTiles.create(tile_id, [
+        [latSouth, lngWest],
+        [latNorth, lngEast],
+      ]);
 
       if (this.cache && this.cache.isFresh(tile_id)) {
         // data is fresh in the cache - just render it
-        this.pushRenderQueue(tile_id,this.cache.get(tile_id),'cache-fresh');
+        this.pushRenderQueue(tile_id, this.cache.get(tile_id), 'cache-fresh');
         this.cachedTileCount += 1;
       } else {
-
         // no fresh data
 
         // tile needed. calculate the distance from the centre of the screen, to optimise the load order
 
-        var latCenter = (latNorth+latSouth)/2;
-        var lngCenter = (lngEast+lngWest)/2;
-        var tileLatLng = L.latLng(latCenter,lngCenter);
+        var latCenter = (latNorth + latSouth) / 2;
+        var lngCenter = (lngEast + lngWest) / 2;
+        var tileLatLng = L.latLng(latCenter, lngCenter);
 
-        var tilePoint = map.project(tileLatLng, mapZoom);
+        var tilePoint = window.map.project(tileLatLng, mapZoom);
 
         var delta = mapCenterPoint.subtract(tilePoint);
-        var distanceSquared = delta.x*delta.x + delta.y*delta.y;
+        var distanceSquared = delta.x * delta.x + delta.y * delta.y;
 
         tilesToFetchDistance[tile_id] = distanceSquared;
         this.requestedTileCount += 1;
@@ -25793,8 +25888,8 @@ window.MapDataRequest.prototype.refresh = function() {
 
   // re-order the tile list by distance from the centre of the screen. this should load more relevant data first
   var tilesToFetch = Object.keys(tilesToFetchDistance);
-  tilesToFetch.sort(function(a,b) {
-    return tilesToFetchDistance[a]-tilesToFetchDistance[b];
+  tilesToFetch.sort(function (a, b) {
+    return tilesToFetchDistance[a] - tilesToFetchDistance[b];
   });
 
   for (var i in tilesToFetch) {
@@ -25803,15 +25898,13 @@ window.MapDataRequest.prototype.refresh = function() {
     this.queuedTiles[qk] = qk;
   }
 
-
-
-  this.setStatus ('loading', undefined, -1);
+  this.setStatus('loading', undefined, -1);
 
   // technically a request hasn't actually finished - however, displayed portal data has been refreshed
   // so as far as plugins are concerned, it should be treated as a finished request
-  window.runHooks('requestFinished', {success: true});
+  window.runHooks('requestFinished', { success: true });
 
-  log.log ('done request preparation (cleared out-of-bounds and invalid for zoom, and rendered cached data)');
+  log.log('done request preparation (cleared out-of-bounds and invalid for zoom, and rendered cached data)');
 
   if (Object.keys(this.queuedTiles).length > 0) {
     // queued requests - don't start processing the download queue immediately - start it after a short delay
@@ -25820,7 +25913,7 @@ window.MapDataRequest.prototype.refresh = function() {
     // all data was from the cache, nothing queued - run the queue 'immediately' so it handles the end request processing
     this.delayProcessRequestQueue(0);
   }
-}
+};
 
 /**
  * Delays the processing of the request queue for fetching map data tiles. The delay is specified in seconds.
@@ -25839,7 +25932,7 @@ window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
       }, seconds * 1000);
     }, 0);
   }
-}
+};
 
 /**
  * Processes the request queue for fetching map data tiles. Manages the number of simultaneous tile requests,
@@ -25850,7 +25943,7 @@ window.MapDataRequest.prototype.delayProcessRequestQueue = function (seconds) {
  */
 window.MapDataRequest.prototype.processRequestQueue = function () {
   // if nothing left in the queue, finish
-  if (Object.keys(this.queuedTiles).length == 0) {
+  if (Object.keys(this.queuedTiles).length === 0) {
     // we leave the renderQueue code to handle ending the render pass now
     // (but we need to make sure it's not left without it's timer running!)
     if (!this.renderQueuePaused) {
@@ -25860,32 +25953,29 @@ window.MapDataRequest.prototype.processRequestQueue = function () {
     return;
   }
 
-
   // create a list of tiles that aren't requested over the network
   var pendingTiles = [];
-  for (var id in this.queuedTiles) {
-    if (!(id in this.requestedTiles) ) {
+  for (const id in this.queuedTiles) {
+    if (!(id in this.requestedTiles)) {
       pendingTiles.push(id);
     }
   }
 
-//  log.log('- request state: '+Object.keys(this.requestedTiles).length+' tiles in '+this.activeRequestCount+' active requests, '+pendingTiles.length+' tiles queued');
+  // log.log('- request state: '+Object.keys(this.requestedTiles).length+' tiles in '+this.activeRequestCount+' active requests, '+pendingTiles.length+' tiles queued');
 
   var requestBuckets = this.MAX_REQUESTS - this.activeRequestCount;
   if (pendingTiles.length > 0 && requestBuckets > 0) {
-
     var requestBucketSize = Math.min(this.NUM_TILES_PER_REQUEST, Math.max(5, Math.ceil(pendingTiles.length / requestBuckets)));
-    for (var bucket=0; bucket < requestBuckets; bucket++) {
-
+    for (var bucket = 0; bucket < requestBuckets; bucket++) {
       // if the tiles for this request have had several retries, use smaller requests
       // maybe some of the tiles caused all the others to error? no harm anyway, and it may help...
       var numTilesThisRequest = Math.min(requestBucketSize, pendingTiles.length);
 
-      var id = pendingTiles[0];
-      var retryTotal = (this.tileErrorCount[id]||0);
-      for (var i=1; i<numTilesThisRequest; i++) {
+      let id = pendingTiles[0];
+      var retryTotal = this.tileErrorCount[id] || 0;
+      for (var i = 1; i < numTilesThisRequest; i++) {
         id = pendingTiles[i];
-        retryTotal += (this.tileErrorCount[id]||0);
+        retryTotal += this.tileErrorCount[id] || 0;
         if (retryTotal > this.MAX_TILE_RETRIES) {
           numTilesThisRequest = i;
           break;
@@ -25897,21 +25987,20 @@ window.MapDataRequest.prototype.processRequestQueue = function () {
         this.sendTileRequest(tiles);
       }
     }
-
   }
 
-
   // update status
-  var pendingTileCount = this.requestedTileCount - (this.successTileCount+this.failedTileCount+this.staleTileCount);
-  var longText = 'Tiles: ' + this.cachedTileCount + ' cached, ' +
-                 this.successTileCount + ' loaded, ' +
-                 (this.staleTileCount ? this.staleTileCount + ' stale, ' : '') +
-                 (this.failedTileCount ? this.failedTileCount + ' failed, ' : '') +
-                 pendingTileCount + ' remaining';
+  var pendingTileCount = this.requestedTileCount - (this.successTileCount + this.failedTileCount + this.staleTileCount);
+  var longText =
+    `Tiles: ${this.cachedTileCount} cached, ` +
+    `${this.successTileCount} loaded, ` +
+    (this.staleTileCount ? this.staleTileCount + ' stale, ' : '') +
+    (this.failedTileCount ? this.failedTileCount + ' failed, ' : '') +
+    `${pendingTileCount} remaining`;
 
-  progress = this.requestedTileCount > 0 ? (this.requestedTileCount-pendingTileCount) / this.requestedTileCount : undefined;
-  this.setStatus ('loading', longText, progress);
-}
+  const progress = this.requestedTileCount > 0 ? (this.requestedTileCount - pendingTileCount) / this.requestedTileCount : undefined;
+  this.setStatus('loading', longText, progress);
+};
 
 /**
  * Sends requests for a group of tiles to the server.
@@ -25921,21 +26010,20 @@ window.MapDataRequest.prototype.processRequestQueue = function () {
  * @memberof MapDataRequest
  * @param {Array} tiles - An array of tile identifiers to request.
  */
-window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
-
+window.MapDataRequest.prototype.sendTileRequest = function (tiles) {
   var tilesList = [];
 
   for (var i in tiles) {
     var id = tiles[i];
 
-    this.debugTiles.setState (id, 'requested');
+    this.debugTiles.setState(id, 'requested');
 
     this.requestedTiles[id] = true;
 
     if (id in this.queuedTiles) {
-      tilesList.push (id);
+      tilesList.push(id);
     } else {
-      log.warn('no queue entry for tile id '+id);
+      log.warn('no queue entry for tile id ' + id);
     }
   }
 
@@ -25949,10 +26037,14 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
   window.postAjax(
     'getEntities',
     data,
-    function(data, textStatus, jqXHR) { savedThis.handleResponse (data, tiles, true); },  // request successful callback
-    function() { savedThis.handleResponse (undefined, tiles, false); }  // request failed callback
+    function (data) {
+      savedThis.handleResponse(data, tiles, true);
+    }, // request successful callback
+    function () {
+      savedThis.handleResponse(undefined, tiles, false);
+    } // request failed callback
   );
-}
+};
 
 /**
  * Re-queues a tile for data fetching in case of an error or timeouts.
@@ -25963,13 +26055,13 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
  * @param {string} id - The tile identifier.
  * @param {boolean} error - Flag indicating whether the tile fetch encountered an error.
  */
-window.MapDataRequest.prototype.requeueTile = function(id, error) {
+window.MapDataRequest.prototype.requeueTile = function (id, error) {
   if (id in this.queuedTiles) {
     // tile is currently wanted...
 
     // first, see if the error can be ignored due to retry counts
     if (error) {
-      this.tileErrorCount[id] = (this.tileErrorCount[id]||0)+1;
+      this.tileErrorCount[id] = (this.tileErrorCount[id] || 0) + 1;
       if (this.tileErrorCount[id] <= this.MAX_TILE_RETRIES) {
         // retry limit low enough - clear the error flag
         error = false;
@@ -25981,19 +26073,18 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
       var data = this.cache ? this.cache.get(id) : undefined;
       if (data) {
         // we have cached data - use it, even though it's stale
-        this.pushRenderQueue(id,data,'cache-stale');
+        this.pushRenderQueue(id, data, 'cache-stale');
         this.staleTileCount += 1;
       } else {
         // no cached data
-        this.debugTiles.setState (id, 'error');
+        this.debugTiles.setState(id, 'error');
         this.failedTileCount += 1;
       }
       // and delete from the pending requests...
       delete this.queuedTiles[id];
-
     } else {
       // if false, was a 'timeout' or we're retrying, so unlimited retries (as the stock site does)
-      this.debugTiles.setState (id, 'retrying');
+      this.debugTiles.setState(id, 'retrying');
 
       // FIXME? it's nice to move retried tiles to the end of the request queue. however, we don't actually have a
       // proper queue, just an object with guid as properties. Javascript standards don't guarantee the order of properties
@@ -26001,10 +26092,9 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
       // therefore, delete and re-add the requeued tile and it will be added to the end of the queue
       delete this.queuedTiles[id];
       this.queuedTiles[id] = id;
-
     }
   } // else the tile wasn't currently wanted (an old non-cancelled request) - ignore
-}
+};
 
 /**
  * Handles the response from the server for tile data requests.
@@ -26017,7 +26107,6 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
  * @param {boolean} success - Flag indicating if the request was successful.
  */
 window.MapDataRequest.prototype.handleResponse = function (data, tiles, success) {
-
   this.activeRequestCount -= 1;
 
   var successTiles = [];
@@ -26027,33 +26116,31 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
   var unaccountedTiles = tiles.slice(0); // Clone
 
   if (!success || !data || !data.result) {
-    log.warn('Request.handleResponse: request failed - requeuing...'+(data && data.error?' error: '+data.error:''));
+    log.warn('Request.handleResponse: request failed - requeuing...' + (data && data.error ? ' error: ' + data.error : ''));
 
-    //request failed - requeue all the tiles(?)
+    // request failed - requeue all the tiles(?)
 
-    if (data && data.error && data.error == 'RETRY') {
+    if (data && data.error && data.error === 'RETRY') {
       // the server can sometimes ask us to retry a request. this is botguard related, I believe
 
-      for (var i in tiles) {
-        var id = tiles[i];
+      for (const i in tiles) {
+        const id = tiles[i];
         retryTiles.push(id);
-        this.debugTiles.setState (id, 'retrying');
+        this.debugTiles.setState(id, 'retrying');
       }
 
-      window.runHooks('requestFinished', {success: false});
-
+      window.runHooks('requestFinished', { success: false });
     } else {
-      for (var i in tiles) {
-        var id = tiles[i];
+      for (const i in tiles) {
+        const id = tiles[i];
         errorTiles.push(id);
-        this.debugTiles.setState (id, 'request-fail');
+        this.debugTiles.setState(id, 'request-fail');
       }
 
-      window.runHooks('requestFinished', {success: false});
+      window.runHooks('requestFinished', { success: false });
     }
     unaccountedTiles = [];
   } else {
-
     // TODO: use result.minLevelOfDetail ??? stock site doesn't use it yet...
 
     var m = data.result.map;
@@ -26064,33 +26151,30 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
       if ('error' in val) {
         // server returned an error for this individual data tile
 
-        if (val.error == "TIMEOUT") {
+        if (val.error === 'TIMEOUT') {
           // TIMEOUT errors for individual tiles are quite common. used to be unlimited retries, but not any more
-          timeoutTiles.push (id);
+          timeoutTiles.push(id);
         } else {
-          log.warn('map data tile '+id+' failed: error=='+val.error);
-          errorTiles.push (id);
-          this.debugTiles.setState (id, 'tile-fail');
+          log.warn('map data tile ' + id + ' failed: error==' + val.error);
+          errorTiles.push(id);
+          this.debugTiles.setState(id, 'tile-fail');
         }
       } else {
         // no error for this data tile - process it
-        successTiles.push (id);
+        successTiles.push(id);
 
         // store the result in the cache
-        this.cache && this.cache.store (id, val);
+        this.cache?.store(id, val);
 
         // if this tile was in the render list, render it
         // (requests aren't aborted when new requests are started, so it's entirely possible we don't want to render it!)
         if (id in this.queuedTiles) {
-
-          this.pushRenderQueue(id,val,'ok');
+          this.pushRenderQueue(id, val, 'ok');
 
           delete this.queuedTiles[id];
           this.successTileCount += 1;
-
         } // else we don't want this tile (from an old non-cancelled request) - ignore
       }
-
     }
 
     window.runHooks('requestFinished', { success: true });
@@ -26098,24 +26182,29 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
   // set the queue delay based on any errors or timeouts
   // NOTE: retryTimes are retried at the regular delay - no longer wait as for error/timeout cases
-  var nextQueueDelay = errorTiles.length > 0 ? this.BAD_REQUEST_RUN_QUEUE_DELAY :
-                       unaccountedTiles.length > 0 ? this.EMPTY_RESPONSE_RUN_QUEUE_DELAY :
-                       timeoutTiles.length > 0 ? this.TIMEOUT_REQUEST_RUN_QUEUE_DELAY :
-                       this.RUN_QUEUE_DELAY;
-  var statusMsg = 'getEntities status: '+tiles.length+' tiles: ';
-  statusMsg += successTiles.length+' successful';
-  if (retryTiles.length) statusMsg += ', '+retryTiles.length+' retried';
-  if (timeoutTiles.length) statusMsg += ', '+timeoutTiles.length+' timed out';
-  if (errorTiles.length) statusMsg += ', '+errorTiles.length+' failed';
-  if (unaccountedTiles.length) statusMsg += ', '+unaccountedTiles.length+' unaccounted';
-  statusMsg += '. delay '+nextQueueDelay+' seconds';
+  let nextQueueDelay;
+  if (errorTiles.length > 0) {
+    nextQueueDelay = this.BAD_REQUEST_RUN_QUEUE_DELAY;
+  } else if (unaccountedTiles.length > 0) {
+    nextQueueDelay = this.EMPTY_RESPONSE_RUN_QUEUE_DELAY;
+  } else if (timeoutTiles.length > 0) {
+    nextQueueDelay = this.TIMEOUT_REQUEST_RUN_QUEUE_DELAY;
+  } else {
+    nextQueueDelay = this.RUN_QUEUE_DELAY;
+  }
+  var statusMsg = 'getEntities status: ' + tiles.length + ' tiles: ';
+  statusMsg += successTiles.length + ' successful';
+  if (retryTiles.length) statusMsg += ', ' + retryTiles.length + ' retried';
+  if (timeoutTiles.length) statusMsg += ', ' + timeoutTiles.length + ' timed out';
+  if (errorTiles.length) statusMsg += ', ' + errorTiles.length + ' failed';
+  if (unaccountedTiles.length) statusMsg += ', ' + unaccountedTiles.length + ' unaccounted';
+  statusMsg += '. delay ' + nextQueueDelay + ' seconds';
   log.log(statusMsg);
-
 
   // requeue any 'timeout' tiles immediately
   if (timeoutTiles.length > 0) {
-    for (var i in timeoutTiles) {
-      var id = timeoutTiles[i];
+    for (const i in timeoutTiles) {
+      const id = timeoutTiles[i];
       delete this.requestedTiles[id];
 
       this.requeueTile(id, true);
@@ -26123,38 +26212,37 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
   }
 
   if (retryTiles.length > 0) {
-    for (var i in retryTiles) {
-      var id = retryTiles[i];
+    for (const i in retryTiles) {
+      const id = retryTiles[i];
       delete this.requestedTiles[id];
 
-      this.requeueTile(id, false);  //tiles from a error==RETRY request are requeued without counting it as an error
+      this.requeueTile(id, false); // tiles from a error==RETRY request are requeued without counting it as an error
     }
   }
 
   if (errorTiles.length > 0) {
-    for (var i in errorTiles) {
-      var id = errorTiles[i];
+    for (const i in errorTiles) {
+      const id = errorTiles[i];
       delete this.requestedTiles[id];
       this.requeueTile(id, true);
     }
   }
 
   if (unaccountedTiles.length > 0) {
-    for (var i in unaccountedTiles) {
-      var id = unaccountedTiles[i];
+    for (const i in unaccountedTiles) {
+      const id = unaccountedTiles[i];
       delete this.requestedTiles[id];
       this.requeueTile(id, true);
     }
   }
 
-  for (var i in successTiles) {
-    var id = successTiles[i];
+  for (const i in successTiles) {
+    const id = successTiles[i];
     delete this.requestedTiles[id];
   }
 
-
   this.delayProcessRequestQueue(nextQueueDelay);
-}
+};
 
 /**
  * Resets the render queue, clearing existing queued render tasks and stopping any active timer.
@@ -26162,7 +26250,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.resetRenderQueue = function() {
+window.MapDataRequest.prototype.resetRenderQueue = function () {
   this.renderQueue = [];
 
   if (this.renderQueueTimer) {
@@ -26170,7 +26258,7 @@ window.MapDataRequest.prototype.resetRenderQueue = function() {
     this.renderQueueTimer = undefined;
   }
   this.renderQueuePaused = false;
-}
+};
 
 /**
  * Pushes a tile to the render queue for processing. The queue is processed to render entities on the map.
@@ -26182,18 +26270,19 @@ window.MapDataRequest.prototype.resetRenderQueue = function() {
  * @param {string} status - The status of the tile, such as 'render-queue'.
  */
 window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
-  this.debugTiles.setState(id,'render-queue');
+  this.debugTiles.setState(id, 'render-queue');
   this.renderQueue.push({
-    id:id,
+    id: id,
     // the data in the render queue is modified as we go, so we need to copy the values of the arrays. just storing the reference would modify the data in the cache!
-    deleted: (data.deletedGameEntityGuids||[]).slice(0),
-    entities: (data.gameEntities||[]).slice(0),
-    status:status});
+    deleted: (data.deletedGameEntityGuids || []).slice(0),
+    entities: (data.gameEntities || []).slice(0),
+    status: status,
+  });
 
   if (!this.renderQueuePaused) {
     this.startQueueTimer(this.RENDER_PAUSE);
   }
-}
+};
 
 /**
  * Starts a timer to process the render queue after a specified delay.
@@ -26202,14 +26291,20 @@ window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
  * @memberof MapDataRequest
  * @param {number} delay - The delay in seconds before processing the render queue.
  */
-window.MapDataRequest.prototype.startQueueTimer = function(delay) {
+window.MapDataRequest.prototype.startQueueTimer = function (delay) {
   if (this.renderQueueTimer === undefined) {
     var _this = this;
-    this.renderQueueTimer = setTimeout( function() {
-      _this.renderQueueTimer = setTimeout ( function() { _this.renderQueueTimer = undefined; _this.processRenderQueue(); }, (delay||0)*1000 );
+    this.renderQueueTimer = setTimeout(function () {
+      _this.renderQueueTimer = setTimeout(
+        function () {
+          _this.renderQueueTimer = undefined;
+          _this.processRenderQueue();
+        },
+        (delay || 0) * 1000
+      );
     }, 0);
   }
-}
+};
 
 /**
  * Pauses or resumes the render queue processing. When paused, the queue timer is cleared.
@@ -26218,7 +26313,7 @@ window.MapDataRequest.prototype.startQueueTimer = function(delay) {
  * @memberof MapDataRequest
  * @param {boolean} pause - Flag indicating whether to pause (true) or resume (false) the render queue processing.
  */
-window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
+window.MapDataRequest.prototype.pauseRenderQueue = function (pause) {
   this.renderQueuePaused = pause;
   if (pause) {
     if (this.renderQueueTimer) {
@@ -26230,7 +26325,7 @@ window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
       this.startQueueTimer(this.RENDER_PAUSE);
     }
   }
-}
+};
 
 /**
  * Processes the render queue, rendering entities on the map.
@@ -26240,63 +26335,58 @@ window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
  * @function
  * @memberof MapDataRequest
  */
-window.MapDataRequest.prototype.processRenderQueue = function() {
+window.MapDataRequest.prototype.processRenderQueue = function () {
   var drawEntityLimit = this.RENDER_BATCH_SIZE;
 
-
-//TODO: we don't take account of how many of the entities are actually new/removed - they
-// could already be drawn and not changed. will see how it works like this...
+  // TODO: we don't take account of how many of the entities are actually new/removed - they
+  //  could already be drawn and not changed. will see how it works like this...
   while (drawEntityLimit > 0 && this.renderQueue.length > 0) {
     var current = this.renderQueue[0];
 
     if (current.deleted.length > 0) {
-      var deleteThisPass = current.deleted.splice(0,drawEntityLimit);
+      var deleteThisPass = current.deleted.splice(0, drawEntityLimit);
       drawEntityLimit -= deleteThisPass.length;
       this.render.processDeletedGameEntityGuids(deleteThisPass);
     }
 
     if (drawEntityLimit > 0 && current.entities.length > 0) {
-      var drawThisPass = current.entities.splice(0,drawEntityLimit);
+      var drawThisPass = current.entities.splice(0, drawEntityLimit);
       drawEntityLimit -= drawThisPass.length;
       this.render.processGameEntities(drawThisPass, 'extended');
     }
 
-    if (current.deleted.length == 0 && current.entities.length == 0) {
-      this.renderQueue.splice(0,1);
+    if (current.deleted.length === 0 && current.entities.length === 0) {
+      this.renderQueue.splice(0, 1);
       this.debugTiles.setState(current.id, current.status);
     }
-
-
   }
 
   if (this.renderQueue.length > 0) {
     this.startQueueTimer(this.RENDER_PAUSE);
-  } else if (Object.keys(this.queuedTiles).length == 0) {
-
+  } else if (Object.keys(this.queuedTiles).length === 0) {
     this.render.endRenderPass();
 
     var endTime = new Date().getTime();
-    var duration = (endTime - this.refreshStartTime)/1000;
+    var duration = (endTime - this.refreshStartTime) / 1000;
 
-    log.log('finished requesting data! (took '+duration+' seconds to complete)');
+    log.log('finished requesting data! (took ' + duration + ' seconds to complete)');
 
-    window.runHooks ('mapDataRefreshEnd', {});
+    window.runHooks('mapDataRefreshEnd', {});
 
-    var longStatus = 'Tiles: ' + this.cachedTileCount + ' cached, ' +
-                 this.successTileCount + ' loaded, ' +
-                 (this.staleTileCount ? this.staleTileCount + ' stale, ' : '') +
-                 (this.failedTileCount ? this.failedTileCount + ' failed, ' : '') +
-                 'in ' + duration + ' seconds';
+    var longStatus =
+      `Tiles: ${this.cachedTileCount} cached, ` +
+      `${this.successTileCount} loaded, ` +
+      (this.staleTileCount ? this.staleTileCount + ' stale, ' : '') +
+      (this.failedTileCount ? this.failedTileCount + ' failed, ' : '') +
+      `in ${duration} seconds`;
 
     // refresh timer based on time to run this pass, with a minimum of REFRESH seconds
-    var minRefresh = map.getZoom()>12 ? this.REFRESH_CLOSE : this.REFRESH_FAR;
-    var refreshTimer = Math.max(minRefresh, duration*this.FETCH_TO_REFRESH_FACTOR);
+    var minRefresh = window.map.getZoom() > 12 ? this.REFRESH_CLOSE : this.REFRESH_FAR;
+    var refreshTimer = Math.max(minRefresh, duration * this.FETCH_TO_REFRESH_FACTOR);
     this.refreshOnTimeout(refreshTimer);
-    this.setStatus (this.failedTileCount ? 'errors' : this.staleTileCount ? 'out of date' : 'done', longStatus);
-
+    this.setStatus(this.failedTileCount ? 'errors' : this.staleTileCount ? 'out of date' : 'done', longStatus);
   }
-
-}
+};
 
 
 })();
@@ -26305,7 +26395,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 // *** module: ornaments.js ***
 (function () {
 var log = ulog('ornaments');
-/* global L, dialog, log, IITC */
+/* global IITC, L, log -- eslint */
 
 /**
  * @namespace window.ornaments
@@ -26368,7 +26458,7 @@ window.ornaments = {
    *
    * @property {object} icon - The icon object for ornaments and beacons.
    */
-  icon:{},
+  icon: {},
 
   /**
    * List of ornaments to be excluded.
@@ -26402,7 +26492,7 @@ window.ornaments = {
     this.layers['Excluded ornaments'] = window.ornaments.layerGroup(); // to keep excluded ornaments in an own layer
 
     window.layerChooser.addOverlay(this.layers['Ornaments'], 'Ornaments');
-    window.layerChooser.addOverlay(this.layers['Excluded ornaments'], 'Excluded ornaments', {default: false});
+    window.layerChooser.addOverlay(this.layers['Excluded ornaments'], 'Excluded ornaments', { default: false });
 
     IITC.toolbox.addButton({
       id: 'ornaments-toolbox-link',
@@ -26444,16 +26534,16 @@ window.ornaments = {
         var iconUrl = '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/' + ornament + '.png';
 
         if (!this.knownOrnaments[ornament]) {
-          this.knownOrnaments[ornament]=false;
+          this.knownOrnaments[ornament] = false;
         }
 
         if (ornament in this.icon) {
           if (this.icon[ornament].layer) {
-            if (this.layers[this.icon[ornament].layer] === undefined){
-              log.log ('Add missing layer: ',this.icon[ornament].layer);
+            if (this.layers[this.icon[ornament].layer] === undefined) {
+              log.log('Add missing layer: ', this.icon[ornament].layer);
               window.ornaments.createLayer(window.ornaments.icon[ornament].layer);
             }
-            layer =  this.layers[window.ornaments.icon[ornament].layer];
+            layer = this.layers[window.ornaments.icon[ornament].layer];
           }
           if (window.ornaments.icon[ornament].url) {
             iconUrl = window.ornaments.icon[ornament].url;
@@ -26468,13 +26558,13 @@ window.ornaments = {
         }
 
         var exclude = false;
-        if (this.excludedOrnaments && this.excludedOrnaments !== ['']) {
-          exclude = this.excludedOrnaments.some( function(pattern) {
+        if (this.excludedOrnaments && !(this.excludedOrnaments.length === 1 && this.excludedOrnaments[0] === '')) {
+          exclude = this.excludedOrnaments.some(function (pattern) {
             return ornament.startsWith(pattern);
           });
         }
-        exclude = exclude | this.knownOrnaments[ornament];
-        if (exclude){
+        exclude = exclude || this.knownOrnaments[ornament];
+        if (exclude) {
           layer = this.layers['Excluded ornaments'];
         }
 
@@ -26483,14 +26573,13 @@ window.ornaments = {
             iconUrl: iconUrl,
             iconSize: [size, size],
             iconAnchor: anchor, // https://github.com/IITC-CE/Leaflet.Canvas-Markers/issues/4
-            className: 'no-pointer-events'
+            className: 'no-pointer-events',
           }),
           interactive: false,
           keyboard: false,
           opacity: opacity,
-          layer: layer
+          layer: layer,
         }).addTo(layer);
-
       }, this);
     }
   },
@@ -26533,22 +26622,23 @@ window.ornaments = {
     var dataStr;
     try {
       dataStr = localStorage.getItem('excludedOrnaments');
-      if (!dataStr) { return; }
+      if (!dataStr) {
+        return;
+      }
       this.excludedOrnaments = JSON.parse(dataStr);
     } catch (e) {
-      log.warn('ornaments: failed to load excludedOrnaments from localStorage: '+e);
+      log.warn('ornaments: failed to load excludedOrnaments from localStorage: ' + e);
     }
     try {
       dataStr = localStorage.getItem('knownOrnaments');
       if (!dataStr) {
-        this.initOrnaments ();
+        this.initOrnaments();
         return;
       }
       this.knownOrnaments = JSON.parse(dataStr);
     } catch (e) {
-      log.warn('ornaments: failed to load data from localStorage: '+e);
+      log.warn('ornaments: failed to load data from localStorage: ' + e);
     }
-
   },
 
   /**
@@ -26581,11 +26671,15 @@ window.ornaments = {
    * @memberof window.ornaments
    */
   processInput: function () {
-    window.ornaments.excludedOrnaments = $('#ornaments_E').val().split(/[\s,]+/);
-    window.ornaments.excludedOrnaments = window.ornaments.excludedOrnaments.filter(function (ornamentCode) { return ornamentCode !== ''; });
+    window.ornaments.excludedOrnaments = $('#ornaments_E')
+      .val()
+      .split(/[\s,]+/);
+    window.ornaments.excludedOrnaments = window.ornaments.excludedOrnaments.filter(function (ornamentCode) {
+      return ornamentCode !== '';
+    });
     // process the input from the checkboxes
     for (var ornamentCode in window.ornaments.knownOrnaments) {
-      var input = $('#chk_orn_'+ornamentCode);
+      var input = $('#chk_orn_' + ornamentCode);
       window.ornaments.knownOrnaments[ornamentCode] = input.is(':checked');
     }
   },
@@ -26597,21 +26691,21 @@ window.ornaments = {
    * @memberof window.ornaments
    * @returns {string} HTML string representing the list of ornaments.
    */
-  ornamentsList: function() {
-    var text ='';
+  ornamentsList: function () {
+    var text = '';
     var sortedIDs = Object.keys(window.ornaments.knownOrnaments).sort();
 
-    sortedIDs.forEach ( function (ornamentCode) {
-      var hidden = window.ornaments.excludedOrnaments.some( function(code) {
+    sortedIDs.forEach(function (ornamentCode) {
+      var hidden = window.ornaments.excludedOrnaments.some(function (code) {
         return ornamentCode.startsWith(code);
       });
 
-      var name = (window.ornaments.icon[ornamentCode] ? window.ornaments.icon[ornamentCode].name +' ('+ornamentCode+')' : ornamentCode);
-      var checked = (window.ornaments.knownOrnaments[ornamentCode]||hidden) ?  'checked ' : '';
+      var name = window.ornaments.icon[ornamentCode] ? window.ornaments.icon[ornamentCode].name + ' (' + ornamentCode + ')' : ornamentCode;
+      var checked = window.ornaments.knownOrnaments[ornamentCode] || hidden ? 'checked ' : '';
       text += '<label><input id="chk_orn_' + ornamentCode + '" type="checkbox" ' + checked;
       text += ' onchange="window.ornaments.processInput();window.ornaments.save();window.ornaments.reload()"';
-      text += (hidden ? 'disabled':'');
-      text += '>'+ name + '</label><br>';
+      text += hidden ? 'disabled' : '';
+      text += '>' + name + '</label><br>';
     });
     return text;
   },
@@ -26647,36 +26741,36 @@ window.ornaments = {
    */
   ornamentsOpt: function () {
     var excludedIDs = window.ornaments.excludedOrnaments.join(',');
-    var html = '<div class="ornamentsOpts">'
-             + 'Hide Ornaments from IITC that start with:<br>'
-             + '<input type="text" value="' + excludedIDs + '" id="ornaments_E"'
-             + ' onchange="window.ornaments.onChangeHandler()"></input><br>'
-             + '(separator: space or comma allowed)<hr>'
-             + '<b>known Ornaments, check to hide:</b><br>'
-             + '<div id="ornamentsList"> ' + window.ornaments.ornamentsList() + '</div>'
-             + '</div>';
+    var html =
+      '<div class="ornamentsOpts">' +
+      'Hide Ornaments from IITC that start with:<br>' +
+      `<input type="text" value="${excludedIDs}" id="ornaments_E"` +
+      ' onchange="window.ornaments.onChangeHandler()" /><br>' +
+      '(separator: space or comma allowed)<hr>' +
+      '<b>known Ornaments, check to hide:</b><br>' +
+      `<div id="ornamentsList"> ${window.ornaments.ornamentsList()}</div>` +
+      '</div>';
 
-    dialog({
-      html:html,
-      id:'ornamentsOpt',
-      title:'Ornament excludes',
+    window.dialog({
+      html: html,
+      id: 'ornamentsOpt',
+      title: 'Ornament excludes',
       buttons: {
-        RESET : function () {
+        RESET: function () {
           window.ornaments.initOrnaments();
           window.ornaments.reload();
           $(this).dialog('close');
         },
-        OK : function() {
+        OK: function () {
           // process the input from the input
           window.ornaments.processInput();
           window.ornaments.save();
           window.ornaments.reload();
           $(this).dialog('close');
-
-        }
-      }
+        },
+      },
     });
-  }
+  },
 };
 
 
@@ -26704,12 +26798,12 @@ window.currentPane = '';
  * @function show
  * @param {string} id - The ID of the pane to show.
  */
-window.show = function(id) {
-  if(window.currentPane == id) return;
+window.show = function (id) {
+  if (window.currentPane === id) return;
   window.currentPane = id;
   window.hideall();
 
-  runHooks("paneChanged", id);
+  window.runHooks('paneChanged', id);
 
   // look for comm tab first
   if (window.chat.getChannelDesc(id)) window.chat.show(id);
@@ -26725,19 +26819,19 @@ window.show = function(id) {
         break;
     }
   }
-}
+};
 
 /**
  * Hides all panes and related elements.
  *
  * @function hideall
  */
-window.hideall = function() {
+window.hideall = function () {
   $('#chatcontrols, #chat, #chatinput, #sidebartoggle, #scrollwrapper, #updatestatus, #portal_highlight_select').hide();
   $('#farm_level_select').hide();
-  $('#map').css({'visibility': 'hidden', 'opacity': '0'});
+  $('#map').css({ visibility: 'hidden', opacity: '0' });
   $('.ui-tooltip').remove();
-}
+};
 
 
 })();
@@ -26761,7 +26855,6 @@ var log = ulog('player_names');
  * @returns {boolean} Returns `true` if the player name is a system account, otherwise `false`.
  */
 window.isSystemPlayer = function (name) {
-
   switch (name) {
     case '__ADA__':
     case '__JARVIS__':
@@ -26771,8 +26864,7 @@ window.isSystemPlayer = function (name) {
     default:
       return false;
   }
-
-}
+};
 
 
 })();
@@ -26794,23 +26886,22 @@ var log = ulog('portal_data');
  * @param {string} guid - The GUID of the portal to search for links.
  * @returns {Object} An object containing arrays of incoming ('in') and outgoing ('out') link GUIDs.
  */
-window.getPortalLinks = function(guid) {
-
+window.getPortalLinks = function (guid) {
   var links = { in: [], out: [] };
 
-  $.each(window.links, function(g,l) {
+  $.each(window.links, function (g, l) {
     var d = l.options.data;
 
-    if (d.oGuid == guid) {
+    if (d.oGuid === guid) {
       links.out.push(g);
     }
-    if (d.dGuid == guid) {
+    if (d.dGuid === guid) {
       links.in.push(g);
     }
   });
 
   return links;
-}
+};
 
 /**
  * Counts the total number of links (both incoming and outgoing) for a specified portal.
@@ -26819,10 +26910,10 @@ window.getPortalLinks = function(guid) {
  * @param {string} guid - The GUID of the portal.
  * @returns {number} The total number of links for the portal.
  */
-window.getPortalLinksCount = function(guid) {
-  var links = getPortalLinks(guid);
-  return links.in.length+links.out.length;
-}
+window.getPortalLinksCount = function (guid) {
+  var links = window.getPortalLinks(guid);
+  return links.in.length + links.out.length;
+};
 
 /**
  * Searches through the fields for all fields that reference a specified portal.
@@ -26831,22 +26922,19 @@ window.getPortalLinksCount = function(guid) {
  * @param {string} guid - The GUID of the portal to search for fields.
  * @returns {Array} An array containing the GUIDs of fields associated with the portal.
  */
-window.getPortalFields = function(guid) {
+window.getPortalFields = function (guid) {
   var fields = [];
 
-  $.each(window.fields, function(g,f) {
+  $.each(window.fields, function (g, f) {
     var d = f.options.data;
 
-    if ( d.points[0].guid == guid
-      || d.points[1].guid == guid
-      || d.points[2].guid == guid ) {
-
+    if (d.points[0].guid === guid || d.points[1].guid === guid || d.points[2].guid === guid) {
       fields.push(g);
     }
   });
 
   return fields;
-}
+};
 
 /**
  * Counts the total number of fields associated with a specified portal.
@@ -26855,11 +26943,10 @@ window.getPortalFields = function(guid) {
  * @param {string} guid - The GUID of the portal.
  * @returns {number} The total number of fields associated with the portal.
  */
-window.getPortalFieldsCount = function(guid) {
-  var fields = getPortalFields(guid);
+window.getPortalFieldsCount = function (guid) {
+  var fields = window.getPortalFields(guid);
   return fields.length;
 };
-
 
 (function () {
   var cache = {};
@@ -26877,31 +26964,31 @@ window.getPortalFieldsCount = function(guid) {
    * @param {number} lngE6 - The longitude in E6 format.
    * @returns {string|null} The GUID of the portal at the specified location, or null if not found.
    */
-  window.findPortalGuidByPositionE6 = function(latE6, lngE6) {
-    var item = cache[latE6+","+lngE6];
-    if(item) return item[0];
+  window.findPortalGuidByPositionE6 = function (latE6, lngE6) {
+    var item = cache[latE6 + ',' + lngE6];
+    if (item) return item[0];
 
     // now try searching through currently rendered portals
-    for(var guid in window.portals) {
+    for (var guid in window.portals) {
       var data = window.portals[guid].options.data;
-      if(data.latE6 == latE6 && data.lngE6 == lngE6) return guid;
+      if (data.latE6 === latE6 && data.lngE6 === lngE6) return guid;
     }
 
     // now try searching through fields
-    for(var fguid in window.fields) {
+    for (var fguid in window.fields) {
       var points = window.fields[fguid].options.data.points;
 
-      for(var i in points) {
+      for (var i in points) {
         var point = points[i];
-        if(point.latE6 == latE6 && point.lngE6 == lngE6) return point.guid;
+        if (point.latE6 === latE6 && point.lngE6 === lngE6) return point.guid;
       }
     }
 
     // and finally search through links
-    for(var lguid in window.links) {
+    for (var lguid in window.links) {
       var l = window.links[lguid].options.data;
-      if(l.oLatE6 == latE6 && l.oLngE6 == lngE6) return l.oGuid;
-      if(l.dLatE6 == latE6 && l.dLngE6 == lngE6) return l.dGuid;
+      if (l.oLatE6 === latE6 && l.oLngE6 === lngE6) return l.oGuid;
+      if (l.dLatE6 === latE6 && l.dLngE6 === lngE6) return l.dGuid;
     }
 
     return null;
@@ -26916,22 +27003,26 @@ window.getPortalFieldsCount = function(guid) {
    * @param {number} latE6 - The latitude in E6 format.
    * @param {number} lngE6 - The longitude in E6 format.
    */
-  window.pushPortalGuidPositionCache = function(guid, latE6, lngE6) {
-    cache[latE6+","+lngE6] = [guid, Date.now()];
+  window.pushPortalGuidPositionCache = function (guid, latE6, lngE6) {
+    cache[latE6 + ',' + lngE6] = [guid, Date.now()];
     cache_level += 1;
 
-    if(cache_level > GC_LIMIT) {
+    if (cache_level > GC_LIMIT) {
       Object.keys(cache) // get all latlngs
-        .map(function(latlng) { return [latlng, cache[latlng][1]]; })  // map them to [latlng, timestamp]
-        .sort(function(a,b) { return b[1] - a[1]; }) // sort them
+        .map(function (latlng) {
+          return [latlng, cache[latlng][1]];
+        }) // map them to [latlng, timestamp]
+        .sort(function (a, b) {
+          return b[1] - a[1];
+        }) // sort them
         .slice(GC_KEEP) // drop the MRU
-        .forEach(function(item) { delete cache[item[0]] }); // delete the rest
-      cache_level = Object.keys(cache).length
+        .forEach(function (item) {
+          delete cache[item[0]];
+        }); // delete the rest
+      cache_level = Object.keys(cache).length;
     }
-  }
+  };
 })();
-
-
 
 
 })();
@@ -26948,18 +27039,18 @@ var log = ulog('portal_detail');
 var cache;
 var requestQueue = {};
 
-window.portalDetail = function() {};
+window.portalDetail = function () {};
 
 /**
  * Sets up the portal detail handler, initializing the cache.
  *
  * @function window.portalDetail.setup
  */
-window.portalDetail.setup = function() {
-  cache = new DataCache();
+window.portalDetail.setup = function () {
+  cache = new window.DataCache();
 
   cache.startExpireInterval(20);
-}
+};
 
 /**
  * Retrieves portal details from cache by GUID.
@@ -26968,9 +27059,9 @@ window.portalDetail.setup = function() {
  * @param {string} guid - The Global Unique Identifier of the portal.
  * @returns Cached portal details if available.
  */
-window.portalDetail.get = function(guid) {
+window.portalDetail.get = function (guid) {
   return cache.get(guid);
-}
+};
 
 /**
  * Stores portal details in the cache.
@@ -26992,52 +27083,54 @@ window.portalDetail.store = function (guid, dict, freshtime) {
  * @param {string} guid - The Global Unique Identifier of the portal.
  * @returns {boolean} True if details are fresh, false otherwise.
  */
-window.portalDetail.isFresh = function(guid) {
+window.portalDetail.isFresh = function (guid) {
   return cache.isFresh(guid);
-}
+};
 
-
-var handleResponse = function(deferred, guid, data, success) {
+var handleResponse = function (deferred, guid, data, success) {
   if (!data || data.error || !data.result) {
     success = false;
   }
 
   if (success) {
-
-    var dict = decodeArray.portal(data.result, 'detailed');
+    var dict = window.decodeArray.portal(data.result, 'detailed');
 
     // entity format, as used in map data
-    var ent = [guid,dict.timestamp,data.result];
+    var ent = [guid, dict.timestamp, data.result];
 
-    cache.store(guid,dict);
+    cache.store(guid, dict);
 
-    //FIXME..? better way of handling sidebar refreshing...
+    // FIXME..? better way of handling sidebar refreshing...
 
-    if (guid == selectedPortal) {
-      renderPortalDetails(guid);
+    if (guid === window.selectedPortal) {
+      window.renderPortalDetails(guid);
     }
 
     deferred.resolve(dict);
-    window.runHooks ('portalDetailLoaded', {guid:guid, success:success, details:dict, ent:ent});
-
+    window.runHooks('portalDetailLoaded', { guid: guid, success: success, details: dict, ent: ent });
   } else {
-    if (data && data.error == "RETRY") {
+    if (data && data.error === 'RETRY') {
       // server asked us to try again
       doRequest(deferred, guid);
     } else {
       deferred.reject();
-      window.runHooks ('portalDetailLoaded', {guid:guid, success:success});
+      window.runHooks('portalDetailLoaded', { guid: guid, success: success });
     }
   }
+};
 
-}
-
-var doRequest = function(deferred, guid) {
-  window.postAjax('getPortalDetails', {guid:guid},
-    function(data,textStatus,jqXHR) { handleResponse(deferred, guid, data, true); },
-    function() { handleResponse(deferred, guid, undefined, false); }
+var doRequest = function (deferred, guid) {
+  window.postAjax(
+    'getPortalDetails',
+    { guid: guid },
+    function (data) {
+      handleResponse(deferred, guid, data, true);
+    },
+    function () {
+      handleResponse(deferred, guid, undefined, false);
+    }
   );
-}
+};
 
 /**
  * Requests detailed information for a specific portal. If the information is not already being requested,
@@ -27047,17 +27140,19 @@ var doRequest = function(deferred, guid) {
  * @param {string} guid - The Global Unique Identifier of the portal.
  * @returns {Promise} A promise that resolves with the portal details upon successful retrieval or rejection on failure.
  */
-window.portalDetail.request = function(guid) {
+window.portalDetail.request = function (guid) {
   if (!requestQueue[guid]) {
     var deferred = $.Deferred();
     requestQueue[guid] = deferred.promise();
-    deferred.always(function() { delete requestQueue[guid]; });
+    deferred.always(function () {
+      delete requestQueue[guid];
+    });
 
     doRequest(deferred, guid);
   }
 
   return requestQueue[guid];
-}
+};
 
 
 })();
@@ -27066,6 +27161,8 @@ window.portalDetail.request = function(guid) {
 // *** module: portal_detail_display.js ***
 (function () {
 var log = ulog('portal_detail_display');
+/* global L -- eslint */
+
 /**
  * @file Main code block that renders the portal details in the sidebar and
  * methods that highlight the portal in the map view.
@@ -27077,10 +27174,10 @@ var log = ulog('portal_detail_display');
  *
  * @function resetScrollOnNewPortal
  */
-window.resetScrollOnNewPortal = function() {
-  if (selectedPortal !== window.renderPortalDetails.lastVisible) {
+window.resetScrollOnNewPortal = function () {
+  if (window.selectedPortal !== window.renderPortalDetails.lastVisible) {
     // another portal selected so scroll position become irrelevant to new portal details
-    $("#sidebar").scrollTop(0); // NB: this works ONLY when #sidebar:visible
+    $('#sidebar').scrollTop(0); // NB: this works ONLY when #sidebar:visible
   }
 };
 
@@ -27099,10 +27196,12 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
   var linkDetails = $('.linkdetails');
 
   // a permalink for the portal
-  var permaHtml = $('<a>').attr({
-    href: window.makePermalink([lat,lng]),
-    title: 'Create a URL link to this portal'}
-  ).text('Portal link');
+  var permaHtml = $('<a>')
+    .attr({
+      href: window.makePermalink([lat, lng]),
+      title: 'Create a URL link to this portal',
+    })
+    .text('Portal link');
   linkDetails.append($('<aside>').append(permaHtml));
 
   var scannerLink = $('<a>')
@@ -27111,7 +27210,7 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
       title: 'Copy link to this portal for Ingress Prime',
     })
     .click(function (event) {
-      navigator.clipboard.writeText(event.target.href);
+      navigator.clipboard.writeText(event.target.href).then();
       event.stopPropagation();
       return false;
     })
@@ -27119,9 +27218,12 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
   linkDetails.append($('<aside>').append(scannerLink));
 
   // and a map link popup dialog
-  var mapHtml = $('<a>').attr({
-    title: 'Link to alternative maps (Google, etc)'
-  }).text('Map links').click(window.showPortalPosLinks.bind(this, lat, lng, title));
+  var mapHtml = $('<a>')
+    .attr({
+      title: 'Link to alternative maps (Google, etc)',
+    })
+    .text('Map links')
+    .click(window.showPortalPosLinks.bind(this, lat, lng, title));
   linkDetails.append($('<aside>').append(mapHtml));
 };
 
@@ -27129,26 +27231,26 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
  * Renders the details of a portal in the sidebar.
  *
  * @function renderPortalDetails
- * @param {string} guid - The globally unique identifier of the portal to display details for.
+ * @param {string|null} guid - The globally unique identifier of the portal to display details for.
  */
-window.renderPortalDetails = function(guid) {
-  selectPortal(window.portals[guid] ? guid : null);
+window.renderPortalDetails = function (guid) {
+  window.selectPortal(window.portals[guid] ? guid : null);
   if ($('#sidebar').is(':visible')) {
     window.resetScrollOnNewPortal();
     window.renderPortalDetails.lastVisible = guid;
   }
 
-  if (guid && !portalDetail.isFresh(guid)) {
-    portalDetail.request(guid);
+  if (guid && !window.portalDetail.isFresh(guid)) {
+    window.portalDetail.request(guid);
   }
 
   // TODO? handle the case where we request data for a particular portal GUID, but it *isn't* in
   // window.portals....
 
-  if(!window.portals[guid]) {
-    urlPortal = guid;
+  if (!window.portals[guid]) {
+    window.urlPortal = guid;
     $('#portaldetails').html('');
-    if(isSmartphone()) {
+    if (window.isSmartphone()) {
       $('.fullimg').remove();
       $('#mobileinfo').html('<div style="text-align: center"><b>tap here for info screen</b></div>');
     }
@@ -27157,73 +27259,76 @@ window.renderPortalDetails = function(guid) {
 
   var portal = window.portals[guid];
   var data = portal.options.data;
-  var details = portalDetail.get(guid);
-  var historyDetails = getPortalHistoryDetails(data);
+  var details = window.portalDetail.get(guid);
+  var historyDetails = window.getPortalHistoryDetails(data);
 
   // details and data can get out of sync. if we have details, construct a matching 'data'
   if (details) {
-    data = getPortalSummaryData(details);
+    data = window.getPortalSummaryData(details);
   }
 
+  var modDetails = details ? '<div class="mods">' + window.getModDetails(details) + '</div>' : '';
+  var miscDetails = details ? window.getPortalMiscDetails(guid, details) : '';
+  var resoDetails = details ? window.getResonatorDetails(details) : '';
 
-  var modDetails = details ? '<div class="mods">'+getModDetails(details)+'</div>' : '';
-  var miscDetails = details ? getPortalMiscDetails(guid,details) : '';
-  var resoDetails = details ? getResonatorDetails(details) : '';
-
-//TODO? other status details...
+  // TODO? other status details...
   var statusDetails = details ? '' : '<div id="portalStatus">Loading details...</div>';
 
-  var img = fixPortalImageUrl(details ? details.image : data.image);
+  var img = window.fixPortalImageUrl(details ? details.image : data.image);
   var title = (details && details.title) || (data && data.title) || 'null';
 
-  var lat = data.latE6/1E6;
-  var lng = data.lngE6/1E6;
+  var lat = data.latE6 / 1e6;
+  var lng = data.lngE6 / 1e6;
 
-  var imgTitle = title+'\n\nClick to show full image.';
-
+  var imgTitle = title + '\n\nClick to show full image.';
 
   // portal level. start with basic data - then extend with fractional info in tooltip if available
-  var levelInt = (teamStringToId(data.team) == TEAM_NONE) ? 0 : data.level;
+  var levelInt = window.teamStringToId(data.team) === window.TEAM_NONE ? 0 : data.level;
   var levelDetails = levelInt;
   if (details) {
-    levelDetails = getPortalLevel(details);
-    if(levelDetails != 8) {
-      if(levelDetails==Math.ceil(levelDetails))
-        levelDetails += "\n8";
-      else
-        levelDetails += "\n" + (Math.ceil(levelDetails) - levelDetails)*8;
-      levelDetails += " resonator level(s) needed for next portal level";
+    levelDetails = window.getPortalLevel(details);
+    if (levelDetails !== 8) {
+      if (levelDetails === Math.ceil(levelDetails)) levelDetails += '\n8';
+      else levelDetails += '\n' + (Math.ceil(levelDetails) - levelDetails) * 8;
+      levelDetails += ' resonator level(s) needed for next portal level';
     } else {
-      levelDetails += "\nfully upgraded";
+      levelDetails += '\nfully upgraded';
     }
   }
-  levelDetails = "Level " + levelDetails;
+  levelDetails = 'Level ' + levelDetails;
 
   $('#portaldetails')
-    .html('') //to ensure it's clear
-    .attr('class', TEAM_TO_CSS[teamStringToId(data.team)])
+    .html('') // to ensure it's clear
+    .attr('class', window.TEAM_TO_CSS[window.teamStringToId(data.team)])
     .append(
-      $('<h3>', { class:'title' })
+      $('<h3>', { class: 'title' })
         .text(title)
         .prepend(
           $('<svg><use xlink:href="#ic_place_24px"/><title>Click to move to portal</title></svg>')
             .attr({
               class: 'material-icons icon-button',
-              style: 'float: left'
+              style: 'float: left',
             })
-            .click(function() {
-              zoomToAndShowPortal(guid,[data.latE6/1E6,data.lngE6/1E6]);
-              if (isSmartphone()) { show('map') };
-            })),
+            .click(function () {
+              window.zoomToAndShowPortal(guid, [data.latE6 / 1e6, data.lngE6 / 1e6]);
+              if (window.isSmartphone()) {
+                window.show('map');
+              }
+            })
+        ),
 
-      $('<span>').attr({
-        class: 'close',
-        title: 'Close [w]',
-        accesskey: 'w'
-      }).text('X')
+      $('<span>')
+        .attr({
+          class: 'close',
+          title: 'Close [w]',
+          accesskey: 'w',
+        })
+        .text('X')
         .click(function () {
-          renderPortalDetails(null);
-          if (isSmartphone()) { show('map') };
+          window.renderPortalDetails(null);
+          if (window.isSmartphone()) {
+            window.show('map');
+          }
         }),
 
       // help cursor via ".imgpreview img"
@@ -27231,13 +27336,9 @@ window.renderPortalDetails = function(guid) {
         .attr({
           class: 'imgpreview',
           title: imgTitle,
-          style: 'background-image: url("' + img + '")'
+          style: 'background-image: url("' + img + '")',
         })
-        .append(
-          $('<span>', { id: 'level', title: levelDetails })
-            .text(levelInt),
-          $('<img>', { class: 'hide', src:img })
-        ),
+        .append($('<span>', { id: 'level', title: levelDetails }).text(levelInt), $('<img>', { class: 'hide', src: img })),
 
       modDetails,
       miscDetails,
@@ -27252,9 +27353,9 @@ window.renderPortalDetails = function(guid) {
   // only run the hooks when we have a portalDetails object - most plugins rely on the extended data
   // TODO? another hook to call always, for any plugins that can work with less data?
   if (details) {
-    runHooks('portalDetailsUpdated', {guid: guid, portal: portal, portalDetails: details, portalData: data});
+    window.runHooks('portalDetailsUpdated', { guid: guid, portal: portal, portalDetails: details, portalData: data });
   }
-}
+};
 
 /**
  * Gets miscellaneous details for a specified portal.
@@ -27264,38 +27365,33 @@ window.renderPortalDetails = function(guid) {
  * @param {Object} d - The portal detail object containing various properties of the portal.
  * @returns {string} HTML string representing the miscellaneous details of the portal.
  */
-window.getPortalMiscDetails = function(guid,d) {
-
+window.getPortalMiscDetails = function (guid, d) {
   var randDetails;
 
   if (d) {
-
     // collect some random data that’s not worth to put in an own method
-    var linkInfo = getPortalLinks(guid);
-    var maxOutgoing = getMaxOutgoingLinks(d);
+    var linkInfo = window.getPortalLinks(guid);
+    var maxOutgoing = window.getMaxOutgoingLinks(d);
     var linkCount = linkInfo.in.length + linkInfo.out.length;
-    var links = {incoming: linkInfo.in.length, outgoing: linkInfo.out.length};
+    var links = { incoming: linkInfo.in.length, outgoing: linkInfo.out.length };
 
-    var title = 'at most ' + maxOutgoing + ' outgoing links\n' +
-                links.outgoing + ' links out\n' +
-                links.incoming + ' links in\n' +
-                '(' + (links.outgoing+links.incoming) + ' total)'
-    var linksText = ['links', links.outgoing+' out / '+links.incoming+' in', title];
+    var title =
+      `at most ${maxOutgoing} outgoing links\n` +
+      `${links.outgoing} links out\n` +
+      `${links.incoming} links in\n` +
+      `(${links.outgoing + links.incoming} total)`;
+    var linksText = ['links', links.outgoing + ' out / ' + links.incoming + ' in', title];
 
-    var player = d.owner
-      ? '<span class="nickname">' + d.owner + '</span>'
-      : '-';
+    var player = d.owner ? '<span class="nickname">' + d.owner + '</span>' : '-';
     var playerText = ['owner', player];
 
-
-    var fieldCount = getPortalFieldsCount(guid);
+    var fieldCount = window.getPortalFieldsCount(guid);
 
     var fieldsText = ['fields', fieldCount];
 
-    var apGainText = getAttackApGainText(d,fieldCount,linkCount);
+    var apGainText = window.getAttackApGainText(d, fieldCount, linkCount);
 
-    var attackValues = getPortalAttackValues(d);
-
+    var attackValues = window.getPortalAttackValues(d);
 
     // collect and html-ify random data
 
@@ -27303,26 +27399,28 @@ window.getPortalMiscDetails = function(guid,d) {
       // these pieces of data are only relevant when the portal is captured
       // maybe check if portal is captured and remove?
       // But this makes the info panel look rather empty for unclaimed portals
-      playerText, getRangeText(d),
-      linksText, fieldsText,
-      getMitigationText(d,linkCount), getEnergyText(d),
+      playerText,
+      window.getRangeText(d),
+      linksText,
+      fieldsText,
+      window.getMitigationText(d, linkCount),
+      window.getEnergyText(d),
       // and these have some use, even for uncaptured portals
-      apGainText, getHackDetailsText(d),
+      apGainText,
+      window.getHackDetailsText(d),
     ];
 
-    if(attackValues.attack_frequency != 0)
-      randDetailsData.push([
-        '<span title="attack frequency" class="text-overflow-ellipsis">attack frequency</span>',
-        '×'+attackValues.attack_frequency]);
-    if(attackValues.hit_bonus != 0)
-      randDetailsData.push(['hit bonus', attackValues.hit_bonus+'%']);
-    if(attackValues.force_amplifier != 0)
-      randDetailsData.push([
-        '<span title="force amplifier" class="text-overflow-ellipsis">force amplifier</span>',
-        '×'+attackValues.force_amplifier]);
+    if (attackValues.attack_frequency !== 0) {
+      randDetailsData.push(['<span title="attack frequency" class="text-overflow-ellipsis">attack frequency</span>', '×' + attackValues.attack_frequency]);
+    }
+    if (attackValues.hit_bonus !== 0) {
+      randDetailsData.push(['hit bonus', attackValues.hit_bonus + '%']);
+    }
+    if (attackValues.force_amplifier !== 0) {
+      randDetailsData.push(['<span title="force amplifier" class="text-overflow-ellipsis">force amplifier</span>', '×' + attackValues.force_amplifier]);
+    }
 
-    randDetails = '<table id="randdetails">' + genFourColumnTable(randDetailsData) + '</table>';
-
+    randDetails = '<table id="randdetails">' + window.genFourColumnTable(randDetailsData) + '</table>';
 
     // artifacts - tacked on after (but not as part of) the 'randdetails' table
     // instead of using the existing columns....
@@ -27330,18 +27428,24 @@ window.getPortalMiscDetails = function(guid,d) {
     if (d.artifactBrief && d.artifactBrief.target && Object.keys(d.artifactBrief.target).length > 0) {
       var targets = Object.keys(d.artifactBrief.target);
       // currently (2015-07-10) we no longer know the team each target portal is for - so we'll just show the artifact type(s)
-       randDetails += '<div id="artifact_target">Target portal: '+targets.map(function(x) { return x.capitalize(); }).join(', ')+'</div>';
+      randDetails +=
+        '<div id="artifact_target">Target portal: ' +
+        targets
+          .map(function (x) {
+            return x.capitalize();
+          })
+          .join(', ') +
+        '</div>';
     }
 
     // shards - taken directly from the portal details
     if (d.artifactDetail) {
-      randDetails += '<div id="artifact_fragments">Shards: '+d.artifactDetail.displayName+' #'+d.artifactDetail.fragments.join(', ')+'</div>';
+      randDetails += '<div id="artifact_fragments">Shards: ' + d.artifactDetail.displayName + ' #' + d.artifactDetail.fragments.join(', ') + '</div>';
     }
-
   }
 
   return randDetails;
-}
+};
 
 /**
  * The function adds circles indicating the hack range and link range of the portal.
@@ -27350,41 +27454,44 @@ window.getPortalMiscDetails = function(guid,d) {
  * @function setPortalIndicators
  * @param {Object} p - The portal object for which to set the indicators.
  */
-window.setPortalIndicators = function(p) {
-
-  if(portalRangeIndicator) map.removeLayer(portalRangeIndicator);
-  portalRangeIndicator = null;
-  if(portalAccessIndicator) map.removeLayer(portalAccessIndicator);
-  portalAccessIndicator = null;
+window.setPortalIndicators = function (p) {
+  if (window.portalRangeIndicator) window.map.removeLayer(window.portalRangeIndicator);
+  window.portalRangeIndicator = null;
+  if (window.portalAccessIndicator) window.map.removeLayer(window.portalAccessIndicator);
+  window.portalAccessIndicator = null;
 
   // if we have a portal...
 
-  if(p) {
+  if (p) {
     var coord = p.getLatLng();
 
     // range is only known for sure if we have portal details
     // TODO? render a min range guess until details are loaded..?
 
-    var d = portalDetail.get(p.options.guid);
+    var d = window.portalDetail.get(p.options.guid);
     if (d) {
-      var range = getPortalRange(d);
-      portalRangeIndicator = (range.range > 0
+      var range = window.getPortalRange(d);
+      window.portalRangeIndicator = (
+        range.range > 0
           ? L.geodesicCircle(coord, range.range, {
               fill: false,
-              color: RANGE_INDICATOR_COLOR,
+              color: window.RANGE_INDICATOR_COLOR,
               weight: 3,
-              dashArray: range.isLinkable ? undefined : "10,10",
-              interactive: false })
+              dashArray: range.isLinkable ? undefined : '10,10',
+              interactive: false,
+            })
           : L.circle(coord, range.range, { fill: false, stroke: false, interactive: false })
-        ).addTo(map);
+      ).addTo(window.map);
     }
 
-    portalAccessIndicator = L.circle(coord, HACK_RANGE,
-      { fill: false, color: ACCESS_INDICATOR_COLOR, weight: 2, interactive: false }
-    ).addTo(map);
+    window.portalAccessIndicator = L.circle(coord, window.HACK_RANGE, {
+      fill: false,
+      color: window.ACCESS_INDICATOR_COLOR,
+      weight: 2,
+      interactive: false,
+    }).addTo(window.map);
   }
-
-}
+};
 
 /**
  * Highlights the selected portal on the map and clears the highlight from the previously selected portal.
@@ -27393,31 +27500,31 @@ window.setPortalIndicators = function(p) {
  * @param {string} guid - The GUID of the portal to select.
  * @returns {boolean} True if the same portal is re-selected (just an update), false if a different portal is selected.
  */
-window.selectPortal = function(guid) {
-  var update = selectedPortal === guid;
-  var oldPortalGuid = selectedPortal;
-  selectedPortal = guid;
+window.selectPortal = function (guid) {
+  var update = window.selectedPortal === guid;
+  var oldPortalGuid = window.selectedPortal;
+  window.selectedPortal = guid;
 
-  var oldPortal = portals[oldPortalGuid];
-  var newPortal = portals[guid];
+  var oldPortal = window.portals[oldPortalGuid];
+  var newPortal = window.portals[guid];
 
   // Restore style of unselected portal
-  if(!update && oldPortal) setMarkerStyle(oldPortal,false);
+  if (!update && oldPortal) window.setMarkerStyle(oldPortal, false);
 
   // Change style of selected portal
-  if(newPortal) {
-    setMarkerStyle(newPortal, true);
+  if (newPortal) {
+    window.setMarkerStyle(newPortal, true);
 
-    if (map.hasLayer(newPortal)) {
+    if (window.map.hasLayer(newPortal)) {
       newPortal.bringToFront();
     }
   }
 
-  setPortalIndicators(newPortal);
+  window.setPortalIndicators(newPortal);
 
-  runHooks('portalSelected', {selectedPortalGuid: guid, unselectedPortalGuid: oldPortalGuid});
+  window.runHooks('portalSelected', { selectedPortalGuid: guid, unselectedPortalGuid: oldPortalGuid });
   return update;
-}
+};
 
 
 })();
@@ -27426,6 +27533,8 @@ window.selectPortal = function(guid) {
 // *** module: portal_detail_display_tools.js ***
 (function () {
 var log = ulog('portal_detail_display_tools');
+/* global L -- eslint */
+
 /**
  * @file Hand any of these functions the details-hash of a portal, and they
  * will return pretty, displayable HTML or parts thereof.
@@ -27445,15 +27554,18 @@ window.getPortalHistoryDetails = function (d) {
   }
   var classParts = {};
   ['visited', 'captured', 'scoutControlled'].forEach(function (k) {
-    classParts[k] = d.history[k] ? 'class="completed"' : "";
+    classParts[k] = d.history[k] ? 'class="completed"' : '';
   });
 
-  return L.Util.template('<div id="historydetails">History: '
-  + '<span id="visited" {visited}>visited</span> | '
-  + '<span id="captured" {captured}>captured</span> | '
-  + '<span id="scout-controlled" {scoutControlled}>scout controlled</span>'
-  + '</div>', classParts);
-}
+  return L.Util.template(
+    '<div id="historydetails">History: ' +
+      '<span id="visited" {visited}>visited</span> | ' +
+      '<span id="captured" {captured}>captured</span> | ' +
+      '<span id="scout-controlled" {scoutControlled}>scout controlled</span>' +
+      '</div>',
+    classParts
+  );
+};
 
 /**
  * Returns displayable text and link about portal range including base range, link amp boost, and total range.
@@ -27462,14 +27574,12 @@ window.getPortalHistoryDetails = function (d) {
  * @param {Object} d - The portal detail object containing range information.
  * @returns {Array} An array containing the range label, HTML content, and a tooltip title.
  */
-window.getRangeText = function(d) {
-  var range = getPortalRange(d);
+window.getRangeText = function (d) {
+  var range = window.getPortalRange(d);
 
-  var title = 'Base range:\t' + digits(Math.floor(range.base))+'m'
-    + '\nLink amp boost:\t×'+range.boost
-    + '\nRange:\t'+digits(Math.floor(range.range))+'m';
+  var title = `Base range:\t${window.digits(Math.floor(range.base))}m\nLink amp boost:\t×${range.boost}\nRange:\t${window.digits(Math.floor(range.range))}m`;
 
-  if(!range.isLinkable) title += '\nPortal is missing resonators,\nno new links can be made';
+  if (!range.isLinkable) title += '\nPortal is missing resonators,\nno new links can be made';
 
   return [
     'range',
@@ -27480,7 +27590,7 @@ window.getRangeText = function(d) {
       '</a>',
     title,
   ];
-}
+};
 
 /**
  * Given portal details, returns HTML code to display mod details.
@@ -27489,11 +27599,11 @@ window.getRangeText = function(d) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {string} HTML string representing the mod details of the portal.
  */
-window.getModDetails = function(d) {
+window.getModDetails = function (d) {
   var mods = [];
   var modsTitle = [];
   var modsColor = [];
-  $.each(d.mods, function(ind, mod) {
+  $.each(d.mods, function (ind, mod) {
     var modName = '';
     var modTooltip = '';
     var modColor = '#000';
@@ -27505,38 +27615,44 @@ window.getModDetails = function(d) {
       modName = mod.name || '(unknown mod)';
 
       if (mod.rarity) {
-        modName = mod.rarity.capitalize().replace(/_/g,' ') + ' ' + modName;
+        modName = mod.rarity.capitalize().replace(/_/g, ' ') + ' ' + modName;
       }
 
       modTooltip = modName + '\n';
       if (mod.owner) {
-        modTooltip += 'Installed by: '+ mod.owner + '\n';
+        modTooltip += 'Installed by: ' + mod.owner + '\n';
       }
 
       if (mod.stats) {
         modTooltip += 'Stats:';
         for (var key in mod.stats) {
-          if (!mod.stats.hasOwnProperty(key)) continue;
+          if (!Object.hasOwn(mod.stats, key)) continue;
           var val = mod.stats[key];
 
           // if (key === 'REMOVAL_STICKINESS' && val == 0) continue;  // stat on all mods recently - unknown meaning, not displayed in stock client
 
           // special formatting for known mod stats, where the display of the raw value is less useful
-          if      (key === 'HACK_SPEED')            val = (val/10000)+'%'; // 500000 = 50%
-          else if (key === 'HIT_BONUS')             val = (val/10000)+'%'; // 300000 = 30%
-          else if (key === 'ATTACK_FREQUENCY')      val = (val/1000) +'x'; // 2000 = 2x
-          else if (key === 'FORCE_AMPLIFIER')       val = (val/1000) +'x'; // 2000 = 2x
-          else if (key === 'LINK_RANGE_MULTIPLIER') val = (val/1000) +'x'; // 2000 = 2x
-          else if (key === 'LINK_DEFENSE_BOOST')    val = (val/1000) +'x'; // 1500 = 1.5x
-          else if (key === 'REMOVAL_STICKINESS' && val > 100) val = (val/10000)+'%'; // an educated guess
+          if (key === 'HACK_SPEED')
+            val = val / 10000 + '%'; // 500000 = 50%
+          else if (key === 'HIT_BONUS')
+            val = val / 10000 + '%'; // 300000 = 30%
+          else if (key === 'ATTACK_FREQUENCY')
+            val = val / 1000 + 'x'; // 2000 = 2x
+          else if (key === 'FORCE_AMPLIFIER')
+            val = val / 1000 + 'x'; // 2000 = 2x
+          else if (key === 'LINK_RANGE_MULTIPLIER')
+            val = val / 1000 + 'x'; // 2000 = 2x
+          else if (key === 'LINK_DEFENSE_BOOST')
+            val = val / 1000 + 'x'; // 1500 = 1.5x
+          else if (key === 'REMOVAL_STICKINESS' && val > 100) val = val / 10000 + '%'; // an educated guess
           // else display unmodified. correct for shield mitigation and multihack - unknown for future/other mods
 
-          modTooltip += '\n+' +  val + ' ' + key.capitalize().replace(/_/g,' ');
+          modTooltip += '\n+' + val + ' ' + key.capitalize().replace(/_/g, ' ');
         }
       }
 
       if (mod.rarity) {
-        modColor = COLORS_MOD[mod.rarity];
+        modColor = window.COLORS_MOD[mod.rarity];
       } else {
         modColor = '#fff';
       }
@@ -27547,18 +27663,17 @@ window.getModDetails = function(d) {
     modsColor.push(modColor);
   });
 
-
   var t = '';
-  for (var i=0; i<mods.length; i++) {
-    t += '<span'+(modsTitle[i].length ? ' title="'+modsTitle[i]+'"' : '')+' style="color:'+modsColor[i]+'">'+mods[i]+'</span>'
+  for (let i = 0; i < mods.length; i++) {
+    t += '<span' + (modsTitle[i].length ? ' title="' + modsTitle[i] + '"' : '') + ' style="color:' + modsColor[i] + '">' + mods[i] + '</span>';
   }
   // and add blank entries if we have less than 4 mods (as the server no longer returns all mod slots, but just the filled ones)
-  for (var i=mods.length; i<4; i++) {
-    t += '<span style="color:#000"></span>'
+  for (let i = mods.length; i < 4; i++) {
+    t += '<span style="color:#000"></span>';
   }
 
   return t;
-}
+};
 
 /**
  * Generates text representing the current and total energy of a portal.
@@ -27567,13 +27682,13 @@ window.getModDetails = function(d) {
  * @param {Object} d - The portal detail object containing energy information.
  * @returns {Array} An array containing the energy label, formatted energy values, and a tooltip title.
  */
-window.getEnergyText = function(d) {
-  var currentNrg = getCurrentPortalEnergy(d);
-  var totalNrg = getTotalPortalEnergy(d);
+window.getEnergyText = function (d) {
+  var currentNrg = window.getCurrentPortalEnergy(d);
+  var totalNrg = window.getTotalPortalEnergy(d);
   var title = currentNrg + ' / ' + totalNrg;
-  var fill = prettyEnergy(currentNrg) + ' / ' + prettyEnergy(totalNrg)
+  var fill = window.prettyEnergy(currentNrg) + ' / ' + window.prettyEnergy(totalNrg);
   return ['energy', fill, title];
-}
+};
 
 /**
  * Generates HTML details for resonators deployed on a portal.
@@ -27582,7 +27697,7 @@ window.getEnergyText = function(d) {
  * @param {Object} d - The portal detail object containing resonator information.
  * @returns {string} HTML string representing the resonator details of the portal.
  */
-window.getResonatorDetails = function(d) {
+window.getResonatorDetails = function (d) {
   var resoDetails = [];
   // octant=slot: 0=E, 1=NE, 2=N, 3=NW, 4=W, 5=SW, 6=S, SE=7
   // resos in the display should be ordered like this:
@@ -27592,8 +27707,10 @@ window.getResonatorDetails = function(d) {
   //  SW    S
   // note: as of 2014-05-23 update, this is not true for portals with empty slots!
 
-  var processResonatorSlot = function(reso,slot) {
-    var lvl=0, nrg=0, owner=null;
+  var processResonatorSlot = function (reso, slot) {
+    var lvl = 0,
+      nrg = 0,
+      owner = null;
 
     if (reso) {
       lvl = parseInt(reso.level);
@@ -27601,28 +27718,25 @@ window.getResonatorDetails = function(d) {
       owner = reso.owner;
     }
 
-    resoDetails.push(renderResonatorDetails(slot, lvl, nrg, owner));
+    resoDetails.push(window.renderResonatorDetails(slot, lvl, nrg, owner));
   };
-
 
   // if all 8 resonators are deployed, we know which is in which slot
 
-  if (d.resonators.length == 8) {
+  if (d.resonators.length === 8) {
     // fully deployed - we can make assumptions about deployment slots
-    $.each([2, 1, 3, 0, 4, 7, 5, 6], function(ind, slot) {
-      processResonatorSlot(d.resonators[slot],slot);
+    $.each([2, 1, 3, 0, 4, 7, 5, 6], function (ind, slot) {
+      processResonatorSlot(d.resonators[slot], slot);
     });
   } else {
     // partially deployed portal - we can no longer find out which resonator is in which slot
-    for(var ind=0; ind<8; ind++) {
+    for (var ind = 0; ind < 8; ind++) {
       processResonatorSlot(ind < d.resonators.length ? d.resonators[ind] : null, null);
     }
-
   }
 
-  return '<table id="resodetails">' + genFourColumnTable(resoDetails) + '</table>';
-
-}
+  return '<table id="resodetails">' + window.genFourColumnTable(resoDetails) + '</table>';
+};
 
 /**
  * Helper function that renders the HTML for a given resonator.
@@ -27635,34 +27749,29 @@ window.getResonatorDetails = function(d) {
  * @param {string|null} nick - The nickname of the owner of the resonator, or null if not applicable.
  * @returns {Array} An array containing the HTML content of the resonator and the owner's nickname.
  */
-window.renderResonatorDetails = function(slot, level, nrg, nick) {
-  if(OCTANTS[slot] === 'N')
-    var className = 'meter north';
-  else
-    var className = 'meter';
+window.renderResonatorDetails = function (slot, level, nrg, nick) {
+  const className = window.OCTANTS[slot] === 'N' ? 'meter north' : 'meter';
 
-  var max = RESO_NRG[level];
-  var fillGrade = level > 0 ? nrg/max*100 : 0;
+  var max = window.RESO_NRG[level];
+  var fillGrade = level > 0 ? (nrg / max) * 100 : 0;
 
-  var inf = (level > 0 ? 'energy:\t' + nrg   + ' / ' + max + ' (' + Math.round(fillGrade) + '%)\n'
-                        +'level:\t'  + level + '\n'
-                        +'owner:\t'  + nick  + '\n'
-                       : '')
-          + (slot !== null ? 'octant:\t' + OCTANTS[slot] + ' ' + OCTANTS_ARROW[slot]:'');
+  var inf =
+    (level > 0 ? 'energy:\t' + nrg + ' / ' + max + ' (' + Math.round(fillGrade) + '%)\n' + 'level:\t' + level + '\n' + 'owner:\t' + nick + '\n' : '') +
+    (slot !== null ? 'octant:\t' + window.OCTANTS[slot] + ' ' + window.OCTANTS_ARROW[slot] : '');
 
-  var style = fillGrade ? 'width:'+fillGrade+'%; background:'+COLORS_LVL[level]+';':'';
+  var style = fillGrade ? 'width:' + fillGrade + '%; background:' + window.COLORS_LVL[level] + ';' : '';
 
-  var color = (level < 3 ? "#9900FF" : "#FFFFFF");
+  var color = level < 3 ? '#9900FF' : '#FFFFFF';
 
   var lbar = level > 0 ? '<span class="meter-level" style="color: ' + color + ';"> L ' + level + ' </span>' : '';
 
-  var fill  = '<span style="'+style+'"></span>';
+  var fill = '<span style="' + style + '"></span>';
 
-  var meter = '<span class="' + className + '" title="'+inf+'">' + fill + lbar + '</span>';
+  var meter = '<span class="' + className + '" title="' + inf + '">' + fill + lbar + '</span>';
 
-  nick = nick ? '<span class="nickname">'+nick+'</span>' : null;
+  nick = nick ? '<span class="nickname">' + nick + '</span>' : null;
   return [meter, nick || ''];
-}
+};
 
 /**
  * Calculates the AP gain from destroying and then capturing a portal by deploying resonators.
@@ -27673,12 +27782,12 @@ window.renderResonatorDetails = function(slot, level, nrg, nick) {
  * @param {number} linkCount - The number of links connected to the portal.
  * @returns {Array} An array containing the label 'AP Gain', total AP gain, and a breakdown tooltip.
  */
-window.getAttackApGainText = function(d,fieldCount,linkCount) {
-  var breakdown = getAttackApGain(d,fieldCount,linkCount);
+window.getAttackApGainText = function (d, fieldCount, linkCount) {
+  var breakdown = window.getAttackApGain(d, fieldCount, linkCount);
   var totalGain = breakdown.enemyAp;
 
   var t = '';
-  if (teamStringToId(PLAYER.team) == teamStringToId(d.team)) {
+  if (window.teamStringToId(window.PLAYER.team) === window.teamStringToId(d.team)) {
     totalGain = breakdown.friendlyAp;
     t += 'Friendly AP:\t' + breakdown.friendlyAp + '\n';
     t += '  Deploy ' + breakdown.deployCount + ', ';
@@ -27689,8 +27798,8 @@ window.getAttackApGainText = function(d,fieldCount,linkCount) {
   t += '  Destroy AP:\t' + breakdown.destroyAp + '\n';
   t += '  Capture AP:\t' + breakdown.captureAp + '\n';
 
-  return ['AP Gain', digits(totalGain), t];
-}
+  return ['AP Gain', window.digits(totalGain), t];
+};
 
 /**
  * Provides details about the hack count and cooldown time of a portal.
@@ -27699,18 +27808,19 @@ window.getAttackApGainText = function(d,fieldCount,linkCount) {
  * @param {Object} d - The portal detail object containing hack information.
  * @returns {Array} An array containing the label 'hacks', short hack info, and a detailed tooltip.
  */
-window.getHackDetailsText = function(d) {
-  var hackDetails = getPortalHackDetails(d);
+window.getHackDetailsText = function (d) {
+  var hackDetails = window.getPortalHackDetails(d);
 
-  var shortHackInfo = hackDetails.hacks+' @ '+formatInterval(hackDetails.cooldown);
+  var shortHackInfo = hackDetails.hacks + ' @ ' + window.formatInterval(hackDetails.cooldown);
 
-  var title = 'Hacks available every 4 hours\n'
-            + 'Hack count:\t'+hackDetails.hacks+'\n'
-            + 'Cooldown time:\t'+formatInterval(hackDetails.cooldown)+'\n'
-            + 'Burnout time:\t'+formatInterval(hackDetails.burnout);
+  var title =
+    `Hacks available every 4 hours\n` +
+    `Hack count:\t${hackDetails.hacks}\n` +
+    `Cooldown time:\t${window.formatInterval(hackDetails.cooldown)}\n` +
+    `Burnout time:\t${window.formatInterval(hackDetails.burnout)}`;
 
   return ['hacks', shortHackInfo, title];
-}
+};
 
 /**
  * Generates text representing the total mitigation provided by shields and links on a portal.
@@ -27720,21 +27830,22 @@ window.getHackDetailsText = function(d) {
  * @param {number} linkCount - The number of links connected to the portal.
  * @returns {Array} An array containing the label 'shielding', short mitigation info, and a detailed tooltip.
  */
-window.getMitigationText = function(d,linkCount) {
-  var mitigationDetails = getPortalMitigationDetails(d,linkCount);
+window.getMitigationText = function (d, linkCount) {
+  var mitigationDetails = window.getPortalMitigationDetails(d, linkCount);
 
   var mitigationShort = mitigationDetails.total;
-  if (mitigationDetails.excess) mitigationShort += ' (+'+mitigationDetails.excess+')';
+  if (mitigationDetails.excess) mitigationShort += ' (+' + mitigationDetails.excess + ')';
 
-  var title = 'Total shielding:\t'+(mitigationDetails.shields+mitigationDetails.links)+'\n'
-            + '- active:\t'+mitigationDetails.total+'\n'
-            + '- excess:\t'+mitigationDetails.excess+'\n'
-            + 'From\n'
-            + '- shields:\t'+mitigationDetails.shields+'\n'
-            + '- links:\t'+mitigationDetails.links+' ('+mitigationDetails.linkDefenseBoost+'x)';
+  var title =
+    `Total shielding:\t${mitigationDetails.shields + mitigationDetails.links}\n` +
+    `- active:\t${mitigationDetails.total}\n` +
+    `- excess:\t${mitigationDetails.excess}\n` +
+    `From\n` +
+    `- shields:\t${mitigationDetails.shields}\n` +
+    `- links:\t${mitigationDetails.links} (${mitigationDetails.linkDefenseBoost}x)`;
 
   return ['shielding', mitigationShort, title];
-}
+};
 
 
 })();
@@ -27764,67 +27875,66 @@ window._no_highlighter = 'No Highlights';
  * @param {Function} data - The callback function for the highlighter.
  *                          This function receives data about the portal and decides how to highlight it.
  */
-window.addPortalHighlighter = function(name, data) {
-  if(_highlighters === null) {
-    _highlighters = {};
+window.addPortalHighlighter = function (name, data) {
+  if (window._highlighters === null) {
+    window._highlighters = {};
   }
 
   // old-format highlighters just passed a callback function. this is the same as just a highlight method
   if (!data.highlight) {
-    data = {highlight: data}
+    data = { highlight: data };
   }
 
-  _highlighters[name] = data;
+  window._highlighters[name] = data;
 
-  if (window.isApp && app.addPortalHighlighter)
-    app.addPortalHighlighter(name);
+  if (window.isApp && window.app.addPortalHighlighter) window.app.addPortalHighlighter(name);
 
-  if(window._current_highlighter === undefined) {
-    _current_highlighter = name;
+  if (window._current_highlighter === undefined) {
+    window._current_highlighter = name;
   }
 
-  if (_current_highlighter == name) {
-    if (window.isApp && app.setActiveHighlighter)
-      app.setActiveHighlighter(name);
+  if (window._current_highlighter === name) {
+    if (window.isApp && window.app.setActiveHighlighter) window.app.setActiveHighlighter(name);
 
     // call the setSelected callback
-    if (_highlighters[_current_highlighter].setSelected) {
-      _highlighters[_current_highlighter].setSelected(true);
+    if (window._highlighters[window._current_highlighter].setSelected) {
+      window._highlighters[window._current_highlighter].setSelected(true);
     }
-
   }
-  updatePortalHighlighterControl();
-}
+  window.updatePortalHighlighterControl();
+};
 
 /**
  * Updates the portal highlighter dropdown list, recreating the dropdown list of available highlighters.
  *
  * @function updatePortalHighlighterControl
  */
-window.updatePortalHighlighterControl = function() {
-  if (isApp && app.addPortalHighlighter) {
+window.updatePortalHighlighterControl = function () {
+  if (window.isApp && window.app.addPortalHighlighter) {
     $('#portal_highlight_select').remove();
     return;
   }
 
-  if(_highlighters !== null) {
-    if($('#portal_highlight_select').length === 0) {
-      $("body").append("<select id='portal_highlight_select'></select>");
-      $("#portal_highlight_select").change(function(){ changePortalHighlights($(this).val());});
-      $(".leaflet-top.leaflet-left").css('padding-top', '20px');
-      $(".leaflet-control-scale-line").css('margin-top','25px');
+  if (window._highlighters !== null) {
+    if ($('#portal_highlight_select').length === 0) {
+      $('body').append("<select id='portal_highlight_select'></select>");
+      $('#portal_highlight_select').change(function () {
+        window.changePortalHighlights($(this).val());
+      });
+      $('.leaflet-top.leaflet-left').css('padding-top', '20px');
+      $('.leaflet-control-scale-line').css('margin-top', '25px');
     }
-    $("#portal_highlight_select").html('');
-    $("#portal_highlight_select").append($("<option>").attr('value',_no_highlighter).text(_no_highlighter));
-    var h_names = Object.keys(_highlighters).sort();
+    $('#portal_highlight_select').html('');
+    $('#portal_highlight_select').append($('<option>').attr('value', window._no_highlighter).text(window._no_highlighter));
+    var h_names = Object.keys(window._highlighters).sort();
 
     $.each(h_names, function (i, name) {
-      $("#portal_highlight_select").append($("<option>").attr('value',name).text(name));
+      $('#portal_highlight_select').append($('<option>').attr('value', name).text(name));
     });
 
-    $("#portal_highlight_select").val(_current_highlighter);
+    $('#portal_highlight_select').val(window._current_highlighter);
   }
-}
+};
 
 /**
  * Changes the current portal highlights based on the selected highlighter.
@@ -27832,25 +27942,23 @@ window.updatePortalHighlighterControl = function() {
  * @function changePortalHighlights
  * @param {string} name - The name of the highlighter to be applied.
  */
-window.changePortalHighlights = function(name) {
-
+window.changePortalHighlights = function (name) {
   // first call any previous highlighter select callback
-  if (_current_highlighter && _highlighters[_current_highlighter] && _highlighters[_current_highlighter].setSelected) {
-    _highlighters[_current_highlighter].setSelected(false);
+  if (window._current_highlighter && window._highlighters[window._current_highlighter] && window._highlighters[window._current_highlighter].setSelected) {
+    window._highlighters[window._current_highlighter].setSelected(false);
   }
 
-  _current_highlighter = name;
-  if (window.isApp && app.setActiveHighlighter)
-    app.setActiveHighlighter(name);
+  window._current_highlighter = name;
+  if (window.isApp && window.app.setActiveHighlighter) window.app.setActiveHighlighter(name);
 
   // now call the setSelected callback for the new highlighter
-  if (_current_highlighter && _highlighters[_current_highlighter] && _highlighters[_current_highlighter].setSelected) {
-    _highlighters[_current_highlighter].setSelected(true);
+  if (window._current_highlighter && window._highlighters[window._current_highlighter] && window._highlighters[window._current_highlighter].setSelected) {
+    window._highlighters[window._current_highlighter].setSelected(true);
   }
 
-  resetHighlightedPortals();
+  window.resetHighlightedPortals();
   localStorage.portal_highlighter = name;
-}
+};
 
 /**
  * Applies the currently active highlighter to a specific portal.
@@ -27859,22 +27967,22 @@ window.changePortalHighlights = function(name) {
  * @function highlightPortal
  * @param {Object} p - The portal object to be highlighted.
  */
-window.highlightPortal = function(p) {
-  if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
-    _highlighters[_current_highlighter].highlight({portal: p});
+window.highlightPortal = function (p) {
+  if (window._highlighters !== null && window._highlighters[window._current_highlighter] !== undefined) {
+    window._highlighters[window._current_highlighter].highlight({ portal: p });
   }
-}
+};
 
 /**
  * Resets the highlighting of all portals, returning them to their default style.
  *
  * @function resetHighlightedPortals
  */
-window.resetHighlightedPortals = function() {
-  $.each(portals, function(guid, portal) {
-    setMarkerStyle(portal, guid === selectedPortal);
+window.resetHighlightedPortals = function () {
+  $.each(window.portals, function (guid, portal) {
+    window.setMarkerStyle(portal, guid === window.selectedPortal);
   });
-}
+};
 
 
 })();
@@ -27896,16 +28004,16 @@ var log = ulog('portal_info');
  * @param {Object} d - The portal detail object containing resonator information.
  * @returns {number} The calculated portal level.
  */
-window.getPortalLevel = function(d) {
+window.getPortalLevel = function (d) {
   var lvl = 0;
   var hasReso = false;
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso) return true;
+  $.each(d.resonators, function (ind, reso) {
+    if (!reso) return true;
     lvl += parseInt(reso.level);
     hasReso = true;
   });
-  return hasReso ? Math.max(1, lvl/8) : 0;
-}
+  return hasReso ? Math.max(1, lvl / 8) : 0;
+};
 
 /**
  * Calculates the total energy capacity of a portal based on its resonators.
@@ -27914,16 +28022,16 @@ window.getPortalLevel = function(d) {
  * @param {Object} d - The portal detail object containing resonator information.
  * @returns {number} The total energy capacity of the portal.
  */
-window.getTotalPortalEnergy = function(d) {
+window.getTotalPortalEnergy = function (d) {
   var nrg = 0;
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso) return true;
+  $.each(d.resonators, function (ind, reso) {
+    if (!reso) return true;
     var level = parseInt(reso.level);
-    var max = RESO_NRG[level];
+    var max = window.RESO_NRG[level];
     nrg += max;
   });
   return nrg;
-}
+};
 
 // For backwards compatibility
 window.getPortalEnergy = window.getTotalPortalEnergy;
@@ -27935,14 +28043,14 @@ window.getPortalEnergy = window.getTotalPortalEnergy;
  * @param {Object} d - The portal detail object containing resonator information.
  * @returns {number} The current energy of the portal.
  */
-window.getCurrentPortalEnergy = function(d) {
+window.getCurrentPortalEnergy = function (d) {
   var nrg = 0;
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso) return true;
+  $.each(d.resonators, function (ind, reso) {
+    if (!reso) return true;
     nrg += parseInt(reso.energy);
   });
   return nrg;
-}
+};
 
 /**
  * Calculates the range of a portal for creating links. The range depends on portal level and any installed Link Amps.
@@ -27953,7 +28061,7 @@ window.getCurrentPortalEnergy = function(d) {
  *                   total range after applying the boost (`range`),
  *                   and a boolean indicating if the portal is linkable (`isLinkable`).
  */
-window.getPortalRange = function(d) {
+window.getPortalRange = function (d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
   var range = {
@@ -27965,7 +28073,7 @@ window.getPortalRange = function(d) {
   range.isLinkable = d.resCount === 8;
 
   return range;
-}
+};
 
 /**
  * Calculates the boost in link range provided by installed Link Amps.
@@ -27974,7 +28082,7 @@ window.getPortalRange = function(d) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {number} The total boost factor for the link range.
  */
-window.getLinkAmpRangeBoost = function(d) {
+window.getLinkAmpRangeBoost = function (d) {
   if (window.teamStringToId(d.team) === window.TEAM_MAC) {
     return 1.0;
   }
@@ -27983,19 +28091,19 @@ window.getLinkAmpRangeBoost = function(d) {
   // link amps scale: first is full, second a quarter, the last two an eighth
   var scale = [1.0, 0.25, 0.125, 0.125];
 
-  var boost = 0.0;  // initial boost is 0.0 (i.e. no boost over standard range)
+  var boost = 0.0; // initial boost is 0.0 (i.e. no boost over standard range)
 
-  var linkAmps = getPortalModsByType(d, 'LINK_AMPLIFIER');
+  var linkAmps = window.getPortalModsByType(d, 'LINK_AMPLIFIER');
 
-  linkAmps.forEach(function(mod, i) {
+  linkAmps.forEach(function (mod, i) {
     // link amp stat LINK_RANGE_MULTIPLIER is 2000 for rare, and gives 2x boost to the range
     // and very-rare is 7000 and gives 7x the range
-    var baseMultiplier = mod.stats.LINK_RANGE_MULTIPLIER/1000;
-    boost += baseMultiplier*scale[i];
+    var baseMultiplier = mod.stats.LINK_RANGE_MULTIPLIER / 1000;
+    boost += baseMultiplier * scale[i];
   });
 
-  return (linkAmps.length > 0) ? boost : 1.0;
-}
+  return linkAmps.length > 0 ? boost : 1.0;
+};
 
 /**
  * Calculates the potential AP gain from attacking a portal.
@@ -28006,23 +28114,22 @@ window.getLinkAmpRangeBoost = function(d) {
  * @param {number} linkCount - The number of links attached to the portal.
  * @returns {Object} An object detailing various components of AP gain, including totals for friendly and enemy factions.
  */
-window.getAttackApGain = function(d,fieldCount,linkCount) {
+window.getAttackApGain = function (d, fieldCount, linkCount) {
   if (!fieldCount) fieldCount = 0;
 
   var resoCount = 0;
-  var maxResonators = MAX_RESO_PER_PLAYER.slice(0);
-  var curResonators = [ 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var maxResonators = window.MAX_RESO_PER_PLAYER.slice(0);
+  var curResonators = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  for(var n = PLAYER.level + 1; n < 9; n++) {
+  for (let n = window.PLAYER.level + 1; n < 9; n++) {
     maxResonators[n] = 0;
   }
-  $.each(d.resonators, function(ind, reso) {
-    if(!reso)
-      return true;
+  $.each(d.resonators, function (ind, reso) {
+    if (!reso) return true;
     resoCount += 1;
-    var reslevel=parseInt(reso.level);
-    if(reso.owner === PLAYER.nickname) {
-      if(maxResonators[reslevel] > 0) {
+    var reslevel = parseInt(reso.level);
+    if (reso.owner === window.PLAYER.nickname) {
+      if (maxResonators[reslevel] > 0) {
         maxResonators[reslevel] -= 1;
       }
     } else {
@@ -28030,25 +28137,24 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
     }
   });
 
-
-  var resoAp = resoCount * DESTROY_RESONATOR;
-  var linkAp = linkCount * DESTROY_LINK;
-  var fieldAp = fieldCount * DESTROY_FIELD;
+  var resoAp = resoCount * window.DESTROY_RESONATOR;
+  var linkAp = linkCount * window.DESTROY_LINK;
+  var fieldAp = fieldCount * window.DESTROY_FIELD;
   var destroyAp = resoAp + linkAp + fieldAp;
-  var captureAp = CAPTURE_PORTAL + 8 * DEPLOY_RESONATOR + COMPLETION_BONUS;
+  var captureAp = window.CAPTURE_PORTAL + 8 * window.DEPLOY_RESONATOR + window.COMPLETION_BONUS;
   var enemyAp = destroyAp + captureAp;
   var deployCount = 8 - resoCount;
-  var completionAp = (deployCount > 0) ? COMPLETION_BONUS : 0;
+  var completionAp = deployCount > 0 ? window.COMPLETION_BONUS : 0;
   var upgradeCount = 0;
   var upgradeAvailable = maxResonators[8];
-  for(var n = 7; n >= 0; n--) {
+  for (let n = 7; n >= 0; n--) {
     upgradeCount += curResonators[n];
-    if(upgradeAvailable < upgradeCount) {
-        upgradeCount -= (upgradeCount - upgradeAvailable);
+    if (upgradeAvailable < upgradeCount) {
+      upgradeCount -= upgradeCount - upgradeAvailable;
     }
     upgradeAvailable += maxResonators[n];
   }
-  var friendlyAp = deployCount * DEPLOY_RESONATOR + upgradeCount * UPGRADE_ANOTHERS_RESONATOR + completionAp;
+  var friendlyAp = deployCount * window.DEPLOY_RESONATOR + upgradeCount * window.UPGRADE_ANOTHERS_RESONATOR + completionAp;
   return {
     friendlyAp: friendlyAp,
     deployCount: deployCount,
@@ -28056,9 +28162,9 @@ window.getAttackApGain = function(d,fieldCount,linkCount) {
     enemyAp: enemyAp,
     destroyAp: destroyAp,
     resoAp: resoAp,
-    captureAp: captureAp
+    captureAp: captureAp,
   };
-}
+};
 
 /**
  * Corrects the portal image URL to match the current protocol (http/https).
@@ -28074,10 +28180,9 @@ window.fixPortalImageUrl = function (url) {
     }
     return url;
   } else {
-    return DEFAULT_PORTAL_IMG;
+    return window.DEFAULT_PORTAL_IMG;
   }
-
-}
+};
 
 /**
  * Returns a list of portal mods filtered by a specific type.
@@ -28087,13 +28192,13 @@ window.fixPortalImageUrl = function (url) {
  * @param {string} type - The type of mods to filter (e.g., 'RES_SHIELD', 'LINK_AMPLIFIER').
  * @returns {Array} An array of mods matching the specified type.
  */
-window.getPortalModsByType = function(d, type) {
+window.getPortalModsByType = function (d, type) {
   var mods = [];
 
   var typeToStat = {
     RES_SHIELD: 'MITIGATION',
     FORCE_AMP: 'FORCE_AMPLIFIER',
-    TURRET: 'HIT_BONUS',  // and/or ATTACK_FREQUENCY??
+    TURRET: 'HIT_BONUS', // and/or ATTACK_FREQUENCY??
     HEATSINK: 'HACK_SPEED',
     MULTIHACK: 'BURNOUT_INSULATION',
     LINK_AMPLIFIER: 'LINK_RANGE_MULTIPLIER',
@@ -28102,18 +28207,17 @@ window.getPortalModsByType = function(d, type) {
 
   var stat = typeToStat[type];
 
-  $.each(d.mods || [], function(i,mod) {
-    if (mod && mod.stats.hasOwnProperty(stat)) mods.push(mod);
+  $.each(d.mods || [], function (i, mod) {
+    if (mod && Object.hasOwn(mod.stats, stat)) mods.push(mod);
   });
 
-
   // sorting mods by the stat keeps code simpler, when calculating combined mod effects
-  mods.sort (function(a,b) {
+  mods.sort(function (a, b) {
     return b.stats[stat] - a.stats[stat];
   });
 
   return mods;
-}
+};
 
 /**
  * Calculates the total mitigation provided by shields installed on a portal.
@@ -28122,16 +28226,16 @@ window.getPortalModsByType = function(d, type) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {number} The total mitigation value from all shields installed on the portal.
  */
-window.getPortalShieldMitigation = function(d) {
-  var shields = getPortalModsByType(d, 'RES_SHIELD');
+window.getPortalShieldMitigation = function (d) {
+  var shields = window.getPortalModsByType(d, 'RES_SHIELD');
 
   var mitigation = 0;
-  $.each(shields, function(i,s) {
+  $.each(shields, function (i, s) {
     mitigation += parseInt(s.stats.MITIGATION);
   });
 
   return mitigation;
-}
+};
 
 /**
  * Calculates the link defense boost provided by installed Ultra Link Amps.
@@ -28140,8 +28244,8 @@ window.getPortalShieldMitigation = function(d) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {number} The total link defense boost factor.
  */
-window.getPortalLinkDefenseBoost = function(d) {
-  var ultraLinkAmps = getPortalModsByType(d, 'ULTRA_LINK_AMP');
+window.getPortalLinkDefenseBoost = function (d) {
+  var ultraLinkAmps = window.getPortalModsByType(d, 'ULTRA_LINK_AMP');
 
   var linkDefenseBoost = 1;
 
@@ -28150,7 +28254,7 @@ window.getPortalLinkDefenseBoost = function(d) {
   });
 
   return Math.round(10 * linkDefenseBoost) / 10;
-}
+};
 
 /**
  * Calculates the additional mitigation provided by links attached to a portal.
@@ -28159,10 +28263,10 @@ window.getPortalLinkDefenseBoost = function(d) {
  * @param {number} linkCount - The number of links attached to the portal.
  * @returns {number} The additional mitigation value provided by the links.
  */
-window.getPortalLinksMitigation = function(linkCount) {
-  var mitigation = Math.round(400/9*Math.atan(linkCount/Math.E));
+window.getPortalLinksMitigation = function (linkCount) {
+  var mitigation = Math.round((400 / 9) * Math.atan(linkCount / Math.E));
   return mitigation;
-}
+};
 
 /**
  * Calculates detailed mitigation information for a portal, including contributions from shields and links.
@@ -28172,23 +28276,23 @@ window.getPortalLinksMitigation = function(linkCount) {
  * @param {number} linkCount - The number of links attached to the portal.
  * @returns {Object} An object detailing various components of mitigation.
  */
-window.getPortalMitigationDetails = function(d,linkCount) {
-  var linkDefenseBoost = getPortalLinkDefenseBoost(d);
+window.getPortalMitigationDetails = function (d, linkCount) {
+  var linkDefenseBoost = window.getPortalLinkDefenseBoost(d);
 
   var mitigation = {
-    shields: getPortalShieldMitigation(d),
-    links: getPortalLinksMitigation(linkCount) * linkDefenseBoost,
-    linkDefenseBoost: linkDefenseBoost
+    shields: window.getPortalShieldMitigation(d),
+    links: window.getPortalLinksMitigation(linkCount) * linkDefenseBoost,
+    linkDefenseBoost: linkDefenseBoost,
   };
 
   // mitigation is limited to 95% (as confirmed by Brandon Badger on G+)
-  mitigation.total = Math.min(95, mitigation.shields+mitigation.links);
+  mitigation.total = Math.min(95, mitigation.shields + mitigation.links);
 
-  var excess = (mitigation.shields+mitigation.links) - mitigation.total;
+  var excess = mitigation.shields + mitigation.links - mitigation.total;
   mitigation.excess = Math.round(10 * excess) / 10;
 
   return mitigation;
-}
+};
 
 /**
  * Calculates the maximum number of outgoing links that can be created from a portal.
@@ -28197,12 +28301,12 @@ window.getPortalMitigationDetails = function(d,linkCount) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {number} The maximum number of outgoing links.
  */
-window.getMaxOutgoingLinks = function(d) {
-  var linkAmps = getPortalModsByType(d, 'ULTRA_LINK_AMP');
+window.getMaxOutgoingLinks = function (d) {
+  var linkAmps = window.getPortalModsByType(d, 'ULTRA_LINK_AMP');
 
   var links = 8;
 
-  linkAmps.forEach(function(mod, i) {
+  linkAmps.forEach(function (mod) {
     links += parseInt(mod.stats.OUTGOING_LINKS_BONUS);
   });
 
@@ -28216,30 +28320,29 @@ window.getMaxOutgoingLinks = function(d) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {Object} An object containing hack-related details like cooldown time, hack count, and burnout time.
  */
-window.getPortalHackDetails = function(d) {
-
-  var heatsinks = getPortalModsByType(d, 'HEATSINK');
-  var multihacks = getPortalModsByType(d, 'MULTIHACK');
+window.getPortalHackDetails = function (d) {
+  var heatsinks = window.getPortalModsByType(d, 'HEATSINK');
+  var multihacks = window.getPortalModsByType(d, 'MULTIHACK');
 
   // first mod of type is fully effective, the others are only 50% effective
-  var effectivenessReduction = [ 1, 0.5, 0.5, 0.5 ];
+  var effectivenessReduction = [1, 0.5, 0.5, 0.5];
 
-  var cooldownTime = BASE_HACK_COOLDOWN;
+  var cooldownTime = window.BASE_HACK_COOLDOWN;
 
-  $.each(heatsinks, function(index,mod) {
-    var hackSpeed = parseInt(mod.stats.HACK_SPEED)/1000000;
+  $.each(heatsinks, function (index, mod) {
+    var hackSpeed = parseInt(mod.stats.HACK_SPEED) / 1000000;
     cooldownTime = Math.round(cooldownTime * (1 - hackSpeed * effectivenessReduction[index]));
   });
 
-  var hackCount = BASE_HACK_COUNT; // default hacks
+  var hackCount = window.BASE_HACK_COUNT; // default hacks
 
-  $.each(multihacks, function(index,mod) {
+  $.each(multihacks, function (index, mod) {
     var extraHacks = parseInt(mod.stats.BURNOUT_INSULATION);
-    hackCount = hackCount + (extraHacks * effectivenessReduction[index]);
+    hackCount = hackCount + extraHacks * effectivenessReduction[index];
   });
 
-  return {cooldown: cooldownTime, hacks: hackCount, burnout: cooldownTime*(hackCount-1)};
-}
+  return { cooldown: cooldownTime, hacks: hackCount, burnout: cooldownTime * (hackCount - 1) };
+};
 
 /**
  * Converts detailed portal information into a summary format similar to that seen in the map tile data.
@@ -28248,11 +28351,10 @@ window.getPortalHackDetails = function(d) {
  * @param {Object} d - The detailed portal data.
  * @returns {Object} A summary of the portal data, including level, title, image, resonator count, health, and team.
  */
-window.getPortalSummaryData = function(d) {
-
+window.getPortalSummaryData = function (d) {
   // NOTE: the summary data reports unclaimed portals as level 1 - not zero as elsewhere in IITC
-  var level = parseInt(getPortalLevel(d));
-  if (level == 0) level = 1; //niantic returns neutral portals as level 1, not 0 as used throughout IITC elsewhere
+  var level = Math.floor(window.getPortalLevel(d));
+  if (level === 0) level = 1; // niantic returns neutral portals as level 1, not 0 as used throughout IITC elsewhere
 
   var resCount = 0;
   if (d.resonators) {
@@ -28260,9 +28362,9 @@ window.getPortalSummaryData = function(d) {
       if (d.resonators[x]) resCount++;
     }
   }
-  var maxEnergy = getTotalPortalEnergy(d);
-  var curEnergy = getCurrentPortalEnergy(d);
-  var health = maxEnergy>0 ? parseInt(curEnergy/maxEnergy*100) : 0;
+  var maxEnergy = window.getTotalPortalEnergy(d);
+  var curEnergy = window.getCurrentPortalEnergy(d);
+  var health = maxEnergy > 0 ? Math.floor((curEnergy / maxEnergy) * 100) : 0;
 
   return {
     level: level,
@@ -28273,9 +28375,9 @@ window.getPortalSummaryData = function(d) {
     health: health,
     team: d.team,
     lngE6: d.lngE6,
-    type: 'portal'
+    type: 'portal',
   };
-}
+};
 
 /**
  * Calculates various attack values of a portal, including hit bonus, force amplifier, and attack frequency.
@@ -28284,9 +28386,9 @@ window.getPortalSummaryData = function(d) {
  * @param {Object} d - The portal detail object containing mod information.
  * @returns {Object} An object containing attack values such as hit bonus, force amplifier, and attack frequency.
  */
-window.getPortalAttackValues = function(d) {
-  var forceamps = getPortalModsByType(d, 'FORCE_AMP');
-  var turrets = getPortalModsByType(d, 'TURRET');
+window.getPortalAttackValues = function (d) {
+  var forceamps = window.getPortalModsByType(d, 'FORCE_AMP');
+  var turrets = window.getPortalModsByType(d, 'TURRET');
 
   // at the time of writing, only rare force amps and turrets have been seen in the wild, so there's a little guesswork
   // at how the stats work and combine
@@ -28304,13 +28406,13 @@ window.getPortalAttackValues = function(d) {
     attack_frequency: 0,
   };
 
-  forceamps.forEach(function(mod, i) {
+  forceamps.forEach(function (mod, i) {
     // force amp stat FORCE_AMPLIFIER is 2000 for rare, and gives 2x boost to the range
     var baseMultiplier = mod.stats.FORCE_AMPLIFIER / 1000;
     attackValues.force_amplifier += baseMultiplier * scale[i];
   });
 
-  turrets.forEach(function(mod, i) {
+  turrets.forEach(function (mod, i) {
     // turret stat ATTACK_FREQUENCY is 2000 for rare, and gives 2x boost to the range
     var baseMultiplier = mod.stats.ATTACK_FREQUENCY / 1000;
     attackValues.attack_frequency += baseMultiplier * scale[i];
@@ -28319,9 +28421,7 @@ window.getPortalAttackValues = function(d) {
   });
 
   return attackValues;
-}
-
-
+};
 
 
 })();
@@ -28330,6 +28430,8 @@ window.getPortalAttackValues = function(d) {
 // *** module: portal_marker.js ***
 (function () {
 var log = ulog('portal_marker');
+/* global L -- eslint */
+
 /**
  * @file This file contains the code related to creating and updating portal markers on the map.
  * @module portal_marker
@@ -28341,13 +28443,11 @@ var log = ulog('portal_marker');
  * @function portalMarkerScale
  * @returns {number} The scale factor for portal markers.
  */
-window.portalMarkerScale = function() {
-  var zoom = map.getZoom();
-  if (L.Browser.mobile)
-    return zoom >= 16 ? 1.5 : zoom >= 14 ? 1.2 : zoom >= 11 ? 1.0 : zoom >= 8 ? 0.65 : 0.5;
-  else
-    return zoom >= 14 ? 1 : zoom >= 11 ? 0.8 : zoom >= 8 ? 0.65 : 0.5;
-}
+window.portalMarkerScale = function () {
+  var zoom = window.map.getZoom();
+  if (L.Browser.mobile) return zoom >= 16 ? 1.5 : zoom >= 14 ? 1.2 : zoom >= 11 ? 1.0 : zoom >= 8 ? 0.65 : 0.5;
+  else return zoom >= 14 ? 1 : zoom >= 11 ? 0.8 : zoom >= 8 ? 0.65 : 0.5;
+};
 
 /**
  * Creates a new portal marker on the map.
@@ -28357,17 +28457,17 @@ window.portalMarkerScale = function() {
  * @param {Object} data - The IITC-specific entity data to be stored in the marker options.
  * @returns {L.circleMarker} A Leaflet circle marker representing the portal.
  */
-window.createMarker = function(latlng, data) {
+window.createMarker = function (latlng, data) {
   var styleOptions = window.getMarkerStyleOptions(data);
 
   var options = L.extend({}, data, styleOptions, { interactive: true });
 
   var marker = L.circleMarker(latlng, options);
 
-  highlightPortal(marker);
+  window.highlightPortal(marker);
 
   return marker;
-}
+};
 
 /**
  * Sets the style of a portal marker, including options for when the portal is selected.
@@ -28376,20 +28476,19 @@ window.createMarker = function(latlng, data) {
  * @param {L.circleMarker} marker - The portal marker whose style will be set.
  * @param {boolean} selected - Indicates if the portal is selected.
  */
-window.setMarkerStyle = function(marker, selected) {
-
+window.setMarkerStyle = function (marker, selected) {
   var styleOptions = window.getMarkerStyleOptions(marker.options);
 
   marker.setStyle(styleOptions);
 
   // FIXME? it's inefficient to set the marker style (above), then do it again inside the highlighter
   // the highlighter API would need to be changed for this to be improved though. will it be too slow?
-  highlightPortal(marker);
+  window.highlightPortal(marker);
 
   if (selected) {
-    marker.setStyle ({color: COLOR_SELECTED_PORTAL});
+    marker.setStyle({ color: window.COLOR_SELECTED_PORTAL });
   }
-}
+};
 
 /**
  * Determines the style options for a portal marker based on its details.
@@ -28398,21 +28497,21 @@ window.setMarkerStyle = function(marker, selected) {
  * @param {Object} details - Details of the portal, including team and level.
  * @returns {Object} Style options for the portal marker.
  */
-window.getMarkerStyleOptions = function(details) {
+window.getMarkerStyleOptions = function (details) {
   var scale = window.portalMarkerScale();
 
   //   portal level      0  1  2  3  4  5  6  7  8
   var LEVEL_TO_WEIGHT = [2, 2, 2, 2, 2, 3, 3, 4, 4];
-  var LEVEL_TO_RADIUS = [7, 7, 7, 7, 8, 8, 9,10,11];
+  var LEVEL_TO_RADIUS = [7, 7, 7, 7, 8, 8, 9, 10, 11];
 
-  var level = Math.floor(details.level||0);
+  var level = Math.floor(details.level || 0);
 
   var lvlWeight = LEVEL_TO_WEIGHT[level] * Math.sqrt(scale);
   var lvlRadius = LEVEL_TO_RADIUS[level] * scale;
 
   var dashArray = null;
   // thinner and dashed outline for placeholder portals
-  if (details.team != TEAM_NONE && level==0) {
+  if (details.team !== window.TEAM_NONE && level === 0) {
     lvlWeight = 1;
     dashArray = '1,2';
   }
@@ -28420,18 +28519,17 @@ window.getMarkerStyleOptions = function(details) {
   var options = {
     radius: lvlRadius,
     stroke: true,
-    color: COLORS[details.team],
+    color: window.COLORS[details.team],
     weight: lvlWeight,
     opacity: 1,
     fill: true,
-    fillColor: COLORS[details.team],
+    fillColor: window.COLORS[details.team],
     fillOpacity: 0.5,
-    dashArray: dashArray
+    dashArray: dashArray,
   };
 
   return options;
-}
-
+};
 
 
 })();
@@ -28440,6 +28538,8 @@ window.getMarkerStyleOptions = function(details) {
 // *** module: redeeming.js ***
 (function () {
 var log = ulog('redeeming');
+/* global log -- eslint */
+
 /**
  * @file This file contains functions related to the handling of passcode redeeming in Ingress.
  * @module redeeming
@@ -28453,19 +28553,19 @@ var log = ulog('redeeming');
  * @type {Object}
  */
 window.REDEEM_SHORT_NAMES = {
-  'portal shield':'S',
-  'force amp':'FA',
-  'link amp':'LA',
-  'heatsink':'H',
-  'multihack':'M',
-  'turret':'T',
-  'unusual object':'U',
-  'resonator':'R',
-  'xmp burster':'X',
-  'power cube':'C',
-  'media':'M',
-  'ultra strike':'US',
-}
+  'portal shield': 'S',
+  'force amp': 'FA',
+  'link amp': 'LA',
+  heatsink: 'H',
+  multihack: 'M',
+  turret: 'T',
+  'unusual object': 'U',
+  resonator: 'R',
+  'xmp burster': 'X',
+  'power cube': 'C',
+  media: 'M',
+  'ultra strike': 'US',
+};
 
 /**
  * HTTP status codes and corresponding messages returned by the redemption API.
@@ -28476,7 +28576,7 @@ window.REDEEM_SHORT_NAMES = {
  */
 window.REDEEM_STATUSES = {
   429: 'You have been rate-limited by the server. Wait a bit and try again.',
-  500: 'Internal server error'
+  500: 'Internal server error',
 };
 
 /**
@@ -28487,61 +28587,62 @@ window.REDEEM_STATUSES = {
  * @param {string} textStatus - The status of the response.
  * @param {jqXHR} jqXHR - The jQuery wrapped XMLHttpRequest object.
  */
-window.handleRedeemResponse = function(data, textStatus, jqXHR) {
+window.handleRedeemResponse = function (data, textStatus, jqXHR) {
   var passcode = jqXHR.passcode;
 
-  if(data.error) {
-    log.error('Error redeeming passcode "'+passcode+'": ' + data.error)
-    dialog({
+  if (data.error) {
+    log.error('Error redeeming passcode "' + passcode + '": ' + data.error);
+    window.dialog({
       title: 'Error: ' + passcode,
-      html: '<strong>' + data.error + '</strong>'
+      html: '<strong>' + data.error + '</strong>',
     });
     return;
   }
-  if(!data.rewards) {
-    log.error('Error redeeming passcode "'+passcode+'": ', data)
-    dialog({
+  if (!data.rewards) {
+    log.error('Error redeeming passcode "' + passcode + '": ', data);
+    window.dialog({
       title: 'Error: ' + passcode,
-      html: '<strong>An unexpected error occured</strong>'
+      html: '<strong>An unexpected error occured</strong>',
     });
     return;
   }
 
-  if(data.playerData) {
+  if (data.playerData) {
     window.PLAYER = data.playerData;
     window.setupPlayerStat();
   }
 
-  var format = "long";
+  var format = 'long';
   try {
-    format = localStorage["iitc-passcode-format"];
-  } catch(e) {}
+    format = localStorage['iitc-passcode-format'];
+  } catch {
+    /* empty */
+  }
 
   var formatHandlers = {
-    "short": formatPasscodeShort,
-    "long": formatPasscodeLong
-  }
-  if(!formatHandlers[format])
-    format = "long";
+    short: window.formatPasscodeShort,
+    long: window.formatPasscodeLong,
+  };
+  if (!formatHandlers[format]) format = 'long';
 
   var html = formatHandlers[format](data.rewards);
 
   var buttons = {};
-  Object.keys(formatHandlers).forEach(function(label) {
-    if(label == format) return;
+  Object.keys(formatHandlers).forEach(function (label) {
+    if (label === format) return;
 
-    buttons[label.toUpperCase()] = function() {
-      $(this).dialog("close");
-      localStorage["iitc-passcode-format"] = label;
-      handleRedeemResponse(data, textStatus, jqXHR);
-    }
+    buttons[label.toUpperCase()] = function () {
+      $(this).dialog('close');
+      localStorage['iitc-passcode-format'] = label;
+      window.handleRedeemResponse(data, textStatus, jqXHR);
+    };
   });
 
   // Display it
-  dialog({
+  window.dialog({
     title: 'Passcode: ' + passcode,
     html: html,
-    buttons: buttons
+    buttons: buttons,
   });
 };
 
@@ -28552,29 +28653,27 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
  * @param {Object} data - The reward data.
  * @returns {string} Formatted string representing the detailed rewards.
  */
-window.formatPasscodeLong = function(data) {
+window.formatPasscodeLong = function (data) {
   var html = '<p><strong>Passcode confirmed. Acquired items:</strong></p><ul class="redeemReward">';
 
-  if(data.other) {
-    data.other.forEach(function(item) {
+  if (data.other) {
+    data.other.forEach(function (item) {
       html += '<li>' + window.escapeHtmlSpecialChars(item) + '</li>';
     });
   }
 
-  if(0 < data.xm)
-    html += '<li>' + window.escapeHtmlSpecialChars(data.xm) + ' XM</li>';
-  if(0 < data.ap)
-    html += '<li>' + window.escapeHtmlSpecialChars(data.ap) + ' AP</li>';
+  if (0 < data.xm) html += '<li>' + window.escapeHtmlSpecialChars(data.xm) + ' XM</li>';
+  if (0 < data.ap) html += '<li>' + window.escapeHtmlSpecialChars(data.ap) + ' AP</li>';
 
-  if(data.inventory) {
-    data.inventory.forEach(function(type) {
-      type.awards.forEach(function(item) {
+  if (data.inventory) {
+    data.inventory.forEach(function (type) {
+      type.awards.forEach(function (item) {
         html += '<li>' + item.count + 'x ';
 
         var l = item.level;
-        if(0 < l) {
+        if (0 < l) {
           l = parseInt(l);
-          html += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">L' + l + '</span> ';
+          html += '<span class="itemlevel" style="color:' + window.COLORS_LVL[l] + '">L' + l + '</span> ';
         }
 
         html += window.escapeHtmlSpecialChars(type.name) + '</li>';
@@ -28582,9 +28681,9 @@ window.formatPasscodeLong = function(data) {
     });
   }
 
-  html += '</ul>'
+  html += '</ul>';
   return html;
-}
+};
 
 /**
  * Formats passcode reward data into a short, concise html string.
@@ -28593,41 +28692,37 @@ window.formatPasscodeLong = function(data) {
  * @param {Object} data - The reward data.
  * @returns {string} Formatted string representing the concise rewards.
  */
-window.formatPasscodeShort = function(data) {
-
-  if(data.other) {
-    var awards = data.other.map(window.escapeHtmlSpecialChars);
-  } else {
-    var awards = [];
+window.formatPasscodeShort = function (data) {
+  let awards = [];
+  if (data.other) {
+    awards = data.other.map(window.escapeHtmlSpecialChars);
   }
 
-  if(0 < data.xm)
-    awards.push(window.escapeHtmlSpecialChars(data.xm) + ' XM');
-  if(0 < data.ap)
-    awards.push(window.escapeHtmlSpecialChars(data.ap) + ' AP');
+  if (0 < data.xm) awards.push(window.escapeHtmlSpecialChars(data.xm) + ' XM');
+  if (0 < data.ap) awards.push(window.escapeHtmlSpecialChars(data.ap) + ' AP');
 
-  if(data.inventory) {
-    data.inventory.forEach(function(type) {
-      type.awards.forEach(function(item) {
-        var str = "";
-        if(item.count > 1)
-          str += item.count + "&nbsp;";
+  if (data.inventory) {
+    data.inventory.forEach(function (type) {
+      type.awards.forEach(function (item) {
+        var str = '';
+        if (item.count > 1) str += item.count + '&nbsp;';
 
-        if(window.REDEEM_SHORT_NAMES[type.name.toLowerCase()]) {
+        if (window.REDEEM_SHORT_NAMES[type.name.toLowerCase()]) {
           var shortName = window.REDEEM_SHORT_NAMES[type.name.toLowerCase()];
 
-          var l = item.level;
-          if(0 < l) {
+          let l = item.level;
+          if (0 < l) {
             l = parseInt(l);
-            str += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">' + shortName + l + '</span>';
+            str += '<span class="itemlevel" style="color:' + window.COLORS_LVL[l] + '">' + shortName + l + '</span>';
           } else {
             str += shortName;
           }
-        } else { // no short name known
-          var l = item.level;
-          if(0 < l) {
+        } else {
+          // no short name known
+          let l = item.level;
+          if (0 < l) {
             l = parseInt(l);
-            str += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">L' + l + '</span> ';
+            str += '<span class="itemlevel" style="color:' + window.COLORS_LVL[l] + '">L' + l + '</span> ';
           }
           str += type.name;
         }
@@ -28637,32 +28732,32 @@ window.formatPasscodeShort = function(data) {
     });
   }
 
-  return '<p class="redeemReward">' + awards.join(', ') + '</p>'
-}
+  return '<p class="redeemReward">' + awards.join(', ') + '</p>';
+};
 
 /**
  * Sets up the redeem functionality, binding to UI elements.
  *
  * @function setupRedeem
  */
-window.setupRedeem = function() {
-  $("#redeem").keypress(function(e) {
-    if((e.keyCode ? e.keyCode : e.which) !== 13) return;
+window.setupRedeem = function () {
+  $('#redeem').keypress(function (e) {
+    if ((e.keyCode ? e.keyCode : e.which) !== 13) return;
 
     var passcode = $(this).val();
-    passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); //removes non-printable characters
-    if(!passcode) return;
+    passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); // removes non-printable characters
+    if (!passcode) return;
 
-    var jqXHR = window.postAjax('redeemReward', {passcode:passcode}, window.handleRedeemResponse, function(response) {
+    var jqXHR = window.postAjax('redeemReward', { passcode: passcode }, window.handleRedeemResponse, function (response) {
       var extra = '';
-      if(response.status) {
+      if (response.status) {
         extra = (window.REDEEM_STATUSES[response.status] || 'The server indicated an error.') + ' (HTTP ' + response.status + ')';
       } else {
         extra = 'No status code was returned.';
       }
-      dialog({
+      window.dialog({
         title: 'Request failed: ' + passcode,
-        html: '<strong>The HTTP request failed.</strong> ' + extra
+        html: '<strong>The HTTP request failed.</strong> ' + extra,
       });
     });
     jqXHR.passcode = passcode;
@@ -28689,8 +28784,7 @@ var log = ulog('region_scoreboard');
  * @function RegionScoreboardSetup
  * @returns {Function} A setup function to initialize the scoreboard.
  */
-window.RegionScoreboardSetup = (function() {
-
+window.RegionScoreboardSetup = (function () {
   var mainDialog;
   var regionScore;
   var timer;
@@ -28708,41 +28802,41 @@ window.RegionScoreboardSetup = (function() {
     this.regionName = serverResult.regionName;
     this.gameScore = serverResult.gameScore;
 
-    this.median=[-1,-1,-1];
+    this.median = [-1, -1, -1];
     this.CP_COUNT = 35;
-    this.CP_DURATION = 5*60*60*1000;
+    this.CP_DURATION = 5 * 60 * 60 * 1000;
     this.CYCLE_DURATION = this.CP_DURATION * this.CP_COUNT;
 
     this.checkpoints = [];
 
-    this.hasNoTopAgents = function() {
-      return this.topAgents.length===0;
+    this.hasNoTopAgents = function () {
+      return this.topAgents.length === 0;
     };
 
-    this.getAvgScore = function(faction) {
-      return parseInt(this.gameScore[ faction===TEAM_ENL? 0:1 ]);
+    this.getAvgScore = function (faction) {
+      return parseInt(this.gameScore[faction === window.TEAM_ENL ? 0 : 1]);
     };
 
-    this.getAvgScoreMax = function() {
-      return Math.max(this.getAvgScore(TEAM_ENL), this.getAvgScore(TEAM_RES), 1);
+    this.getAvgScoreMax = function () {
+      return Math.max(this.getAvgScore(window.TEAM_ENL), this.getAvgScore(window.TEAM_RES), 1);
     };
 
-    this.getCPScore = function(cp) {
+    this.getCPScore = function (cp) {
       return this.checkpoints[cp];
     };
 
-    this.getScoreMax = function(min_value) {
+    this.getScoreMax = function (min_value) {
       var max = min_value || 0;
-      for (var i=1; i<this.checkpoints.length; i++) {
+      for (var i = 1; i < this.checkpoints.length; i++) {
         var cp = this.checkpoints[i];
-        max = Math.max(max,cp[0],cp[1]);
+        max = Math.max(max, cp[0], cp[1]);
       }
       return max;
     };
 
-    this.getCPSum = function() {
-      var sums=[0,0];
-      for (var i=1; i<this.checkpoints.length; i++) {
+    this.getCPSum = function () {
+      var sums = [0, 0];
+      for (var i = 1; i < this.checkpoints.length; i++) {
         sums[0] += this.checkpoints[i][0];
         sums[1] += this.checkpoints[i][1];
       }
@@ -28750,15 +28844,14 @@ window.RegionScoreboardSetup = (function() {
       return sums;
     };
 
-
-    this.getAvgScoreAtCP = function(faction, cp_idx) {
-      var idx = faction===TEAM_RES? 1:0;
+    this.getAvgScoreAtCP = function (faction, cp_idx) {
+      var idx = faction === window.TEAM_RES ? 1 : 0;
 
       var score = 0;
       var count = 0;
-      var cp_len = Math.min(cp_idx,this.checkpoints.length);
+      var cp_len = Math.min(cp_idx, this.checkpoints.length);
 
-      for (var i=1; i<=cp_len; i++) {
+      for (var i = 1; i <= cp_len; i++) {
         if (this.checkpoints[i] !== undefined) {
           score += this.checkpoints[i][idx];
           count++;
@@ -28766,66 +28859,71 @@ window.RegionScoreboardSetup = (function() {
       }
 
       if (count < cp_idx) {
-        score += this.getScoreMedian(faction)*(cp_idx-count);
+        score += this.getScoreMedian(faction) * (cp_idx - count);
       }
 
       return Math.floor(score / cp_idx);
     };
 
-
-    this.getScoreMedian = function(faction) {
-      if (this.median[faction]<0) {
-        var idx = faction===TEAM_RES? 1:0;
-        var values = this.checkpoints.map( function(val) { return val[idx];} );
-        values = values.filter(function(n) { return n !== undefined; });
+    this.getScoreMedian = function (faction) {
+      if (this.median[faction] < 0) {
+        var idx = faction === window.TEAM_RES ? 1 : 0;
+        var values = this.checkpoints.map(function (val) {
+          return val[idx];
+        });
+        values = values.filter(function (n) {
+          return n !== undefined;
+        });
         this.median[faction] = this.findMedian(values);
       }
 
       return this.median[faction];
     };
 
-    this.findMedian = function(values) {
+    this.findMedian = function (values) {
       var len = values.length;
-      var rank = Math.floor((len-1)/2);
+      var rank = Math.floor((len - 1) / 2);
 
-      if (len===0) return 0;
+      if (len === 0) return 0;
 
-      var l=0, m=len-1;
-      var b,i,j,x;
-      while (l<m) {
-        x=values[rank];
-        i=l;
-        j=m;
+      var l = 0,
+        m = len - 1;
+      var b, i, j, x;
+      while (l < m) {
+        x = values[rank];
+        i = l;
+        j = m;
         do {
-          while (values[i]<x) i++;
-          while (x<values[j]) j--;
-          if (i<=j) {
+          while (values[i] < x) i++;
+          while (x < values[j]) j--;
+          if (i <= j) {
             b = values[i];
             values[i] = values[j];
             values[j] = b;
-            i++ ; j-- ;
+            i++;
+            j--;
           }
-        } while (i<=j);
-        if (j<rank) l=i ;
-        if (rank<i) m=j ;
+        } while (i <= j);
+        if (j < rank) l = i;
+        if (rank < i) m = j;
       }
       return values[rank];
     };
 
-    this.getLastCP = function() {
-      if (this.checkpoints.length===0) return 0;
-      return this.checkpoints.length-1;
+    this.getLastCP = function () {
+      if (this.checkpoints.length === 0) return 0;
+      return this.checkpoints.length - 1;
     };
 
-    this.getCycleEnd = function() {
+    this.getCycleEnd = function () {
       return this.getCheckpointEnd(this.CP_COUNT);
     };
 
-    this.getCheckpointEnd = function(cp) {
+    this.getCheckpointEnd = function (cp) {
       return new Date(this.cycleStartTime.getTime() + this.CP_DURATION * cp);
     };
 
-    for (var i=0; i<serverResult.scoreHistory.length; i++) {
+    for (var i = 0; i < serverResult.scoreHistory.length; i++) {
       var h = serverResult.scoreHistory[i];
       this.checkpoints[parseInt(h[0])] = [parseInt(h[1]), parseInt(h[2])];
     }
@@ -28833,16 +28931,14 @@ window.RegionScoreboardSetup = (function() {
     this.cycleStartTime = new Date(Math.floor(Date.now() / this.CYCLE_DURATION) * this.CYCLE_DURATION);
   }
 
-
   function showDialog() {
-    var latLng = map.getCenter();
+    var latLng = window.map.getCenter();
 
-    var latE6 = Math.round(latLng.lat*1E6);
-    var lngE6 = Math.round(latLng.lng*1E6);
+    var latE6 = Math.round(latLng.lat * 1e6);
+    var lngE6 = Math.round(latLng.lng * 1e6);
 
     showRegion(latE6, lngE6);
   }
-
 
   /*
     function showScoreOf (region) {
@@ -28853,25 +28949,22 @@ window.RegionScoreboardSetup = (function() {
     }
     */
 
-
-  function showRegion(latE6,lngE6) {
+  function showRegion(latE6, lngE6) {
     var text = 'Loading regional scores...';
     if (window.useAppPanes()) {
       var style = 'position: absolute; top: 0; width: 100%; max-width: 412px';
-      mainDialog = $('<div>',{style: style}).html(text).appendTo(document.body);
+      mainDialog = $('<div>', { style: style }).html(text).appendTo(document.body);
     } else {
-      mainDialog = dialog({
+      mainDialog = window.dialog({
         title: 'Region scores',
         html: text,
         width: 450,
         height: 340,
-        closeCallback: onDialogClose
+        closeCallback: onDialogClose,
       });
     }
 
-    window.postAjax('getRegionScoreDetails', {latE6:latE6, lngE6:lngE6},
-      onRequestSuccess,
-      onRequestFailure);
+    window.postAjax('getRegionScoreDetails', { latE6: latE6, lngE6: lngE6 }, onRequestSuccess, onRequestFailure);
   }
 
   function onRequestFailure() {
@@ -28888,49 +28981,47 @@ window.RegionScoreboardSetup = (function() {
     startTimer();
   }
 
-
   function updateDialog(logscale) {
-
     mainDialog.html(
-      '<div class="cellscore">' +
-        '<b>Region scores for ' + regionScore.regionName + '</b>' +
-        '<div class="historychart">' + createResults() + HistoryChart(regionScore, logscale) + '</div>' +
-        '<b>Checkpoint overview</b><div>' + createHistoryTable() + '</div>' +
-        '<b>Top agents</b><div>' + createAgentTable() + '</div>' +
-      '</div>' +
-      createTimers() );
+      `<div class="cellscore">` +
+        `<b>Region scores for ${regionScore.regionName}</b>` +
+        `<div class="historychart">${createResults()}${HistoryChart(regionScore, logscale)}</div>` +
+        `<b>Checkpoint overview</b><div>${createHistoryTable()}</div>` +
+        `<b>Top agents</b><div>${createAgentTable()}</div>` +
+        `</div>` +
+        createTimers()
+    );
 
     setupToolTips();
 
     var tooltip = createResultTooltip();
     $('#overview', mainDialog).tooltip({
-      content: convertTextToTableMagic(tooltip)
+      content: window.convertTextToTableMagic(tooltip),
     });
 
     $('.cellscore', mainDialog).accordion({
       header: 'b',
-      heightStyle: 'fill'
+      heightStyle: 'fill',
     });
 
-    $('input.logscale', mainDialog).change(function() {
+    $('input.logscale', mainDialog).change(function () {
       var input = $(this);
       updateDialog(input.prop('checked'));
     });
   }
 
-
   function setupToolTips() {
-    $('g.checkpoint', mainDialog).each(function(i, elem) {
+    $('g.checkpoint', mainDialog).each(function (i, elem) {
       elem = $(elem);
 
       function formatScore(idx, score_now, score_last) {
-        if (!score_now[idx])  return '';
-        var res = digits(score_now[idx]);
+        if (!score_now[idx]) return '';
+        var res = window.digits(score_now[idx]);
         if (score_last && score_last[idx]) {
-          var delta = score_now[idx]-score_last[idx];
+          var delta = score_now[idx] - score_last[idx];
           res += '\t(';
-          if (delta>0) res += '+';
-          res += digits(delta) + ')';
+          if (delta > 0) res += '+';
+          res += window.digits(delta) + ')';
         }
         return res;
       }
@@ -28939,75 +29030,66 @@ window.RegionScoreboardSetup = (function() {
       var cp = parseInt(elem.attr('data-cp'));
       if (cp) {
         var score_now = regionScore.getCPScore(cp);
-        var score_last = regionScore.getCPScore(cp-1);
-        var enl_str = score_now ? '\nEnl:\t' + formatScore(0,score_now,score_last) : '';
-        var res_str = score_now ? '\nRes:\t' + formatScore(1,score_now,score_last) : '';
+        var score_last = regionScore.getCPScore(cp - 1);
+        var enl_str = score_now ? '\nEnl:\t' + formatScore(0, score_now, score_last) : '';
+        var res_str = score_now ? '\nRes:\t' + formatScore(1, score_now, score_last) : '';
 
-        tooltip = 'CP:\t' + cp + '\t-\t' + formatDayHours(regionScore.getCheckpointEnd(cp)) +
-                  '\n<hr>' + enl_str + res_str;
+        tooltip = 'CP:\t' + cp + '\t-\t' + formatDayHours(regionScore.getCheckpointEnd(cp)) + '\n<hr>' + enl_str + res_str;
       }
 
       elem.tooltip({
-        content: convertTextToTableMagic(tooltip),
-        position: {my: 'center bottom', at: 'center top-10'},
+        content: window.convertTextToTableMagic(tooltip),
+        position: { my: 'center bottom', at: 'center top-10' },
         tooltipClass: 'checkpointtooltip',
-        show: 100
+        show: 100,
       });
     });
   }
-
 
   function onDialogClose() {
     stopTimer();
   }
 
-
   function createHistoryTable() {
-
-    var _invert = PLAYER.team === 'RESISTANCE';
-    function order (_1, _2) {
+    var _invert = window.PLAYER.team === 'RESISTANCE';
+    function order(_1, _2) {
       return (_invert ? [_2, _1] : [_1, _2]).join('');
     }
-    var enl = { class: window.TEAM_TO_CSS[window.TEAM_ENL], name: window.TEAM_NAMES[window.TEAM_ENL]};
-    var res = { class: window.TEAM_TO_CSS[window.TEAM_RES], name: window.TEAM_NAMES[window.TEAM_RES]};
+    var enl = { class: window.TEAM_TO_CSS[window.TEAM_ENL], name: window.TEAM_NAMES[window.TEAM_ENL] };
+    var res = { class: window.TEAM_TO_CSS[window.TEAM_RES], name: window.TEAM_NAMES[window.TEAM_RES] };
 
-    var table = '<table class="checkpoint_table"><thead>' +
-      '<tr><th>CP</th><th>Time</th>' + order('<th>'+enl.name+'</th>','<th>'+res.name+'</th>') + '</tr>';
+    var table = `<table class="checkpoint_table"><thead><tr><th>CP</th><th>Time</th>${order('<th>' + enl.name + '</th>', '<th>' + res.name + '</th>')}</tr>`;
 
     var total = regionScore.getCPSum();
-    table += '<tr class="cp_total"><th></th><th></th>' +
-      order(
-      '<th class="' + enl.class + '">' + digits(total[0]) + '</th>',
-      '<th class="' + res.class + '">' + digits(total[1]) + '</th>'
-      ) + '</tr></thead>';
+    table +=
+      '<tr class="cp_total"><th></th><th></th>' +
+      order('<th class="' + enl.class + '">' + window.digits(total[0]) + '</th>', '<th class="' + res.class + '">' + window.digits(total[1]) + '</th>') +
+      '</tr></thead>';
 
-    for (var cp=regionScore.getLastCP(); cp>0; cp--) {
+    for (var cp = regionScore.getLastCP(); cp > 0; cp--) {
       var score = regionScore.getCPScore(cp);
       var class_e = score[0] > score[1] ? ' class="' + enl.class + '"' : '';
       var class_r = score[1] > score[0] ? ' class="' + res.class + '"' : '';
 
-      table += '<tr>' +
-        '<td>' + cp + '</td>' +
-        '<td>' + formatDayHours(regionScore.getCheckpointEnd(cp)) + '</td>' +
-        order(
-        '<td' + class_e + '>' + digits(score[0]) + '</td>',
-        '<td' + class_r + '>' + digits(score[1]) + '</td>'
-        ) + '</tr>';
+      table +=
+        `<tr>` +
+        `<td>${cp}</td>` +
+        `<td>${formatDayHours(regionScore.getCheckpointEnd(cp))}</td>` +
+        order(`<td${class_e}>${window.digits(score[0])}</td>`, `<td${class_r}>${window.digits(score[1])}</td>`) +
+        `</tr>`;
     }
 
     table += '</table>';
     return table;
   }
 
-
   function createAgentTable() {
     var agentTable = '<table><tr><th>#</th><th>Agent</th></tr>';
 
-    for (var i=0; i<regionScore.topAgents.length; i++) {
+    for (var i = 0; i < regionScore.topAgents.length; i++) {
       var agent = regionScore.topAgents[i];
-      agentTable += '<tr>' +
-        '<td>' + (i+1) + '</td>' +
-        '<td class="nickname ' + (agent.team==='RESISTANCE'?'res':'enl') + '">' + agent.nick + '</td></tr>';
+      agentTable +=
+        '<tr>' + '<td>' + (i + 1) + '</td>' + '<td class="nickname ' + (agent.team === 'RESISTANCE' ? 'res' : 'enl') + '">' + agent.nick + '</td></tr>';
     }
 
     if (regionScore.hasNoTopAgents()) {
@@ -29018,76 +29100,70 @@ window.RegionScoreboardSetup = (function() {
     return agentTable;
   }
 
-
   function createResults() {
-
     var maxAverage = regionScore.getAvgScoreMax();
-    var order = (PLAYER.team === 'RESISTANCE' ? [TEAM_RES,TEAM_ENL]:[TEAM_ENL,TEAM_RES]);
+    var order = window.PLAYER.team === 'RESISTANCE' ? [window.TEAM_RES, window.TEAM_ENL] : [window.TEAM_ENL, window.TEAM_RES];
 
     var result = '<table id="overview" title="">';
-    for (var t=0; t<2; t++) {
+    for (var t = 0; t < 2; t++) {
       var faction = order[t];
       var team = window.TEAM_NAMES[faction];
       var teamClass = window.TEAM_TO_CSS[faction];
-      var teamCol = COLORS[faction];
-      var barSize = Math.round(regionScore.getAvgScore(faction)/maxAverage*100);
-      result += '<tr><th class="' + teamClass + '">' + team + '</th>' +
-        '<td class="' + teamClass + '">' + digits(regionScore.getAvgScore(faction)) + '</td>' +
-        '<td style="width:100%"><div style="background:' + teamCol + '; width: ' + barSize + '%; height: 1.3ex; border: 2px outset ' + teamCol + '; margin-top: 2px"> </td>' +
-        '<td class="' + teamClass + '"><small>( ' + digits(regionScore.getAvgScoreAtCP(faction,35)) + ' )</small></td>' +
-        '</tr>';
+      var teamCol = window.COLORS[faction];
+      var barSize = Math.round((regionScore.getAvgScore(faction) / maxAverage) * 100);
+      result +=
+        `<tr><th class="${teamClass}">${team}</th>` +
+        `<td class="${teamClass}">${window.digits(regionScore.getAvgScore(faction))}</td>` +
+        `<td style="width:100%"><div style="background:${teamCol}; width: ${barSize}%; height: 1.3ex; border: 2px outset ${teamCol}; margin-top: 2px"> </td>` +
+        `<td class="${teamClass}"><small>( ${window.digits(regionScore.getAvgScoreAtCP(faction, 35))} )</small></td>` +
+        `</tr>`;
     }
 
     return result + '</table>';
   }
 
   function createResultTooltip() {
+    var e_res = regionScore.getAvgScoreAtCP(window.TEAM_RES, regionScore.CP_COUNT);
+    var e_enl = regionScore.getAvgScoreAtCP(window.TEAM_ENL, regionScore.CP_COUNT);
+    var loosing_faction = e_res < e_enl ? window.TEAM_RES : window.TEAM_ENL;
 
-    var e_res = regionScore.getAvgScoreAtCP(TEAM_RES,regionScore.CP_COUNT);
-    var e_enl = regionScore.getAvgScoreAtCP(TEAM_ENL,regionScore.CP_COUNT);
-    var loosing_faction = e_res<e_enl ? TEAM_RES : TEAM_ENL;
+    var order = loosing_faction === window.TEAM_ENL ? [window.TEAM_RES, window.TEAM_ENL] : [window.TEAM_ENL, window.TEAM_RES];
 
-    var order = (loosing_faction === TEAM_ENL ? [TEAM_RES,TEAM_ENL]:[TEAM_ENL,TEAM_RES]);
-
-    function percentToString(score,total) {
-      if (total===0) return '50%';
-      return (Math.round( score/total * 10000 )/100) + '%';
+    function percentToString(score, total) {
+      if (total === 0) return '50%';
+      return Math.round((score / total) * 10000) / 100 + '%';
     }
 
     function currentScore() {
-      var res='Current:\n';
-      var total = regionScore.getAvgScore(TEAM_RES) + regionScore.getAvgScore(TEAM_ENL);
-      for (var t=0; t<2; t++) {
+      var res = 'Current:\n';
+      var total = regionScore.getAvgScore(window.TEAM_RES) + regionScore.getAvgScore(window.TEAM_ENL);
+      for (var t = 0; t < 2; t++) {
         var faction = order[t];
         var score = regionScore.getAvgScore(faction);
-        res += window.TEAM_NAMES[faction] + '\t' +
-            digits(score) + '\t' +
-            percentToString(score,total) + '\n';
+        res += window.TEAM_NAMES[faction] + '\t' + window.digits(score) + '\t' + percentToString(score, total) + '\n';
       }
 
       return res;
     }
 
     function estimatedScore() {
-      var res ='<hr>Estimated:\n';
+      var res = '<hr>Estimated:\n';
       var total = e_res + e_enl;
-      for (var t=0; t<2; t++) {
+      for (var t = 0; t < 2; t++) {
         var faction = order[t];
-        var score = regionScore.getAvgScoreAtCP(faction,regionScore.CP_COUNT);
-        res += window.TEAM_NAMES[faction] + '\t' +
-            digits(score) + '\t' +
-            percentToString(score,total) + '\n';
+        var score = regionScore.getAvgScoreAtCP(faction, regionScore.CP_COUNT);
+        res += window.TEAM_NAMES[faction] + '\t' + window.digits(score) + '\t' + percentToString(score, total) + '\n';
       }
 
       return res;
     }
 
     function requiredScore() {
-      var res='';
-      var required_mu = Math.abs(e_res-e_enl) * regionScore.CP_COUNT + 1;
+      var res = '';
+      var required_mu = Math.abs(e_res - e_enl) * regionScore.CP_COUNT + 1;
       res += '<hr>\n';
-      res += window.TEAM_NAMES[loosing_faction] + ' requires:\t' + digits(Math.ceil(required_mu)) + ' \n';
-      res += 'Checkpoint(s) left:\t' + (regionScore.CP_COUNT-regionScore.getLastCP()) + ' \n';
+      res += window.TEAM_NAMES[loosing_faction] + ' requires:\t' + window.digits(Math.ceil(required_mu)) + ' \n';
+      res += 'Checkpoint(s) left:\t' + (regionScore.CP_COUNT - regionScore.getLastCP()) + ' \n';
 
       return res;
     }
@@ -29095,15 +29171,16 @@ window.RegionScoreboardSetup = (function() {
     return currentScore() + estimatedScore() + requiredScore();
   }
 
-
   function createTimers() {
-    var nextcp = regionScore.getCheckpointEnd( regionScore.getLastCP() + 1 );
+    var nextcp = regionScore.getCheckpointEnd(regionScore.getLastCP() + 1);
     var endcp = regionScore.getCycleEnd();
 
-    return '<div class="checkpoint_timers"><table><tr>' +
-        '<td>Next CP at: ' + formatHours(nextcp) + ' (in <span id="cycletimer"></span>)</td>' +
-        '<td>Cycle ends: ' + formatDayHours(endcp) + '</td>' +
-      '</tr></table></div>';
+    return (
+      `<div class="checkpoint_timers"><table><tr>` +
+      `<td>Next CP at: ${formatHours(nextcp)} (in <span id="cycletimer"></span>)</td>` +
+      `<td>Cycle ends: ${formatDayHours(endcp)}</td>` +
+      `</tr></table></div>`
+    );
   }
 
   function startTimer() {
@@ -29121,21 +29198,21 @@ window.RegionScoreboardSetup = (function() {
   }
 
   function onTimer() {
-    var d = regionScore.getCheckpointEnd(regionScore.getLastCP() + 1) - (new Date());
-    $('#cycletimer',mainDialog).html(formatMinutes( Math.max(0,Math.floor(d/1000))) );
+    var d = regionScore.getCheckpointEnd(regionScore.getLastCP() + 1) - new Date();
+    $('#cycletimer', mainDialog).html(formatMinutes(Math.max(0, Math.floor(d / 1000))));
   }
 
   function formatMinutes(sec) {
-    var hours   = Math.floor(sec / 3600);
+    var hours = Math.floor(sec / 3600);
     var minutes = Math.floor((sec % 3600) / 60);
     sec = sec % 60;
 
-    var time='';
+    var time = '';
     time += hours + ':';
-    if (minutes<10) time += '0';
+    if (minutes < 10) time += '0';
     time += minutes;
     time += ':';
-    if (sec<10) time += '0';
+    if (sec < 10) time += '0';
     time += sec;
     return time;
   }
@@ -29149,8 +29226,8 @@ window.RegionScoreboardSetup = (function() {
 
   return function setup() {
     if (window.useAppPanes()) {
-      app.addPane('regionScoreboard', 'Region scores', 'ic_action_view_as_list');
-      addHook('paneChanged', function (pane) {
+      window.app.addPane('regionScoreboard', 'Region scores', 'ic_action_view_as_list');
+      window.addHook('paneChanged', function (pane) {
         if (pane === 'regionScoreboard') {
           showDialog();
         } else if (mainDialog) {
@@ -29165,8 +29242,8 @@ window.RegionScoreboardSetup = (function() {
         action: showDialog,
       });
     }
-  }
-}());
+  };
+})();
 
 /**
  * Creates an SVG-based history chart for regional scores.
@@ -29176,23 +29253,24 @@ window.RegionScoreboardSetup = (function() {
  * @param {boolean} logscale - Whether to use logarithmic scale for the chart.
  * @returns {string} An SVG string representing the history chart.
  */
-var HistoryChart = (function() {
+var HistoryChart = (function () {
   var regionScore;
   var scaleFct;
   var logscale;
   var svgTickText;
 
-  function create(_regionScore,logscale) {
+  function create(_regionScore, logscale) {
     regionScore = _regionScore;
 
-    var max = regionScore.getScoreMax(10); //NOTE: ensure a min of 10 for the graph
-    max *= 1.09;      // scale up maximum a little, so graph isn't squashed right against upper edge
-    setScaleType(max,logscale);
+    var max = regionScore.getScoreMax(10); // NOTE: ensure a min of 10 for the graph
+    max *= 1.09; // scale up maximum a little, so graph isn't squashed right against upper edge
+    setScaleType(max, logscale);
 
     svgTickText = [];
 
     // svg area 400x130. graph area 350x100, offset to 40,10
-    var svg = '<div><svg width="400" height="133" style="margin-left: 10px;">' +
+    var svg =
+      '<div><svg width="400" height="133" style="margin-left: 10px;">' +
       svgBackground() +
       svgAxis(max) +
       svgAveragePath() +
@@ -29200,7 +29278,9 @@ var HistoryChart = (function() {
       svgCheckPointMarkers() +
       svgTickText.join('') +
       '<foreignObject height="18" width="60" y="113" x="0" class="node"><label title="Logarithmic scale">' +
-      '<input type="checkbox" class="logscale"' + (logscale?' checked':'') + '/>' +
+      '<input type="checkbox" class="logscale"' +
+      (logscale ? ' checked' : '') +
+      '/>' +
       'log</label></foreignObject>' +
       '</svg></div>';
 
@@ -29208,16 +29288,13 @@ var HistoryChart = (function() {
   }
 
   function svgFactionPath() {
-
     var svgPath = '';
 
-    for (var t=0; t<2; t++) {
-
+    for (var t = 0; t < 2; t++) {
       var col = getFactionColor(t);
       var teamPaths = [];
 
-      for (var cp=1; cp<=regionScore.getLastCP(); cp++) {
-
+      for (var cp = 1; cp <= regionScore.getLastCP(); cp++) {
         var score = regionScore.getCPScore(cp);
         if (score !== undefined) {
           var x = cp * 10 + 40;
@@ -29234,23 +29311,21 @@ var HistoryChart = (function() {
   }
 
   function svgCheckPointMarkers() {
-
     var markers = '';
 
     var col1 = getFactionColor(0);
     var col2 = getFactionColor(1);
 
-    for (var cp=1; cp<=regionScore.CP_COUNT; cp++) {
+    for (var cp = 1; cp <= regionScore.CP_COUNT; cp++) {
       var scores = regionScore.getCPScore(cp);
 
       markers +=
-        '<g title="dummy" class="checkpoint" data-cp="' + cp + '">' +
-        '<rect x="' + (cp*10+35) + '" y="10" width="10" height="100" fill="black" fill-opacity="0" />';
+        `<g title="dummy" class="checkpoint" data-cp="${cp}">` + `<rect x="${cp * 10 + 35}" y="10" width="10" height="100" fill="black" fill-opacity="0" />`;
 
       if (scores) {
         markers +=
-          '<circle cx="' + (cp*10+40) + '" cy="' + scaleFct(scores[0]) + '" r="3" stroke-width="1" stroke="' + col1 + '" fill="' + col1 + '" fill-opacity="0.5" />' +
-          '<circle cx="' + (cp*10+40) + '" cy="' + scaleFct(scores[1]) + '" r="3" stroke-width="1" stroke="' + col2 + '" fill="' + col2 + '" fill-opacity="0.5" />';
+          `<circle cx="${cp * 10 + 40}" cy="${scaleFct(scores[0])}" r="3" stroke-width="1" stroke="${col1}" fill="${col1}" fill-opacity="0.5" />` +
+          `<circle cx="${cp * 10 + 40}" cy="${scaleFct(scores[1])}" r="3" stroke-width="1" stroke="${col2}" fill="${col2}" fill-opacity="0.5" />`;
       }
 
       markers += '</g>';
@@ -29274,52 +29349,55 @@ var HistoryChart = (function() {
       var y = scaleFct(i);
 
       ticks.push('M40,' + y + ' L390,' + y);
-      svgTickText.push('<text x="35" y="' + y + '" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="end" fill="#fff">' + formatNumber(i) + '</text>');
+      svgTickText.push(
+        '<text x="35" y="' + y + '" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="end" fill="#fff">' + formatNumber(i) + '</text>'
+      );
     }
 
     // vertical
     // first we calculate the power of 10 that is smaller than the max limit
-    var vtickStep = Math.pow(10,Math.floor(Math.log10(max)));
+    var vtickStep = Math.pow(10, Math.floor(Math.log10(max)));
     if (logscale) {
-      for (var i=0; i<4; i++) {
-
+      for (var i = 0; i < 4; i++) {
         addVTick(vtickStep);
         vtickStep /= 10;
       }
     } else {
       // this could be between 1 and 10 grid lines - so we adjust to give nicer spacings
-      if (vtickStep < (max/5)) {
+      if (vtickStep < max / 5) {
         vtickStep *= 2;
-      } else if (vtickStep > (max/2)) {
+      } else if (vtickStep > max / 2) {
         vtickStep /= 2;
       }
 
-      for (var ti=vtickStep; ti<=max; ti+=vtickStep) {
+      for (var ti = vtickStep; ti <= max; ti += vtickStep) {
         addVTick(ti);
       }
     }
 
-    return ('<path d="' + ticks.join(' ') + '" stroke="#fff" opacity="0.3" />');
+    return '<path d="' + ticks.join(' ') + '" stroke="#fff" opacity="0.3" />';
   }
 
   function createTicksHorz() {
     var ticks = [];
-    for (var i=5; i<=35; i+=5) {
+    for (var i = 5; i <= 35; i += 5) {
       var x = i * 10 + 40;
       ticks.push('M' + x + ',10 L' + x + ',110');
-      svgTickText.push('<text x="' + x + '" y="125" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="middle" fill="#fff">' + i + '</text>');
+      svgTickText.push(
+        '<text x="' + x + '" y="125" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="middle" fill="#fff">' + i + '</text>'
+      );
     }
 
     return ticks;
   }
 
   function svgAveragePath() {
-    var path='';
-    for (var faction=1; faction<3; faction++) {
-      var col = COLORS[faction];
+    var path = '';
+    for (var faction = 1; faction < 3; faction++) {
+      var col = window.COLORS[faction];
 
-      var points=[];
-      for (var cp=1; cp<=regionScore.CP_COUNT; cp++) {
+      var points = [];
+      for (var cp = 1; cp <= regionScore.CP_COUNT; cp++) {
         var score = regionScore.getAvgScoreAtCP(faction, cp);
 
         var x = cp * 10 + 40;
@@ -29333,33 +29411,43 @@ var HistoryChart = (function() {
     return path;
   }
 
-  function setScaleType(max,useLogScale) {
-
+  function setScaleType(max, useLogScale) {
     logscale = useLogScale;
     if (useLogScale) {
       if (!Math.log10)
-        Math.log10 = function(x) { return Math.log(x) / Math.LN10; };
+        Math.log10 = function (x) {
+          return Math.log(x) / Math.LN10;
+        };
 
       // 0 cannot be displayed on a log scale, so we set the minimum to 0.001 and divide by lg(0.001)=-3
-      scaleFct = function(y) { return Math.round(10 - Math.log10(Math.max(0.001,y/max)) / 3 * 100); };
+      scaleFct = function (y) {
+        return Math.round(10 - (Math.log10(Math.max(0.001, y / max)) / 3) * 100);
+      };
     } else {
-      scaleFct = function(y) { return Math.round(110-y/max*100); };
+      scaleFct = function (y) {
+        return Math.round(110 - (y / max) * 100);
+      };
     }
   }
 
   function getFactionColor(t) {
-    return (t===0 ? COLORS[TEAM_ENL] : COLORS[TEAM_RES]);
+    return t === 0 ? window.COLORS[window.TEAM_ENL] : window.COLORS[window.TEAM_RES];
   }
 
   function formatNumber(num) {
-    return (num>=1000000000 ? (num/1000000000) + 'B' :
-      num>=1000000 ? (num/1000000) + 'M' :
-        num>=1000 ? (num/1000) + 'k' :
-          num);
+    if (num >= 1_000_000_000) {
+      return num / 1_000_000_000 + 'B';
+    } else if (num >= 1_000_000) {
+      return num / 1_000_000 + 'M';
+    } else if (num >= 1_000) {
+      return num / 1_000 + 'k';
+    } else {
+      return num.toString();
+    }
   }
 
   return create;
-}());
+})();
 
 
 })();
@@ -29368,8 +29456,6 @@ var HistoryChart = (function() {
 // *** module: request_handling.js ***
 (function () {
 var log = ulog('request_handling');
-/* global REFRESH MINIMUM_OVERRIDE_REFRESH */
-
 /**
  * @file This file contains functions and variables related to request handling in IITC.
  * Note: only meant for portal/links/fields request, everything else does not count towards “loading”
@@ -29401,8 +29487,8 @@ window.requests._lastRefreshTime = 0;
  */
 window.requests.add = function (ajax) {
   window.activeRequests.push(ajax);
-  renderUpdateStatus();
-}
+  window.renderUpdateStatus();
+};
 
 /**
  * Removes an AJAX request from the activeRequests array and updates the status.
@@ -29412,8 +29498,8 @@ window.requests.add = function (ajax) {
  */
 window.requests.remove = function (ajax) {
   window.activeRequests.splice(window.activeRequests.indexOf(ajax), 1);
-  renderUpdateStatus();
-}
+  window.renderUpdateStatus();
+};
 
 /**
  * Aborts all active AJAX requests and resets related variables and status.
@@ -29428,8 +29514,8 @@ window.requests.abort = function () {
   window.activeRequests = [];
   window.failedRequestCount = 0;
 
-  renderUpdateStatus();
-}
+  window.renderUpdateStatus();
+};
 
 /**
  * Sets a timeout for the next automatic refresh of data. Ensures only one timeout is queued.
@@ -29449,22 +29535,22 @@ window.startRefreshTimeout = function (override) {
   var t = 0;
   if (override) {
     t = override;
-    //ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
+    // ensure override can't cause too fast a refresh if repeatedly used (e.g. lots of scrolling/zooming)
     let timeSinceLastRefresh = new Date().getTime() - window.requests._lastRefreshTime;
     if (timeSinceLastRefresh < 0) timeSinceLastRefresh = 0; // in case of clock adjustments
-    if (timeSinceLastRefresh < MINIMUM_OVERRIDE_REFRESH * 1000) {
-      t = MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh;
+    if (timeSinceLastRefresh < window.MINIMUM_OVERRIDE_REFRESH * 1000) {
+      t = window.MINIMUM_OVERRIDE_REFRESH * 1000 - timeSinceLastRefresh;
     }
   } else {
-    t = REFRESH * 1000;
+    t = window.REFRESH * 1000;
 
-    var adj = ZOOM_LEVEL_ADJ * (18 - map.getZoom());
+    var adj = window.ZOOM_LEVEL_ADJ * (18 - window.map.getZoom());
     if (adj > 0) t += adj * 1000;
   }
 
   window.refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
-  renderUpdateStatus();
-}
+  window.renderUpdateStatus();
+};
 
 window.requests._onRefreshFunctions = [];
 
@@ -29475,10 +29561,10 @@ window.requests._onRefreshFunctions = [];
  * @function window.requests._callOnRefreshFunctions
  */
 window.requests._callOnRefreshFunctions = function () {
-  startRefreshTimeout();
+  window.startRefreshTimeout();
 
   if (window.isIdle()) {
-    renderUpdateStatus();
+    window.renderUpdateStatus();
     return;
   }
 
@@ -29487,7 +29573,7 @@ window.requests._callOnRefreshFunctions = function () {
   $.each(window.requests._onRefreshFunctions, function (ind, f) {
     f();
   });
-}
+};
 
 /**
  * Adds a function to the list of functions to be called on each automatic refresh.
@@ -29497,7 +29583,7 @@ window.requests._callOnRefreshFunctions = function () {
  */
 window.requests.addRefreshFunction = function (f) {
   window.requests._onRefreshFunctions.push(f);
-}
+};
 
 
 })();
@@ -29547,7 +29633,7 @@ window.search = {
  * @param {string} term - The search term.
  * @param {boolean} confirmed - Indicates if the search is confirmed (e.g., by pressing Enter).
  */
-window.search.Query = function(term, confirmed) {
+window.search.Query = function (term, confirmed) {
   this.term = term;
   this.confirmed = confirmed;
   this.init();
@@ -29558,18 +29644,17 @@ window.search.Query = function(term, confirmed) {
  *
  * @function
  */
-window.search.Query.prototype.init = function() {
+window.search.Query.prototype.init = function () {
   this.results = [];
 
   this.container = $('<div>').addClass('searchquery');
 
   this.header = $('<h3>')
-    .text(this.confirmed
-      ? this.term
-      : ((this.term.length > 16
-        ? this.term.substr(0,8) + '…' + this.term.substr(this.term.length-8,8)
-        : this.term)
-        + ' (Return to load more)'))
+    .text(
+      this.confirmed
+        ? this.term
+        : (this.term.length > 16 ? this.term.substr(0, 8) + '…' + this.term.substr(this.term.length - 8, 8) : this.term) + ' (Return to load more)'
+    )
     .appendTo(this.container);
 
   this.list = $('<ul>')
@@ -29581,7 +29666,7 @@ window.search.Query.prototype.init = function() {
     heightStyle: 'content',
   });
 
-  runHooks('search', this);
+  window.runHooks('search', this);
 };
 
 /**
@@ -29589,7 +29674,7 @@ window.search.Query.prototype.init = function() {
  *
  * @function
  */
-window.search.Query.prototype.show = function() {
+window.search.Query.prototype.show = function () {
   this.container.appendTo('#searchwrapper');
 };
 
@@ -29598,7 +29683,7 @@ window.search.Query.prototype.show = function() {
  *
  * @function
  */
-window.search.Query.prototype.hide = function() {
+window.search.Query.prototype.hide = function () {
   this.container.remove();
   this.removeSelectedResult();
   this.removeHoverResult();
@@ -29610,8 +29695,8 @@ window.search.Query.prototype.hide = function() {
  * @function
  * @param {Object} result - The search result object to add.
  */
-window.search.Query.prototype.addResult = function(result) {
-  if(this.results.length == 0) {
+window.search.Query.prototype.addResult = function (result) {
+  if (this.results.length === 0) {
     // remove 'No results'
     this.list.empty();
   }
@@ -29620,23 +29705,32 @@ window.search.Query.prototype.addResult = function(result) {
   var item = $('<li>')
     .appendTo(this.list)
     .attr('tabindex', '0')
-    .on('click dblclick', function(ev) {
-      this.onResultSelected(result, ev);
-    }.bind(this))
-    .on('mouseover', function(ev) {
-      this.onResultHoverStart(result, ev);
-    }.bind(this))
-    .on('mouseout', function(ev) {
-      this.onResultHoverEnd(result, ev);
-    }.bind(this))
-    .keypress(function(ev) {
-      if((ev.keyCode || ev.charCode || ev.which) == 32) {
+    .on(
+      'click dblclick',
+      function (ev) {
+        this.onResultSelected(result, ev);
+      }.bind(this)
+    )
+    .on(
+      'mouseover',
+      function (ev) {
+        this.onResultHoverStart(result, ev);
+      }.bind(this)
+    )
+    .on(
+      'mouseout',
+      function (ev) {
+        this.onResultHoverEnd(result, ev);
+      }.bind(this)
+    )
+    .keypress(function (ev) {
+      if ((ev.keyCode || ev.charCode || ev.which) === 32) {
         ev.preventDefault();
         ev.type = 'click';
         $(this).trigger(ev);
         return;
       }
-      if((ev.keyCode || ev.charCode || ev.which) == 13) {
+      if ((ev.keyCode || ev.charCode || ev.which) === 13) {
         ev.preventDefault();
         ev.type = 'dblclick';
         $(this).trigger(ev);
@@ -29644,20 +29738,15 @@ window.search.Query.prototype.addResult = function(result) {
       }
     });
 
-  var link = $('<a>')
-    .append(result.title)
-    .appendTo(item);
+  var link = $('<a>').append(result.title).appendTo(item);
 
-  if(result.icon) {
-    link.css('background-image', 'url("'+result.icon+'")');
+  if (result.icon) {
+    link.css('background-image', 'url("' + result.icon + '")');
     item.css('list-style', 'none');
   }
 
-  if(result.description) {
-    item
-      .append($('<br>'))
-      .append($('<em>')
-        .append(result.description));
+  if (result.description) {
+    item.append($('<br>')).append($('<em>').append(result.description));
   }
 };
 
@@ -29668,18 +29757,18 @@ window.search.Query.prototype.addResult = function(result) {
  * @param {Object} result - The search result object.
  * @returns {L.Layer} The layer created for this result.
  */
-window.search.Query.prototype.resultLayer = function(result) {
-  if(result.layer !== null && !result.layer) {
+window.search.Query.prototype.resultLayer = function (result) {
+  if (result.layer !== null && !result.layer) {
     result.layer = L.layerGroup();
 
-    if(result.position) {
+    if (result.position) {
       L.marker(result.position, {
         icon: L.divIcon.coloredSvg('red'),
-        title: result.title
+        title: result.title,
       }).addTo(result.layer);
     }
 
-    if(result.bounds) {
+    if (result.bounds) {
       L.rectangle(result.bounds, {
         title: result.title,
         interactive: false,
@@ -29688,8 +29777,7 @@ window.search.Query.prototype.resultLayer = function(result) {
       }).addTo(result.layer);
     }
   }
-return result.layer;
-
+  return result.layer;
 };
 
 /**
@@ -29699,65 +29787,64 @@ return result.layer;
  * @param {Object} result - The selected search result object.
  * @param {Event} ev - The event associated with the selection.
  */
-window.search.Query.prototype.onResultSelected = function(result, ev) {
+window.search.Query.prototype.onResultSelected = function (result, ev) {
   this.removeHoverResult();
   this.removeSelectedResult();
   this.selectedResult = result;
 
-  if(result.onSelected) {
-    if(result.onSelected(result, ev)) return;
+  if (result.onSelected) {
+    if (result.onSelected(result, ev)) return;
   }
 
-  if(ev.type == 'dblclick') {
-    if(result.position) {
-      map.setView(result.position, DEFAULT_ZOOM);
-    } else if(result.bounds) {
-      map.fitBounds(result.bounds, {maxZoom: DEFAULT_ZOOM});
+  if (ev.type === 'dblclick') {
+    if (result.position) {
+      window.map.setView(result.position, window.DEFAULT_ZOOM);
+    } else if (result.bounds) {
+      window.map.fitBounds(result.bounds, { maxZoom: window.DEFAULT_ZOOM });
     }
-  } else { // ev.type != 'dblclick'
-    if(result.bounds) {
-      map.fitBounds(result.bounds, {maxZoom: DEFAULT_ZOOM});
-    } else if(result.position) {
-      map.setView(result.position);
+  } else {
+    // ev.type != 'dblclick'
+    if (result.bounds) {
+      window.map.fitBounds(result.bounds, { maxZoom: window.DEFAULT_ZOOM });
+    } else if (result.position) {
+      window.map.setView(result.position);
     }
   }
 
   result.layer = this.resultLayer(result);
 
-  if(result.layer)
-    map.addLayer(result.layer);
+  if (result.layer) window.map.addLayer(result.layer);
 
-  if(window.isSmartphone()) window.show('map');
-}
+  if (window.isSmartphone()) window.show('map');
+};
 
 /**
  * Removes the currently selected search result from the map and performs cleanup.
  *
  * @function
  */
-window.search.Query.prototype.removeSelectedResult = function() {
-  if(this.selectedResult) {
-    if(this.selectedResult.layer) map.removeLayer(this.selectedResult.layer);
-    if(this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
+window.search.Query.prototype.removeSelectedResult = function () {
+  if (this.selectedResult) {
+    if (this.selectedResult.layer) window.map.removeLayer(this.selectedResult.layer);
+    if (this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
   }
-}
+};
 
 /**
  * Handles the start of a hover over a search result. Adds the layer for the result to the map if not already selected.
  *
  * @function
  * @param {Object} result - The search result object being hovered over.
- * @param {Event} ev - The event associated with the hover start.
  */
-window.search.Query.prototype.onResultHoverStart = function(result, ev) {
+window.search.Query.prototype.onResultHoverStart = function (result) {
   this.removeHoverResult();
   this.hoverResult = result;
 
-  if(result === this.selectedResult) return;
+  if (result === this.selectedResult) return;
 
   result.layer = this.resultLayer(result);
 
-  if(result.layer) map.addLayer(result.layer);
+  if (result.layer) window.map.addLayer(result.layer);
 };
 
 /**
@@ -29765,10 +29852,12 @@ window.search.Query.prototype.onResultHoverStart = function(result, ev) {
  *
  * @function
  */
-window.search.Query.prototype.removeHoverResult = function() {
-  if(this.hoverResult !== this.selectedResult) {
-    if(this.hoverResult) {
-      if(this.hoverResult.layer) { map.removeLayer(this.hoverResult.layer); }
+window.search.Query.prototype.removeHoverResult = function () {
+  if (this.hoverResult !== this.selectedResult) {
+    if (this.hoverResult) {
+      if (this.hoverResult.layer) {
+        window.map.removeLayer(this.hoverResult.layer);
+      }
     }
   }
   this.hoverResult = null;
@@ -29776,12 +29865,8 @@ window.search.Query.prototype.removeHoverResult = function() {
 
 /**
  * Handles the end of a hover over a search result. Removes the hover result layer from the map.
- *
- * @function
- * @param {Object} result - The search result object being hovered over.
- * @param {Event} ev - The event associated with the hover end.
  */
-window.search.Query.prototype.onResultHoverEnd = function(result, ev) {
+window.search.Query.prototype.onResultHoverEnd = function () {
   this.removeHoverResult();
 };
 
@@ -29792,31 +29877,25 @@ window.search.Query.prototype.onResultHoverEnd = function(result, ev) {
  * @param {string} term - The search term.
  * @param {boolean} confirmed - Indicates if the search term is confirmed.
  */
-window.search.doSearch = function(term, confirmed) {
+window.search.doSearch = function (term, confirmed) {
   term = term.trim();
 
   // minimum 3 characters for automatic search
-  if(term.length < 3 && !confirmed) return;
+  if (term.length < 3 && !confirmed) return;
 
   // don't clear last confirmed search
-  if(window.search.lastSearch
-  && window.search.lastSearch.confirmed
-  && !confirmed)
-    return;
+  if (window.search.lastSearch && window.search.lastSearch.confirmed && !confirmed) return;
 
   // don't make the same query again
-  if(window.search.lastSearch
-  && window.search.lastSearch.confirmed == confirmed
-  && window.search.lastSearch.term == term)
-    return;
+  if (window.search.lastSearch && window.search.lastSearch.confirmed === confirmed && window.search.lastSearch.term === term) return;
 
-  if(window.search.lastSearch) window.search.lastSearch.hide();
+  if (window.search.lastSearch) window.search.lastSearch.hide();
   window.search.lastSearch = null;
 
   // clear results
-  if(term == '') return;
+  if (term === '') return;
 
-  if(useAppPanes()) show('info');
+  if (window.useAppPanes()) window.show('info');
 
   $('.ui-tooltip').remove();
 
@@ -29829,10 +29908,10 @@ window.search.doSearch = function(term, confirmed) {
  *
  * @function window.search.setup
  */
-window.search.setup = function() {
+window.search.setup = function () {
   $('#search')
-    .keypress(function(e) {
-      if((e.keyCode ? e.keyCode : e.which) != 13) return;
+    .keypress(function (e) {
+      if ((e.keyCode ? e.keyCode : e.which) !== 13) return;
       e.preventDefault();
 
       var term = $(this).val();
@@ -29840,15 +29919,18 @@ window.search.setup = function() {
       clearTimeout(window.search.timer);
       window.search.doSearch(term, true);
     })
-    .on('keyup keypress change paste', function(e) {
+    .on('keyup keypress change paste', function () {
       clearTimeout(window.search.timer);
-      window.search.timer = setTimeout(function() {
-        var term = $(this).val();
-        window.search.doSearch(term, false);
-      }.bind(this), 500);
+      window.search.timer = setTimeout(
+        function () {
+          var term = $(this).val();
+          window.search.doSearch(term, false);
+        }.bind(this),
+        500
+      );
     });
-  $('#buttongeolocation').click(function(){
-    map.locate({setView : true, maxZoom: 13});
+  $('#buttongeolocation').click(function () {
+    window.map.locate({ setView: true, maxZoom: 13 });
   });
 };
 
@@ -29897,81 +29979,90 @@ window.search.addSearchResult = function (query, data, guid) {
 window.addHook('search', function (query) {
   var term = query.term.toLowerCase();
 
-  $.each(portals, function(guid, portal) {
+  $.each(window.portals, function (guid, portal) {
     var data = portal.options.data;
-    if(!data.title) return;
+    if (!data.title) return;
 
-    if(data.title.toLowerCase().indexOf(term) !== -1) {
+    if (data.title.toLowerCase().indexOf(term) !== -1) {
       window.search.addSearchResult(query, data, guid);
     }
   });
 });
-
 
 // search for locations
 // TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
 window.addHook('search', function (query) {
   var locations = query.term.replaceAll(/%2C/gi, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
   var added = {};
-  if(!locations) return;
-  locations.forEach(function(location) {
+  if (!locations) return;
+  locations.forEach(function (location) {
     var pair = location.split(',').map(function (s) {
       return parseFloat(s.trim()).toFixed(6);
     });
-    var ll = pair.join(",");
-    var latlng = L.latLng(pair.map(function(s) { return parseFloat(s); }));
-    if(added[ll]) return;
+    var ll = pair.join(',');
+    var latlng = L.latLng(
+      pair.map(function (s) {
+        return parseFloat(s);
+      })
+    );
+    if (added[ll]) return;
     added[ll] = true;
 
     query.addResult({
       title: ll,
       description: 'geo coordinates',
       position: latlng,
-      onSelected: function(result, event) {
-        for(var guid in window.portals) {
+      onSelected: function (result) {
+        for (var guid in window.portals) {
           var p = window.portals[guid].getLatLng();
-          if((p.lat.toFixed(6)+","+p.lng.toFixed(6)) == ll) {
-            renderPortalDetails(guid);
+          if (p.lat.toFixed(6) + ',' + p.lng.toFixed(6) === ll) {
+            window.renderPortalDetails(guid);
             return;
           }
         }
 
-        urlPortalLL = [result.position.lat, result.position.lng];
+        window.urlPortalLL = [result.position.lat, result.position.lng];
       },
     });
   });
 });
 
-
 // search on OpenStreetMap
 window.addHook('search', function (query) {
-  if(!query.confirmed) return;
+  if (!query.confirmed) return;
 
   // Viewbox search orders results so they're closer to the viewbox
-  var mapBounds = map.getBounds();
-  var viewbox = '&viewbox=' + mapBounds.getSouthWest().lng + ',' + mapBounds.getSouthWest().lat + ',' + mapBounds.getNorthEast().lng + ',' + mapBounds.getNorthEast().lat;
+  var mapBounds = window.map.getBounds();
+  var viewbox =
+    '&viewbox=' + mapBounds.getSouthWest().lng + ',' + mapBounds.getSouthWest().lat + ',' + mapBounds.getNorthEast().lng + ',' + mapBounds.getNorthEast().lat;
 
   var resultCount = 0;
   var resultMap = {};
   function onQueryResult(isViewboxResult, data) {
     resultCount += data.length;
-    if(isViewboxResult) {
+    if (isViewboxResult) {
       // Search for things outside the viewbox
-      $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox, onQueryResult.bind(null, false));
-      if(resultCount === 0) { return; }
+      $.getJSON(window.NOMINATIM + encodeURIComponent(query.term) + viewbox, onQueryResult.bind(null, false));
+      if (resultCount === 0) {
+        return;
+      }
     } else {
-      if(resultCount === 0) {
+      if (resultCount === 0) {
         query.addResult({
           title: 'No results on OpenStreetMap',
           icon: '//www.openstreetmap.org/favicon.ico',
-          onSelected: function() {return true;},
+          onSelected: function () {
+            return true;
+          },
         });
         return;
       }
     }
 
-    data.forEach(function(item) {
-      if(resultMap[item.place_id]) { return; } // duplicate
+    data.forEach(function (item) {
+      if (resultMap[item.place_id]) {
+        return;
+      } // duplicate
       resultMap[item.place_id] = true;
 
       var result = {
@@ -29981,26 +30072,26 @@ window.addHook('search', function (query) {
         icon: item.icon,
       };
 
-      if(item.geojson) {
+      if (item.geojson) {
         result.layer = L.geoJson(item.geojson, {
           interactive: false,
           color: 'red',
           opacity: 0.7,
           weight: 2,
           fill: false,
-          pointToLayer: function(featureData,latLng) {
+          pointToLayer: function (featureData, latLng) {
             return L.marker(latLng, {
               icon: L.divIcon.coloredSvg('red'),
-              title: item.display_name
+              title: item.display_name,
             });
-          }
+          },
         });
       }
 
       var b = item.boundingbox;
-      if(b) {
+      if (b) {
         var southWest = new L.LatLng(b[0], b[2]),
-            northEast = new L.LatLng(b[1], b[3]);
+          northEast = new L.LatLng(b[1], b[3]);
         result.bounds = new L.LatLngBounds(southWest, northEast);
       }
 
@@ -30012,7 +30103,7 @@ window.addHook('search', function (query) {
   // http://wiki.openstreetmap.org/wiki/Nominatim/Special_Phrases/EN
   var bounded = '&bounded=1';
 
-  $.getJSON(NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
+  $.getJSON(window.NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
 });
 
 // search on guid
@@ -30054,19 +30145,19 @@ var log = ulog('send_request');
  * @param {Function} errorCallback - Function to call on error. Additionally, it is logged if the request failed.
  * @returns {jqXHR} The jQuery wrapped XMLHttpRequest object.
  */
-window.postAjax = function(action, data, successCallback, errorCallback) {
+window.postAjax = function (action, data, successCallback, errorCallback) {
   // state management functions... perhaps should be outside of this func?
 
-//  var remove = function(data, textStatus, jqXHR) { window.requests.remove(jqXHR); };
-//  var errCnt = function(jqXHR) { window.failedRequestCount++; window.requests.remove(jqXHR); };
+  // var remove = function(data, textStatus, jqXHR) { window.requests.remove(jqXHR); };
+  // var errCnt = function(jqXHR) { window.failedRequestCount++; window.requests.remove(jqXHR); };
 
-  if (window.latestFailedRequestTime && window.latestFailedRequestTime < Date.now()-120*1000) {
+  if (window.latestFailedRequestTime && window.latestFailedRequestTime < Date.now() - 120 * 1000) {
     // no errors in the last two minutes - clear the error count
     window.failedRequestCount = 0;
     window.latestFailedRequestTime = undefined;
   }
 
-  var onError = function(jqXHR, textStatus, errorThrown) {
+  var onError = function (jqXHR, textStatus, errorThrown) {
     window.requests.remove(jqXHR);
     window.failedRequestCount++;
 
@@ -30078,11 +30169,11 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
     }
   };
 
-  var onSuccess = function(data, textStatus, jqXHR) {
+  var onSuccess = function (data, textStatus, jqXHR) {
     window.requests.remove(jqXHR);
 
     // the Niantic server can return a HTTP success, but the JSON response contains an error. handle that sensibly
-    if (data && data.error && data.error == 'out of date') {
+    if (data && data.error && data.error === 'out of date') {
       window.failedRequestCount++;
       // let's call the error callback in thos case...
       if (errorCallback) {
@@ -30104,16 +30195,18 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
     if (errorCallback) {
       // NOTE: error called on a setTimeout - as it won't be expected to be synchronous
       // ensures no recursion issues if the error handler immediately resends the request
-      setTimeout(function(){errorCallback(null, undefined, "window.blockOutOfDateRequests is set");}, 10);
+      setTimeout(function () {
+        errorCallback(null, undefined, 'window.blockOutOfDateRequests is set');
+      }, 10);
     }
     return;
   }
 
-  var versionStr = niantic_params.CURRENT_VERSION;
-  var post_data = JSON.stringify($.extend({}, data, {v: versionStr}));
+  var versionStr = window.niantic_params.CURRENT_VERSION;
+  var post_data = JSON.stringify($.extend({}, data, { v: versionStr }));
 
   var result = $.ajax({
-    url: '/r/'+action,
+    url: '/r/' + action,
     type: 'POST',
     data: post_data,
     context: data,
@@ -30121,15 +30214,15 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
     success: [onSuccess],
     error: [onError],
     contentType: 'application/json; charset=utf-8',
-    beforeSend: function(req) {
-      req.setRequestHeader('X-CSRFToken', readCookie('csrftoken'));
-    }
+    beforeSend: function (req) {
+      req.setRequestHeader('X-CSRFToken', window.readCookie('csrftoken'));
+    },
   });
 
-  requests.add(result);
+  window.requests.add(result);
 
   return result;
-}
+};
 
 /**
  * Displays a dialog prompt to the user when the IITC version is out of date.
@@ -30137,37 +30230,33 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
  *
  * @function outOfDateUserPrompt
  */
-window.outOfDateUserPrompt = function()
-{
+window.outOfDateUserPrompt = function () {
   // we block all requests while the dialog is open.
   if (!window.blockOutOfDateRequests) {
     window.blockOutOfDateRequests = true;
 
-    dialog({
+    window.dialog({
       title: 'Reload IITC',
-      html: '<p>IITC is using an outdated version code. This will happen when Niantic updates the standard intel site.</p>'
-           +'<p>You need to reload the page to get the updated changes.</p>'
-           +'<p>If you have just reloaded the page, then an old version of the standard site script is cached somewhere.'
-           +'In this case, try clearing your cache, or waiting 15-30 minutes for the stale data to expire.</p>',
+      html:
+        '<p>IITC is using an outdated version code. This will happen when Niantic updates the standard intel site.</p>' +
+        '<p>You need to reload the page to get the updated changes.</p>' +
+        '<p>If you have just reloaded the page, then an old version of the standard site script is cached somewhere.' +
+        'In this case, try clearing your cache, or waiting 15-30 minutes for the stale data to expire.</p>',
       buttons: {
-        'RELOAD': function() {
-          if (window.isApp && app.reloadIITC) {
-            app.reloadIITC();
+        RELOAD: function () {
+          if (window.isApp && window.app.reloadIITC) {
+            window.app.reloadIITC();
           } else {
             window.location.reload();
           }
-        }
+        },
       },
-      close: function(event, ui) {
+      close: function () {
         delete window.blockOutOfDateRequests;
-      }
-
+      },
     });
-
-
   }
-
-}
+};
 
 
 })();
@@ -30188,7 +30277,7 @@ var log = ulog('sidebar');
  *
  * @function setupSidebar
  */
-window.setupSidebar = function() {
+window.setupSidebar = function () {
   window.setupStyles();
   setupIcons();
   window.setupPlayerStat();
@@ -30205,19 +30294,25 @@ window.setupSidebar = function() {
  * @function setupStyles
  */
 window.setupStyles = function () {
-  $('head').append('<style>' +
-    [ '#largepreview.enl img { border:2px solid '+COLORS[TEAM_ENL]+'; } ',
-      '#largepreview.res img { border:2px solid '+COLORS[TEAM_RES]+'; } ',
-      '#largepreview.none img { border:2px solid '+COLORS[TEAM_NONE]+'; } ',
-      '#chatcontrols { bottom: '+(CHAT_SHRINKED+22)+'px; }',
-      '#chat { height: '+CHAT_SHRINKED+'px; } ',
-      '.leaflet-right { margin-right: '+(SIDEBAR_WIDTH+1)+'px } ',
-      '#updatestatus { width:'+(SIDEBAR_WIDTH+2)+'px;  } ',
-      '#sidebar { width:'+(SIDEBAR_WIDTH + HIDDEN_SCROLLBAR_ASSUMED_WIDTH + 1 /*border*/)+'px;  } ',
-      '#sidebartoggle { right:'+(SIDEBAR_WIDTH+1)+'px;  } ',
-      '#scrollwrapper  { width:'+(SIDEBAR_WIDTH + 2*HIDDEN_SCROLLBAR_ASSUMED_WIDTH)+'px; right:-'+(2*HIDDEN_SCROLLBAR_ASSUMED_WIDTH-2)+'px } ',
-      '#sidebar > * { width:'+(SIDEBAR_WIDTH+1)+'px;  }'].join('\n')
-    + '</style>');
+  $('head').append(
+    '<style>' +
+      [
+        '#largepreview.enl img { border:2px solid ' + window.COLORS[window.TEAM_ENL] + '; } ',
+        '#largepreview.res img { border:2px solid ' + window.COLORS[window.TEAM_RES] + '; } ',
+        '#largepreview.none img { border:2px solid ' + window.COLORS[window.TEAM_NONE] + '; } ',
+        '#chatcontrols { bottom: ' + (window.CHAT_SHRINKED + 22) + 'px; }',
+        '#chat { height: ' + window.CHAT_SHRINKED + 'px; } ',
+        '.leaflet-right { margin-right: ' + (window.SIDEBAR_WIDTH + 1) + 'px } ',
+        '#updatestatus { width:' + (window.SIDEBAR_WIDTH + 2) + 'px;  } ',
+        '#sidebar { width:' + (window.SIDEBAR_WIDTH + window.HIDDEN_SCROLLBAR_ASSUMED_WIDTH + 1) /* border*/ + 'px;  } ',
+        '#sidebartoggle { right:' + (window.SIDEBAR_WIDTH + 1) + 'px;  } ',
+        `#scrollwrapper  { width:${window.SIDEBAR_WIDTH + 2 * window.HIDDEN_SCROLLBAR_ASSUMED_WIDTH}px; right:-${
+          2 * window.HIDDEN_SCROLLBAR_ASSUMED_WIDTH - 2
+        }px } `,
+        '#sidebar > * { width:' + (window.SIDEBAR_WIDTH + 1) + 'px;  }',
+      ].join('\n') +
+      '</style>'
+  );
 };
 
 /**
@@ -30225,15 +30320,19 @@ window.setupStyles = function () {
  *
  * @function setupIcons
  */
-function setupIcons () {
-  $(['<svg>',
+function setupIcons() {
+  $(
+    [
+      '<svg>',
       // Material Icons
 
       // portal_detail_display.js
       '<symbol id="ic_place_24px" viewBox="0 0 24 24">',
-        '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>',
+      '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>',
       '</symbol>',
-    '</svg>'].join('\\n')).appendTo('body');
+      '</svg>',
+    ].join('\\n')
+  ).appendTo('body');
 }
 
 /**
@@ -30245,33 +30344,33 @@ function setupIcons () {
  */
 window.setupPlayerStat = function () {
   // stock site updated to supply the actual player level, AP requirements and XM capacity values
-  var level = PLAYER.verified_level;
-  PLAYER.level = level; // for historical reasons IITC expects PLAYER.level to contain the current player level
+  var level = window.PLAYER.verified_level;
+  window.PLAYER.level = level; // for historical reasons IITC expects PLAYER.level to contain the current player level
 
-  var n = PLAYER.nickname;
-  PLAYER.nickMatcher = new RegExp('\\b('+n+')\\b', 'ig');
+  var n = window.PLAYER.nickname;
+  window.PLAYER.nickMatcher = new RegExp('\\b(' + n + ')\\b', 'ig');
 
-  var ap = parseInt(PLAYER.ap);
-  var thisLvlAp = parseInt(PLAYER.min_ap_for_current_level);
-  var nextLvlAp = parseInt(PLAYER.min_ap_for_next_level);
+  var ap = parseInt(window.PLAYER.ap);
+  var thisLvlAp = parseInt(window.PLAYER.min_ap_for_current_level);
+  var nextLvlAp = parseInt(window.PLAYER.min_ap_for_next_level);
 
   if (nextLvlAp) {
-    var lvlUpAp = digits(nextLvlAp-ap);
-    var lvlApProg = Math.round((ap-thisLvlAp)/(nextLvlAp-thisLvlAp)*100);
+    var lvlUpAp = window.digits(nextLvlAp - ap);
+    var lvlApProg = Math.round(((ap - thisLvlAp) / (nextLvlAp - thisLvlAp)) * 100);
   } // else zero nextLvlAp - so at maximum level(?)
 
-  var xmMax = parseInt(PLAYER.xm_capacity);
-  var xmRatio = Math.round(PLAYER.energy/xmMax*100);
+  var xmMax = parseInt(window.PLAYER.xm_capacity);
+  var xmRatio = Math.round((window.PLAYER.energy / xmMax) * 100);
 
-  var cls = PLAYER.team === 'RESISTANCE' ? 'res' : 'enl';
+  var cls = window.PLAYER.team === 'RESISTANCE' ? 'res' : 'enl';
 
-
-  var t = 'Level:\t' + level + '\n'
-        + 'XM:\t' + PLAYER.energy + ' / ' + xmMax + '\n'
-        + 'AP:\t' + digits(ap) + '\n'
-        + (nextLvlAp > 0 ? 'level up in:\t' + lvlUpAp + ' AP' : 'Maximum level reached(!)')
-        + '\nInvites:\t'+PLAYER.available_invites
-        + '\n\nNote: your player stats can only be updated by a full reload (F5)';
+  var t =
+    `Level:\t${level}\n` +
+    `XM:\t${window.PLAYER.energy} / ${xmMax}\n` +
+    `AP:\t${window.digits(ap)}\n` +
+    (nextLvlAp > 0 ? `level up in:\t${lvlUpAp} AP` : 'Maximum level reached(!)') +
+    `\nInvites:\t${window.PLAYER.available_invites}` +
+    `\n\nNote: your player stats can only be updated by a full reload (F5)`;
 
   $('#playerstat').html(
     `<h2 title="${t}">
@@ -30293,21 +30392,21 @@ window.setupPlayerStat = function () {
  *
  * @function setupSidebarToggle
  */
-function setupSidebarToggle () {
-  $('#sidebartoggle').on('click', function() {
+function setupSidebarToggle() {
+  $('#sidebartoggle').on('click', function () {
     var toggle = $('#sidebartoggle');
     var sidebar = $('#scrollwrapper');
     if (sidebar.is(':visible')) {
       sidebar.hide();
-      $('.leaflet-right').css('margin-right','0');
+      $('.leaflet-right').css('margin-right', '0');
       toggle.html('<span class="toggle open"></span>');
       toggle.css('right', '0');
     } else {
       sidebar.show();
       window.resetScrollOnNewPortal();
-      $('.leaflet-right').css('margin-right', SIDEBAR_WIDTH+1+'px');
+      $('.leaflet-right').css('margin-right', window.SIDEBAR_WIDTH + 1 + 'px');
       toggle.html('<span class="toggle close"></span>');
-      toggle.css('right', SIDEBAR_WIDTH+1+'px');
+      toggle.css('right', window.SIDEBAR_WIDTH + 1 + 'px');
     }
     $('.ui-tooltip').remove();
   });
@@ -30320,11 +30419,11 @@ function setupSidebarToggle () {
  *
  * @function setupLargeImagePreview
  */
-function setupLargeImagePreview  () {
+function setupLargeImagePreview() {
   $('#portaldetails').on('click', '.imgpreview', function (e) {
     var img = this.querySelector('img');
-    //dialogs have 12px padding around the content
-    var dlgWidth = Math.max(img.naturalWidth+24,500);
+    // dialogs have 12px padding around the content
+    var dlgWidth = Math.max(img.naturalWidth + 24, 500);
     // This might be a case where multiple dialogs make sense, for example
     // someone might want to compare images of multiple portals.  But
     // usually we only want to show one version of each image.
@@ -30335,7 +30434,7 @@ function setupLargeImagePreview  () {
     preview.src = img.src;
     preview.style = 'margin: auto; display: block';
     var title = e.delegateTarget.querySelector('.title').innerText;
-    dialog({
+    window.dialog({
       html: preview,
       title: title,
       id: 'iitc-portal-image',
@@ -30351,7 +30450,7 @@ function setupLargeImagePreview  () {
  *
  * @function setPermaLink
  */
-function setPermaLink () {
+function setPermaLink() {
   this.href = window.makePermalink(null, true);
 }
 
@@ -30360,7 +30459,7 @@ function setPermaLink () {
  *
  * @function setupAddons
  */
-function setupAddons () {
+function setupAddons() {
   IITC.toolbox.addButton({
     id: 'permalink',
     label: 'Permalink',
@@ -30388,6 +30487,8 @@ function setupAddons () {
 // *** module: smartphone.js ***
 (function () {
 var log = ulog('smartphone');
+/* global log -- eslint */
+
 /**
  * @file This file provides functions and utilities specifically for the smartphone layout of IITC.
  * @module smartphone
@@ -30401,7 +30502,7 @@ var log = ulog('smartphone');
  * @function isSmartphone
  * @returns {boolean} True if the user's device is a smartphone, false otherwise.
  */
-window.isSmartphone = function() {
+window.isSmartphone = function () {
   // this check is also used in main.js. Note it should not detect
   // tablets because their display is large enough to use the desktop
   // version.
@@ -30410,13 +30511,12 @@ window.isSmartphone = function() {
   // parameter - let's support the same. (stock only allows this for some
   // browsers - e.g. android phone/tablet. let's allow it for all, but
   // no promises it'll work right)
-  var viewParam = getURLParam('vp');
-  if (viewParam == 'm') return true;
-  if (viewParam == 'f') return false;
+  var viewParam = window.getURLParam('vp');
+  if (viewParam === 'm') return true;
+  if (viewParam === 'f') return false;
 
-  return navigator.userAgent.match(/Android.*Mobile/)
-  || navigator.userAgent.match(/iPhone|iPad|iPod/i);
-}
+  return !!(navigator.userAgent.match(/Android.*Mobile/) || navigator.userAgent.match(/iPhone|iPad|iPod/i));
+};
 
 /**
  * Placeholder for smartphone specific manipulations.
@@ -30424,7 +30524,7 @@ window.isSmartphone = function() {
  *
  * @function smartphone
  */
-window.smartphone = function() {};
+window.smartphone = function () {};
 
 /**
  * Performs initial setup tasks for IITC on smartphones before the IITC boot process.
@@ -30433,8 +30533,8 @@ window.smartphone = function() {};
  *
  * @function runOnSmartphonesBeforeBoot
  */
-window.runOnSmartphonesBeforeBoot = function() {
-  if(!isSmartphone()) return;
+window.runOnSmartphonesBeforeBoot = function () {
+  if (!window.isSmartphone()) return;
   log.warn('running smartphone pre boot stuff');
 
   // add smartphone stylesheet
@@ -30730,23 +30830,27 @@ body.show_controls #chat {\
   document.head.appendChild(style);
 
   // don’t need many of those
-  window.setupStyles = function() {
-    $('head').append('<style>' +
-      [ '#largepreview.enl img { border:2px solid '+COLORS[TEAM_ENL]+'; } ',
-        '#largepreview.res img { border:2px solid '+COLORS[TEAM_RES]+'; } ',
-        '#largepreview.none img { border:2px solid '+COLORS[TEAM_NONE]+'; } '].join("\n")
-      + '</style>');
-  }
+  window.setupStyles = function () {
+    $('head').append(
+      '<style>' +
+        [
+          '#largepreview.enl img { border:2px solid ' + window.COLORS[window.TEAM_ENL] + '; } ',
+          '#largepreview.res img { border:2px solid ' + window.COLORS[window.TEAM_RES] + '; } ',
+          '#largepreview.none img { border:2px solid ' + window.COLORS[window.TEAM_NONE] + '; } ',
+        ].join('\n') +
+        '</style>'
+    );
+  };
 
-  window.smartphone.mapButton = $('<a>map</a>').click(function() {
+  window.smartphone.mapButton = $('<a>map</a>').click(function () {
     window.show('map');
-    $('#map').css({'visibility': 'visible', 'opacity': '1'});
+    $('#map').css({ visibility: 'visible', opacity: '1' });
     $('#updatestatus').show();
     $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('map')").addClass('active');
   });
 
-  window.smartphone.sideButton = $('<a>info</a>').click(function() {
+  window.smartphone.sideButton = $('<a>info</a>').click(function () {
     window.show('info');
     $('#scrollwrapper').show();
     window.resetScrollOnNewPortal();
@@ -30754,82 +30858,79 @@ body.show_controls #chat {\
     $("#chatcontrols a:contains('info')").addClass('active');
   });
 
-  $('#chatcontrols').append(smartphone.mapButton).append(smartphone.sideButton);
+  $('#chatcontrols').append(window.smartphone.mapButton).append(window.smartphone.sideButton);
 
   if (!window.useAppPanes()) {
     document.body.classList.add('show_controls');
   }
 
-  window.addHook('portalDetailsUpdated', function(data) {
+  window.addHook('portalDetailsUpdated', function () {
     var x = $('.imgpreview img').removeClass('hide');
 
-    if(!x.length) {
+    if (!x.length) {
       $('.fullimg').remove();
       return;
     }
 
-    if($('.fullimg').length) {
+    if ($('.fullimg').length) {
       $('.fullimg').replaceWith(x.addClass('fullimg'));
     } else {
       x.addClass('fullimg').appendTo('#sidebar');
     }
   });
-}
+};
 
 /**
  * Updates the mobile information bar with portal details when a portal is selected.
  * This function is hooked to the 'portalSelected' event and is specific to the smartphone layout.
  *
  * @function smartphoneInfo
- * @param {Object} data - The data object containing details about the selected portal.
  */
-window.smartphoneInfo = function(data) {
+window.smartphoneInfo = function () {
   var guid = data.selectedPortalGuid;
-  if(!window.portals[guid]) return;
+  if (!window.portals[guid]) return;
 
-  var data = window.portals[selectedPortal].options.data;
-  if(typeof data.title === 'undefined') return;
+  var data = window.portals[window.selectedPortal].options.data;
+  if (typeof data.title === 'undefined') return;
 
   var details = window.portalDetail.get(guid);
 
   var lvl = data.level;
-  if(data.team === "N" || data.team === "NEUTRAL")
-    var t = '<span class="portallevel">L0</span>';
-  else
-    var t = '<span class="portallevel" style="background: '+COLORS_LVL[lvl]+';">L' + lvl + '</span>';
+  let t;
+  if (data.team === 'N' || data.team === 'NEUTRAL') t = '<span class="portallevel">L0</span>';
+  else t = '<span class="portallevel" style="background: ' + window.COLORS_LVL[lvl] + ';">L' + lvl + '</span>';
 
   var percentage = data.health;
-  if(details) {
-    var totalEnergy = getTotalPortalEnergy(details);
-    if(getTotalPortalEnergy(details) > 0) {
-      percentage = Math.floor(getCurrentPortalEnergy(details) / totalEnergy * 100);
+  if (details) {
+    var totalEnergy = window.getTotalPortalEnergy(details);
+    if (window.getTotalPortalEnergy(details) > 0) {
+      percentage = Math.floor((window.getCurrentPortalEnergy(details) / totalEnergy) * 100);
     }
   }
   t += ' ' + percentage + '% ';
   t += data.title;
 
-  if(details) {
-    var l,v,max,perc;
-    var eastAnticlockwiseToNorthClockwise = [2,1,0,7,6,5,4,3];
+  if (details) {
+    var l, v, max, perc;
+    var eastAnticlockwiseToNorthClockwise = [2, 1, 0, 7, 6, 5, 4, 3];
 
-    for(var ind=0;ind<8;ind++)
-    {
-      if (details.resonators.length == 8) {
-        var slot = eastAnticlockwiseToNorthClockwise[ind];
-        var reso = details.resonators[slot];
+    for (var ind = 0; ind < 8; ind++) {
+      let slot, reso;
+      if (details.resonators.length === 8) {
+        slot = eastAnticlockwiseToNorthClockwise[ind];
+        reso = details.resonators[slot];
       } else {
-        var slot = null;
-        var reso = ind < details.resonators.length ? details.resonators[ind] : null;
+        slot = null;
+        reso = ind < details.resonators.length ? details.resonators[ind] : null;
       }
 
-      var className = TEAM_TO_CSS[getTeam(details)];
-      if(slot !== null && OCTANTS[slot] === 'N')
-        className += ' north'
-      if(reso) {
+      var className = window.TEAM_TO_CSS[window.getTeam(details)];
+      if (slot !== null && window.OCTANTS[slot] === 'N') className += ' north';
+      if (reso) {
         l = parseInt(reso.level);
         v = parseInt(reso.energy);
-        max = RESO_NRG[l];
-        perc = v/max*100;
+        max = window.RESO_NRG[l];
+        perc = (v / max) * 100;
       } else {
         l = 0;
         v = 0;
@@ -30837,14 +30938,14 @@ window.smartphoneInfo = function(data) {
         perc = 0;
       }
 
-      t += '<div class="resonator '+className+'" style="border-top-color: '+COLORS_LVL[l]+';left: '+(100*ind/8.0)+'%;">';
-      t += '<div class="filllevel" style="width:'+perc+'%;"></div>';
-      t += '</div>'
+      t += '<div class="resonator ' + className + '" style="border-top-color: ' + window.COLORS_LVL[l] + ';left: ' + (100 * ind) / 8.0 + '%;">';
+      t += '<div class="filllevel" style="width:' + perc + '%;"></div>';
+      t += '</div>';
     }
   }
 
   $('#mobileinfo').html(t);
-}
+};
 
 /**
  * Performs setup tasks for IITC on smartphones after the IITC boot process.
@@ -30853,8 +30954,8 @@ window.smartphoneInfo = function(data) {
  *
  * @function runOnSmartphonesAfterBoot
  */
-window.runOnSmartphonesAfterBoot = function() {
-  if(!isSmartphone()) return;
+window.runOnSmartphonesAfterBoot = function () {
+  if (!window.isSmartphone()) return;
   log.warn('running smartphone post boot stuff');
 
   window.show('map');
@@ -30868,11 +30969,12 @@ window.runOnSmartphonesAfterBoot = function() {
   // replace img full view handler
   $('#portaldetails')
     .off('click', '.imgpreview')
-    .on('click', '.imgpreview', function(e) {
-      if (e.currentTarget === e.target) { // do not fire on #level
+    .on('click', '.imgpreview', function (e) {
+      if (e.currentTarget === e.target) {
+        // do not fire on #level
         $('.ui-tooltip').remove();
-        var newTop = $('.fullimg').position().top + $("#sidebar").scrollTop();
-        $("#sidebar").animate({ scrollTop: newTop }, 200);
+        var newTop = $('.fullimg').position().top + $('#sidebar').scrollTop();
+        $('#sidebar').animate({ scrollTop: newTop }, 200);
       }
     });
 }
@@ -30898,7 +31000,7 @@ window.renderUpdateStatusTimer_ = undefined;
  *
  * @function renderUpdateStatus
  */
-window.renderUpdateStatus = function() {
+window.renderUpdateStatus = function () {
   var progress = 1;
 
   var tileParams = window.getDataZoomTileParameters();
@@ -30909,17 +31011,17 @@ window.renderUpdateStatus = function() {
     // zoom level includes portals (and also all links/fields)
     t += '<span id="loadlevel">portals</span>';
   } else {
-    if(!window.isSmartphone()) // space is valuable
+    if (!window.isSmartphone())
+      // space is valuable
       t += '<b>links</b>: ';
 
     if (tileParams.minLinkLength > 0)
-      t += '<span id="loadlevel">&gt;'+(tileParams.minLinkLength>1000?tileParams.minLinkLength/1000+'km':tileParams.minLinkLength+'m')+'</span>';
-    else
-      t += '<span id="loadlevel">all links</span>';
+      t +=
+        '<span id="loadlevel">&gt;' + (tileParams.minLinkLength > 1000 ? tileParams.minLinkLength / 1000 + 'km' : tileParams.minLinkLength + 'm') + '</span>';
+    else t += '<span id="loadlevel">all links</span>';
   }
 
-  t +='</span>';
-
+  t += '</span>';
 
   // map status display
   t += ' <span class="map"><b>map</b>: ';
@@ -30930,14 +31032,11 @@ window.renderUpdateStatus = function() {
     // status.short - short description of status
     // status.long - longer description, for tooltip (optional)
     // status.progress - fractional progress (from 0 to 1; -1 for indeterminate) of current state (optional)
-    if (status.long)
-      t += '<span class="help" title="'+status.long+'">'+status.short+'</span>';
-    else
-      t += '<span>'+status.short+'</span>';
+    if (status.long) t += '<span class="help" title="' + status.long + '">' + status.short + '</span>';
+    else t += '<span>' + status.short + '</span>';
 
     if (status.progress !== undefined) {
-      if(status.progress !== -1)
-        t += ' '+Math.floor(status.progress*100)+'%';
+      if (status.progress !== -1) t += ' ' + Math.floor(status.progress * 100) + '%';
       progress = status.progress;
     }
   } else {
@@ -30947,37 +31046,33 @@ window.renderUpdateStatus = function() {
 
   t += '</span>';
 
-  //request status
-  if (window.activeRequests.length > 0)
-    t += ' ' + window.activeRequests.length + ' requests';
-  if (window.failedRequestCount > 0)
-    t += ' <span style="color:#f66">' + window.failedRequestCount + ' failed</span>'
+  // request status
+  if (window.activeRequests.length > 0) t += ' ' + window.activeRequests.length + ' requests';
+  if (window.failedRequestCount > 0) t += ' <span style="color:#f66">' + window.failedRequestCount + ' failed</span>';
 
-
-  //it's possible that updating the status bar excessively causes some performance issues. so rather than doing it
-  //immediately, delay it to the next javascript event loop, cancelling any pending update
+  // it's possible that updating the status bar excessively causes some performance issues. so rather than doing it
+  // immediately, delay it to the next javascript event loop, cancelling any pending update
   // will also cause any browser-related rendering to occur first, before the status actually updates
 
   if (window.renderUpdateStatusTimer_) clearTimeout(window.renderUpdateStatusTimer_);
 
-  window.renderUpdateStatusTimer_ = setTimeout ( function() {
+  window.renderUpdateStatusTimer_ = setTimeout(function () {
     window.renderUpdateStatusTimer_ = undefined;
 
     $('#innerstatus').html(t);
-    //$('#updatestatus').click(function() { startRefreshTimeout(10); });
-    //. <a style="cursor: pointer" onclick="startRefreshTimeout(10)" title="Refresh">⟳</a>';
+    // $('#updatestatus').click(function() { startRefreshTimeout(10); });
+    // . <a style="cursor: pointer" onclick="startRefreshTimeout(10)" title="Refresh">⟳</a>';
 
-    if(progress == 1 && window.activeRequests.length > 0) {
+    if (progress === 1 && window.activeRequests.length > 0) {
       // we don't know the exact progress, but we have requests (e.g. chat) running, so show it as indeterminate.
       progress = -1;
     }
 
-    if (window.isApp && app.setProgress) {
-      app.setProgress(progress);
+    if (window.isApp && window.app.setProgress) {
+      window.app.setProgress(progress);
     }
   }, 0);
-
-}
+};
 
 
 })();
@@ -31235,6 +31330,8 @@ IITC.toolbox._syncWithLegacyToolbox();
 // *** module: utils_file.js ***
 (function () {
 var log = ulog('utils_file');
+/* global L, log -- eslint */
+
 /**
  * @file This file provides utilities for handling files in an environment-independent way, including
  * functions to save files and wrappers around the FileReader API to integrate with Leaflet's event system.
@@ -31248,13 +31345,15 @@ var log = ulog('utils_file');
  *
  * @private
  * @function saveAs
- * @param {string|BlobPart|BlobPart[]} data - The data to be saved.
+ * @param {string|Blob|BlobPart|Array<BlobPart>} data - The data to be saved.
  * @param {string} [filename] - The name of the file to save.
  * @param {string} [dataType] - The MIME type of the file, used to specify the file format.
  */
-function saveAs (data,filename,dataType) {
-  if (!(data instanceof Array)) { data = [data]; }
-  var file = new Blob(data, {type: dataType});
+function saveAs(data, filename, dataType) {
+  if (!(data instanceof Array)) {
+    data = [data];
+  }
+  var file = new Blob(data, { type: dataType });
   var objectURL = URL.createObjectURL(file);
 
   var link = document.createElement('a');
@@ -31295,17 +31394,19 @@ L.FileReader = L.Evented.extend({
 
     // @option readAs: String = 'readAsText'
     // [Function](https://w3c.github.io/FileAPI/#reading-a-file) to use for file reading.
-    readAs: 'readAsText'
+    readAs: 'readAsText',
   },
 
   initialize: function (file, options) {
     this._setOptions(options);
-    if (file) { this.read(file); }
+    if (file) {
+      this.read(file);
+    }
   },
 
   _setOptions: function (options) {
     if (typeof options === 'string') {
-      options = {readAs: options};
+      options = { readAs: options };
     }
     return L.Util.setOptions(this, options);
   },
@@ -31315,12 +31416,16 @@ L.FileReader = L.Evented.extend({
   _setupReader: function () {
     var reader = new FileReader();
     this._eventTypes.forEach(function (type) {
-      reader.addEventListener(type,this._fire.bind(this,type));
-    },this);
-    if (this._events) { this.on(this._events); }
+      reader.addEventListener(type, this._fire.bind(this, type));
+    }, this);
+    if (this._events) {
+      this.on(this._events);
+    }
     if (this._onerror) {
-      this.once('loadstart',function () {
-        if (!this.listens('error',true)) { this.on('error',this._onerror); }
+      this.once('loadstart', function () {
+        if (!this.listens('error', true)) {
+          this.on('error', this._onerror);
+        }
       });
     }
     return reader;
@@ -31338,7 +31443,9 @@ L.FileReader = L.Evented.extend({
    * @returns {L.FileReader} Returns the `L.FileReader` instance for chaining.
    */
   read: function (file, options) {
-    if (options) { this._setOptions(options); }
+    if (options) {
+      this._setOptions(options);
+    }
     if (file) {
       this.file = file;
       try {
@@ -31347,16 +31454,15 @@ L.FileReader = L.Evented.extend({
         // `Event` object has additional property `file` with [`File`](https://w3c.github.io/FileAPI/#dfn-file) object.
         // Note: in order to stop further processing of the file
         // handler may throw error (is's safe as errors are caught)
-        this.fire('init',{file:file},true);
+        this.fire('init', { file: file }, true);
       } catch (e) {
-
         // @event init:error: Event
         // Fired on errors arised in 'init' handler(s).
         // `Event` object has following additional properties:
         // `file`: [`File`](https://w3c.github.io/FileAPI/#dfn-file) object.
         // `error`: `Error` object.
         // Note: if no handlers found for `error:init` then default one will be attached (`console.warn`)
-        var data = { file:file, error:e };
+        var data = { file: file, error: e };
         if (this._onerror && !this.listens('init:error', true)) {
           this._onerror(data);
         } else {
@@ -31373,7 +31479,7 @@ L.FileReader = L.Evented.extend({
   },
 
   _onerror: function (e) {
-    console.warn('Error loading file: ', e.file.name,'\n', e.error || e.reader.error.message); // eslint-disable-line no-console
+    log.warn('Error loading file: ', e.file.name, '\n', e.error || e.reader.error.message);
   },
 
   // @event [abort, error, load, loadstart, loadend, progress](https://w3c.github.io/FileAPI/#events): Event
@@ -31382,12 +31488,14 @@ L.FileReader = L.Evented.extend({
   // `file`: raw instance of [`File`/`Blob`](https://w3c.github.io/FileAPI/#dfn-file)
   // `originalEvent`: raw [event](https://w3c.github.io/FileAPI/#events)
   // Note: if no handlers found for `error` then default one will be attached (`console.warn`)
-  _eventTypes: ['abort','error','load','loadstart','loadend','progress'],
+  _eventTypes: ['abort', 'error', 'load', 'loadstart', 'loadend', 'progress'],
 
-  _fire: function (type,event) {
-    if (!this.listens(type,true)) { return; }
-    this.fire(type,Object.assign({originalEvent: event},this),true);
-  }
+  _fire: function (type, event) {
+    if (!this.listens(type, true)) {
+      return;
+    }
+    this.fire(type, Object.assign({ originalEvent: event }, this), true);
+  },
 });
 
 /**
@@ -31408,16 +31516,19 @@ L.fileReader = function (file, options) {
   return new L.FileReader(file, options);
 };
 
-
-L.FileReader._chooseFiles = function (callback,options) {
+L.FileReader._chooseFiles = function (callback, options) {
   // assert callback
   var input = document.createElement('input');
-  input.type='file';
+  input.type = 'file';
   input.style.display = 'none';
-  L.extend(input,options); // optional attributes: accept, multiple, capture
-  input.addEventListener('change', function () {
-    callback(this.files);
-  }, false);
+  L.extend(input, options); // optional attributes: accept, multiple, capture
+  input.addEventListener(
+    'change',
+    function () {
+      callback(this.files);
+    },
+    false
+  );
   document.body.appendChild(input);
   input.click();
   input.remove();
@@ -31434,10 +31545,10 @@ L.FileReader._chooseFiles = function (callback,options) {
  * @returns {L.FileReader} A new instance of `L.FileReader` with the file to be read.
  */
 L.FileReader.loadFile = function (options) {
-  var reader = new this;
+  var reader = new this();
   this._chooseFiles(function (fileList) {
     reader.read(fileList[0]);
-  },options);
+  }, options);
   return reader;
 };
 
@@ -31463,22 +31574,24 @@ L.FileListLoader = L.Evented.extend({
   options: {
     // @option readAs: String = 'readAsText'
     // Function to use for file reading.
-    readAs: 'readAsText'
+    readAs: 'readAsText',
   },
 
   initialize: function (fileList, options) {
     L.Util.setOptions(this, options);
-    this.once('loadstart',function () {
+    this.once('loadstart', function () {
       if (this.listens('loaded')) {
-        this.on('loadend',this._loaded);
+        this.on('loadend', this._loaded);
       }
     });
-    this.once('init',function () {
+    this.once('init', function () {
       if (this.listens('init')) {
-        this.on('init:error',this._loaded);
+        this.on('init:error', this._loaded);
       }
     });
-    if (fileList) { this.load(fileList); }
+    if (fileList) {
+      this.load(fileList);
+    }
   },
 
   _readerConstructor: L.FileReader,
@@ -31491,11 +31604,13 @@ L.FileListLoader = L.Evented.extend({
       throw new Error('`fileList` arg required');
     }
     this._toload = fileList.length;
-    this._readers = Array.prototype.map.call(fileList,function (file) {
-      return new this._readerConstructor()
-        .addEventParent(this)
-        .read(file,this.options);
-    },this);
+    this._readers = Array.prototype.map.call(
+      fileList,
+      function (file) {
+        return new this._readerConstructor().addEventParent(this).read(file, this.options);
+      },
+      this
+    );
     return this;
   },
 
@@ -31503,8 +31618,10 @@ L.FileListLoader = L.Evented.extend({
   // Fired after all files are processed (either with success or with error).
   _loaded: function () {
     this._toload--;
-    if (this._toload === 0) { this.fire('loaded'); }
-  }
+    if (this._toload === 0) {
+      this.fire('loaded');
+    }
+  },
 });
 
 /**
@@ -31545,6 +31662,8 @@ L.FileListLoader.loadFiles = function (options) {
 // *** module: utils_misc.js ***
 (function () {
 var log = ulog('utils_misc');
+/* global L -- eslint */
+
 /**
  * @file Misc utils
  *
@@ -31558,21 +31677,20 @@ var log = ulog('utils_misc');
  * @param {string} param - The name of the parameter to retrieve.
  * @returns {string} The value of the parameter, or an empty string if not found.
  */
-window.getURLParam = function(param) {
+window.getURLParam = function (param) {
   var items = window.location.search.substr(1).split('&');
-  if (items == "") return "";
 
-  for (var i=0; i<items.length; i++) {
+  for (var i = 0; i < items.length; i++) {
     var item = items[i].split('=');
 
-    if (item[0] == param) {
-      var val = item.length==1 ? '' : decodeURIComponent (item[1].replace(/\+/g,' '));
+    if (item[0] === param) {
+      var val = item.length === 1 ? '' : decodeURIComponent(item[1].replace(/\+/g, ' '));
       return val;
     }
   }
 
   return '';
-}
+};
 
 /**
  * Reads a cookie by name.
@@ -31582,15 +31700,17 @@ window.getURLParam = function(param) {
  * @param {string} name - The name of the cookie to read.
  * @returns {string} The value of the cookie, or undefined if not found.
  */
-window.readCookie = function(name){
-  var C, i, c = document.cookie.split('; ');
+window.readCookie = function (name) {
+  var C,
+    i,
+    c = document.cookie.split('; ');
   var cookies = {};
-  for(i=c.length-1; i>=0; i--){
+  for (i = c.length - 1; i >= 0; i--) {
     C = c[i].split('=');
     cookies[C[0]] = unescape(C[1]);
   }
   return cookies[name];
-}
+};
 
 /**
  * Writes a cookie with a specified name and value.
@@ -31599,10 +31719,10 @@ window.readCookie = function(name){
  * @param {string} name - The name of the cookie.
  * @param {string} val - The value of the cookie.
  */
-window.writeCookie = function(name, val) {
+window.writeCookie = function (name, val) {
   var d = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = name + "=" + val + '; expires='+d+'; path=/';
-}
+  document.cookie = name + '=' + val + '; expires=' + d + '; path=/';
+};
 
 /**
  * Erases a cookie with a specified name.
@@ -31610,9 +31730,9 @@ window.writeCookie = function(name, val) {
  * @function eraseCookie
  * @param {string} name - The name of the cookie to erase.
  */
-window.eraseCookie = function(name) {
+window.eraseCookie = function (name) {
   document.cookie = name + '=; expires=Thu, 1 Jan 1970 00:00:00 GMT; path=/';
-}
+};
 
 /**
  * Adds thousand separators to a given number.
@@ -31622,11 +31742,11 @@ window.eraseCookie = function(name) {
  * @param {number} d - The number to format.
  * @returns {string} The formatted number with thousand separators.
  */
-window.digits = function(d) {
+window.digits = function (d) {
   // U+2009 - Thin Space. Recommended for use as a thousands separator...
   // https://en.wikipedia.org/wiki/Space_(punctuation)#Table_of_spaces
-  return (d+"").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1&#8201;");
-}
+  return (d + '').replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1&#8201;');
+};
 
 /**
  * Pads a number with zeros up to a specified length.
@@ -31636,33 +31756,31 @@ window.digits = function(d) {
  * @param {number} pad - The desired length of the output string.
  * @returns {string} The padded number as a string.
  */
-window.zeroPad = function(number,pad) {
+window.zeroPad = function (number, pad) {
   number = number.toString();
   var zeros = pad - number.length;
-  return Array(zeros>0?zeros+1:0).join("0") + number;
-}
+  return Array(zeros > 0 ? zeros + 1 : 0).join('0') + number;
+};
 
 /**
  * Converts a UNIX timestamp to a human-readable string.
  * If the timestamp is from today, returns the time (HH:mm:ss format); otherwise, returns the date (YYYY-MM-DD).
  *
  * @function unixTimeToString
- * @param {number} time - The UNIX timestamp to convert.
+ * @param {number} timestamp - The UNIX timestamp to convert.
  * @param {boolean} [full] - If true, returns both date and time.
  * @returns {string|null} The formatted date and/or time.
  */
-window.unixTimeToString = function(time, full) {
-  if(!time) return null;
-  var d = new Date(typeof time === 'string' ? parseInt(time) : time);
+window.unixTimeToString = function (timestamp, full) {
+  if (!timestamp) return null;
+  var d = new Date(typeof timestamp === 'string' ? parseInt(timestamp) : timestamp);
   var time = d.toLocaleTimeString();
-//  var time = zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+':'+zeroPad(d.getSeconds(),2);
-  var date = d.getFullYear()+'-'+zeroPad(d.getMonth()+1,2)+'-'+zeroPad(d.getDate(),2);
-  if(typeof full !== 'undefined' && full) return date + ' ' + time;
-  if(d.toDateString() == new Date().toDateString())
-    return time;
-  else
-    return date;
-}
+  //  var time = zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+':'+zeroPad(d.getSeconds(),2);
+  var date = d.getFullYear() + '-' + window.zeroPad(d.getMonth() + 1, 2) + '-' + window.zeroPad(d.getDate(), 2);
+  if (typeof full !== 'undefined' && full) return date + ' ' + time;
+  if (d.toDateString() === new Date().toDateString()) return time;
+  else return date;
+};
 
 /**
  * Converts a UNIX timestamp to a precise date and time string in the local timezone.
@@ -31673,12 +31791,24 @@ window.unixTimeToString = function(time, full) {
  * @param {boolean} [millisecond] - Whether to include millisecond precision.
  * @returns {string|null} The formatted date and time string.
  */
-window.unixTimeToDateTimeString = function(time, millisecond) {
-  if(!time) return null;
+window.unixTimeToDateTimeString = function (time, millisecond) {
+  if (!time) return null;
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
-  return d.getFullYear()+'-'+zeroPad(d.getMonth()+1,2)+'-'+zeroPad(d.getDate(),2)
-    +' '+zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+':'+zeroPad(d.getSeconds(),2)+(millisecond?'.'+zeroPad(d.getMilliseconds(),3):'');
-}
+  return (
+    d.getFullYear() +
+    '-' +
+    window.zeroPad(d.getMonth() + 1, 2) +
+    '-' +
+    window.zeroPad(d.getDate(), 2) +
+    ' ' +
+    window.zeroPad(d.getHours(), 2) +
+    ':' +
+    window.zeroPad(d.getMinutes(), 2) +
+    ':' +
+    window.zeroPad(d.getSeconds(), 2) +
+    (millisecond ? '.' + window.zeroPad(d.getMilliseconds(), 3) : '')
+  );
+};
 
 /**
  * Converts a UNIX timestamp to a time string formatted as HH:mm.
@@ -31687,13 +31817,15 @@ window.unixTimeToDateTimeString = function(time, millisecond) {
  * @param {number|string} time - The UNIX timestamp to convert.
  * @returns {string|null} Formatted time as HH:mm.
  */
-window.unixTimeToHHmm = function(time) {
-  if(!time) return null;
+window.unixTimeToHHmm = function (time) {
+  if (!time) return null;
   var d = new Date(typeof time === 'string' ? parseInt(time) : time);
-  var h = '' + d.getHours(); h = h.length === 1 ? '0' + h : h;
-  var s = '' + d.getMinutes(); s = s.length === 1 ? '0' + s : s;
-  return  h + ':' + s;
-}
+  var h = '' + d.getHours();
+  h = h.length === 1 ? '0' + h : h;
+  var s = '' + d.getMinutes();
+  s = s.length === 1 ? '0' + s : s;
+  return h + ':' + s;
+};
 
 /**
  * Formats an interval of time given in seconds into a human-readable string.
@@ -31703,23 +31835,22 @@ window.unixTimeToHHmm = function(time) {
  * @param {number} [maxTerms] - The maximum number of time units to include.
  * @returns {string} The formatted time interval.
  */
-window.formatInterval = function(seconds,maxTerms) {
-
+window.formatInterval = function (seconds, maxTerms) {
   var d = Math.floor(seconds / 86400);
   var h = Math.floor((seconds % 86400) / 3600);
   var m = Math.floor((seconds % 3600) / 60);
   var s = seconds % 60;
 
   var terms = [];
-  if (d > 0) terms.push(d+'d');
-  if (h > 0) terms.push(h+'h');
-  if (m > 0) terms.push(m+'m');
-  if (s > 0 || terms.length==0) terms.push(s+'s');
+  if (d > 0) terms.push(d + 'd');
+  if (h > 0) terms.push(h + 'h');
+  if (m > 0) terms.push(m + 'm');
+  if (s > 0 || terms.length === 0) terms.push(s + 's');
 
-  if (maxTerms) terms = terms.slice(0,maxTerms);
+  if (maxTerms) terms = terms.slice(0, maxTerms);
 
   return terms.join(' ');
-}
+};
 
 /**
  * Formats a distance in meters, converting to kilometers if the distance is over 10,000 meters.
@@ -31737,12 +31868,10 @@ window.formatDistance = function (distance) {
  *
  * @function rangeLinkClick
  */
-window.rangeLinkClick = function() {
-  if(window.portalRangeIndicator)
-    window.map.fitBounds(window.portalRangeIndicator.getBounds());
-  if(window.isSmartphone())
-    window.show('map');
-}
+window.rangeLinkClick = function () {
+  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
+  if (window.isSmartphone()) window.show('map');
+};
 
 /**
  * Displays a dialog with links to show the specified location on various map services.
@@ -31752,20 +31881,21 @@ window.rangeLinkClick = function() {
  * @param {number} lng - Longitude of the location.
  * @param {string} name - Name of the location.
  */
-window.showPortalPosLinks = function(lat, lng, name) {
+window.showPortalPosLinks = function (lat, lng, name) {
   var encoded_name = encodeURIComponent(name);
   var qrcode = '<div id="qrcode"></div>';
-  var script = '<script>$(\'#qrcode\').qrcode({text:\'GEO:'+lat+','+lng+'\'});</script>';
-  var gmaps = '<a href="https://maps.google.com/maps?ll='+lat+','+lng+'&q='+lat+','+lng+'%20('+encoded_name+')">Google Maps</a>';
-  var bingmaps = '<a href="https://www.bing.com/maps/?v=2&cp='+lat+'~'+lng+'&lvl=16&sp=Point.'+lat+'_'+lng+'_'+encoded_name+'___">Bing Maps</a>';
-  var osm = '<a href="https://www.openstreetmap.org/?mlat='+lat+'&mlon='+lng+'&zoom=16">OpenStreetMap</a>';
-  var latLng = '<span>' + lat + ',' + lng +'</span>';
-  dialog({
+  var script = "<script>$('#qrcode').qrcode({text:'GEO:" + lat + ',' + lng + "'});</script>";
+  var gmaps = '<a href="https://maps.google.com/maps?ll=' + lat + ',' + lng + '&q=' + lat + ',' + lng + '%20(' + encoded_name + ')">Google Maps</a>';
+  var bingmaps =
+    '<a href="https://www.bing.com/maps/?v=2&cp=' + lat + '~' + lng + '&lvl=16&sp=Point.' + lat + '_' + lng + '_' + encoded_name + '___">Bing Maps</a>';
+  var osm = '<a href="https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=16">OpenStreetMap</a>';
+  var latLng = '<span>' + lat + ',' + lng + '</span>';
+  window.dialog({
     html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
     title: name,
-    id: 'poslinks'
+    id: 'poslinks',
   });
-}
+};
 
 /**
  * Checks if the device is a touch-enabled device.
@@ -31773,16 +31903,18 @@ window.showPortalPosLinks = function(lat, lng, name) {
  * @function isTouchDevice
  * @returns {boolean} True if the device is touch-enabled, otherwise false.
  */
-window.isTouchDevice = function() {
-  return 'ontouchstart' in window // works on most browsers
-      || 'onmsgesturechange' in window; // works on ie10
+window.isTouchDevice = function () {
+  return (
+    'ontouchstart' in window || // works on most browsers
+    'onmsgesturechange' in window
+  ); // works on ie10
 };
 
 // !!deprecated
 // to be ovewritten in app.js
-window.androidCopy = function(text) {
+window.androidCopy = function () {
   return true; // i.e. execute other actions
-}
+};
 
 /**
  * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
@@ -31791,27 +31923,25 @@ window.androidCopy = function(text) {
  * @param {string|jQuery} elm - The element to calculate the scroll bottom for.
  * @returns {number} The number of pixels from the bottom.
  */
-window.scrollBottom = function(elm) {
-  if(typeof elm === 'string') elm = $(elm);
+window.scrollBottom = function (elm) {
+  if (typeof elm === 'string') elm = $(elm);
   return elm.get(0).scrollHeight - elm.innerHeight() - elm.scrollTop();
-}
+};
 
 /**
  * Zooms the map to a specific portal and shows its details if available.
  *
  * @function zoomToAndShowPortal
  * @param {string} guid - The globally unique identifier of the portal.
- * @param {L.LatLng} latlng - The latitude and longitude of the portal.
+ * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
  */
-window.zoomToAndShowPortal = function(guid, latlng) {
-  map.setView(latlng, DEFAULT_ZOOM);
+window.zoomToAndShowPortal = function (guid, latlng) {
+  window.map.setView(latlng, window.DEFAULT_ZOOM);
   // if the data is available, render it immediately. Otherwise defer
   // until it becomes available.
-  if(window.portals[guid])
-    renderPortalDetails(guid);
-  else
-    urlPortal = guid;
-}
+  if (window.portals[guid]) window.renderPortalDetails(guid);
+  else window.urlPortal = guid;
+};
 
 /**
  * Selects a portal by its latitude and longitude.
@@ -31821,25 +31951,25 @@ window.zoomToAndShowPortal = function(guid, latlng) {
  *                                      or an array or L.LatLng object containing both latitude and longitude.
  * @param {number} [lng] - The longitude of the portal.
  */
-window.selectPortalByLatLng = function(lat, lng) {
-  if(lng === undefined && lat instanceof Array) {
+window.selectPortalByLatLng = function (lat, lng) {
+  if (lng === undefined && lat instanceof Array) {
     lng = lat[1];
     lat = lat[0];
-  } else if(lng === undefined && lat instanceof L.LatLng) {
+  } else if (lng === undefined && lat instanceof L.LatLng) {
     lng = lat.lng;
     lat = lat.lat;
   }
-  for(var guid in window.portals) {
+  for (var guid in window.portals) {
     var latlng = window.portals[guid].getLatLng();
-    if(latlng.lat == lat && latlng.lng == lng) {
-      renderPortalDetails(guid);
+    if (latlng.lat === lat && latlng.lng === lng) {
+      window.renderPortalDetails(guid);
       return;
     }
   }
 
   // not currently visible
-  urlPortalLL = [lat, lng];
-  map.setView(urlPortalLL, DEFAULT_ZOOM);
+  window.urlPortalLL = [lat, lng];
+  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
 };
 
 /**
@@ -31850,9 +31980,9 @@ window.selectPortalByLatLng = function(lat, lng) {
  * @param {string} str - The string to escape.
  * @returns {string} The escaped string.
  */
-window.escapeJavascriptString = function(str) {
-  return (str+'').replace(/[\\"']/g,'\\$&');
-}
+window.escapeJavascriptString = function (str) {
+  return (str + '').replace(/[\\"']/g, '\\$&');
+};
 
 /**
  * Escapes HTML special characters in a string.
@@ -31861,12 +31991,12 @@ window.escapeJavascriptString = function(str) {
  * @param {string} str - The string to escape.
  * @returns {string} The escaped string.
  */
-window.escapeHtmlSpecialChars = function(str) {
+window.escapeHtmlSpecialChars = function (str) {
   var div = document.createElement('div');
   var text = document.createTextNode(str);
   div.appendChild(text);
   return div.innerHTML;
-}
+};
 
 /**
  * Formats energy of portal.
@@ -31875,9 +32005,9 @@ window.escapeHtmlSpecialChars = function(str) {
  * @param {number} nrg - The energy value to format.
  * @returns {string} The formatted energy value.
  */
-window.prettyEnergy = function(nrg) {
-  return nrg> 1000 ? Math.round(nrg/1000) + ' k': nrg;
-}
+window.prettyEnergy = function (nrg) {
+  return nrg > 1000 ? Math.round(nrg / 1000) + ' k' : nrg;
+};
 
 /**
  * Converts a list of items into a unique array, removing duplicates.
@@ -31886,11 +32016,11 @@ window.prettyEnergy = function(nrg) {
  * @param {Array} arr - The array to process.
  * @returns {Array} A new array containing only unique elements.
  */
-window.uniqueArray = function(arr) {
-  return $.grep(arr, function(v, i) {
+window.uniqueArray = function (arr) {
+  return $.grep(arr, function (v, i) {
     return $.inArray(v, arr) === i;
   });
-}
+};
 
 /**
  * Generates a four-column HTML table from an array of data blocks.
@@ -31898,18 +32028,24 @@ window.uniqueArray = function(arr) {
  * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
  * @returns {string} HTML string representing the constructed table.
  */
-window.genFourColumnTable = function(blocks) {
-  var t = $.map(blocks, function(detail, index) {
-    if(!detail) return '';
-    var title = detail[2] ? ' title="'+escapeHtmlSpecialChars(detail[2]) + '"' : '';
-    if(index % 2 === 0)
-      return '<tr><td'+title+'>'+detail[1]+'</td><th'+title+'>'+detail[0]+'</th>';
-    else
-      return '    <th'+title+'>'+detail[0]+'</th><td'+title+'>'+detail[1]+'</td></tr>';
+window.genFourColumnTable = function (blocks) {
+  let t = $.map(blocks, function (detail, index) {
+    if (!detail) return '';
+    const title = detail[2] ? ' title="' + window.escapeHtmlSpecialChars(detail[2]) + '"' : '';
+    if (index % 2 === 0) {
+      return '<tr><td' + title + '>' + detail[1] + '</td><th' + title + '>' + detail[0] + '</th>';
+    } else {
+      return '<th' + title + '>' + detail[0] + '</th><td' + title + '>' + detail[1] + '</td></tr>';
+    }
   }).join('');
-  if(t.length % 2 === 1) t + '<td></td><td></td></tr>';
+
+  // If the total number of rows is odd, add empty cells to complete the last row
+  if (blocks.length % 2 === 1) {
+    t += '<td></td><td></td></tr>';
+  }
+
   return t;
-}
+};
 
 /**
  * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
@@ -31918,36 +32054,36 @@ window.genFourColumnTable = function(blocks) {
  * @param {string} text - The text to convert.
  * @returns {string} The resulting HTML table.
  */
-window.convertTextToTableMagic = function(text) {
+window.convertTextToTableMagic = function (text) {
   // check if it should be converted to a table
-  if(!text.match(/\t/)) return text.replace(/\n/g, '<br>');
+  if (!text.match(/\t/)) return text.replace(/\n/g, '<br>');
 
   var data = [];
   var columnCount = 0;
 
   // parse data
   var rows = text.split('\n');
-  $.each(rows, function(i, row) {
+  $.each(rows, function (i, row) {
     data[i] = row.split('\t');
-    if(data[i].length > columnCount) columnCount = data[i].length;
+    if (data[i].length > columnCount) columnCount = data[i].length;
   });
 
   // build the table
   var table = '<table>';
-  $.each(data, function(i, row) {
+  $.each(data, function (i) {
     table += '<tr>';
-    $.each(data[i], function(k, cell) {
+    $.each(data[i], function (k, cell) {
       var attributes = '';
-      if(k === 0 && data[i].length < columnCount) {
-        attributes = ' colspan="'+(columnCount - data[i].length + 1)+'"';
+      if (k === 0 && data[i].length < columnCount) {
+        attributes = ' colspan="' + (columnCount - data[i].length + 1) + '"';
       }
-      table += '<td'+attributes+'>'+cell+'</td>';
+      table += '<td' + attributes + '>' + cell + '</td>';
     });
     table += '</tr>';
   });
   table += '</table>';
   return table;
-}
+};
 
 /**
  * Clamps a given value between a minimum and maximum value.
@@ -31975,11 +32111,8 @@ var MAX_LATITUDE = 85.051128; // L.Projection.SphericalMercator.MAX_LATITUDE
  */
 window.clampLatLng = function (latlng) {
   // Ingress accepts requests only for this range
-  return [
-    clamp(latlng.lat, MAX_LATITUDE, -MAX_LATITUDE),
-    clamp(latlng.lng, 179.999999, -180)
-  ];
-}
+  return [clamp(latlng.lat, MAX_LATITUDE, -MAX_LATITUDE), clamp(latlng.lng, 179.999999, -180)];
+};
 
 /**
  * Clamps a latitude and longitude bounds to the maximum and minimum valid values.
@@ -31989,9 +32122,10 @@ window.clampLatLng = function (latlng) {
  * @returns {L.LatLngBounds} The clamped bounds.
  */
 window.clampLatLngBounds = function (bounds) {
-  var SW = bounds.getSouthWest(), NE = bounds.getNorthEast();
-  return L.latLngBounds(clampLatLng(SW), clampLatLng(NE));
-}
+  var SW = bounds.getSouthWest(),
+    NE = bounds.getNorthEast();
+  return L.latLngBounds(window.clampLatLng(SW), window.clampLatLng(NE));
+};
 
 /*
 pnpoly Copyright (c) 1970-2003, Wm. Randolph Franklin
@@ -32024,8 +32158,9 @@ window.pnpoly = function (polygon, point) {
   var inside = 0;
   // j records previous value. Also handles wrapping around.
   for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    inside ^= polygon[i].y > point.y !== polygon[j].y > point.y &&
-              point.x - polygon[i].x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y);
+    inside ^=
+      polygon[i].y > point.y !== polygon[j].y > point.y &&
+      point.x - polygon[i].x < ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) / (polygon[j].y - polygon[i].y);
   }
   // Let's make js as magical as C. Yay.
   return !!inside;
@@ -32047,7 +32182,7 @@ window.makePrimeLink = function (guid, lat, lng) {
 /**
  * Generates a permalink URL based on the specified latitude and longitude and additional options.
  *
- * @param {L.LatLng} [latlng] - The latitude and longitude for the permalink.
+ * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
  *                              Can be omitted to create mapview-only permalink.
  * @param {Object} [options] - Additional options for permalink generation.
  * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
@@ -32057,20 +32192,20 @@ window.makePrimeLink = function (guid, lat, lng) {
 window.makePermalink = function (latlng, options) {
   options = options || {};
 
-  function round (l) { // ensures that lat,lng are with same precision as in stock intel permalinks
-    return Math.floor(l*1e6)/1e6;
+  function round(l) {
+    // ensures that lat,lng are with same precision as in stock intel permalinks
+    return Math.floor(l * 1e6) / 1e6;
   }
   var args = [];
   if (!latlng || options.includeMapView) {
     var c = window.map.getCenter();
-    args.push(
-      'll='+[round(c.lat),round(c.lng)].join(','),
-      'z='+window.map.getZoom()
-    );
+    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
   }
   if (latlng) {
-    if ('lat' in latlng) { latlng = [latlng.lat, latlng.lng]; }
-    args.push('pll='+latlng.join(','));
+    if ('lat' in latlng) {
+      latlng = [latlng.lat, latlng.lng];
+    }
+    args.push('pll=' + latlng.join(','));
   }
   var url = '';
   if (options.fullURL) {
@@ -32091,10 +32226,10 @@ if (!String.prototype.capitalize) {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#polyfill
 if (!String.prototype.startsWith) {
   Object.defineProperty(String.prototype, 'startsWith', {
-    value: function(search, rawPos) {
-      var pos = rawPos > 0 ? rawPos|0 : 0;
+    value: function (search, rawPos) {
+      var pos = rawPos > 0 ? rawPos | 0 : 0;
       return this.substring(pos, pos + search.length) === search;
-    }
+    },
   });
 }
 
@@ -32110,9 +32245,9 @@ if (!Math.trunc) {
 // https://tc39.github.io/ecma262/#sec-array.prototype.find
 if (!Array.prototype.find) {
   Object.defineProperty(Array.prototype, 'find', {
-    value: function(predicate) {
+    value: function (predicate) {
       // 1. Let O be ? ToObject(this value).
-      if (this == null) {
+      if (this === null) {
         throw TypeError('"this" is null or not defined');
       }
 
@@ -32150,19 +32285,17 @@ if (!Array.prototype.find) {
       return undefined;
     },
     configurable: true,
-    writable: true
+    writable: true,
   });
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#polyfill
 if (!Element.prototype.matches) {
-  Element.prototype.matches =
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.webkitMatchesSelector;
+  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 }
 
 if (!Element.prototype.closest) {
-  Element.prototype.closest = function(s) {
+  Element.prototype.closest = function (s) {
     var el = this;
 
     do {
@@ -32177,7 +32310,7 @@ if (!Element.prototype.closest) {
 })();
 
 
-/* exported ulog, portalsFactionLayers, linksFactionLayers, fieldsFactionLayers -- eslint */
+/* exported ulog -- eslint */
 
 } // wrapper end
 // inject code into site context

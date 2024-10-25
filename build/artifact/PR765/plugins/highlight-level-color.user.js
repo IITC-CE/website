@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals by level color
 // @category       Highlighter
-// @version        0.2.2.20241023.122913
+// @version        0.2.3.20241025.071630
 // @description    Use the portal fill color to denote the portal level by using the game level colors.
 // @id             highlight-level-color
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'highlight-level-color';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global COLORS_LVL */
 
 var changelog = [
+  {
+    version: '0.2.3',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.2',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -39,15 +42,15 @@ var changelog = [
   },
 ];
 
-function highlightLevelColor (data) {
+function highlightLevelColor(data) {
   var portal_level = data.portal.options.data.level;
   if (portal_level !== undefined) {
-    var opacity = .6;
-    data.portal.setStyle({fillColor: COLORS_LVL[portal_level], fillOpacity: opacity});
+    var opacity = 0.6;
+    data.portal.setStyle({ fillColor: window.COLORS_LVL[portal_level], fillOpacity: opacity });
   }
 }
 
-function setup () {
+function setup() {
   window.addPortalHighlighter('Level Color', highlightLevelColor);
 }
 
