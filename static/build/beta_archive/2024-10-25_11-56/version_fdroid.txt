@@ -1,0 +1,2 @@
+versionName=0.39.1-beta-2024.10.25-11:56
+versionCode=1729857343
