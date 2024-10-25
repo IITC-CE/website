@@ -2,7 +2,7 @@
 // @author         fkloft
 // @name           IITC plugin: Layer count
 // @category       Info
-// @version        0.2.4.20241023.122913
+// @version        0.2.5.20241025.071630
 // @description    Allow users to count nested fields
 // @id             layer-count
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'layer-count';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.5',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.4',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -43,10 +48,12 @@ var layerCount = {};
 window.plugin.layerCount = layerCount;
 
 var tooltip;
-function calculate (ev) {
+function calculate(ev) {
   var point = ev.layerPoint;
   var fields = window.fields;
-  var layersRes = 0, layersEnl = 0, layersDrawn = 0;
+  var layersRes = 0,
+    layersEnl = 0,
+    layersDrawn = 0;
 
   for (var guid in fields) {
     var field = fields[guid];
@@ -60,9 +67,9 @@ function calculate (ev) {
       }
     }
     if (window.pnpoly(rings, point)) {
-      if (field.options.team === TEAM_ENL) {
+      if (field.options.team === window.TEAM_ENL) {
         layersEnl++;
-      } else if (field.options.team === TEAM_RES) {
+      } else if (field.options.team === window.TEAM_RES) {
         layersRes++;
       }
     }
@@ -92,7 +99,7 @@ function calculate (ev) {
   tooltip.innerHTML = content;
 }
 
-function setup () {
+function setup() {
   $('<style>').prop('type', 'text/css').html('\
 .leaflet-control-layer-count a\
 {\
@@ -137,25 +144,29 @@ function setup () {
 
   var LayerCount = L.Control.extend({
     options: {
-      position: 'topleft'
+      position: 'topleft',
     },
 
     onAdd: function (map) {
       var button = document.createElement('a');
       button.className = 'leaflet-bar-part';
-      button.addEventListener('click', function toggle () {
-        var btn = this;
-        if (btn.classList.contains('active')) {
-          map.off('click', calculate);
-          btn.classList.remove('active');
-        } else {
-          map.on('click', calculate);
-          btn.classList.add('active');
-          setTimeout(function () {
-            tooltip.textContent = 'Click on map';
-          }, 10);
-        }
-      }, false);
+      button.addEventListener(
+        'click',
+        function toggle() {
+          var btn = this;
+          if (btn.classList.contains('active')) {
+            map.off('click', calculate);
+            btn.classList.remove('active');
+          } else {
+            map.on('click', calculate);
+            btn.classList.add('active');
+            setTimeout(function () {
+              tooltip.textContent = 'Click on map';
+            }, 10);
+          }
+        },
+        false
+      );
       button.title = 'Count nested fields';
 
       tooltip = document.createElement('div');
@@ -170,13 +181,11 @@ function setup () {
 
     onRemove: function (map) {
       map.off('click', calculate);
-    }
+    },
   });
-  var ctrl = new LayerCount;
+  var ctrl = new LayerCount();
   ctrl.addTo(window.map);
 }
-
-/* exported setup */
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

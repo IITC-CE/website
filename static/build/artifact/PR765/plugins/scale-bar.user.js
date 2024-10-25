@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Scale bar
 // @category       Controls
-// @version        0.1.3.20241023.122913
+// @version        0.1.4.20241025.071630
 // @description    Show scale bar on the map.
 // @id             scale-bar
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'scale-bar';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.1.4',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.3',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -51,7 +56,7 @@ scaleBar.mobileOptions = { position: 'bottomright', maxWidth: 100 };
 
 scaleBar.desktopOptions = { position: 'topleft', maxWidth: 200 };
 
-function moveToEdge (ctrl) {
+function moveToEdge(ctrl) {
   var $el = $(ctrl.getContainer());
   var $corner = $el.parent();
   var pos = ctrl.getPosition();
@@ -63,13 +68,16 @@ function moveToEdge (ctrl) {
   }
 }
 
-function setup () {
+function setup() {
   var options = L.extend({}, window.isSmartphone() ? scaleBar.mobileOptions : scaleBar.desktopOptions, scaleBar.options);
   scaleBar.control = L.control.scale(options).addTo(window.map);
   // wait other controls to initialize (should be initialized last)
-  setTimeout(function () { moveToEdge(scaleBar.control); });
+  setTimeout(function () {
+    moveToEdge(scaleBar.control);
+  });
 }
 setup.priority = 'low';
+
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;
 if(!window.bootPlugins) window.bootPlugins = [];

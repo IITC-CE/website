@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.2.4.20241023.122913
+// @version        0.2.5.20241025.071630
 // @description    Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-stamen';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.5',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.4',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -57,23 +61,23 @@ mapStamen.setup = function () {
         'Map tiles by <a href="http://stamen.com/">Stamen Design</a>, ',
         'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ',
         'Data by <a href="http://openstreetmap.org/">OpenStreetMap</a>, ',
-        'under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
-      ].join('')
+        'under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.',
+      ].join(''),
     },
     initialize: function (name, options) {
-      options.layer = name.replace(' ','-').toLowerCase();
+      options.layer = name.replace(' ', '-').toLowerCase();
       L.TileLayer.prototype.initialize.call(this, baseUrl, options);
-    }
+    },
   });
 
-  function addLayer (name,options) {
-    layerChooser.addBaseLayer(new L_StamenTileLayer(name,options),'Stamen ' + name);
+  function addLayer(name, options) {
+    window.layerChooser.addBaseLayer(new L_StamenTileLayer(name, options), 'Stamen ' + name);
   }
 
   var options = { minZoom: 0, maxNativeZoom: 20 };
-  addLayer('Toner',options);
-  addLayer('Toner Background',options);
-  addLayer('Toner Lite',options);
+  addLayer('Toner', options);
+  addLayer('Toner Background', options);
+  addLayer('Toner Lite', options);
   // transparent layers. could be useful over satellite imagery or similar
   // addLayer('Toner Hybrid',options);
   // addLayer('Toner Labels',options);
@@ -94,10 +98,10 @@ mapStamen.setup = function () {
       'Map tiles by <a href="http://stamen.com/">Stamen Design</a>, ',
       'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ',
       'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ',
-      'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
-    ].join('')
+      'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+    ].join(''),
   };
-  addLayer('Watercolor',options);
+  addLayer('Watercolor', options);
 };
 
 function setup() {

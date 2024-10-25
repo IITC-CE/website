@@ -2,7 +2,7 @@
 // @author         jacob1123
 // @name           IITC plugin: Gray Google map
 // @category       Map Tiles
-// @version        0.1.6.20241023.122913
+// @version        0.1.7.20241025.071630
 // @description    Add a simplified gray Version of Google map tiles as an optional layer.
 // @id             basemap-google-gray
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-google-gray';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.1.7',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.6',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -56,12 +60,12 @@ grayGMaps.addLayer = function () {
       { featureType: 'poi' },
       { featureType: 'landscape.man_made', stylers: [{ saturation: -100 }, { gamma: 0.13 }] },
       { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-    ]
+    ],
   };
 
   var grayGMaps = L.gridLayer.googleMutant(grayGMapsOptions);
 
-  layerChooser.addBaseLayer(grayGMaps, "Google Gray");
+  window.layerChooser.addBaseLayer(grayGMaps, 'Google Gray');
 };
 
 function setup() {

@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Kartverket.no maps (Norway)
 // @category       Map Tiles
-// @version        0.3.0.20241023.122913
+// @version        0.3.1.20241025.071630
 // @description    Add Kartverket.no map layers.
 // @id             basemap-kartverket
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-kartverket';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.3.1',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.3.0',
     changes: [
@@ -46,9 +50,7 @@ var changelog = [
 var mapKartverket = {};
 
 mapKartverket.setup = function () {
-
   L.TileLayer.Kartverket = L.TileLayer.extend({
-
     baseUrl: 'https://cache.kartverket.no/v1/wmts/1.0.0/' + '{layer}/default/webmercator/{z}/{y}/{x}.png',
 
     options: {
@@ -96,8 +98,7 @@ mapKartverket.setup = function () {
       L.TileLayer.prototype.initialize.call(this, this.baseUrl, options);
       this.options.layer = layer;
       this._name = this.layers[layer] || layer;
-    }
-
+    },
   });
 
   L.tileLayer.kartverket = function (layer, options) {
@@ -105,13 +106,13 @@ mapKartverket.setup = function () {
   };
 
   L.tileLayer.kartverket.getLayers = function () {
-    return L.extend({},L.TileLayer.Kartverket.prototype.layers);
+    return L.extend({}, L.TileLayer.Kartverket.prototype.layers);
   };
 
   var l, layer;
   for (layer in L.tileLayer.kartverket.getLayers()) {
     l = L.tileLayer.kartverket(layer);
-    layerChooser.addBaseLayer(l, l._name);
+    window.layerChooser.addBaseLayer(l, l._name);
   }
 };
 

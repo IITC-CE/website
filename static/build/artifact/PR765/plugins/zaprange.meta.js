@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Zaprange
 // @category       Layer
-// @version        0.1.7.20241023.122913
+// @version        0.1.8.20241025.071630
 // @description    Shows the maximum range of attack by the portals.
 // @id             zaprange
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

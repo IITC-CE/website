@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Cache viewed portals on map
 // @category       Cache
-// @version        0.1.2.20241023.122913
+// @version        0.1.3.20241025.071630
 // @description    Cache the details of recently viewed portals and use this to populate the map when possible
 // @id             cache-portals-on-map
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'cache-portals-on-map';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.1.3',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.2',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -39,18 +43,18 @@ var changelog = [
 ];
 
 // use own namespace for plugin
-window.plugin.cachePortalDetailsOnMap = function() {};
+window.plugin.cachePortalDetailsOnMap = function () {};
 
-window.plugin.cachePortalDetailsOnMap.MAX_AGE = 12*60*60;  //12 hours max age for cached data
+window.plugin.cachePortalDetailsOnMap.MAX_AGE = 12 * 60 * 60; // 12 hours max age for cached data
 
-window.plugin.cachePortalDetailsOnMap.portalDetailLoaded = function(data) {
+window.plugin.cachePortalDetailsOnMap.portalDetailLoaded = function (data) {
   if (data.success) {
     window.plugin.cachePortalDetailsOnMap.cache[data.guid] = { loadtime: Date.now(), ent: data.ent };
   }
 };
 
-window.plugin.cachePortalDetailsOnMap.entityInject = function(data) {
-  var maxAge = Date.now() - window.plugin.cachePortalDetailsOnMap.MAX_AGE*1000;
+window.plugin.cachePortalDetailsOnMap.entityInject = function (data) {
+  var maxAge = Date.now() - window.plugin.cachePortalDetailsOnMap.MAX_AGE * 1000;
 
   var ents = [];
   for (var guid in window.plugin.cachePortalDetailsOnMap.cache) {
@@ -63,16 +67,14 @@ window.plugin.cachePortalDetailsOnMap.entityInject = function(data) {
   data.callback(ents, 'detailed');
 };
 
-
-window.plugin.cachePortalDetailsOnMap.setup  = function() {
-
+window.plugin.cachePortalDetailsOnMap.setup = function () {
   window.plugin.cachePortalDetailsOnMap.cache = {};
 
-  addHook('portalDetailLoaded', window.plugin.cachePortalDetailsOnMap.portalDetailLoaded);
-  addHook('mapDataEntityInject', window.plugin.cachePortalDetailsOnMap.entityInject);
+  window.addHook('portalDetailLoaded', window.plugin.cachePortalDetailsOnMap.portalDetailLoaded);
+  window.addHook('mapDataEntityInject', window.plugin.cachePortalDetailsOnMap.entityInject);
 };
 
-var setup =  window.plugin.cachePortalDetailsOnMap.setup;
+var setup = window.plugin.cachePortalDetailsOnMap.setup;
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

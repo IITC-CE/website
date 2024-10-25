@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.5.20241023.122913
+// @version        0.1.6.20241025.071630
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,18 +21,22 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'basemap-openstreetmap';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L, layerChooser */
+/* global L -- eslint */
 
 // use own namespace for plugin
 var mapOpenStreetMap = {};
 window.plugin.mapOpenStreetMap = mapOpenStreetMap;
 
 var changelog = [
+  {
+    version: '0.1.6',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.1.5',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -80,7 +84,7 @@ function setup() {
 
   for (var entry of mapOpenStreetMap.LAYERS) {
     var layer = new L.TileLayer(entry.url, entry.options);
-    layerChooser.addBaseLayer(layer, entry.name);
+    window.layerChooser.addBaseLayer(layer, entry.name);
   }
 }
 

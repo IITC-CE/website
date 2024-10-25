@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Pan control
 // @category       Controls
-// @version        0.2.4.20241023.122913
+// @version        0.2.5.20241025.071630
 // @description    Show a panning control on the map.
 // @id             pan-control
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'pan-control';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.5',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.4',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -43,17 +48,18 @@ var panControl = {};
 window.plugin.panControl = panControl;
 
 panControl.options = {
-  //position: 'topleft',
-  //panOffset: 350
+  // position: 'topleft',
+  // panOffset: 350
 };
 
-function setup () {
+function setup() {
   loadLeafletPancontrol();
 
   var map = window.map;
   panControl.control = L.control.pan(panControl.options).addTo(map);
 
-  if (!panControl.options.position) { // default: 'topleft'
+  if (!panControl.options.position) {
+    // default: 'topleft'
     // to be above all controls
     $('.leaflet-top.leaflet-left .leaflet-control').first().before(panControl.control.getContainer());
   }
@@ -61,7 +67,9 @@ function setup () {
   // L.Control.Pan.css tries to align zoom control with the pan control, but the result sucks
   // so here is our attempt to make it better
   // (adapted from https://github.com/kartena/Leaflet.Pancontrol/pull/20)
-  $('<style>').html('\
+  $('<style>')
+    .html(
+      '\
     .leaflet-left.has-leaflet-pan-control .leaflet-control-zoom,\
     .leaflet-left.has-leaflet-pan-control .leaflet-control-zoomslider { left: unset; }\
     .leaflet-left.has-leaflet-pan-control .leaflet-control-scale { left: -24.5px; }\
@@ -72,13 +80,16 @@ function setup () {
     .leaflet-touch .leaflet-left .leaflet-control-pan { left: -26px; }\
     .leaflet-touch .leaflet-control-pan { width: 86px; height: 114px; }\
     .leaflet-touch .leaflet-left .leaflet-control-pan { margin-left: 10px; }\
-  ').appendTo('head');
+  '
+    )
+    .appendTo('head');
 }
 setup.priority = 'low';
 
-function loadLeafletPancontrol () {
+function loadLeafletPancontrol() {
   try {
     // https://github.com/kartena/Leaflet.Pancontrol
+    // eslint-disable-next-line
     // *** included: external/L.Control.Pan.js ***
 (function (factory) {
 	// Packaging/modules magic dance
@@ -327,7 +338,6 @@ function loadLeafletPancontrol () {
   top:80px;\
 }\
 ').appendTo('head');
-
   } catch (e) {
     console.error('L.Control.Pan.js loading failed');
     throw e;

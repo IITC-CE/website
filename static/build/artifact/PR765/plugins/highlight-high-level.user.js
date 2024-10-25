@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight high level portals
 // @category       Highlighter
-// @version        0.2.2.20241023.122913
+// @version        0.2.3.20241025.071630
 // @description    Use the portal fill color to denote high level portals: Purple L8, Red L7, Orange L6
 // @id             highlight-high-level
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-23-122913';
+plugin_info.dateTimeVersion = '2024-10-25-071630';
 plugin_info.pluginId = 'highlight-high-level';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L */
+/* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.3',
+    changes: ['Refactoring: fix eslint'],
+  },
   {
     version: '0.2.2',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -45,33 +49,30 @@ window.plugin.highlightHighLevel = highLevel;
 
 highLevel.styles = {
   common: {
-    fillOpacity: 0.7
+    fillOpacity: 0.7,
   },
   level6: {
-    fillColor: 'orange'
+    fillColor: 'orange',
   },
   level7: {
-    fillColor: 'red'
+    fillColor: 'red',
   },
   level8: {
-    fillColor: 'magenta'
-  }
+    fillColor: 'magenta',
+  },
 };
 
-function highlightHighLevel (data) {
+function highlightHighLevel(data) {
   var portal_level = data.portal.options.data.level;
-  if (portal_level === undefined) return;           // continue on 0..8
-  var newStyle= L.extend ( {},
-    highLevel.styles.common,
-    highLevel.styles['level'+portal_level]
-  );
+  if (portal_level === undefined) return; // continue on 0..8
+  var newStyle = L.extend({}, highLevel.styles.common, highLevel.styles['level' + portal_level]);
 
   if (newStyle.fillColor) {
     data.portal.setStyle(newStyle);
   }
 }
 
-function setup () {
+function setup() {
   window.addPortalHighlighter('Higher Level Portals', highlightHighLevel);
 }
 
