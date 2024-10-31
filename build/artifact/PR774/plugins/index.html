@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>/build/artifact/PR774/plugins</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { padding: 0; margin: 0; }
+
+        body {
+            font-family: sans-serif;
+            text-rendering: optimizespeed;
+            background-color: #ffffff;
+        }
+
+        a {
+            color: #006ed3;
+            text-decoration: none;
+        }
+
+        a:hover,
+        h1 a:hover {
+            color: #319cff;
+        }
+
+        header,
+        #summary {
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+
+        th:first-child,
+        td:first-child {
+            width: 5%;
+        }
+
+        th:last-child,
+        td:last-child {
+            width: 5%;
+        }
+
+        header {
+            padding-top: 25px;
+            padding-bottom: 15px;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: normal;
+            white-space: nowrap;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+            color: #999;
+        }
+
+        h1 a {
+            color: #000;
+            margin: 0 4px;
+        }
+
+        h1 a:hover {
+            text-decoration: underline;
+        }
+
+        h1 a:first-child {
+            margin: 0;
+        }
+
+        main {
+            display: block;
+        }
+
+        .meta {
+            font-size: 12px;
+            font-family: Verdana, sans-serif;
+            border-bottom: 1px solid #9C9C9C;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .meta-item {
+            margin-right: 1em;
+        }
+
+        #filter {
+            padding: 4px;
+            border: 1px solid #CCC;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        tr {
+            border-bottom: 1px dashed #dadada;
+        }
+
+        tbody tr:hover {
+            background-color: #ffffec;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 10px 0;
+        }
+
+        th {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        th a {
+            color: black;
+        }
+
+        th svg {
+            vertical-align: middle;
+        }
+
+        td {
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        td:nth-child(2) {
+            width: 80%;
+        }
+
+        td:nth-child(3),
+        th:nth-child(3) {
+            padding: 0 20px 0 20px;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            text-align: right;
+        }
+
+        td:nth-child(2) svg {
+            position: absolute;
+        }
+
+        td .name,
+        td .goup {
+            margin-left: 1.75em;
+            word-break: break-all;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .icon {
+            margin-right: 5px;
+        }
+
+        footer {
+            padding: 40px 20px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .hideable {
+                display: none;
+            }
+
+            td:nth-child(2) {
+                width: auto;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                padding-right: 5%;
+                text-align: right;
+            }
+
+            h1 {
+                color: #000;
+            }
+
+            h1 a {
+                margin: 0;
+            }
+
+            #filter {
+                max-width: 100px;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #101010;
+                color: #dddddd;
+            }
+
+            header {
+                background-color: #151515;
+            }
+
+            tbody tr:hover {
+                background-color: #252525;
+            }
+
+            header a,
+            th a {
+                color: #dddddd;
+            }
+
+            a {
+                color: #5796d1;
+                text-decoration: none;
+            }
+
+            a:hover,
+            h1 a:hover {
+                color: #62b2fd;
+            }
+
+            tr {
+                border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+            }
+
+            #up-arrow,
+            #down-arrow {
+                fill: #dddddd;
+            }
+
+            #filter {
+                background-color: #151515;
+                color: #ffffff;
+                border: 1px solid #212121;
+            }
+
+            .meta {
+                border-bottom: 1px solid #212121
+            }
+        }
+    </style>
+</head>
+<body onload='initFilter()'>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="0" width="0" style="position: absolute;">
+    <defs>
+        <!-- Folder -->
+        <g id="folder" fill-rule="nonzero" fill="none">
+            <path d="M285.22 37.55h-142.6L110.9 0H31.7C14.25 0 0 16.9 0 37.55v75.1h316.92V75.1c0-20.65-14.26-37.55-31.7-37.55z" fill="#FFA000"/>
+            <path d="M285.22 36H31.7C14.25 36 0 50.28 0 67.74v158.7c0 17.47 14.26 31.75 31.7 31.75H285.2c17.44 0 31.7-14.3 31.7-31.75V67.75c0-17.47-14.26-31.75-31.7-31.75z" fill="#FFCA28"/>
+        </g>
+        <g id="folder-shortcut" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="folder-shortcut-group" fill-rule="nonzero">
+                <g id="folder-shortcut-shape">
+                    <path d="M285.224876,37.5486902 L142.612438,37.5486902 L110.920785,0 L31.6916529,0 C14.2612438,0 0,16.8969106 0,37.5486902 L0,112.646071 L316.916529,112.646071 L316.916529,75.0973805 C316.916529,54.4456008 302.655285,37.5486902 285.224876,37.5486902 Z" id="Shape" fill="#FFA000"></path>
+                    <path d="M285.224876,36 L31.6916529,36 C14.2612438,36 0,50.2838568 0,67.7419039 L0,226.451424 C0,243.909471 14.2612438,258.193328 31.6916529,258.193328 L285.224876,258.193328 C302.655285,258.193328 316.916529,243.909471 316.916529,226.451424 L316.916529,67.7419039 C316.916529,50.2838568 302.655285,36 285.224876,36 Z" id="Shape" fill="#FFCA28"></path>
+                </g>
+                <path d="M126.154134,250.559184 C126.850974,251.883673 127.300549,253.006122 127.772602,254.106122 C128.469442,255.206122 128.919016,256.104082 129.638335,257.002041 C130.559962,258.326531 131.728855,259 133.100057,259 C134.493737,259 135.415364,258.55102 136.112204,257.67551 C136.809044,257.002041 137.258619,255.902041 137.258619,254.577551 C137.258619,253.904082 137.258619,252.804082 137.033832,251.457143 C136.786566,249.908163 136.561779,249.032653 136.561779,248.583673 C136.089726,242.814286 135.864939,237.920408 135.864939,233.273469 C135.864939,225.057143 136.786566,217.514286 138.180246,210.846939 C139.798713,204.202041 141.889234,198.634694 144.429328,193.763265 C147.216689,188.869388 150.678411,184.873469 154.836973,181.326531 C158.995535,177.779592 163.626149,174.883673 168.481552,172.661224 C173.336954,170.438776 179.113983,168.665306 185.587852,167.340816 C192.061722,166.218367 198.760378,165.342857 205.481514,164.669388 C212.18017,164.220408 219.598146,163.995918 228.162535,163.995918 L246.055591,163.995918 L246.055591,195.514286 C246.055591,197.736735 246.752431,199.510204 248.370899,201.059184 C250.214153,202.608163 252.079886,203.506122 254.372715,203.506122 C256.463236,203.506122 258.531277,202.608163 260.172223,201.059184 L326.102289,137.797959 C327.720757,136.24898 328.642384,134.47551 328.642384,132.253061 C328.642384,130.030612 327.720757,128.257143 326.102289,126.708163 L260.172223,63.4469388 C258.553756,61.8979592 256.463236,61 254.395194,61 C252.079886,61 250.236632,61.8979592 248.393377,63.4469388 C246.77491,64.9959184 246.07807,66.7693878 246.07807,68.9918367 L246.07807,100.510204 L228.162535,100.510204 C166.863084,100.510204 129.166282,117.167347 115.274437,150.459184 C110.666301,161.54898 108.350993,175.310204 108.350993,191.742857 C108.350993,205.279592 113.903236,223.912245 124.760454,247.438776 C125.00772,248.112245 125.457294,249.010204 126.154134,250.559184 Z" id="Shape" fill="#FFFFFF" transform="translate(218.496689, 160.000000) scale(-1, 1) translate(-218.496689, -160.000000) "></path>
+            </g>
+        </g>
+
+        <!-- File -->
+        <g id="file" stroke="#000" stroke-width="25" fill="#FFF" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 24.12v274.76c0 6.16 5.87 11.12 13.17 11.12H239c7.3 0 13.17-4.96 13.17-11.12V136.15S132.6 13 128.37 13H26.17C18.87 13 13 17.96 13 24.12z"/>
+            <path d="M129.37 13L129 113.9c0 10.58 7.26 19.1 16.27 19.1H249L129.37 13z"/>
+        </g>
+        <g id="file-shortcut" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="file-shortcut-group" transform="translate(13.000000, 13.000000)">
+                <g id="file-shortcut-shape" stroke="#000000" stroke-width="25" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M0,11.1214886 L0,285.878477 C0,292.039924 5.87498876,296.999983 13.1728373,296.999983 L225.997983,296.999983 C233.295974,296.999983 239.17082,292.039942 239.17082,285.878477 L239.17082,123.145388 C239.17082,123.145388 119.58541,2.84217094e-14 115.369423,2.84217094e-14 L13.1728576,2.84217094e-14 C5.87500907,-1.71479982e-05 0,4.96022995 0,11.1214886 Z" id="rect1171"></path>
+                    <path d="M116.37005,0 L116,100.904964 C116,111.483663 123.258008,120 132.273377,120 L236,120 L116.37005,0 L116.37005,0 Z" id="rect1794"></path>
+                </g>
+                <path d="M47.803141,294.093878 C48.4999811,295.177551 48.9495553,296.095918 49.4216083,296.995918 C50.1184484,297.895918 50.5680227,298.630612 51.2873415,299.365306 C52.2089688,300.44898 53.3778619,301 54.7490634,301 C56.1427436,301 57.0643709,300.632653 57.761211,299.916327 C58.4580511,299.365306 58.9076254,298.465306 58.9076254,297.381633 C58.9076254,296.830612 58.9076254,295.930612 58.6828382,294.828571 C58.4355724,293.561224 58.2107852,292.844898 58.2107852,292.477551 C57.7387323,287.757143 57.5139451,283.753061 57.5139451,279.95102 C57.5139451,273.228571 58.4355724,267.057143 59.8292526,261.602041 C61.44772,256.165306 63.5382403,251.610204 66.0783349,247.62449 C68.8656954,243.620408 72.3274172,240.35102 76.4859792,237.44898 C80.6445412,234.546939 85.2751561,232.177551 90.1305582,230.359184 C94.9859603,228.540816 100.76299,227.089796 107.236859,226.006122 C113.710728,225.087755 120.409385,224.371429 127.13052,223.820408 C133.829177,223.453061 141.247152,223.269388 149.811542,223.269388 L167.704598,223.269388 L167.704598,249.057143 C167.704598,250.87551 168.401438,252.326531 170.019905,253.593878 C171.86316,254.861224 173.728893,255.595918 176.021722,255.595918 C178.112242,255.595918 180.180284,254.861224 181.82123,253.593878 L247.751296,201.834694 C249.369763,200.567347 250.291391,199.116327 250.291391,197.297959 C250.291391,195.479592 249.369763,194.028571 247.751296,192.761224 L181.82123,141.002041 C180.202763,139.734694 178.112242,139 176.044201,139 C173.728893,139 171.885639,139.734694 170.042384,141.002041 C168.423917,142.269388 167.727077,143.720408 167.727077,145.538776 L167.727077,171.326531 L149.811542,171.326531 C88.5120908,171.326531 50.8152886,184.955102 36.9234437,212.193878 C32.3153075,221.267347 30,232.526531 30,245.971429 C30,257.046939 35.5522422,272.291837 46.4094607,291.540816 C46.6567266,292.091837 47.1063009,292.826531 47.803141,294.093878 Z" id="Shape-Copy" fill="#000000" fill-rule="nonzero" transform="translate(140.145695, 220.000000) scale(-1, 1) translate(-140.145695, -220.000000) "></path>
+            </g>
+        </g>
+
+        <!-- Up arrow -->
+        <g id="up-arrow" transform="translate(-279.22 -208.12)">
+            <path transform="matrix(.22413 0 0 .12089 335.67 164.35)" stroke-width="0" d="m-194.17 412.01h-28.827-28.827l14.414-24.965 14.414-24.965 14.414 24.965z"/>
+        </g>
+
+        <!-- Down arrow -->
+        <g id="down-arrow" transform="translate(-279.22 -208.12)">
+            <path transform="matrix(.22413 0 0 -.12089 335.67 257.93)" stroke-width="0" d="m-194.17 412.01h-28.827-28.827l14.414-24.965 14.414-24.965 14.414 24.965z"/>
+        </g>
+    </defs>
+</svg>
+
+<header>
+    <h1>
+        <a href="/">/</a>
+                    <a href="../../../">build</a>/
+                    <a href="../../">artifact</a>/
+                    <a href="../">PR774</a>/
+                    <a href="">plugins</a>/
+            </h1>
+</header>
+<main>
+    <div class="meta">
+        <div id="summary">
+            <span class="meta-item"><b>0</b> directory</span>
+            <span class="meta-item"><b>134</b> files</span>
+            <span class="meta-item"><input type="text" placeholder="filter" id="filter" onkeyup='filter()'></span>
+        </div>
+    </div>
+    <div class="listing">
+        <table aria-describedby="summary">
+            <thead>
+            <tr>
+                <th></th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Size
+                </th>
+                <th class="hideable">
+                    Modified
+                </th>
+                <th class="hideable"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td></td>
+                <td>
+                    <a href="..">
+                        <span class="goup">Go up</span>
+                    </a>
+                </td>
+                <td>&mdash;</td>
+                <td class="hideable">&mdash;</td>
+                <td class="hideable"></td>
+            </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./ap-stats.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">ap-stats.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="726">726.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./ap-stats.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">ap-stats.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="8223">8.0 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-bing.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-bing.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="698">698.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-bing.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-bing.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="13843">13.5 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-blank.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-blank.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="727">727.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-blank.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-blank.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3273">3.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-gaode.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-gaode.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="747">747.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-gaode.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-gaode.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="5235">5.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-google-gray.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-google-gray.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="777">777.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-google-gray.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-google-gray.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3746">3.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-kartverket.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-kartverket.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="741">741.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-kartverket.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-kartverket.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="4703">4.6 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-openstreetmap.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-openstreetmap.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="784">784.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-openstreetmap.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-openstreetmap.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3872">3.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-stamen.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-stamen.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="757">757.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-stamen.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-stamen.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="4756">4.6 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-yandex.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-yandex.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="730">730.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./basemap-yandex.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">basemap-yandex.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="11943">11.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./bookmarks.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">bookmarks.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="799">799.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./bookmarks.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">bookmarks.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="82009">80.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./cache-portals-on-map.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">cache-portals-on-map.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="809">809.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./cache-portals-on-map.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">cache-portals-on-map.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3818">3.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./cross-links.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">cross-links.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="740">740.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./cross-links.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">cross-links.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="10140">9.9 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./debug-console.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">debug-console.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="702">702.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./debug-console.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">debug-console.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="8000">7.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./debug-raw-portal-data.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">debug-raw-portal-data.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="819">819.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./debug-raw-portal-data.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">debug-raw-portal-data.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="5188">5.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./distance-to-portal.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">distance-to-portal.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="837">837.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./distance-to-portal.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">distance-to-portal.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="9235">9.0 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./done-links.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">done-links.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="769">769.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./done-links.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">done-links.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="7546">7.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./draw-tools.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">draw-tools.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="767">767.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./draw-tools.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">draw-tools.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="296260">289.3 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./farms-find.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">farms-find.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="689">689.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./farms-find.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">farms-find.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="13136">12.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./fix-china-map-offset.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">fix-china-map-offset.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="775">775.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./fix-china-map-offset.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">fix-china-map-offset.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="13090">12.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./fly-links.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">fly-links.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="764">764.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./fly-links.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">fly-links.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="14381">14.0 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./hide-portal-levels.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">hide-portal-levels.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="774">774.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./hide-portal-levels.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">hide-portal-levels.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="4383">4.3 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-forgotten.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-forgotten.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="967">967.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-forgotten.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-forgotten.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3356">3.3 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-hide-team.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-hide-team.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="785">785.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-hide-team.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-hide-team.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="2758">2.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-high-level.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-high-level.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="809">809.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-high-level.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-high-level.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3271">3.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-level-color.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-level-color.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="816">816.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-level-color.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-level-color.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="2890">2.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-missing-resonators.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-missing-resonators.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="836">836.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-missing-resonators.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-missing-resonators.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3465">3.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-moved-portals.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-moved-portals.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="788">788.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-moved-portals.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-moved-portals.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3498">3.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-needs-recharge.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-needs-recharge.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="904">904.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-needs-recharge.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-needs-recharge.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3944">3.9 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-ornaments.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-ornaments.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="825">825.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-ornaments.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-ornaments.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3212">3.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-portal-history.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-portal-history.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="836">836.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-portal-history.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-portal-history.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="5480">5.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-portals-my-level.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-portals-my-level.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="850">850.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-portals-my-level.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-portals-my-level.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3291">3.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-weakness.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-weakness.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="850">850.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./highlight-weakness.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">highlight-weakness.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3433">3.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./keys-on-map.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">keys-on-map.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="733">733.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./keys-on-map.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">keys-on-map.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="5695">5.6 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./keys.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">keys.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="801">801.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./keys.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">keys.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="12797">12.5 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./layer-count.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">layer-count.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="696">696.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./layer-count.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">layer-count.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="6541">6.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./link-show-direction.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">link-show-direction.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="808">808.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./link-show-direction.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">link-show-direction.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="8884">8.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./linked-portals-show.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">linked-portals-show.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="914">914.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./linked-portals-show.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">linked-portals-show.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="12393">12.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./links-to-moved-portals.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">links-to-moved-portals.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="769">769.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./links-to-moved-portals.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">links-to-moved-portals.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="4984">4.9 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./machina-tools.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">machina-tools.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="863">863.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./machina-tools.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">machina-tools.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="153826">150.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./machina-tracker.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">machina-tracker.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="718">718.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./machina-tracker.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">machina-tracker.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="12187">11.9 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./minimap.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">minimap.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="689">689.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./minimap.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">minimap.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="21618">21.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./missions.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">missions.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="744">744.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./missions.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">missions.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="49203">48.0 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./multi-projects-extension.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">multi-projects-extension.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="773">773.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./multi-projects-extension.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">multi-projects-extension.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="19860">19.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./ornament-icons-extended.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">ornament-icons-extended.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="761">761.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./ornament-icons-extended.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">ornament-icons-extended.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3251">3.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./ornament-icons.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">ornament-icons.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="722">722.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./ornament-icons.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">ornament-icons.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="6239">6.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./overlay-kml.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">overlay-kml.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="759">759.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./overlay-kml.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">overlay-kml.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="43058">42.0 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./pan-control.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">pan-control.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="701">701.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./pan-control.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">pan-control.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="25252">24.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./periodic-refresh.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">periodic-refresh.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="791">791.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./periodic-refresh.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">periodic-refresh.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="2929">2.9 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./player-activity-tracker.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">player-activity-tracker.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="911">911.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./player-activity-tracker.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">player-activity-tracker.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="43241">42.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./player-level-guess.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">player-level-guess.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="775">775.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./player-level-guess.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">player-level-guess.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="21637">21.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portal-counts.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portal-counts.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="731">731.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portal-counts.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portal-counts.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="15993">15.6 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portal-level-numbers.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portal-level-numbers.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="741">741.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portal-level-numbers.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portal-level-numbers.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="8618">8.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portal-names.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portal-names.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="697">697.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portal-names.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portal-names.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="8601">8.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portals-list.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portals-list.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="770">770.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./portals-list.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">portals-list.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="24323">23.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./privacy-view.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">privacy-view.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="751">751.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./privacy-view.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">privacy-view.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="4238">4.1 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./regions.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">regions.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="709">709.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./regions.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">regions.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="20758">20.3 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./remove-extra-layers.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">remove-extra-layers.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="794">794.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./remove-extra-layers.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">remove-extra-layers.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="2837">2.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./reso-energy-pct.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">reso-energy-pct.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="785">785.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./reso-energy-pct.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">reso-energy-pct.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3270">3.2 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./scale-bar.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">scale-bar.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="684">684.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./scale-bar.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">scale-bar.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="3634">3.5 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./score-cycle-times.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">score-cycle-times.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="790">790.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./score-cycle-times.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">score-cycle-times.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="4553">4.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./scoreboard.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">scoreboard.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="800">800.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./scoreboard.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">scoreboard.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="8009">7.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./scroll-wheel-zoom-disable.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">scroll-wheel-zoom-disable.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="830">830.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./scroll-wheel-zoom-disable.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">scroll-wheel-zoom-disable.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="2815">2.7 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./sync.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">sync.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="817">817.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./sync.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">sync.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="29537">28.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./tidy-links.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">tidy-links.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="794">794.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./tidy-links.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">tidy-links.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="14146">13.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./uniques.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">uniques.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="939">939.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./uniques.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">uniques.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="22966">22.4 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./zaprange.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">zaprange.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="697">697.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./zaprange.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">zaprange.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="7166">7.0 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./zoom-slider.meta.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">zoom-slider.meta.js</span>
+                        </a>
+                    </td>
+                    <td data-order="725">725.0 B</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                            <tr class="file">
+                    <td></td>
+                    <td>
+                        <a href="./zoom-slider.user.js">
+                            <svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323">
+                                <use xlink:href="#file"></use>
+                            </svg>
+                            <span class="name">zoom-slider.user.js</span>
+                        </a>
+                    </td>
+                    <td data-order="13079">12.8 KiB</td>
+                    <td class="hideable"><time datetime="2024-10-31T09:08:56Z">2024-10-31 09:08:56</time></td>
+                    <td class="hideable"></td>
+                </tr>
+                        </tbody>
+        </table>
+    </div>
+</main>
+<footer>
+    <a rel="noopener noreferrer" href="https://iitc.app">iitc.app</a>
+</footer>
+<script>
+    var filterEl = document.getElementById('filter');
+    filterEl.focus();
+
+    function initFilter() {
+        if (!filterEl.value) {
+            var filterParam = new URL(window.location.href).searchParams.get('filter');
+            if (filterParam) {
+                filterEl.value = filterParam;
+            }
+        }
+        filter();
+    }
+
+    function filter() {
+        var q = filterEl.value.trim().toLowerCase();
+        var elems = document.querySelectorAll('tr.file');
+        elems.forEach(function(el) {
+            if (!q) {
+                el.style.display = '';
+                return;
+            }
+            var nameEl = el.querySelector('.name');
+            var nameVal = nameEl.textContent.trim().toLowerCase();
+            if (nameVal.indexOf(q) !== -1) {
+                el.style.display = '';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    }
+
+    function localizeDatetime(e, index, ar) {
+        if (e.textContent === undefined) {
+            return;
+        }
+        var d = new Date(e.getAttribute('datetime'));
+        if (isNaN(d)) {
+            d = new Date(e.textContent);
+            if (isNaN(d)) {
+                return;
+            }
+        }
+        e.textContent = d.toLocaleString([], {day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"});
+    }
+    var timeList = Array.prototype.slice.call(document.getElementsByTagName("time"));
+    timeList.forEach(localizeDatetime);
+</script>
+</body>
+</html>
