@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241031.081459
+// @version        0.39.1.20241031.090250
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-31-081459';
+plugin_info.dateTimeVersion = '2024-10-31-090250';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -121,7 +121,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-10-31-081459';
+window.iitcBuildDate = '2024-10-31-090250';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4007,7 +4007,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-10-31-081459');
+  log.log('loading done, booting. Built: ' + '2024-10-31-090250');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -31502,7 +31502,13 @@ const formatInterval = (seconds, maxTerms) => {
 };
 
 /**
- * Formats a distance in meters, converting to kilometers if the distance is over 10,000 meters.
+ * Formats a distance in meters, converting to kilometers with appropriate precision
+ * based on the distance range.
+ *
+ * For distances:
+ * - Under 1000m: shows in meters, rounded to whole numbers
+ * - 1000m to 9999m: shows in kilometers with 1 decimal place
+ * - 10000m and above: shows in whole kilometers
  *
  * @memberof IITC.utils
  * @function formatDistance
@@ -31511,9 +31517,22 @@ const formatInterval = (seconds, maxTerms) => {
  */
 const formatDistance = (distance) => {
   if (distance === null || distance === undefined) return '';
-  const isKilometers = distance > 10000;
-  const value = isKilometers ? (distance / 1000).toFixed(2) : Math.round(distance);
-  const unit = isKilometers ? 'km' : 'm';
+  let value, unit;
+
+  if (distance >= 10000) {
+    // For 10km and above: show whole kilometers
+    value = Math.round(distance / 1000);
+    unit = 'km';
+  } else if (distance >= 1000) {
+    // For 1km to 9.9km: show kilometers with one decimal
+    value = Math.round(distance / 100) / 10;
+    unit = 'km';
+  } else {
+    // For under 1km: show in meters
+    value = Math.round(distance);
+    unit = 'm';
+  }
+
   return `${IITC.utils.formatNumber(value)}${unit}`;
 };
 
