@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241031.090250
+// @version        0.39.1.20241104.092523
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-31-090250';
+plugin_info.dateTimeVersion = '2024-11-04-092523';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -121,7 +121,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-10-31-090250';
+window.iitcBuildDate = '2024-11-04-092523';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4007,7 +4007,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-10-31-090250');
+  log.log('loading done, booting. Built: ' + '2024-11-04-092523');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20243,7 +20243,12 @@ chat.show = function (name) {
 chat.chooser = function (event) {
   var t = $(event.target);
   var tab = t.data('channel');
-  chat.chooseTab(tab);
+
+  if (window.isSmartphone() && !window.useAppPanes()) {
+    window.show(tab);
+  } else {
+    chat.chooseTab(tab);
+  }
 };
 
 /**
@@ -30675,10 +30680,6 @@ body {\
   margin-left: 4px;\
 }\
 \
-#sidebar, #chatcontrols, #chat, #chatinput {\
-  background: transparent !important;\
-}\
-\
 .leaflet-top .leaflet-control {\
   margin-top: 5px !important;\
   margin-left: 5px !important;\
@@ -30807,7 +30808,37 @@ body {\
    https://github.com/IITC-CE/ingress-intel-total-conversion/issues/89\
 */\
 .leaflet-bottom { bottom: 5px; }\
-'));
+\
+/* Controls for mobile view without an app */\
+:root {\
+  --top-controls-height: 38px;\
+}\
+\
+body.show_controls #chatcontrols {\
+  display: flex !important;\
+  top: 0;\
+  overflow-x: auto;\
+  width: calc(100% - 1px);\
+}\
+\
+body.show_controls #chatcontrols a {\
+  flex: 1;\
+  min-width: fit-content;\
+  padding: 0 5px;\
+}\
+\
+body.show_controls #map {\
+  height: calc(100vh - var(--top-controls-height) - 25px);\
+  margin-top: var(--top-controls-height);\
+}\
+\
+body.show_controls #scrollwrapper {\
+  margin-top: var(--top-controls-height)\
+}\
+\
+body.show_controls #chat {\
+  top: var(--top-controls-height) !important;\
+}'));
   document.head.appendChild(style);
 
   // don’t need many of those
@@ -30824,20 +30855,26 @@ body {\
   };
 
   window.smartphone.mapButton = $('<a>map</a>').click(function () {
+    window.show('map');
     $('#map').css({ visibility: 'visible', opacity: '1' });
     $('#updatestatus').show();
-    $('#chatcontrols a .active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('map')").addClass('active');
   });
 
   window.smartphone.sideButton = $('<a>info</a>').click(function () {
+    window.show('info');
     $('#scrollwrapper').show();
     window.resetScrollOnNewPortal();
-    $('.active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('info')").addClass('active');
   });
 
   $('#chatcontrols').append(window.smartphone.mapButton).append(window.smartphone.sideButton);
+
+  if (!window.useAppPanes()) {
+    document.body.classList.add('show_controls');
+  }
 
   window.addHook('portalDetailsUpdated', function () {
     var x = $('.imgpreview img').removeClass('hide');
@@ -30953,10 +30990,6 @@ window.runOnSmartphonesAfterBoot = function () {
         $('#sidebar').animate({ scrollTop: newTop }, 200);
       }
     });
-
-  // make buttons in action bar flexible
-  var l = $('#chatcontrols a:visible');
-  l.css('width', 100 / l.length + '%');
 };
 
 
@@ -31586,17 +31619,13 @@ const showPortalPosLinks = (lat, lng, name) => {
 
 /**
  * Checks if the device is a touch-enabled device.
+ * Alias for `L.Browser.touch()`
  *
  * @memberof IITC.utils
  * @function isTouchDevice
  * @returns {boolean} True if the device is touch-enabled, otherwise false.
  */
-const isTouchDevice = function () {
-  return (
-    'ontouchstart' in window || // works on most browsers
-    'onmsgesturechange' in window
-  ); // works on ie10
-};
+const isTouchDevice = () => L.Browser.touch;
 
 /**
  * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
