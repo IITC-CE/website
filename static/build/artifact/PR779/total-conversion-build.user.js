@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241103.152915
+// @version        0.39.1.20241104.085854
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-11-03-152915';
+plugin_info.dateTimeVersion = '2024-11-04-085854';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -125,7 +125,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-11-03-152915';
+window.iitcBuildDate = '2024-11-04-085854';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4034,7 +4034,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-11-03-152915');
+  log.log('loading done, booting. Built: ' + '2024-11-04-085854');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20270,7 +20270,12 @@ chat.show = function (name) {
 chat.chooser = function (event) {
   var t = $(event.target);
   var tab = t.data('channel');
-  chat.chooseTab(tab);
+
+  if (window.isSmartphone() && !window.useAppPanes()) {
+    window.show(tab);
+  } else {
+    chat.chooseTab(tab);
+  }
 };
 
 /**
@@ -30050,6 +30055,7 @@ class Query {
    *
    * @memberof IITC.search.Query
    * @function show
+   * @private
    */
   show() {
     this.resultsView.renderIn('#searchwrapper');
@@ -30060,6 +30066,7 @@ class Query {
    *
    * @memberof IITC.search.Query
    * @function show
+   * @private
    */
   hide() {
     this.resultsView.remove();
@@ -30131,6 +30138,7 @@ class Query {
    * @function handleKeyPress
    * @param {Event} ev - The keyboard event.
    * @param {Object} result - The result being interacted with.
+   * @private
    */
   handleKeyPress(ev, result) {
     if (ev.key === ' ' || ev.key === 'Enter') {
@@ -30145,6 +30153,7 @@ class Query {
    *
    * @memberof IITC.search.Query
    * @function renderResults
+   * @private
    */
   renderResults() {
     this.resultsView.renderResults(this.results, (result, event) => this.handleResultInteraction(result, event));
@@ -30157,6 +30166,7 @@ class Query {
    * @function handleResultInteraction
    * @param {Object} result - The result being interacted with.
    * @param {Event} event - The event associated with the interaction.
+   * @private
    */
   handleResultInteraction(result, event) {
     switch (event.type) {
@@ -30170,7 +30180,7 @@ class Query {
       case 'mouseout':
         this.onResultHoverEnd();
         break;
-      case 'keypress':
+      case 'keydown':
         this.handleKeyPress(event, result);
         break;
     }
@@ -30183,6 +30193,7 @@ class Query {
    * @function resultLayer
    * @param {Object} result - The search result object.
    * @returns {L.Layer} - The generated layer for the result.
+   * @private
    */
   resultLayer(result) {
     if (!result.layer) {
@@ -30214,6 +30225,7 @@ class Query {
    * @function onResultSelected
    * @param {Object} result - The selected search result object.
    * @param {Event} event - The event associated with the selection.
+   * @private
    */
   onResultSelected(result, event) {
     this.removeHoverResult();
@@ -30248,6 +30260,7 @@ class Query {
    *
    * @memberof IITC.search.Query
    * @function removeSelectedResult
+   * @private
    */
   removeSelectedResult() {
     if (this.selectedResult) {
@@ -30262,6 +30275,7 @@ class Query {
    * @memberof IITC.search.Query
    * @function onResultHoverStart
    * @param {Object} result - The result being hovered over.
+   * @private
    */
   onResultHoverStart(result) {
     this.removeHoverResult();
@@ -30279,6 +30293,7 @@ class Query {
    *
    * @memberof IITC.search.Query
    * @function removeHoverResult
+   * @private
    */
   removeHoverResult() {
     if (this.hoverResult && this.hoverResult.layer && this.hoverResult !== this.selectedResult) {
@@ -30292,6 +30307,7 @@ class Query {
    *
    * @memberof IITC.search.Query
    * @function onResultHoverEnd
+   * @private
    */
   onResultHoverEnd() {
     this.removeHoverResult();
@@ -30338,6 +30354,7 @@ class QueryResultsView {
    * @memberof IITC.search.QueryResultsView
    * @function createContainer
    * @returns {HTMLElement} - The container element for the results.
+   * @private
    */
   createContainer() {
     const container = document.createElement('div');
@@ -30351,6 +30368,7 @@ class QueryResultsView {
    * @memberof IITC.search.QueryResultsView
    * @function createHeader
    * @returns {HTMLElement} - The header element displaying the search term or a loading message.
+   * @private
    */
   createHeader() {
     const header = document.createElement('h3');
@@ -30379,6 +30397,7 @@ class QueryResultsView {
    * @memberof IITC.search.QueryResultsView
    * @function createList
    * @returns {HTMLElement} - The list element for displaying the results.
+   * @private
    */
   createList() {
     const list = document.createElement('ul');
@@ -30394,6 +30413,7 @@ class QueryResultsView {
    *
    * @memberof IITC.search.QueryResultsView
    * @function setupAccordion
+   * @private
    */
   setupAccordion() {
     this.header.addEventListener('click', () => {
@@ -30423,6 +30443,7 @@ class QueryResultsView {
         item.addEventListener('dblclick', (ev) => onResultInteraction(result, ev));
         item.addEventListener('mouseover', (ev) => onResultInteraction(result, ev));
         item.addEventListener('mouseout', (ev) => onResultInteraction(result, ev));
+        item.addEventListener('keydown', (ev) => onResultInteraction(result, ev));
         this.list.appendChild(item);
       });
     }
@@ -30435,6 +30456,7 @@ class QueryResultsView {
    * @function createListItem
    * @param {Object} result - The search result object with properties such as title, description, and icon.
    * @returns {HTMLElement} - The list item element representing the search result.
+   * @private
    */
   createListItem(result) {
     const item = document.createElement('li');
@@ -30477,6 +30499,7 @@ class QueryResultsView {
    *
    * @memberof IITC.search.QueryResultsView
    * @function remove
+   * @private
    */
   remove() {
     if (this.container.parentNode) {
@@ -30489,6 +30512,7 @@ class QueryResultsView {
    *
    * @memberof IITC.search.QueryResultsView
    * @function clearList
+   * @private
    */
   clearList() {
     this.list.innerHTML = '';
@@ -31043,10 +31067,6 @@ body {\
   margin-left: 4px;\
 }\
 \
-#sidebar, #chatcontrols, #chat, #chatinput {\
-  background: transparent !important;\
-}\
-\
 .leaflet-top .leaflet-control {\
   margin-top: 5px !important;\
   margin-left: 5px !important;\
@@ -31175,7 +31195,37 @@ body {\
    https://github.com/IITC-CE/ingress-intel-total-conversion/issues/89\
 */\
 .leaflet-bottom { bottom: 5px; }\
-'));
+\
+/* Controls for mobile view without an app */\
+:root {\
+  --top-controls-height: 38px;\
+}\
+\
+body.show_controls #chatcontrols {\
+  display: flex !important;\
+  top: 0;\
+  overflow-x: auto;\
+  width: calc(100% - 1px);\
+}\
+\
+body.show_controls #chatcontrols a {\
+  flex: 1;\
+  min-width: fit-content;\
+  padding: 0 5px;\
+}\
+\
+body.show_controls #map {\
+  height: calc(100vh - var(--top-controls-height) - 25px);\
+  margin-top: var(--top-controls-height);\
+}\
+\
+body.show_controls #scrollwrapper {\
+  margin-top: var(--top-controls-height)\
+}\
+\
+body.show_controls #chat {\
+  top: var(--top-controls-height) !important;\
+}'));
   document.head.appendChild(style);
 
   // don’t need many of those
@@ -31192,20 +31242,26 @@ body {\
   };
 
   window.smartphone.mapButton = $('<a>map</a>').click(function () {
+    window.show('map');
     $('#map').css({ visibility: 'visible', opacity: '1' });
     $('#updatestatus').show();
-    $('#chatcontrols a .active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('map')").addClass('active');
   });
 
   window.smartphone.sideButton = $('<a>info</a>').click(function () {
+    window.show('info');
     $('#scrollwrapper').show();
     window.resetScrollOnNewPortal();
-    $('.active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('info')").addClass('active');
   });
 
   $('#chatcontrols').append(window.smartphone.mapButton).append(window.smartphone.sideButton);
+
+  if (!window.useAppPanes()) {
+    document.body.classList.add('show_controls');
+  }
 
   window.addHook('portalDetailsUpdated', function () {
     var x = $('.imgpreview img').removeClass('hide');
@@ -31321,10 +31377,6 @@ window.runOnSmartphonesAfterBoot = function () {
         $('#sidebar').animate({ scrollTop: newTop }, 200);
       }
     });
-
-  // make buttons in action bar flexible
-  var l = $('#chatcontrols a:visible');
-  l.css('width', 100 / l.length + '%');
 };
 
 
