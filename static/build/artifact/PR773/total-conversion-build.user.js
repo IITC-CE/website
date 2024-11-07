@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241104.092523
+// @version        0.39.1.20241107.084150
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-11-04-092523';
+plugin_info.dateTimeVersion = '2024-11-07-084150';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -121,7 +121,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-11-04-092523';
+window.iitcBuildDate = '2024-11-07-084150';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4007,7 +4007,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-11-04-092523');
+  log.log('loading done, booting. Built: ' + '2024-11-07-084150');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26960,6 +26960,50 @@ window.getPortalFieldsCount = function (guid) {
   return fields.length;
 };
 
+/**
+ * Zooms the map to a specific portal and shows its details if available.
+ *
+ * @function zoomToAndShowPortal
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
+ */
+window.zoomToAndShowPortal = function (guid, latlng) {
+  window.map.setView(latlng, window.DEFAULT_ZOOM);
+  // if the data is available, render it immediately. Otherwise defer
+  // until it becomes available.
+  if (window.portals[guid]) window.renderPortalDetails(guid);
+  else window.urlPortal = guid;
+};
+
+/**
+ * Selects a portal by its latitude and longitude.
+ *
+ * @function selectPortalByLatLng
+ * @param {number|Array|L.LatLng} lat - The latitude of the portal
+ *                                      or an array or L.LatLng object containing both latitude and longitude.
+ * @param {number} [lng] - The longitude of the portal.
+ */
+window.selectPortalByLatLng = function (lat, lng) {
+  if (lng === undefined && lat instanceof Array) {
+    lng = lat[1];
+    lat = lat[0];
+  } else if (lng === undefined && lat instanceof L.LatLng) {
+    lng = lat.lng;
+    lat = lat.lat;
+  }
+  for (var guid in window.portals) {
+    var latlng = window.portals[guid].getLatLng();
+    if (latlng.lat === lat && latlng.lng === lng) {
+      window.renderPortalDetails(guid);
+      return;
+    }
+  }
+
+  // not currently visible
+  window.urlPortalLL = [lat, lng];
+  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
+};
+
 (function () {
   var cache = {};
   var cache_level = 0;
@@ -27538,6 +27582,65 @@ window.selectPortal = function (guid) {
   return update;
 };
 
+/**
+ * Changes the coordinates and map scale to show the range for portal links.
+ *
+ * @function rangeLinkClick
+ */
+window.rangeLinkClick = function () {
+  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
+  if (window.isSmartphone()) window.show('map');
+};
+
+/**
+ * Creates a link to open a specific portal in Ingress Prime.
+ *
+ * @function makePrimeLink
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {number} lat - The latitude of the portal.
+ * @param {number} lng - The longitude of the portal.
+ * @returns {string} The Ingress Prime link for the portal
+ */
+window.makePrimeLink = function (guid, lat, lng) {
+  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
+};
+
+/**
+ * Generates a permalink URL based on the specified latitude and longitude and additional options.
+ *
+ * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
+ *                              Can be omitted to create mapview-only permalink.
+ * @param {Object} [options] - Additional options for permalink generation.
+ * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
+ * @param {boolean} [options.fullURL] - Generate a fully qualified URL (default: relative link).
+ * @returns {string} The generated permalink URL.
+ */
+window.makePermalink = function (latlng, options) {
+  options = options || {};
+
+  function round(l) {
+    // ensures that lat,lng are with same precision as in stock intel permalinks
+    return Math.floor(l * 1e6) / 1e6;
+  }
+  var args = [];
+  if (!latlng || options.includeMapView) {
+    var c = window.map.getCenter();
+    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
+  }
+  if (latlng) {
+    if ('lat' in latlng) {
+      latlng = [latlng.lat, latlng.lng];
+    }
+    args.push('pll=' + latlng.join(','));
+  }
+  var url = '';
+  if (options.fullURL) {
+    url += new URL(document.baseURI).origin;
+  }
+  url += '/';
+  return url + '?' + args.join('&');
+};
+
 
 })();
 
@@ -27857,6 +27960,30 @@ window.getMitigationText = function (d, linkCount) {
     `- links:\t${mitigationDetails.links} (${mitigationDetails.linkDefenseBoost}x)`;
 
   return ['shielding', mitigationShort, title];
+};
+
+/**
+ * Displays a dialog with links to show the specified location on various map services.
+ *
+ * @function showPortalPosLinks
+ * @param {number} lat - Latitude of the location.
+ * @param {number} lng - Longitude of the location.
+ * @param {string} name - Name of the location.
+ */
+window.showPortalPosLinks = function (lat, lng, name) {
+  var encoded_name = encodeURIComponent(name);
+  var qrcode = '<div id="qrcode"></div>';
+  var script = "<script>$('#qrcode').qrcode({text:'GEO:" + lat + ',' + lng + "'});</script>";
+  var gmaps = '<a href="https://maps.google.com/maps?ll=' + lat + ',' + lng + '&q=' + lat + ',' + lng + '%20(' + encoded_name + ')">Google Maps</a>';
+  var bingmaps =
+    '<a href="https://www.bing.com/maps/?v=2&cp=' + lat + '~' + lng + '&lvl=16&sp=Point.' + lat + '_' + lng + '_' + encoded_name + '___">Bing Maps</a>';
+  var osm = '<a href="https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=16">OpenStreetMap</a>';
+  var latLng = '<span>' + lat + ',' + lng + '</span>';
+  window.dialog({
+    html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
+    title: name,
+    id: 'poslinks',
+  });
 };
 
 
@@ -31570,54 +31697,6 @@ const formatDistance = (distance) => {
 };
 
 /**
- * Changes the coordinates and map scale to show the range for portal links.
- *
- * @memberof IITC.utils
- * @function rangeLinkClick
- */
-const rangeLinkClick = function () {
-  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
-  if (window.isSmartphone()) window.show('map');
-};
-
-/**
- * Displays a dialog with links to show the specified location on various map services.
- *
- * @memberof IITC.utils
- * @function showPortalPosLinks
- * @param {number} lat - Latitude of the location.
- * @param {number} lng - Longitude of the location.
- * @param {string} name - Name of the location.
- */
-const showPortalPosLinks = (lat, lng, name) => {
-  const encodedName = encodeURIComponent(name);
-
-  const qrcodeContainer = `<div id="qrcode"></div>`;
-  const qrcodeScript = `<script>$('#qrcode').qrcode({ text: 'GEO:${lat},${lng}' });</script>`;
-
-  const gmapsLink = `<a href="https://maps.google.com/maps?ll=${lat},${lng}&q=${lat},${lng}%20(${encodedName})">Google Maps</a>`;
-  const bingmapsLink = `<a href="https://www.bing.com/maps/?v=2&cp=${lat}~${lng}&lvl=16&sp=Point.${lat}_${lng}_${encodedName}___">Bing Maps</a>`;
-  const osmLink = `<a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}&zoom=16">OpenStreetMap</a>`;
-
-  const latLngDisplay = `<span>${lat}, ${lng}</span>`;
-
-  const content = `
-    <div style="text-align: center;">
-      ${qrcodeContainer}
-      ${qrcodeScript}
-      ${gmapsLink}; ${bingmapsLink}; ${osmLink}<br />
-      ${latLngDisplay}
-    </div>
-  `;
-
-  window.dialog({
-    html: content,
-    title: name,
-    id: 'poslinks',
-  });
-};
-
-/**
  * Checks if the device is a touch-enabled device.
  * Alias for `L.Browser.touch()`
  *
@@ -31639,52 +31718,6 @@ const scrollBottom = (elm) => {
   // Ensure elm is an HTMLElement: resolve selector strings or extract DOM element from jQuery object
   const element = typeof elm === 'string' ? document.querySelector(elm) : elm instanceof jQuery ? elm[0] : elm;
   return element.scrollHeight - element.clientHeight - element.scrollTop;
-};
-
-/**
- * Zooms the map to a specific portal and shows its details if available.
- *
- * @memberof IITC.utils
- * @function zoomToAndShowPortal
- * @param {string} guid - The globally unique identifier of the portal.
- * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
- */
-const zoomToAndShowPortal = function (guid, latlng) {
-  window.map.setView(latlng, window.DEFAULT_ZOOM);
-  // if the data is available, render it immediately. Otherwise defer
-  // until it becomes available.
-  if (window.portals[guid]) window.renderPortalDetails(guid);
-  else window.urlPortal = guid;
-};
-
-/**
- * Selects a portal by its latitude and longitude.
- *
- * @memberof IITC.utils
- * @function selectPortalByLatLng
- * @param {number|Array|L.LatLng} lat - The latitude of the portal
- *                                      or an array or L.LatLng object containing both latitude and longitude.
- * @param {number} [lng] - The longitude of the portal.
- */
-const selectPortalByLatLng = function (lat, lng) {
-  if (lng === undefined && lat instanceof Array) {
-    lng = lat[1];
-    lat = lat[0];
-  } else if (lng === undefined && lat instanceof L.LatLng) {
-    lng = lat.lng;
-    lat = lat.lat;
-  }
-  for (var guid in window.portals) {
-    var latlng = window.portals[guid].getLatLng();
-    if (latlng.lat === lat && latlng.lng === lng) {
-      window.renderPortalDetails(guid);
-      return;
-    }
-  }
-
-  // not currently visible
-  window.urlPortalLL = [lat, lng];
-  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
 };
 
 /**
@@ -31877,52 +31910,6 @@ const isPointInPolygon = (polygon, point) => {
   return !!inside;
 };
 
-/**
- * Creates a link to open a specific portal in Ingress Prime.
- *
- * @memberof IITC.utils
- * @function makePrimeLink
- * @param {string} guid - The globally unique identifier of the portal.
- * @param {number} lat - The latitude of the portal.
- * @param {number} lng - The longitude of the portal.
- * @returns {string} The Ingress Prime link for the portal
- */
-const makePrimeLink = function (guid, lat, lng) {
-  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
-};
-
-/**
- * Generates a permalink URL based on the specified latitude and longitude and additional options.
- *
- * @memberof IITC.utils
- * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
- *                                       Can be omitted to create mapview-only permalink.
- * @param {Object} [options={}] - Additional options for permalink generation.
- * @param {boolean} [options.includeMapView=false] - Include current map view in the permalink.
- * @param {boolean} [options.fullURL=false] - Generate a fully qualified URL (default: relative link).
- * @returns {string} The generated permalink URL.
- */
-const makePermalink = (latlng, options = {}) => {
-  const { includeMapView = false, fullURL = false } = options;
-
-  // Rounds latitude/longitude to match stock intel permalinks precision
-  const round = (l) => Math.floor(l * 1e6) / 1e6;
-
-  const params = [];
-  if (!latlng || includeMapView) {
-    const center = window.map.getCenter();
-    params.push(`ll=${round(center.lat)},${round(center.lng)}`);
-    params.push(`z=${window.map.getZoom()}`);
-  }
-  if (latlng) {
-    const [lat, lng] = 'lat' in latlng ? [latlng.lat, latlng.lng] : latlng;
-    params.push(`pll=${lat},${lng}`);
-  }
-  const baseURL = fullURL ? new URL(document.baseURI).origin : '';
-
-  return `${baseURL}/?${params.join('&')}`;
-};
-
 IITC.utils = {
   getURLParam,
   getCookie,
@@ -31935,12 +31922,8 @@ IITC.utils = {
   unixTimeToHHmm,
   formatInterval,
   formatDistance,
-  rangeLinkClick,
-  showPortalPosLinks,
   isTouchDevice,
   scrollBottom,
-  zoomToAndShowPortal,
-  selectPortalByLatLng,
   escapeJavascriptString,
   escapeHtmlSpecialChars,
   prettyEnergy,
@@ -31951,8 +31934,6 @@ IITC.utils = {
   clampLatLng,
   clampLatLngBounds,
   isPointInPolygon,
-  makePrimeLink,
-  makePermalink,
 };
 
 // Map of legacy function names to their new names (or the same name if not renamed)
@@ -31968,12 +31949,8 @@ const legacyFunctionMappings = {
   unixTimeToHHmm: 'unixTimeToHHmm',
   formatInterval: 'formatInterval',
   formatDistance: 'formatDistance',
-  rangeLinkClick: 'rangeLinkClick',
-  showPortalPosLinks: 'showPortalPosLinks',
   isTouchDevice: 'isTouchDevice',
   scrollBottom: 'scrollBottom',
-  zoomToAndShowPortal: 'zoomToAndShowPortal',
-  selectPortalByLatLng: 'selectPortalByLatLng',
   escapeJavascriptString: 'escapeJavascriptString',
   escapeHtmlSpecialChars: 'escapeHtmlSpecialChars',
   prettyEnergy: 'prettyEnergy',
@@ -31984,8 +31961,6 @@ const legacyFunctionMappings = {
   clampLatLng: 'clampLatLng',
   clampLatLngBounds: 'clampLatLngBounds',
   pnpoly: 'isPointInPolygon',
-  makePrimeLink: 'makePrimeLink',
-  makePermalink: 'makePermalink',
 };
 
 // Set up synchronization between `window` and `IITC.utils` with new names
