@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241026.143026
+// @version        0.39.1.20241110.122422
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-26-143026';
+plugin_info.dateTimeVersion = '2024-11-10-122422';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -121,7 +121,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-10-26-143026';
+window.iitcBuildDate = '2024-11-10-122422';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -3107,6 +3107,18 @@ window.findPortalLatLng = function (guid) {
   return undefined;
 };
 
+// to be ovewritten in app.js
+/**
+ * Finds the latitude and longitude for a portal using all available data sources.
+ * This includes the list of portals, cached portal details, and information from links and fields.
+ *
+ * @deprecated
+ * @function androidCopy
+ */
+window.androidCopy = function () {
+  return true; // i.e. execute other actions
+};
+
 
 })();
 
@@ -3995,7 +4007,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-10-26-143026');
+  log.log('loading done, booting. Built: ' + '2024-11-10-122422');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -20231,7 +20243,12 @@ chat.show = function (name) {
 chat.chooser = function (event) {
   var t = $(event.target);
   var tab = t.data('channel');
-  chat.chooseTab(tab);
+
+  if (window.isSmartphone() && !window.useAppPanes()) {
+    window.show(tab);
+  } else {
+    chat.chooseTab(tab);
+  }
 };
 
 /**
@@ -26868,6 +26885,8 @@ window.isSystemPlayer = function (name) {
 // *** module: portal_data.js ***
 (function () {
 var log = ulog('portal_data');
+/* global L -- eslint */
+
 /**
  * @file Contain misc functions to get portal info
  * @module portal_data
@@ -26941,6 +26960,50 @@ window.getPortalFields = function (guid) {
 window.getPortalFieldsCount = function (guid) {
   var fields = window.getPortalFields(guid);
   return fields.length;
+};
+
+/**
+ * Zooms the map to a specific portal and shows its details if available.
+ *
+ * @function zoomToAndShowPortal
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
+ */
+window.zoomToAndShowPortal = function (guid, latlng) {
+  window.map.setView(latlng, window.DEFAULT_ZOOM);
+  // if the data is available, render it immediately. Otherwise defer
+  // until it becomes available.
+  if (window.portals[guid]) window.renderPortalDetails(guid);
+  else window.urlPortal = guid;
+};
+
+/**
+ * Selects a portal by its latitude and longitude.
+ *
+ * @function selectPortalByLatLng
+ * @param {number|Array|L.LatLng} lat - The latitude of the portal
+ *                                      or an array or L.LatLng object containing both latitude and longitude.
+ * @param {number} [lng] - The longitude of the portal.
+ */
+window.selectPortalByLatLng = function (lat, lng) {
+  if (lng === undefined && lat instanceof Array) {
+    lng = lat[1];
+    lat = lat[0];
+  } else if (lng === undefined && lat instanceof L.LatLng) {
+    lng = lat.lng;
+    lat = lat.lat;
+  }
+  for (var guid in window.portals) {
+    var latlng = window.portals[guid].getLatLng();
+    if (latlng.lat === lat && latlng.lng === lng) {
+      window.renderPortalDetails(guid);
+      return;
+    }
+  }
+
+  // not currently visible
+  window.urlPortalLL = [lat, lng];
+  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
 };
 
 (function () {
@@ -27521,6 +27584,65 @@ window.selectPortal = function (guid) {
   return update;
 };
 
+/**
+ * Changes the coordinates and map scale to show the range for portal links.
+ *
+ * @function rangeLinkClick
+ */
+window.rangeLinkClick = function () {
+  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
+  if (window.isSmartphone()) window.show('map');
+};
+
+/**
+ * Creates a link to open a specific portal in Ingress Prime.
+ *
+ * @function makePrimeLink
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {number} lat - The latitude of the portal.
+ * @param {number} lng - The longitude of the portal.
+ * @returns {string} The Ingress Prime link for the portal
+ */
+window.makePrimeLink = function (guid, lat, lng) {
+  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
+};
+
+/**
+ * Generates a permalink URL based on the specified latitude and longitude and additional options.
+ *
+ * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
+ *                              Can be omitted to create mapview-only permalink.
+ * @param {Object} [options] - Additional options for permalink generation.
+ * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
+ * @param {boolean} [options.fullURL] - Generate a fully qualified URL (default: relative link).
+ * @returns {string} The generated permalink URL.
+ */
+window.makePermalink = function (latlng, options) {
+  options = options || {};
+
+  function round(l) {
+    // ensures that lat,lng are with same precision as in stock intel permalinks
+    return Math.floor(l * 1e6) / 1e6;
+  }
+  var args = [];
+  if (!latlng || options.includeMapView) {
+    var c = window.map.getCenter();
+    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
+  }
+  if (latlng) {
+    if ('lat' in latlng) {
+      latlng = [latlng.lat, latlng.lng];
+    }
+    args.push('pll=' + latlng.join(','));
+  }
+  var url = '';
+  if (options.fullURL) {
+    url += new URL(document.baseURI).origin;
+  }
+  url += '/';
+  return url + '?' + args.join('&');
+};
+
 
 })();
 
@@ -27840,6 +27962,30 @@ window.getMitigationText = function (d, linkCount) {
     `- links:\t${mitigationDetails.links} (${mitigationDetails.linkDefenseBoost}x)`;
 
   return ['shielding', mitigationShort, title];
+};
+
+/**
+ * Displays a dialog with links to show the specified location on various map services.
+ *
+ * @function showPortalPosLinks
+ * @param {number} lat - Latitude of the location.
+ * @param {number} lng - Longitude of the location.
+ * @param {string} name - Name of the location.
+ */
+window.showPortalPosLinks = function (lat, lng, name) {
+  var encoded_name = encodeURIComponent(name);
+  var qrcode = '<div id="qrcode"></div>';
+  var script = "<script>$('#qrcode').qrcode({text:'GEO:" + lat + ',' + lng + "'});</script>";
+  var gmaps = '<a href="https://maps.google.com/maps?ll=' + lat + ',' + lng + '&q=' + lat + ',' + lng + '%20(' + encoded_name + ')">Google Maps</a>';
+  var bingmaps =
+    '<a href="https://www.bing.com/maps/?v=2&cp=' + lat + '~' + lng + '&lvl=16&sp=Point.' + lat + '_' + lng + '_' + encoded_name + '___">Bing Maps</a>';
+  var osm = '<a href="https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=16">OpenStreetMap</a>';
+  var latLng = '<span>' + lat + ',' + lng + '</span>';
+  window.dialog({
+    html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
+    title: name,
+    id: 'poslinks',
+  });
 };
 
 
@@ -30663,10 +30809,6 @@ body {\
   margin-left: 4px;\
 }\
 \
-#sidebar, #chatcontrols, #chat, #chatinput {\
-  background: transparent !important;\
-}\
-\
 .leaflet-top .leaflet-control {\
   margin-top: 5px !important;\
   margin-left: 5px !important;\
@@ -30795,7 +30937,37 @@ body {\
    https://github.com/IITC-CE/ingress-intel-total-conversion/issues/89\
 */\
 .leaflet-bottom { bottom: 5px; }\
-'));
+\
+/* Controls for mobile view without an app */\
+:root {\
+  --top-controls-height: 38px;\
+}\
+\
+body.show_controls #chatcontrols {\
+  display: flex !important;\
+  top: 0;\
+  overflow-x: auto;\
+  width: calc(100% - 1px);\
+}\
+\
+body.show_controls #chatcontrols a {\
+  flex: 1;\
+  min-width: fit-content;\
+  padding: 0 5px;\
+}\
+\
+body.show_controls #map {\
+  height: calc(100vh - var(--top-controls-height) - 25px);\
+  margin-top: var(--top-controls-height);\
+}\
+\
+body.show_controls #scrollwrapper {\
+  margin-top: var(--top-controls-height)\
+}\
+\
+body.show_controls #chat {\
+  top: var(--top-controls-height) !important;\
+}'));
   document.head.appendChild(style);
 
   // don’t need many of those
@@ -30812,20 +30984,26 @@ body {\
   };
 
   window.smartphone.mapButton = $('<a>map</a>').click(function () {
+    window.show('map');
     $('#map').css({ visibility: 'visible', opacity: '1' });
     $('#updatestatus').show();
-    $('#chatcontrols a .active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('map')").addClass('active');
   });
 
   window.smartphone.sideButton = $('<a>info</a>').click(function () {
+    window.show('info');
     $('#scrollwrapper').show();
     window.resetScrollOnNewPortal();
-    $('.active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('info')").addClass('active');
   });
 
   $('#chatcontrols').append(window.smartphone.mapButton).append(window.smartphone.sideButton);
+
+  if (!window.useAppPanes()) {
+    document.body.classList.add('show_controls');
+  }
 
   window.addHook('portalDetailsUpdated', function () {
     var x = $('.imgpreview img').removeClass('hide');
@@ -30941,10 +31119,6 @@ window.runOnSmartphonesAfterBoot = function () {
         $('#sidebar').animate({ scrollTop: newTop }, 200);
       }
     });
-
-  // make buttons in action bar flexible
-  var l = $('#chatcontrols a:visible');
-  l.css('width', 100 / l.length + '%');
 };
 
 
@@ -31295,6 +31469,558 @@ IITC.toolbox._syncWithLegacyToolbox();
 })();
 
 
+// *** module: utils.js ***
+(function () {
+var log = ulog('utils');
+/* global IITC, L -- eslint */
+
+/**
+ * Namespace for IITC utils
+ *
+ * @memberof IITC
+ * @namespace utils
+ */
+
+// The sv-SE locale is one of the closest to the ISO format among all locales
+const timeWithSecondsFormatter = new Intl.DateTimeFormat('sv-SE', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+});
+
+const timeFormatter = new Intl.DateTimeFormat('sv-SE', {
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+/**
+ * Retrieves a parameter from the URL query string.
+ *
+ * @memberof IITC.utils
+ * @function getURLParam
+ * @param {string} param - The name of the parameter to retrieve.
+ * @returns {string} The value of the parameter, or an empty string if not found.
+ */
+const getURLParam = (param) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param) || '';
+};
+
+/**
+ * Retrieves the value of a cookie by name.
+ *
+ * @memberof IITC.utils
+ * @function getCookie
+ * @param {string} name - The name of the cookie to retrieve.
+ * @returns {string|undefined} The value of the cookie, or undefined if not found.
+ */
+const getCookie = (name) => {
+  const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+    const [key, value] = cookie.split('=');
+    acc[key] = decodeURIComponent(value);
+    return acc;
+  }, {});
+
+  return cookies[name];
+};
+
+/**
+ * Sets a cookie with a specified name and value, with a default expiration of 10 years.
+ *
+ * @memberof IITC.utils
+ * @function setCookie
+ * @param {string} name - The name of the cookie.
+ * @param {string} value - The value of the cookie.
+ * @param {number} [days=3650] - Optional: the number of days until the cookie expires (default is 10 years).
+ */
+const setCookie = (name, value, days = 3650) => {
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
+
+/**
+ * Deletes a cookie by name.
+ *
+ * @memberof IITC.utils
+ * @function deleteCookie
+ * @param {string} name - The name of the cookie to delete.
+ */
+const deleteCookie = (name) => {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+};
+
+/**
+ * Formats a number with thousand separators (thin spaces).
+ * see https://en.wikipedia.org/wiki/Space_(punctuation)#Table_of_spaces
+ *
+ * @memberof IITC.utils
+ * @function formatNumber
+ * @param {number} num - The number to format.
+ * @returns {string} The formatted number with thousand separators.
+ */
+const formatNumber = (num) => {
+  if (num === null || num === undefined) return '';
+  // Convert number to string and use a thin space (U+2009) as thousand separator
+  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, '\u2009');
+};
+
+/**
+ * Pads a number with zeros up to a specified length.
+ *
+ * @memberof IITC.utils
+ * @function zeroPad
+ * @param {number} number - The number to pad.
+ * @param {number} length - The desired length of the output string.
+ * @returns {string} The padded number as a string.
+ */
+const zeroPad = (number, length) => number.toString().padStart(length, '0');
+
+/**
+ * Converts a UNIX timestamp to a human-readable string.
+ * If the timestamp is from today, returns the time (HH:mm:ss format); otherwise, returns the date (YYYY-MM-DD).
+ *
+ * @memberof IITC.utils
+ * @function unixTimeToString
+ * @param {number|string} timestamp - The UNIX timestamp in milliseconds to convert.
+ * @param {boolean} [full=false] - If true, returns both date and time in "YYYY-MM-DD <locale time>" format.
+ * @returns {string|null} The formatted date and/or time string, or null if no timestamp provided.
+ */
+const unixTimeToString = (timestamp, full = false) => {
+  if (!timestamp) return null;
+
+  const dateObj = new Date(Number(timestamp));
+  const today = new Date();
+
+  // Check if the date is today
+  const isToday = dateObj.getFullYear() === today.getFullYear() && dateObj.getMonth() === today.getMonth() && dateObj.getDate() === today.getDate();
+
+  const time = timeWithSecondsFormatter.format(dateObj);
+  const date = dateFormatter.format(dateObj);
+
+  if (full) return `${date} ${time}`;
+  return isToday ? time : date;
+};
+
+/**
+ * Converts a UNIX timestamp to a precise date and time string in the local timezone.
+ * Formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone.
+ *
+ * @memberof IITC.utils
+ * @function unixTimeToDateTimeString
+ * @param {number} time - The UNIX timestamp to convert.
+ * @param {boolean} [millisecond] - Whether to include millisecond precision.
+ * @returns {string|null} The formatted date and time string.
+ */
+const unixTimeToDateTimeString = (time, millisecond) => {
+  if (!time) return null;
+  const date = new Date(Number(time));
+  const pad = (num) => IITC.utils.zeroPad(num, 2);
+
+  const dateString = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  const timeString = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  const dateTimeString = `${dateString} ${timeString}`;
+  return millisecond ? `${dateTimeString}.${IITC.utils.zeroPad(date.getMilliseconds(), 3)}` : dateTimeString;
+};
+
+/**
+ * Converts a UNIX timestamp to a time string formatted as HH:mm.
+ *
+ * @memberof IITC.utils
+ * @function unixTimeToHHmm
+ * @param {number|string} time - The UNIX timestamp to convert.
+ * @returns {string|null} Formatted time as HH:mm.
+ */
+const unixTimeToHHmm = (time) => {
+  if (!time) return null;
+  return timeFormatter.format(new Date(Number(time)));
+};
+
+/**
+ * Formats an interval of time given in seconds into a human-readable string.
+ *
+ * @memberof IITC.utils
+ * @function formatInterval
+ * @param {number} seconds - The interval in seconds.
+ * @param {number} [maxTerms] - The maximum number of time units to include.
+ * @returns {string} The formatted time interval.
+ */
+const formatInterval = (seconds, maxTerms) => {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  // Collect terms if they have a non-zero value
+  const terms = [days ? `${days}d` : null, hours ? `${hours}h` : null, minutes ? `${minutes}m` : null, secs ? `${secs}s` : null].filter(Boolean);
+
+  // Limit terms to maxTerms if specified
+  return (maxTerms ? terms.slice(0, maxTerms) : terms).join(' ') || '0s';
+};
+
+/**
+ * Formats a distance in meters, converting to kilometers with appropriate precision
+ * based on the distance range.
+ *
+ * For distances:
+ * - Under 1000m: shows in meters, rounded to whole numbers
+ * - 1000m to 9999m: shows in kilometers with 1 decimal place
+ * - 10000m and above: shows in whole kilometers
+ *
+ * @memberof IITC.utils
+ * @function formatDistance
+ * @param {number} distance - The distance in meters.
+ * @returns {string} The formatted distance.
+ */
+const formatDistance = (distance) => {
+  if (distance === null || distance === undefined) return '';
+  let value, unit;
+
+  if (distance >= 10000) {
+    // For 10km and above: show whole kilometers
+    value = Math.round(distance / 1000);
+    unit = 'km';
+  } else if (distance >= 1000) {
+    // For 1km to 9.9km: show kilometers with one decimal
+    value = Math.round(distance / 100) / 10;
+    unit = 'km';
+  } else {
+    // For under 1km: show in meters
+    value = Math.round(distance);
+    unit = 'm';
+  }
+
+  return `${IITC.utils.formatNumber(value)}${unit}`;
+};
+
+/**
+ * Formats the time difference between two timestamps (in milliseconds) as a string.
+ *
+ * @memberof IITC.utils
+ * @function formatAgo
+ * @param {number} time - The past timestamp in milliseconds.
+ * @param {number} now - The current timestamp in milliseconds.
+ * @param {Object} [options] - Options for formatting.
+ * @param {boolean} [options.showSeconds=false] - Whether to include seconds in the result.
+ * @returns {string} The formatted time difference (e.g., "45s", "5m", "2h 45m", "1d 3h 45m")
+ */
+const formatAgo = (time, now, options = { showSeconds: false }) => {
+  const secondsTotal = Math.floor(Math.max(0, (now - time) / 1000));
+
+  // Calculate time units
+  const days = Math.floor(secondsTotal / 86400);
+  const hours = Math.floor((secondsTotal % 86400) / 3600);
+  const minutes = Math.floor((secondsTotal % 3600) / 60);
+  const seconds = secondsTotal % 60;
+
+  const result = [];
+
+  // Include units conditionally based on non-zero values
+  if (days > 0) result.push(`${days}d`);
+  if (hours > 0 || result.length !== 0) result.push(`${hours}h`);
+  if (minutes > 0 || result.length !== 0) result.push(`${minutes}m`);
+  if (options.showSeconds && (result.length === 0 || seconds > 0)) result.push(`${seconds}s`);
+
+  // If no units were added, show "0" with the smallest available unit
+  if (result.length === 0) {
+    return options.showSeconds ? '0s' : '0m';
+  }
+
+  return result.join(' ');
+};
+
+/**
+ * Checks if the device is a touch-enabled device.
+ * Alias for `L.Browser.touch()`
+ *
+ * @memberof IITC.utils
+ * @function isTouchDevice
+ * @returns {boolean} True if the device is touch-enabled, otherwise false.
+ */
+const isTouchDevice = () => L.Browser.touch;
+
+/**
+ * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
+ *
+ * @memberof IITC.utils
+ * @function scrollBottom
+ * @param {string|HTMLElement|jQuery} elm - The element or selector to calculate the scroll bottom for.
+ * @returns {number} The number of pixels from the bottom.
+ */
+const scrollBottom = (elm) => {
+  // Ensure elm is an HTMLElement: resolve selector strings or extract DOM element from jQuery object
+  const element = typeof elm === 'string' ? document.querySelector(elm) : elm instanceof jQuery ? elm[0] : elm;
+  return element.scrollHeight - element.clientHeight - element.scrollTop;
+};
+
+/**
+ * Escapes special characters in a string for use in JavaScript.
+ * (for strings passed as parameters to html onclick="..." for example)
+ *
+ * @memberof IITC.utils
+ * @function escapeJS
+ * @param {string} str - The string to escape.
+ * @returns {string} The escaped string.
+ */
+const escapeJS = function (str) {
+  return (str + '').replace(/[\\"']/g, '\\$&');
+};
+
+/**
+ * Escapes HTML special characters in a string.
+ *
+ * @memberof IITC.utils
+ * @function escapeHtml
+ * @param {string} str - The string to escape.
+ * @returns {string} The escaped string.
+ */
+const escapeHtml = function (str) {
+  const escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return str.replace(/[&<>"']/g, (char) => escapeMap[char]);
+};
+
+/**
+ * Formats the energy of a portal, converting to "k" units if over 1000.
+ *
+ * @memberof IITC.utils
+ * @function prettyEnergy
+ * @param {number} nrg - The energy value to format.
+ * @returns {string|number} The formatted energy value.
+ */
+const prettyEnergy = (nrg) => (nrg > 1000 ? `${Math.round(nrg / 1000)}k` : nrg);
+
+/**
+ * Converts a list of items into a unique array, removing duplicates.
+ *
+ * @memberof IITC.utils
+ * @function uniqueArray
+ * @param {Array} arr - The array to process.
+ * @returns {Array} A new array containing only unique elements.
+ */
+const uniqueArray = function (arr) {
+  return [...new Set(arr)];
+};
+
+/**
+ * Generates a four-column HTML table from an array of data blocks.
+ *
+ * @memberof IITC.utils
+ * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
+ * @returns {string} HTML string representing the constructed table.
+ */
+const genFourColumnTable = function (blocks) {
+  const rows = blocks
+    .map((detail, index) => {
+      if (!detail) return '';
+      const title = detail[2] ? ` title="${IITC.utils.escapeHtml(detail[2])}"` : '';
+
+      if (index % 2 === 0) {
+        // If index is even, start a new row and add <td> for data and <th> for header
+        return `<tr><td${title}>${detail[1]}</td><th${title}>${detail[0]}</th>`;
+      } else {
+        // If index is odd, complete the row with <th> for header and <td> for data, then close </tr>
+        return `<th${title}>${detail[0]}</th><td${title}>${detail[1]}</td></tr>`;
+      }
+    })
+    .join('');
+
+  // If total number of blocks is odd, add empty cells to complete the last row
+  const isOdd = blocks.length % 2 === 1;
+  return isOdd ? rows + '<td></td><td></td></tr>' : rows;
+};
+
+/**
+ * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
+ *
+ * @memberof IITC.utils
+ * @function textToTable
+ * @param {string} text - The text to convert.
+ * @returns {string} The resulting HTML table.
+ */
+const textToTable = function (text) {
+  // If no tabs are present, replace newlines with <br> and return
+  if (!text.includes('\t')) return text.replace(/\n/g, '<br>');
+
+  // Split text into rows and columns, tracking the max column count
+  const rows = text.split('\n').map((row) => row.split('\t'));
+  const columnCount = Math.max(...rows.map((row) => row.length));
+
+  // Build the table rows
+  const tableRows = [];
+  for (const row of rows) {
+    let rowHtml = '<tr>';
+    for (let k = 0; k < row.length; k++) {
+      const cell = IITC.utils.escapeHtml(row[k]);
+      const colspan = k === 0 && row.length < columnCount ? ` colspan="${columnCount - row.length + 1}"` : '';
+      rowHtml += `<td${colspan}>${cell}</td>`;
+    }
+    rowHtml += '</tr>';
+    tableRows.push(rowHtml);
+  }
+
+  // Combine all rows into a single table HTML
+  return `<table>${tableRows.join('')}</table>`;
+};
+
+/**
+ * Clamps a given value between a minimum and maximum value.
+ * Simple implementation for internal use.
+ *
+ * @memberof IITC.utils
+ * @private
+ * @function clamp
+ * @param {number} n - The value to clamp.
+ * @param {number} max - The maximum allowed value.
+ * @param {number} min - The minimum allowed value.
+ * @returns {number} The clamped value.
+ */
+const clamp = function (n, max, min) {
+  if (n === 0) return 0;
+  return n > 0 ? Math.min(n, max) : Math.max(n, min);
+};
+
+/**
+ * The maximum absolute latitude that can be represented in Web Mercator projection (EPSG:3857).
+ * This value is taken from L.Projection.SphericalMercator.MAX_LATITUDE
+ *
+ * @memberof IITC.utils
+ * @constant {Number}
+ */
+const MAX_LATITUDE = 85.051128;
+
+/**
+ * Clamps a latitude and longitude to the maximum and minimum valid values.
+ *
+ * @memberof IITC.utils
+ * @function clampLatLng
+ * @param {L.LatLng} latlng - The latitude and longitude to clamp.
+ * @returns {Array<number>} The clamped latitude and longitude.
+ */
+const clampLatLng = function (latlng) {
+  // Ingress accepts requests only for this range
+  return [clamp(latlng.lat, MAX_LATITUDE, -MAX_LATITUDE), clamp(latlng.lng, 179.999999, -180)];
+};
+
+/**
+ * Clamps a latitude and longitude bounds to the maximum and minimum valid values.
+ *
+ * @memberof IITC.utils
+ * @function clampLatLngBounds
+ * @param {L.LatLngBounds} bounds - The bounds to clamp.
+ * @returns {L.LatLngBounds} The clamped bounds.
+ */
+const clampLatLngBounds = function (bounds) {
+  var SW = bounds.getSouthWest(),
+    NE = bounds.getNorthEast();
+  return L.latLngBounds(window.clampLatLng(SW), window.clampLatLng(NE));
+};
+
+/**
+ * Determines if a point is inside a polygon.
+ *
+ * @memberof IITC.utils
+ * @param {Array<L.LatLng>} polygon - The vertices of the polygon.
+ * @param {L.LatLng} point - The point to test.
+ * @returns {boolean} True if the point is inside the polygon, false otherwise.
+ */
+const isPointInPolygon = (polygon, point) => {
+  let inside = 0;
+  // j records previous value. Also handles wrapping around.
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    inside ^=
+      polygon[i].y > point.y !== polygon[j].y > point.y &&
+      point.x - polygon[i].x < ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) / (polygon[j].y - polygon[i].y);
+  }
+  // Let's make js as magical as C. Yay.
+  return !!inside;
+};
+
+IITC.utils = {
+  getURLParam,
+  getCookie,
+  setCookie,
+  deleteCookie,
+  formatNumber,
+  zeroPad,
+  unixTimeToString,
+  unixTimeToDateTimeString,
+  unixTimeToHHmm,
+  formatInterval,
+  formatDistance,
+  formatAgo,
+  isTouchDevice,
+  scrollBottom,
+  escapeJS,
+  escapeHtml,
+  prettyEnergy,
+  uniqueArray,
+  genFourColumnTable,
+  textToTable,
+  clamp,
+  clampLatLng,
+  clampLatLngBounds,
+  isPointInPolygon,
+};
+
+// Map of legacy function names to their new names (or the same name if not renamed)
+const legacyFunctionMappings = {
+  getURLParam: 'getURLParam',
+  readCookie: 'getCookie',
+  writeCookie: 'setCookie',
+  eraseCookie: 'deleteCookie',
+  digits: 'formatNumber',
+  zeroPad: 'zeroPad',
+  unixTimeToString: 'unixTimeToString',
+  unixTimeToDateTimeString: 'unixTimeToDateTimeString',
+  unixTimeToHHmm: 'unixTimeToHHmm',
+  formatInterval: 'formatInterval',
+  formatDistance: 'formatDistance',
+  isTouchDevice: 'isTouchDevice',
+  scrollBottom: 'scrollBottom',
+  escapeJavascriptString: 'escapeJS',
+  escapeHtmlSpecialChars: 'escapeHtml',
+  prettyEnergy: 'prettyEnergy',
+  uniqueArray: 'uniqueArray',
+  genFourColumnTable: 'genFourColumnTable',
+  convertTextToTableMagic: 'textToTable',
+  clamp: 'clamp',
+  clampLatLng: 'clampLatLng',
+  clampLatLngBounds: 'clampLatLngBounds',
+  pnpoly: 'isPointInPolygon',
+};
+
+// Set up synchronization between `window` and `IITC.utils` with new names
+Object.entries(legacyFunctionMappings).forEach(([oldName, newName]) => {
+  // Initialize IITC.utils[newName] if not already defined
+  window.IITC.utils[newName] = window.IITC.utils[newName] || function () {};
+
+  // Define a getter/setter on `window` to synchronize with `IITC.utils`
+  Object.defineProperty(window, oldName, {
+    get() {
+      return window.IITC.utils[newName];
+    },
+    set(newFunc) {
+      window.IITC.utils[newName] = newFunc;
+    },
+    configurable: true,
+  });
+});
+
+
+})();
+
+
 // *** module: utils_file.js ***
 (function () {
 var log = ulog('utils_file');
@@ -31627,596 +32353,14 @@ L.FileListLoader.loadFiles = function (options) {
 })();
 
 
-// *** module: utils_misc.js ***
+// *** module: utils_polyfills.js ***
 (function () {
-var log = ulog('utils_misc');
-/* global L -- eslint */
-
+var log = ulog('utils_polyfills');
 /**
- * @file Misc utils
+ * @file Misc polyfills
  *
- * @module utils_misc
+ * @module utils_polyfills
  */
-
-/**
- * Retrieves a parameter from the URL query string.
- *
- * @function getURLParam
- * @param {string} param - The name of the parameter to retrieve.
- * @returns {string} The value of the parameter, or an empty string if not found.
- */
-window.getURLParam = function (param) {
-  var items = window.location.search.substr(1).split('&');
-
-  for (var i = 0; i < items.length; i++) {
-    var item = items[i].split('=');
-
-    if (item[0] === param) {
-      var val = item.length === 1 ? '' : decodeURIComponent(item[1].replace(/\+/g, ' '));
-      return val;
-    }
-  }
-
-  return '';
-};
-
-/**
- * Reads a cookie by name.
- * @see http://stackoverflow.com/a/5639455/1684530
- *
- * @function readCookie
- * @param {string} name - The name of the cookie to read.
- * @returns {string} The value of the cookie, or undefined if not found.
- */
-window.readCookie = function (name) {
-  var C,
-    i,
-    c = document.cookie.split('; ');
-  var cookies = {};
-  for (i = c.length - 1; i >= 0; i--) {
-    C = c[i].split('=');
-    cookies[C[0]] = unescape(C[1]);
-  }
-  return cookies[name];
-};
-
-/**
- * Writes a cookie with a specified name and value.
- *
- * @function writeCookie
- * @param {string} name - The name of the cookie.
- * @param {string} val - The value of the cookie.
- */
-window.writeCookie = function (name, val) {
-  var d = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = name + '=' + val + '; expires=' + d + '; path=/';
-};
-
-/**
- * Erases a cookie with a specified name.
- *
- * @function eraseCookie
- * @param {string} name - The name of the cookie to erase.
- */
-window.eraseCookie = function (name) {
-  document.cookie = name + '=; expires=Thu, 1 Jan 1970 00:00:00 GMT; path=/';
-};
-
-/**
- * Adds thousand separators to a given number.
- * @see http://stackoverflow.com/a/1990590/1684530
- *
- * @function digits
- * @param {number} d - The number to format.
- * @returns {string} The formatted number with thousand separators.
- */
-window.digits = function (d) {
-  // U+2009 - Thin Space. Recommended for use as a thousands separator...
-  // https://en.wikipedia.org/wiki/Space_(punctuation)#Table_of_spaces
-  return (d + '').replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1&#8201;');
-};
-
-/**
- * Pads a number with zeros up to a specified length.
- *
- * @function zeroPad
- * @param {number} number - The number to pad.
- * @param {number} pad - The desired length of the output string.
- * @returns {string} The padded number as a string.
- */
-window.zeroPad = function (number, pad) {
-  number = number.toString();
-  var zeros = pad - number.length;
-  return Array(zeros > 0 ? zeros + 1 : 0).join('0') + number;
-};
-
-/**
- * Converts a UNIX timestamp to a human-readable string.
- * If the timestamp is from today, returns the time (HH:mm:ss format); otherwise, returns the date (YYYY-MM-DD).
- *
- * @function unixTimeToString
- * @param {number} timestamp - The UNIX timestamp to convert.
- * @param {boolean} [full] - If true, returns both date and time.
- * @returns {string|null} The formatted date and/or time.
- */
-window.unixTimeToString = function (timestamp, full) {
-  if (!timestamp) return null;
-  var d = new Date(typeof timestamp === 'string' ? parseInt(timestamp) : timestamp);
-  var time = d.toLocaleTimeString();
-  //  var time = zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+':'+zeroPad(d.getSeconds(),2);
-  var date = d.getFullYear() + '-' + window.zeroPad(d.getMonth() + 1, 2) + '-' + window.zeroPad(d.getDate(), 2);
-  if (typeof full !== 'undefined' && full) return date + ' ' + time;
-  if (d.toDateString() === new Date().toDateString()) return time;
-  else return date;
-};
-
-/**
- * Converts a UNIX timestamp to a precise date and time string in the local timezone.
- * Formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone
- *
- * @function unixTimeToDateTimeString
- * @param {number} time - The UNIX timestamp to convert.
- * @param {boolean} [millisecond] - Whether to include millisecond precision.
- * @returns {string|null} The formatted date and time string.
- */
-window.unixTimeToDateTimeString = function (time, millisecond) {
-  if (!time) return null;
-  var d = new Date(typeof time === 'string' ? parseInt(time) : time);
-  return (
-    d.getFullYear() +
-    '-' +
-    window.zeroPad(d.getMonth() + 1, 2) +
-    '-' +
-    window.zeroPad(d.getDate(), 2) +
-    ' ' +
-    window.zeroPad(d.getHours(), 2) +
-    ':' +
-    window.zeroPad(d.getMinutes(), 2) +
-    ':' +
-    window.zeroPad(d.getSeconds(), 2) +
-    (millisecond ? '.' + window.zeroPad(d.getMilliseconds(), 3) : '')
-  );
-};
-
-/**
- * Converts a UNIX timestamp to a time string formatted as HH:mm.
- *
- * @function unixTimeToHHmm
- * @param {number|string} time - The UNIX timestamp to convert.
- * @returns {string|null} Formatted time as HH:mm.
- */
-window.unixTimeToHHmm = function (time) {
-  if (!time) return null;
-  var d = new Date(typeof time === 'string' ? parseInt(time) : time);
-  var h = '' + d.getHours();
-  h = h.length === 1 ? '0' + h : h;
-  var s = '' + d.getMinutes();
-  s = s.length === 1 ? '0' + s : s;
-  return h + ':' + s;
-};
-
-/**
- * Formats an interval of time given in seconds into a human-readable string.
- *
- * @function formatInterval
- * @param {number} seconds - The interval in seconds.
- * @param {number} [maxTerms] - The maximum number of time units to include.
- * @returns {string} The formatted time interval.
- */
-window.formatInterval = function (seconds, maxTerms) {
-  var d = Math.floor(seconds / 86400);
-  var h = Math.floor((seconds % 86400) / 3600);
-  var m = Math.floor((seconds % 3600) / 60);
-  var s = seconds % 60;
-
-  var terms = [];
-  if (d > 0) terms.push(d + 'd');
-  if (h > 0) terms.push(h + 'h');
-  if (m > 0) terms.push(m + 'm');
-  if (s > 0 || terms.length === 0) terms.push(s + 's');
-
-  if (maxTerms) terms = terms.slice(0, maxTerms);
-
-  return terms.join(' ');
-};
-
-/**
- * Formats a distance in meters, converting to kilometers if the distance is over 10,000 meters.
- *
- * @function formatDistance
- * @param {number} distance - The distance in meters.
- * @returns {string} The formatted distance.
- */
-window.formatDistance = function (distance) {
-  return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
-};
-
-/**
- * Formats the time difference between two timestamps (in milliseconds) as a string.
- *
- * @function formatAgo
- * @param {number} time - The past timestamp in milliseconds.
- * @param {number} now - The current timestamp in milliseconds.
- * @param {Object} [options] - Options for formatting.
- * @param {boolean} [options.showSeconds=false] - Whether to include seconds in the result.
- * @returns {string} The formatted time difference (e.g., "45s", "5m", "2h 45m", "1d 3h 45m")
- */
-window.formatAgo = function (time, now, options = { showSeconds: false }) {
-  const secondsTotal = Math.floor(Math.max(0, (now - time) / 1000));
-
-  // Calculate time units
-  const days = Math.floor(secondsTotal / 86400);
-  const hours = Math.floor((secondsTotal % 86400) / 3600);
-  const minutes = Math.floor((secondsTotal % 3600) / 60);
-  const seconds = secondsTotal % 60;
-
-  const result = [];
-
-  // Include units conditionally based on non-zero values
-  if (days > 0) result.push(`${days}d`);
-  if (hours > 0 || result.length !== 0) result.push(`${hours}h`);
-  if (minutes > 0 || result.length !== 0) result.push(`${minutes}m`);
-  if (options.showSeconds && (result.length === 0 || seconds > 0)) result.push(`${seconds}s`);
-
-  // If no units were added, show "0" with the smallest available unit
-  if (result.length === 0) {
-    return options.showSeconds ? '0s' : '0m';
-  }
-
-  return result.join(' ');
-};
-
-/**
- * Changes the coordinates and map scale to show the range for portal links.
- *
- * @function rangeLinkClick
- */
-window.rangeLinkClick = function () {
-  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
-  if (window.isSmartphone()) window.show('map');
-};
-
-/**
- * Displays a dialog with links to show the specified location on various map services.
- *
- * @function showPortalPosLinks
- * @param {number} lat - Latitude of the location.
- * @param {number} lng - Longitude of the location.
- * @param {string} name - Name of the location.
- */
-window.showPortalPosLinks = function (lat, lng, name) {
-  var encoded_name = encodeURIComponent(name);
-  var qrcode = '<div id="qrcode"></div>';
-  var script = "<script>$('#qrcode').qrcode({text:'GEO:" + lat + ',' + lng + "'});</script>";
-  var gmaps = '<a href="https://maps.google.com/maps?ll=' + lat + ',' + lng + '&q=' + lat + ',' + lng + '%20(' + encoded_name + ')">Google Maps</a>';
-  var bingmaps =
-    '<a href="https://www.bing.com/maps/?v=2&cp=' + lat + '~' + lng + '&lvl=16&sp=Point.' + lat + '_' + lng + '_' + encoded_name + '___">Bing Maps</a>';
-  var osm = '<a href="https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=16">OpenStreetMap</a>';
-  var latLng = '<span>' + lat + ',' + lng + '</span>';
-  window.dialog({
-    html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
-    title: name,
-    id: 'poslinks',
-  });
-};
-
-/**
- * Checks if the device is a touch-enabled device.
- *
- * @function isTouchDevice
- * @returns {boolean} True if the device is touch-enabled, otherwise false.
- */
-window.isTouchDevice = function () {
-  return (
-    'ontouchstart' in window || // works on most browsers
-    'onmsgesturechange' in window
-  ); // works on ie10
-};
-
-// !!deprecated
-// to be ovewritten in app.js
-window.androidCopy = function () {
-  return true; // i.e. execute other actions
-};
-
-/**
- * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
- *
- * @function scrollBottom
- * @param {string|jQuery} elm - The element to calculate the scroll bottom for.
- * @returns {number} The number of pixels from the bottom.
- */
-window.scrollBottom = function (elm) {
-  if (typeof elm === 'string') elm = $(elm);
-  return elm.get(0).scrollHeight - elm.innerHeight() - elm.scrollTop();
-};
-
-/**
- * Zooms the map to a specific portal and shows its details if available.
- *
- * @function zoomToAndShowPortal
- * @param {string} guid - The globally unique identifier of the portal.
- * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
- */
-window.zoomToAndShowPortal = function (guid, latlng) {
-  window.map.setView(latlng, window.DEFAULT_ZOOM);
-  // if the data is available, render it immediately. Otherwise defer
-  // until it becomes available.
-  if (window.portals[guid]) window.renderPortalDetails(guid);
-  else window.urlPortal = guid;
-};
-
-/**
- * Selects a portal by its latitude and longitude.
- *
- * @function selectPortalByLatLng
- * @param {number|Array|L.LatLng} lat - The latitude of the portal
- *                                      or an array or L.LatLng object containing both latitude and longitude.
- * @param {number} [lng] - The longitude of the portal.
- */
-window.selectPortalByLatLng = function (lat, lng) {
-  if (lng === undefined && lat instanceof Array) {
-    lng = lat[1];
-    lat = lat[0];
-  } else if (lng === undefined && lat instanceof L.LatLng) {
-    lng = lat.lng;
-    lat = lat.lat;
-  }
-  for (var guid in window.portals) {
-    var latlng = window.portals[guid].getLatLng();
-    if (latlng.lat === lat && latlng.lng === lng) {
-      window.renderPortalDetails(guid);
-      return;
-    }
-  }
-
-  // not currently visible
-  window.urlPortalLL = [lat, lng];
-  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
-};
-
-/**
- * Escapes special characters in a string for use in JavaScript.
- * (for strings passed as parameters to html onclick="..." for example)
- *
- * @function escapeJavascriptString
- * @param {string} str - The string to escape.
- * @returns {string} The escaped string.
- */
-window.escapeJavascriptString = function (str) {
-  return (str + '').replace(/[\\"']/g, '\\$&');
-};
-
-/**
- * Escapes HTML special characters in a string.
- *
- * @function escapeHtmlSpecialChars
- * @param {string} str - The string to escape.
- * @returns {string} The escaped string.
- */
-window.escapeHtmlSpecialChars = function (str) {
-  var div = document.createElement('div');
-  var text = document.createTextNode(str);
-  div.appendChild(text);
-  return div.innerHTML;
-};
-
-/**
- * Formats energy of portal.
- *
- * @function prettyEnergy
- * @param {number} nrg - The energy value to format.
- * @returns {string} The formatted energy value.
- */
-window.prettyEnergy = function (nrg) {
-  return nrg > 1000 ? Math.round(nrg / 1000) + ' k' : nrg;
-};
-
-/**
- * Converts a list of items into a unique array, removing duplicates.
- *
- * @function uniqueArray
- * @param {Array} arr - The array to process.
- * @returns {Array} A new array containing only unique elements.
- */
-window.uniqueArray = function (arr) {
-  return $.grep(arr, function (v, i) {
-    return $.inArray(v, arr) === i;
-  });
-};
-
-/**
- * Generates a four-column HTML table from an array of data blocks.
- *
- * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
- * @returns {string} HTML string representing the constructed table.
- */
-window.genFourColumnTable = function (blocks) {
-  let t = $.map(blocks, function (detail, index) {
-    if (!detail) return '';
-    const title = detail[2] ? ' title="' + window.escapeHtmlSpecialChars(detail[2]) + '"' : '';
-    if (index % 2 === 0) {
-      return '<tr><td' + title + '>' + detail[1] + '</td><th' + title + '>' + detail[0] + '</th>';
-    } else {
-      return '<th' + title + '>' + detail[0] + '</th><td' + title + '>' + detail[1] + '</td></tr>';
-    }
-  }).join('');
-
-  // If the total number of rows is odd, add empty cells to complete the last row
-  if (blocks.length % 2 === 1) {
-    t += '<td></td><td></td></tr>';
-  }
-
-  return t;
-};
-
-/**
- * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
- *
- * @function convertTextToTableMagic
- * @param {string} text - The text to convert.
- * @returns {string} The resulting HTML table.
- */
-window.convertTextToTableMagic = function (text) {
-  // check if it should be converted to a table
-  if (!text.match(/\t/)) return text.replace(/\n/g, '<br>');
-
-  var data = [];
-  var columnCount = 0;
-
-  // parse data
-  var rows = text.split('\n');
-  $.each(rows, function (i, row) {
-    data[i] = row.split('\t');
-    if (data[i].length > columnCount) columnCount = data[i].length;
-  });
-
-  // build the table
-  var table = '<table>';
-  $.each(data, function (i) {
-    table += '<tr>';
-    $.each(data[i], function (k, cell) {
-      var attributes = '';
-      if (k === 0 && data[i].length < columnCount) {
-        attributes = ' colspan="' + (columnCount - data[i].length + 1) + '"';
-      }
-      table += '<td' + attributes + '>' + cell + '</td>';
-    });
-    table += '</tr>';
-  });
-  table += '</table>';
-  return table;
-};
-
-/**
- * Clamps a given value between a minimum and maximum value.
- *
- * @private
- * @function clamp
- * @param {number} n - The value to clamp.
- * @param {number} max - The maximum allowed value.
- * @param {number} min - The minimum allowed value.
- * @returns {number} The clamped value.
- */
-function clamp(n, max, min) {
-  if (n === 0) return 0;
-  return n > 0 ? Math.min(n, max) : Math.max(n, min);
-}
-
-var MAX_LATITUDE = 85.051128; // L.Projection.SphericalMercator.MAX_LATITUDE
-
-/**
- * Clamps a latitude and longitude to the maximum and minimum valid values.
- *
- * @function clampLatLng
- * @param {L.LatLng} latlng - The latitude and longitude to clamp.
- * @returns {Array<number>} The clamped latitude and longitude.
- */
-window.clampLatLng = function (latlng) {
-  // Ingress accepts requests only for this range
-  return [clamp(latlng.lat, MAX_LATITUDE, -MAX_LATITUDE), clamp(latlng.lng, 179.999999, -180)];
-};
-
-/**
- * Clamps a latitude and longitude bounds to the maximum and minimum valid values.
- *
- * @function clampLatLngBounds
- * @param {L.LatLngBounds} bounds - The bounds to clamp.
- * @returns {L.LatLngBounds} The clamped bounds.
- */
-window.clampLatLngBounds = function (bounds) {
-  var SW = bounds.getSouthWest(),
-    NE = bounds.getNorthEast();
-  return L.latLngBounds(window.clampLatLng(SW), window.clampLatLng(NE));
-};
-
-/*
-pnpoly Copyright (c) 1970-2003, Wm. Randolph Franklin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following conditions:
-
-  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-     disclaimers.
-  2. Redistributions in binary form must reproduce the above copyright notice in the documentation and/or other
-     materials provided with the distribution.
-  3. The name of W. Randolph Franklin may not be used to endorse or promote products derived from this Software without
-     specific prior written permission.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-/**
- * Determines if a point is inside a polygon.
- *
- * @param {Array<L.LatLng>} polygon - The vertices of the polygon.
- * @param {L.LatLng} point - The point to test.
- * @returns {boolean} True if the point is inside the polygon, false otherwise.
- */
-window.pnpoly = function (polygon, point) {
-  var inside = 0;
-  // j records previous value. Also handles wrapping around.
-  for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    inside ^=
-      polygon[i].y > point.y !== polygon[j].y > point.y &&
-      point.x - polygon[i].x < ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) / (polygon[j].y - polygon[i].y);
-  }
-  // Let's make js as magical as C. Yay.
-  return !!inside;
-};
-
-/**
- * Creates a link to open a specific portal in Ingress Prime.
- *
- * @function makePrimeLink
- * @param {string} guid - The globally unique identifier of the portal.
- * @param {number} lat - The latitude of the portal.
- * @param {number} lng - The longitude of the portal.
- * @returns {string} The Ingress Prime link for the portal
- */
-window.makePrimeLink = function (guid, lat, lng) {
-  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
-};
-
-/**
- * Generates a permalink URL based on the specified latitude and longitude and additional options.
- *
- * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
- *                              Can be omitted to create mapview-only permalink.
- * @param {Object} [options] - Additional options for permalink generation.
- * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
- * @param {boolean} [options.fullURL] - Generate a fully qualified URL (default: relative link).
- * @returns {string} The generated permalink URL.
- */
-window.makePermalink = function (latlng, options) {
-  options = options || {};
-
-  function round(l) {
-    // ensures that lat,lng are with same precision as in stock intel permalinks
-    return Math.floor(l * 1e6) / 1e6;
-  }
-  var args = [];
-  if (!latlng || options.includeMapView) {
-    var c = window.map.getCenter();
-    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
-  }
-  if (latlng) {
-    if ('lat' in latlng) {
-      latlng = [latlng.lat, latlng.lng];
-    }
-    args.push('pll=' + latlng.join(','));
-  }
-  var url = '';
-  if (options.fullURL) {
-    url += new URL(document.baseURI).origin;
-  }
-  url += '/';
-  return url + '?' + args.join('&');
-};
 
 if (!String.prototype.capitalize) {
   Object.defineProperty(String.prototype, 'capitalize', {
@@ -32306,6 +32450,29 @@ if (!Element.prototype.closest) {
       el = el.parentElement || el.parentNode;
     } while (el !== null && el.nodeType === 1);
     return null;
+  };
+}
+
+// https://github.com/KhaledElAnsari/String.prototype.padStart/blob/master/index.js
+if (!String.prototype.padStart) {
+  String.prototype.padStart = function (targetLength, padString) {
+    targetLength = Math.floor(targetLength) || 0;
+    if (targetLength < this.length) return String(this);
+
+    padString = padString ? String(padString) : ' ';
+
+    var pad = '';
+    var len = targetLength - this.length;
+    var i = 0;
+    while (pad.length < len) {
+      if (!padString[i]) {
+        i = 0;
+      }
+      pad += padString[i];
+      i++;
+    }
+
+    return pad + String(this).slice(0);
   };
 }
 
