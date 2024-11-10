@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.1.0.20241026.143026
+// @version        1.1.0.20241110.122422
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,17 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-26-143026';
+plugin_info.dateTimeVersion = '2024-11-10-122422';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L */
+/* global IITC, L */
 
 var changelog = [
   {
     version: '1.1.0',
-    changes: ['Using `window.formatAgo` instead of the plugin own function'],
+    changes: ['Using `IITC.utils.formatAgo` instead of the plugin own function'],
   },
   {
     version: '1.0.1',
@@ -236,7 +236,7 @@ machinaTracker.drawData = function () {
     var ageBucket = Math.min((now - event.time) / split, 3);
     var position = event.from.latLng;
 
-    var title = isTouchDev ? '' : window.formatAgo(event.time, now) + ' ago';
+    var title = isTouchDev ? '' : IITC.utils.formatAgo(event.time, now) + ' ago';
     var icon = machinaTracker.icon;
     var opacity = 1 - 0.2 * ageBucket;
 
@@ -250,7 +250,7 @@ machinaTracker.drawData = function () {
       $('<li>')
         .append(machinaTracker.createPortalLink(to))
         .append(' ')
-        .append(window.formatAgo(to.time, now) + ' ago')
+        .append(IITC.utils.formatAgo(to.time, now) + ' ago')
         .appendTo(linkList);
     });
 

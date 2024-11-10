@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.14.0.20241026.143026
+// @version        0.14.0.20241110.122422
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,17 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-26-143026';
+plugin_info.dateTimeVersion = '2024-11-10-122422';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
   {
     version: '0.14.0',
-    changes: ['Using `window.formatAgo` instead of the plugin own function', 'Refactoring to make it easier to extend plugin functions'],
+    changes: ['Using `IITC.utils.formatAgo` instead of the plugin own function', 'Refactoring to make it easier to extend plugin functions'],
   },
   {
     version: '0.13.2',
@@ -338,7 +338,7 @@ window.plugin.playerTracker.drawData = function () {
 
     var evtsLength = playerData.events.length;
     var last = playerData.events[evtsLength - 1];
-    const ago = window.formatAgo;
+    const ago = IITC.utils.formatAgo;
 
     // tooltip for marker - no HTML - and not shown on touchscreen devices
     var tooltip = isTouchDev ? '' : plrname + ', ' + ago(last.time, now) + ' ago';
