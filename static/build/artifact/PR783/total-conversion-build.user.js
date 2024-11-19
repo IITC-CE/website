@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241119.073648
+// @version        0.39.1.20241119.140244
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-11-19-073648';
+plugin_info.dateTimeVersion = '2024-11-19-140244';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -125,7 +125,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-11-19-073648';
+window.iitcBuildDate = '2024-11-19-140244';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2981,7 +2981,7 @@ const ulog = (function (module) {
 // *** module: _deprecated.js ***
 (function () {
 var log = ulog('_deprecated');
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 /**
  * @file This file contains functions that are not use by IITC itself
@@ -3156,6 +3156,19 @@ window.findPortalLatLng = function (guid) {
  */
 window.androidCopy = function () {
   return true; // i.e. execute other actions
+};
+
+/**
+ * Given the entity detail data, returns the team the entity belongs to.
+ * Uses TEAM_* enum values.
+ *
+ * @deprecated
+ * @function getTeam
+ * @param {Object} details - The details hash of an entity.
+ * @returns {number} The team ID the entity belongs to.
+ */
+window.getTeam = function (details) {
+  return IITC.utils.getTeamId(details.team);
 };
 
 
@@ -4046,7 +4059,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-11-19-073648');
+  log.log('loading done, booting. Built: ' + '2024-11-19-140244');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22820,48 +22833,6 @@ window.decodeArray.portalDetail = function (a) {
 })();
 
 
-// *** module: entity_info.js ***
-(function () {
-var log = ulog('entity_info');
-/* exported setup --eslint */
-
-/**
- * Entity Details Tools
- * Functions to extract useful data from entity details, such as portals, links, and fields.
- * @module entity_info
- */
-
-/**
- * Given the entity detail data, returns the team the entity belongs to.
- * Uses TEAM_* enum values.
- *
- * @function getTeam
- * @param {Object} details - The details hash of an entity.
- * @returns {number} The team ID the entity belongs to.
- */
-window.getTeam = function (details) {
-  return window.teamStringToId(details.team);
-};
-
-/**
- * Converts a team string to a team ID.
- *
- * @function teamStringToId
- * @param {string} teamStr - The team string to convert.
- * @returns {number} The team ID corresponding to the team string.
- */
-window.teamStringToId = function (teamStr) {
-  var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
-  if (teamIndex >= 0) return teamIndex;
-  teamIndex = window.TEAM_CODES.indexOf(teamStr);
-  if (teamIndex >= 0) return teamIndex;
-  return window.TEAM_NONE;
-};
-
-
-})();
-
-
 // *** module: extract_niantic_parameters.js ***
 (function () {
 var log = ulog('extract_niantic_parameters');
@@ -28591,7 +28562,7 @@ window.getPortalAttackValues = function (d) {
 // *** module: portal_marker.js ***
 (function () {
 var log = ulog('portal_marker');
-/* global L, log -- eslint */
+/* global IITC, L, log -- eslint */
 
 /**
  * @file This file contains the code related to creating and updating portal markers on the map.
@@ -28761,7 +28732,7 @@ L.PortalMarker = L.CircleMarker.extend({
     }
 
     this._level = parseInt(this._details.level) || 0;
-    this._team = window.teamStringToId(this._details.team);
+    this._team = IITC.utils.getTeamId(this._details.team);
 
     // the data returns unclaimed portals as level 1 - but IITC wants them treated as level 0
     if (this._team === window.TEAM_NONE) {
@@ -32577,6 +32548,28 @@ const isPointInPolygon = (polygon, point) => {
   return !!inside;
 };
 
+/**
+ * Converts a team string or object to a team ID.
+ * Accepts either team string directly (e.g. "RESISTANCE", "R") or an object with team property.
+ * Returns TEAM_NONE if no match found.
+ *
+ * @memberof IITC.utils
+ * @function getTeamId
+ * @param {(Object|string)} input - Input to convert to team ID
+ * @param {string} [input.team] - Team string when input is an object
+ * @returns {number} The team ID corresponding to the team string.
+ */
+const getTeamId = (input) => {
+  const teamStr = typeof input === 'string' ? input : input?.team;
+  if (window.TEAM_CODENAMES.includes(teamStr)) {
+    return window.TEAM_CODENAMES.indexOf(teamStr);
+  }
+  if (window.TEAM_CODES.includes(teamStr)) {
+    return window.TEAM_CODES.indexOf(teamStr);
+  }
+  return window.TEAM_NONE;
+};
+
 IITC.utils = {
   getURLParam,
   getCookie,
@@ -32602,6 +32595,7 @@ IITC.utils = {
   clampLatLng,
   clampLatLngBounds,
   isPointInPolygon,
+  getTeamId,
 };
 
 // Map of legacy function names to their new names (or the same name if not renamed)
@@ -32629,6 +32623,7 @@ const legacyFunctionMappings = {
   clampLatLng: 'clampLatLng',
   clampLatLngBounds: 'clampLatLngBounds',
   pnpoly: 'isPointInPolygon',
+  teamStringToId: 'getTeamId',
 };
 
 // Set up synchronization between `window` and `IITC.utils` with new names
