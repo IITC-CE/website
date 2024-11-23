@@ -1,2 +1,2 @@
-versionName=0.39.1-test-2024.11.23-13:40
-versionCode=1732369183
+versionName=0.39.1-test-2024.11.23-16:24
+versionCode=1732379004
