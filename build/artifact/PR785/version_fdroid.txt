@@ -1,0 +1,2 @@
+versionName=0.39.1-test-2024.11.25-08:01
+versionCode=1732521525
