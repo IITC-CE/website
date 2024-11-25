@@ -2,7 +2,7 @@
 // @author         morph
 // @name           IITC plugin: Wayfarer portal submission range
 // @category       Layer
-// @version        0.1.0.20241125.080053
+// @version        0.1.0.20241125.080443
 // @description    Add a 20m range around portals, to aid Wayfarer portals submissions
 // @id             wayfarer-range
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-11-25-080053';
+plugin_info.dateTimeVersion = '2024-11-25-080443';
 plugin_info.pluginId = 'wayfarer-range';
 //END PLUGIN AUTHORS NOTE
 
@@ -50,7 +50,7 @@ window.plugin.wayfarerrange.portalAdded = function (data) {
   });
 };
 
-window.plugin.wayfarerrange.remove = function (guid, faction) {
+window.plugin.wayfarerrange.remove = function (guid) {
   var previousLayer = window.plugin.wayfarerrange.wayfarerLayers[guid];
   if (previousLayer) {
     window.plugin.wayfarerrange.wayfarerCircleHolderGroup.removeLayer(previousLayer);
@@ -58,12 +58,11 @@ window.plugin.wayfarerrange.remove = function (guid, faction) {
   }
 };
 
-window.plugin.wayfarerrange.draw = function (guid, faction) {
+window.plugin.wayfarerrange.draw = function (guid) {
   var d = window.portals[guid];
 
   var coo = d._latlng;
   var latlng = new L.LatLng(coo.lat, coo.lng);
-  var portalLevel = d.options.level;
   // https://leafletjs.com/reference.html#circle
   var optCircle = { color: 'orange', opacity: 0.7, fillColor: 'orange', fillOpacity: 0.4, weight: 1, interactive: false, dashArray: [10, 6] };
   // submitting a portal closer than 20m to another one, wont make it appear on the map
