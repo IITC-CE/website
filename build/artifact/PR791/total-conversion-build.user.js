@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241218.072630
+// @version        0.39.1.20241218.074849
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-12-18-072630';
+plugin_info.dateTimeVersion = '2024-12-18-074849';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -125,7 +125,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-12-18-072630';
+window.iitcBuildDate = '2024-12-18-074849';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2197,6 +2197,23 @@ td + td {\
   box-shadow: none;\
 }\
 \
+.leaflet-bar a {\
+  text-decoration: none;\
+}\
+\
+.leaflet-control-zoom-in, .leaflet-control-zoom-out {\
+  background-size: 18px;\
+  font-size: 0 !important;\
+}\
+\
+.leaflet-control-zoom-in {\
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E");\
+}\
+\
+.leaflet-control-zoom-out {\
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E");\
+}\
+\
 \
 .portal_details th, .portal_details td {\
   vertical-align: top;\
@@ -4093,7 +4110,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-12-18-072630');
+  log.log('loading done, booting. Built: ' + '2024-12-18-074849');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
