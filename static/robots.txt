@@ -1,4 +1,5 @@
 User-agent: *
 Disallow: /build/
 Disallow: /deploy/
+Disallow: /fdroid/
 Crawl-delay: 10
