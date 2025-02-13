@@ -1,0 +1,2 @@
+versionName=0.39.1-beta-2025.02.13-05:25
+versionCode=1739424305
