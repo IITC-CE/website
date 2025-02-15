@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241231.164104
+// @version        0.39.1.20250215.234203
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-12-31-164104';
+plugin_info.dateTimeVersion = '2025-02-15-234203';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -125,7 +125,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-12-31-164104';
+window.iitcBuildDate = '2025-02-15-234203';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4110,7 +4110,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-12-31-164104');
+  log.log('loading done, booting. Built: ' + '2025-02-15-234203');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -25182,8 +25182,6 @@ window.Render.prototype.endRenderPass = function () {
 
   // reorder portals to be after links/fields
   this.bringPortalsToFront();
-
-  this.isRendering = false;
 };
 
 /**
@@ -25376,8 +25374,15 @@ window.Render.prototype.createPortalEntity = function (ent, details) {
   if (oldPortal) {
     // update marker style/highlight and layer
     marker = window.portals[data.guid];
-
     marker.updateDetails(data);
+
+    if (window.portalDetail.isFresh(guid)) {
+      var oldDetails = window.portalDetail.get(guid);
+      if (data.timestamp > oldDetails.timestamp) {
+        // data is more recent than the cached details so we remove them from the cache
+        window.portalDetail.remove(guid);
+      }
+    }
 
     window.runHooks('portalAdded', { portal: marker, previousData: previousData });
   } else {
@@ -25397,11 +25402,8 @@ window.Render.prototype.createPortalEntity = function (ent, details) {
     window.runHooks('portalAdded', { portal: marker });
 
     window.portals[data.guid] = marker;
-
-    if (window.selectedPortal === data.guid) {
-      marker.renderDetails();
-    }
   }
+
 
   window.ornaments.addPortal(marker);
 
@@ -27189,14 +27191,19 @@ var handleResponse = function (deferred, guid, data, success) {
   }
 
   if (success) {
+    // Parse portal details
+    var dict = window.decodeArray.portal(data.result, 'detailed');
+    cache.store(guid, dict);
+
     // entity format, as used in map data
     var ent = [guid, data.result[13], data.result];
     var portal = window.mapDataRequest.render.createPortalEntity(ent, 'detailed');
 
+    // Update cache with from current map
     cache.store(guid, portal.options.data);
 
     deferred.resolve(portal.options.data);
-    window.runHooks('portalDetailLoaded', { guid: guid, success: success, details: portal.options.data, ent: ent });
+    window.runHooks('portalDetailLoaded', { guid: guid, success: success, details: portal.options.data, ent: ent, portal: portal });
   } else {
     if (data && data.error === 'RETRY') {
       // server asked us to try again
@@ -27317,7 +27324,7 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
 };
 
 /**
- * Renders the details of a portal in the sidebar.
+ * Selects a portal, refresh its data and renders the details of the portal in the sidebar.
  *
  * @function renderPortalDetails
  * @param {string|null} guid - The globally unique identifier of the portal to display details for.
@@ -27325,8 +27332,9 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
  */
 window.renderPortalDetails = function (guid, forceSelect) {
   if (forceSelect || window.selectedPortal !== guid) {
-    window.selectPortal(window.portals[guid] ? guid : null, 'renderPortalDetails');
+    window.selectPortal(guid && window.portals[guid] ? guid : null, 'renderPortalDetails');
   }
+
   if ($('#sidebar').is(':visible')) {
     window.resetScrollOnNewPortal();
     window.renderPortalDetails.lastVisible = guid;
@@ -27336,10 +27344,7 @@ window.renderPortalDetails = function (guid, forceSelect) {
     window.portalDetail.request(guid);
   }
 
-  // TODO? handle the case where we request data for a particular portal GUID, but it *isn't* in
-  // window.portals....
-
-  if (!window.portals[guid]) {
+  if (!guid || !window.portals[guid]) {
     window.urlPortal = guid;
     $('#portaldetails').html('');
     if (window.isSmartphone()) {
@@ -27349,7 +27354,17 @@ window.renderPortalDetails = function (guid, forceSelect) {
     return;
   }
 
-  var portal = window.portals[guid];
+  window.renderPortalToSideBar(window.portals[guid]);
+};
+
+/**
+ * Renders the details of a portal in the sidebar.
+ *
+ * @function renderPortalToSideBar
+ * @param {L.PortalMarker} portal - The portal marker object holding portal details.
+ */
+window.renderPortalToSideBar = function (portal) {
+  var guid = portal.options.guid;
   var details = portal.getDetails();
   var hasFullDetails = portal.hasFullDetails();
   var historyDetails = window.getPortalHistoryDetails(details);
@@ -28799,19 +28814,7 @@ L.PortalMarker = L.CircleMarker.extend({
     };
     L.setOptions(this, dataOptions);
 
-    if (this._selected) {
-      this.renderDetails();
-    }
-
     this.setSelected();
-  },
-
-  renderDetails() {
-    if (!this._rendering) {
-      this._rendering = true;
-      window.renderPortalDetails(this._details.guid);
-      this._rendering = false;
-    }
   },
 
   getDetails: function () {
@@ -31077,6 +31080,9 @@ window.setupSidebar = function () {
   setupLargeImagePreview();
   setupAddons();
   $('#sidebar').show();
+  // setup portal detail display update
+  window.addHook('portalAdded', sidebarOnPortalAdded);
+  window.addHook('portalDetailLoaded', sidebarOnPortalDetailLoaded);
 };
 
 /**
@@ -31270,6 +31276,28 @@ function setupAddons() {
   window.artifact.setup();
 
   window.RegionScoreboardSetup();
+}
+
+/**
+ * portalAdded callback to update the sidebar
+ *
+ * @function sidebarOnPortalAdded
+ */
+function sidebarOnPortalAdded(data) {
+  if (data.portal.options.guid === window.selectedPortal) {
+    window.renderPortalDetails(window.selectedPortal);
+  }
+}
+
+/**
+ * portalDetailLoaded callback to update the sidebar
+ *
+ * @function sidebarOnPortalDetailLoaded
+ */
+function sidebarOnPortalDetailLoaded(data) {
+  if (data.success && data.guid === window.selectedPortal) {
+    window.renderPortalToSideBar(data.portal);
+  }
 }
 
 
