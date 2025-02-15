@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.9.2.20241231.164104
+// @version        0.9.2.20250215.234203
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-12-31-164104';
+plugin_info.dateTimeVersion = '2025-02-15-234203';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -380,13 +380,13 @@ function createInfoLink(text, title, clickCallback) {
   return aside;
 }
 
-machinaTools.onPortalDetailsUpdated = function () {
+machinaTools.onPortalDetailsUpdated = function (data) {
   var portalData;
 
   // If the portal was cleared then exit.
   if (window.selectedPortal === null) return;
 
-  portalData = window.portalDetail.get(window.selectedPortal);
+  portalData = data.portalData;
 
   if (portalData.team === window.TEAM_CODE_MAC) {
     var linkdetails = $('.linkdetails');

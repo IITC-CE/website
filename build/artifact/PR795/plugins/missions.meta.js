@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Missions
 // @category       Info
-// @version        0.3.4.20241231.164104
+// @version        0.3.4.20250215.234203
 // @description    View missions. Marking progress on waypoints/missions basis. Showing mission paths on the map.
 // @id             missions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
