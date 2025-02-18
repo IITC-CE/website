@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20241031.180336
+// @version        0.39.1.20250218.082800
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,11 +21,15 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-31-180336';
+plugin_info.dateTimeVersion = '2025-02-18-082800';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
 /* global plugin_info, PLAYER -- eslint */
+
+/**
+ * @namespace IITC
+ */
 
 // create IITC scope
 const IITC = {};
@@ -121,7 +125,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2024-10-31-180336';
+window.iitcBuildDate = '2025-02-18-082800';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -182,1472 +186,83 @@ document.head.innerHTML =
   '<link rel="shortcut icon" href="/img/favicon.ico" />' +
   '<style>' +
   '\
-/* general rules ******************************************************/\
-\
-/* for printing directly from the browser, hide all UI components\
- * NOTE: @media needs to be first?\
+/*!\
+ * jQuery UI Resizable 1.12.1\
+ * http://jqueryui.com\
+ *\
+ * Copyright jQuery Foundation and other contributors\
+ * Released under the MIT license.\
+ * http://jquery.org/license\
  */\
-@media print {\
-  .leaflet-control-container { display: none !important; }\
-  #chatcontrols, #chat, #chatinput { display: none !important; }\
-  #sidebartoggle, #sidebar { display: none !important; }\
-  #updatestatus { display: none !important; }\
-  #portal_highlight_select { display: none !important; }\
-}\
-\
-.text-overflow-ellipsis {\
-  display: inline-block;\
-  overflow: hidden;\
-  white-space: nowrap;\
-  text-overflow: ellipsis;\
-  vertical-align: text-bottom;\
-  width: 100%;\
-}\
-\
-\
-html, body {\
-  height: 100%;\
-  width: 100%;\
-  overflow: hidden; /* workaround for #373 */\
-  background: #0e3d4e;\
-}\
-\
-#map {\
-  overflow: visible;\
-  height: 100%;\
-  width: 100%;\
-}\
-\
-\
-body {\
-  font-size: 14px;\
-  font-family: Roboto, "Helvetica Neue", Helvetica, sans-serif;\
-  margin: 0;\
-}\
-\
-/* Material Icons */\
-.material-icons {\
-  width: 24px;\
-  height: 24px;\
-}\
-\
-.icon-button {\
-  cursor: pointer;\
-}\
-\
-i.tiny { font-size: 1rem; }\
-i.small { font-size: 2rem; }\
-i.medium { font-size: 4rem; }\
-i.large { font-size: 6rem; }\
-\
-#scrollwrapper {\
-  overflow-x: hidden;\
-  overflow-y: auto;\
-  position: fixed;\
-  right: -38px;\
-  top: 0;\
-  width: 340px;\
-  bottom: 45px;\
-  z-index: 3001;\
-  pointer-events: none;\
-}\
-\
-#sidebar {\
-  background-color: rgba(8, 48, 78, 0.9);\
-  border-left: 1px solid #20A8B1;\
-  color: #888;\
-  position: relative;\
-  left: 0;\
-  top: 0;\
-  max-height: 100%;\
-  overflow-y:scroll;\
-  overflow-x:hidden;\
-  pointer-events: auto;\
-}\
-\
-#sidebartoggle {\
-  display: block;\
-  padding: 20px 5px;\
-  margin-top: -31px; /* -(toggle height / 2) */\
-  line-height: 10px;\
-  position: absolute;\
-  top: 108px;\
-  z-index: 3002;\
-  background-color: rgba(8, 48, 78, 0.9);\
-  color: #FFCE00;\
-  border: 1px solid #20A8B1;\
-  border-right: none;\
-  border-radius: 5px 0 0 5px;\
-  text-decoration: none;\
-  right: -50px; /* overwritten later by the script with SIDEBAR_WIDTH */\
-}\
-\
-.enl {\
-  color: #03fe03;\
-}\
-\
-.res {\
-  color: #00c5ff;\
-}\
-\
-.mac {\
-  color: #ff2020;\
-}\
-\
-.none {\
-  color: #fff;\
-}\
-\
-.nickname {\
-  cursor: pointer;\
-}\
-\
-a {\
-  color: #ffce00;\
-  cursor: pointer;\
-  text-decoration: none;\
-}\
-\
-a:hover {\
-  text-decoration: underline;\
-}\
-\
-.leaflet-control-layers-overlays label.disabled {\
-  text-decoration: line-through;\
-  cursor: help;\
-}\
-\
-/* base layer selection - first column */\
-.leaflet-control-layers-base {\
-  float: left;\
-  overflow-y: auto;\
-  max-height: 600px;\
-}\
-\
-/* overlays layer selection - 2nd column */\
-.leaflet-control-layers-overlays {\
-  float: left;\
-  margin-left: 8px;\
-  border-left: 1px solid #DDDDDD;\
-  padding-left: 8px;\
-  overflow-y: auto;\
-  max-height: 600px;\
-}\
-\
-/* hide the usual separator */\
-.leaflet-control-layers-separator {\
-  display: none;\
-}\
-\
-\
-/* shift controls when chat is expanded */\
-.leaflet-left .leaflet-control.chat-expand {\
-  margin-left: 720px;\
-}\
-\
-.help {\
-  cursor: help;\
-}\
-\
-.toggle {\
-  display: block;\
-  height: 0;\
-  width: 0;\
-}\
-\
-/* field mu count */\
-.fieldmu {\
-  color: #FFCE00;\
-  font-size: 13px;\
-  font-family: Roboto, "Helvetica Neue", Helvetica, sans-serif; /*override leaflet-container */\
-  text-align: center;\
-  text-shadow: 0 0 0.2em black, 0 0 0.2em black, 0 0 0.2em black;\
-  pointer-events: none;\
-}\
-\
-\
-/* chat ***************************************************************/\
-\
-#chatcontrols {\
-  color: #FFCE00;\
-  background: rgba(8, 48, 78, 0.9);\
-  position: absolute;\
-  left: 0;\
-  z-index: 3000;\
-  height: 26px;\
-  padding-left:1px;\
-}\
-\
-#chatcontrols.expand {\
-  top: 0;\
-  bottom: auto;\
-}\
-\
-#chatcontrols a {\
-  margin-left: -1px;\
-  display: inline-block;\
-  width: 94px;\
-  text-align: center;\
-  height: 24px;\
-  line-height: 24px;\
-  border: 1px solid #20A8B1;\
-  vertical-align: top;\
-}\
-\
-#chatcontrols a:first-child {\
-  letter-spacing:-1px;\
-  text-decoration: none;\
-}\
-\
-#chatcontrols a.active {\
-  border-color: #FFCE00;\
-  border-bottom-width:0px;\
-  font-weight:bold;\
-  background: rgb(8, 48, 78);\
-}\
-\
-#chatcontrols a.active + a {\
-  border-left-color: #FFCE00\
-}\
-\
-\
-#chatcontrols .toggle {\
-  border-left: 10px solid transparent;\
-  border-right: 10px solid transparent;\
-  border-bottom: 10px solid #FFCE00;\
-  margin: 6px auto auto;\
-}\
-\
-#chatcontrols.expand .toggle {\
-  border-top: 10px solid #FFCE00;\
-  border-bottom: none;\
-}\
-\
-#chatcontrols .loading {\
-  background-color: rgba(255,0,0,0.3);\
-  -webkit-animation: chatloading 1.2s infinite linear;\
-  -moz-animation: chatloading 1.2s infinite linear;\
-  animation: chatloading 1.2s infinite linear;\
-}\
-\
-@-webkit-keyframes chatloading {\
-    0% { background-color: rgba(255,0,0,0.4) }\
-   50% { background-color: rgba(255,0,0,0.1) }\
-  100% { background-color: rgba(255,0,0,0.4) }\
-}\
-\
-@-moz-keyframes chatloading {\
-    0% { background-color: rgba(255,0,0,0.4) }\
-   50% { background-color: rgba(255,0,0,0.1) }\
-  100% { background-color: rgba(255,0,0,0.4) }\
-}\
-\
-@keyframes chatloading {\
-    0% { background-color: rgba(255,0,0,0.4) }\
-   50% { background-color: rgba(255,0,0,0.1) }\
-  100% { background-color: rgba(255,0,0,0.4) }\
-}\
-\
-\
-\
-#chat {\
-  position: absolute;\
-  width: 708px;\
-  bottom: 23px;\
-  left: 0;\
-  z-index: 3000;\
-  background: rgba(8, 48, 78, 0.9);\
-  line-height: 15px;\
-  color: #eee;\
-  border: 1px solid #20A8B1;\
-  border-bottom: 0;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-}\
-\
-em {\
-  color: red;\
-  font-style: normal;\
-}\
-\
-#chat.expand {\
-  height:auto;\
-  top: 25px;\
-}\
-\
-\
-#chat > div {\
-  overflow-x:hidden;\
-  overflow-y:scroll;\
-  height: 100%;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-  padding: 2px;\
-  position:relative;\
-}\
-\
-#chat table, #chatinput table {\
-  width: 100%;\
-  table-layout: fixed;\
-  border-spacing: 0;\
-  border-collapse: collapse;\
-  /* make the table always scrollable */\
-  min-height: 100%;\
-  margin-bottom: 1px;\
-}\
-\
-/* expand last row if needed */\
-#chat table tr:last-child {\
-    height: 100%;\
-}\
-\
-#chatinput table {\
-  height: 100%;\
-}\
-\
-#chatinput.public mark,\
-#chatinput.public input {\
-  color: #f66;\
-}\
-\
-#chatinput.alerts mark {\
-  color: #bbb;\
-}\
-\
-#chat td, #chatinput td {\
-  font-size: 13px;\
-  vertical-align: top;\
-  padding-bottom: 3px;\
-}\
-\
-#chat .divider {\
-  color: #bbb;\
-}\
-\
-#chat .divider td:nth-child(2) {\
-  text-align: center;\
-}\
-\
-/* time */\
-#chat td:first-child, #chatinput td:first-child {\
-  width: 44px;\
-  overflow: hidden;\
-  padding-left: 2px;\
-  color: #bbb;\
-  white-space: nowrap;\
-}\
-\
-#chat time {\
-  cursor: help;\
-}\
-\
-/* nick */\
-#chat td:nth-child(2), #chatinput td:nth-child(2) {\
-  width: 91px;\
-  overflow: hidden;\
-  padding-left: 2px;\
-  white-space: nowrap;\
-}\
-\
-#chat td.system_narrowcast {\
-  color: #f66;\
-}\
-\
-#chatall tr.faction td:nth-child(3):before,\
-#chatalerts tr.faction td:nth-child(3):before {\
-  content: \'[faction]\';\
-  color: #f88;\
-  background-color: #500;\
-  margin-right: .2rem;\
-}\
-\
-#chatall tr.public td:nth-child(3):before,\
-#chatalerts tr.public td:nth-child(3):before {\
-  content: \'[public]\';\
-  color: #ff6;\
-  background-color: #550;\
-  margin-right: .2rem;\
-}\
-\
-mark {\
-  background: transparent;\
-}\
-\
-.invisep {\
-  display: inline-block;\
-  width: 1px;\
-  height: 1px;\
-  overflow:hidden;\
-  color: transparent;\
-}\
-\
-/* divider */\
-summary {\
-  color: #bbb;\
-  display: inline-block;\
-  height: 16px;\
-  overflow: hidden;\
-  padding: 0 2px;\
-  white-space: nowrap;\
-  width: 100%;\
-}\
-\
-#chatinput {\
-  position: absolute;\
-  bottom: 0;\
-  left: 0;\
-  padding: 0 2px;\
-  background: rgba(8, 48, 78, 0.9);\
-  width: 708px;\
-  height: 23px;\
-  border: 1px solid #20A8B1;\
-  z-index: 3001;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-}\
-\
-#chatinput td {\
-  padding-bottom: 1px;\
-  vertical-align: middle;\
-}\
-\
-\
-#chatinput input {\
-  background: transparent;\
-  color: #EEEEEE;\
-  width: 100%;\
-  height: 100%;\
-  padding:3px 4px 1px 4px;\
-}\
-\
-\
-\
-/* sidebar ************************************************************/\
-\
-#sidebar > * {\
-  border-bottom: 1px solid #20A8B1;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-}\
-\
-\
-\
-#sidebartoggle .toggle {\
-  border-bottom: 10px solid transparent;\
-  border-top: 10px solid transparent;\
-}\
-\
-#sidebartoggle .open {\
-  border-right: 10px solid #FFCE00;\
-}\
-\
-#sidebartoggle .close {\
-  border-left: 10px solid #FFCE00;\
-}\
-\
-/* player stats */\
-#playerstat {\
-  height: 30px;\
-}\
-\
-h2 {\
-  color: #ffce00;\
-  font-size: 21px;\
-  padding: 0 4px;\
-  margin: 0;\
-  cursor:help;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-  width: 100%;\
-}\
-\
-h2 #name {\
-  font-weight: 300;\
-  display: inline;\
-  vertical-align: top;\
-  white-space: nowrap;\
-}\
-\
-h2 #name .playername {\
-  max-width: 70%;\
-  display: inline-block;\
-  overflow: hidden;\
-  text-overflow: ellipsis;\
-}\
-\
-h2 #stats {\
-  float: right;\
-  height: 100%;\
-  overflow: hidden;\
-}\
-\
-#signout {\
-  font-size: 12px;\
-  font-weight: normal;\
-  padding: 0 4px;\
-  background-color: rgba(8, 48, 78, 0.5);\
-  display: none; /* starts hidden */\
-  vertical-align: text-top;\
-}\
-#name:hover .playername {\
-  max-width: 50%;\
-}\
-#name:hover #signout {\
-  display: inline-block;\
-}\
-\
-h2 sup, h2 sub {\
-  display: block;\
-  font-size: 11px;\
-  margin-bottom: -2px;\
-}\
-\
-\
-/* gamestats */\
-#gamestat span {\
-  display: inline-block;\
-  font-weight: bold;\
-  cursor:help;\
-  padding: 0 3px;\
-  box-sizing: border-box;\
-}\
-\
-#gamestat .res {\
-  background: #005684;\
-}\
-\
-#gamestat .enl {\
-  background: #017f01;\
-}\
-\
-\
-/* search input, and others */\
-input:not([type]), .input,\
-input[type="text"], input[type="password"],\
-input[type="number"], input[type="email"],\
-input[type="search"], input[type="url"] {\
-  background-color: rgba(0, 0, 0, 0.3);\
-  color: #ffce00;\
-  height: 24px;\
-  padding:0px 4px 0px 4px;\
-  font-size: 12px;\
-  border:0;\
-  font-family:inherit;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-}\
-\
-#searchwrapper {\
-  position: relative;\
-}\
-#search {\
-  width: 100%;\
-  padding-right: 24px;\
-}\
-#buttongeolocation {\
-  position: absolute;\
-  right: 0;\
-  bottom: 0;\
-  margin: 0;\
-  border: 0 none transparent;\
-  padding: 0 2px 0 0;\
-  height: 100%;\
-  background-color: transparent;\
-}\
-#buttongeolocation:focus {\
-  outline: 1px dotted #ffce00;\
-}\
-#buttongeolocation img {\
-  vertical-align: middle;\
-}\
-#searchwrapper h3 {\
-  font-size: 1em;\
-  height: auto;\
-  cursor: pointer;\
-}\
-.searchquery {\
-  max-height: 25em;\
-  overflow-y: auto;\
-}\
-#searchwrapper .ui-accordion-header::before {\
-  font-size: 18px;\
-  margin-right: 2px;\
-  font-weight: normal;\
-  line-height: 1em;\
-  content: "⊞";\
-}\
-#searchwrapper .ui-accordion-header-active::before {\
-  content: "⊟";\
-}\
-#searchwrapper .ui-accordion-content {\
-  margin: 0;\
-  overflow: hidden;\
-}\
-#searchwrapper ul {\
-  padding-left: 14px;\
-}\
-#searchwrapper li {\
-  cursor: pointer;\
-}\
-#searchwrapper li a {\
-  margin-left: -14px;\
-  padding-left: 14px;\
-  background-position: 1px center;\
-  background-repeat: no-repeat;\
-  background-size: 12px 12px;\
-}\
-#searchwrapper li:focus a, #searchwrapper li:hover a {\
-  text-decoration: underline;\
-}\
-#searchwrapper li em {\
-  color: #ccc;\
-  font-size: 0.9em;\
-}\
-\
-::-webkit-input-placeholder {\
-  font-style: italic;\
-}\
-\
-:-moz-placeholder {\
-  font-style: italic;\
-}\
-\
-::-moz-placeholder {\
-  font-style: italic;\
-}\
-\
-.leaflet-control-layers input {\
-  height: auto;\
-  padding: 0;\
-}\
-\
-\
-/* portal title and image */\
-h3.title {\
-  padding-right: 17px; /* to not overlap with close button */\
-  margin: 2px 0;\
-  line-height: 24px;\
-  overflow: hidden;\
-  text-overflow: ellipsis;\
-  white-space: nowrap;\
-}\
-\
-.imgpreview {\
-  height: 190px;\
-  background: no-repeat center center;\
-  background-size: contain;\
-  cursor: help;\
-  overflow: hidden;\
-  position: relative;\
-}\
-\
-.imgpreview img.hide {\
-  display: none;\
-}\
-\
-.imgpreview .portalDetails {\
-  display: none;\
-}\
-\
-#level {\
-  font-size: 40px;\
-  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;\
-  display: block;\
-  margin-right: 15px;\
-  text-align:right;\
-  float: right;\
-}\
-\
-/* portal mods */\
-.mods {\
-  margin: 3px auto 1px auto;\
-  width: 296px;\
-  height: 67px;\
-  text-align: center;\
-}\
-\
-.mods span {\
-  background-color: rgba(0, 0, 0, 0.3);\
-  /* can’t use inline-block because Webkit\'s implementation is buggy and\
-   * introduces additional margins in random cases. No clear necessary,\
-   * as that’s solved by setting height on .mods. */\
-  display: block;\
-  float:left;\
-  height: 63px;\
-  margin: 0 2px;\
-  overflow: hidden;\
-  padding: 2px;\
-  text-align: center;\
-  width: 63px;\
-  cursor:help;\
-  border: 1px solid #666;\
-}\
-\
-.mods span:not([title]) {\
-  cursor: auto;\
-}\
-\
-.res .mods span, .res .meter {\
-  border: 1px solid #0076b6;\
-}\
-.enl .mods span, .enl .meter {\
-  border: 1px solid #017f01;\
-}\
-\
-/* random details, resonator details */\
-#randdetails, #resodetails {\
-  width: 100%;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-  padding: 0 4px;\
-  table-layout: fixed;\
-  border-spacing: 0m;\
-  border-collapse: collapse;\
-}\
-\
-#randdetails td, #resodetails td {\
-  overflow: hidden;\
-  text-overflow: ellipsis;\
-  vertical-align: top;\
-  white-space: nowrap;\
-  width: 50%;\
-}\
-\
-#randdetails th, #resodetails th {\
-  font-weight: normal;\
-  text-align: right;\
-  width: 62px;\
-  padding:0px;\
-  padding-right:4px;\
-  padding-left:4px;\
-}\
-\
-#randdetails th + th, #resodetails th + th {\
-  text-align: left;\
-  padding-right: 4px;\
-  padding-left: 4px;\
-}\
-\
-#randdetails td:first-child, #resodetails td:first-child {\
-  text-align: right;\
-  padding-left: 2px;\
-}\
-\
-#randdetails td:last-child, #resodetails td:last-child {\
-  text-align: left;\
-  padding-right: 2px;\
-}\
-\
-\
-#randdetails {\
-  margin-top: 4px;\
-  margin-bottom: 5px;\
-}\
-\
-\
-#randdetails tt {\
-  font-family: inherit;\
-  cursor: help;\
-}\
-\
-#artifact_target, #artifact_fragments {\
-  margin-top: 4px;\
-  margin-bottom: 4px;\
-\
-  margin-left: 8px;\
-  margin-right: 8px;\
-}\
-\
-\
-/* resonators */\
-#resodetails {\
-  margin-bottom: 0px;\
-}\
-\
-.meter {\
-  background: #000;\
-  cursor: help;\
-  display: inline-block;\
-  height: 18px;\
-  padding: 1px;\
-  width: 100%;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-  position: relative;\
-  left: 0;\
-  top: 0;\
-}\
-\
-.meter.north {\
-  overflow: hidden;\
-}\
-.meter.north:before {\
-  content: "";\
-  background-color: red;\
-  border: 1px solid #000000;\
-  border-radius: 100%;\
-  display: block;\
-  height: 6px;\
-  width: 6px;\
-  left: 50%;\
-  top: -3px;\
-  margin-left: -4px;\
-  position: absolute;\
-}\
-\
-.meter span {\
-  display: block;\
-  height: 14px;\
-}\
-\
-.meter-level {\
-  position: absolute;\
-  left: 0;\
-  right: 0;\
-  top: -2px;\
-  text-shadow: 0.0em 0.0em 0.3em #808080;\
-  text-align: center;\
-  word-spacing: 4px; /* to leave some space for the north indicator */\
-}\
-\
-/* links below resos */\
-\
-.linkdetails {\
-  margin-bottom: 0px;\
-  text-align: center;\
-}\
-\
-.linkdetails aside {\
-  display: inline-block;\
-  white-space: nowrap;\
-  margin-left: 5px;\
-  margin-right: 5px;\
-}\
-\
-#toolbox {\
-  display: none !important;\
-}\
-\
-#toolbox, #toolbox_component {\
-  text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\
-}\
-\
-#toolbox > a, #toolbox_component > a {\
-  margin-left: 5px;\
-  margin-right: 5px;\
-  white-space: nowrap;\
-  display: inline-block;\
-}\
-\
-/* a common portal display takes this much space (prevents moving\
- * content when first selecting a portal) */\
-\
-#portaldetails {\
-  min-height: 63px;\
-  position: relative; /* so the below \'#portaldetails .close\' is relative to this */\
-}\
-\
-#portaldetails .close {\
-  position: absolute;\
-  top: -2px;\
-  right: 2px;\
-  cursor: pointer;\
-  color: #FFCE00;\
-  font-size: 16px;\
-}\
-\
-/* history details */\
-#historydetails {\
-  text-align: center;\
-  color: #ffce00;\
-}\
-\
-#historydetails .missing {\
-}\
-\
-#historydetails span {\
-  color: #ff4a4a;\
-}\
-\
-#historydetails span.completed {\
-  color: #03fe03;\
-}\
-\
-/* update status */\
-#updatestatus {\
-  background-color: rgba(8, 48, 78, 0.9);\
-  border-bottom: 0;\
-  border-top: 1px solid #20A8B1;\
-  border-left: 1px solid #20A8B1;\
-  bottom: 0;\
-  color: #ffce00;\
-  font-size:13px;\
-  padding: 4px;\
-  position: fixed;\
-  right: 0;\
-  z-index: 3002;\
-  -webkit-box-sizing: border-box;\
-  -moz-box-sizing: border-box;\
-  box-sizing: border-box;\
-}\
-\
-#updatestatus .map {\
-  margin-left: 8px;\
-}\
-\
-#loadlevel {\
-  background: #FFF;\
-  color: #000000;\
-  display: inline-block;\
-  min-width: 1.8em;\
-  border: 1px solid #20A8B1;\
-  border-width: 0 1px;\
-  margin: -4px 0;\
-  padding: 4px 0.2em;\
-}\
-\
-/* Dialogs\
- */\
-.ui-tooltip, .ui-dialog {\
-  position: absolute;\
-  z-index: 9500;\
-  background-color: rgba(8, 48, 78, 0.9);\
-  border: 1px solid #20A8B1;\
-  color: #eee;\
-  font-size: 13px;\
-  line-height: 15px;\
-  padding: 2px 4px;\
-}\
-\
-.ui-tooltip {\
-  max-width: 300px;\
-}\
-\
-.ui-widget-overlay {\
-  height: 100%;\
-  left: 0;\
-  position: fixed;\
-  top: 0;\
-  width: 100%;\
-  z-index: 10000;\
-  background:  #444;\
-  opacity: 0.6;\
-}\
-\
-.ui-modal {\
-  z-index: 10001 !important;\
-}\
-\
-.ui-tooltip {\
-  z-index: 10002 !important;\
-}\
-\
-.ui-tooltip, .ui-dialog a {\
-  color: #FFCE00;\
-}\
-\
-.ui-dialog {\
-  padding: 0;\
-  border-radius: 2px;\
-}\
-\
-.ui-dialog-modal .ui-dialog-titlebar-close {\
-  display: none;\
-}\
-\
-.ui-dialog-titlebar {\
-  font-size: 13px;\
-  line-height: 15px;\
-  text-align: center;\
-  padding: 4px;\
-  background-color: rgba(8, 60, 78, 0.9);\
-}\
-\
-.ui-dialog-title {\
-  font-weight: bold;\
-  margin-left: 8px;\
-  margin-right: 45px;\
-  width: calc(100% - 45px);\
-}\
-\
-.ui-dialog-title-active {\
-  color: #ffce00;\
-}\
-\
-.ui-dialog-title-inactive {\
-  color: #ffffff;\
-}\
-\
-.ui-dialog-titlebar-button {\
-  position: absolute;\
-  display: table-cell;\
-  vertical-align: middle;\
-  text-align: center;\
-  width: 17px;\
-  height: 17px;\
-  top: 3px;\
-  cursor: pointer;\
-  border: 1px solid rgb(32, 168, 177);\
-  background-color: rgba(0, 0, 0, 0);\
-  padding: 0;\
-}\
-\
-.ui-dialog-titlebar-button:active {\
-  background-color: rgb(32, 168, 177);\
-}\
-\
-.ui-dialog-titlebar-button-close {\
-  right: 4px;\
-}\
-\
-.ui-dialog-titlebar-button-collapse {\
-  right: 25px;\
-}\
-\
-.ui-dialog-titlebar-button-collapse-expanded {\
-  /* For future changes */\
-}\
-\
-.ui-dialog-titlebar-button-collapse-collapsed {\
-  background-color: rgb(32, 168, 177);\
-}\
-\
-.ui-dialog-titlebar-button-collapse::after,\
-.ui-dialog-titlebar-button-close::after,\
-.ui-dialog-titlebar-button-close::before {\
-  content: "";\
-  position: absolute;\
-  top: 3px;\
-  left: 50%;\
-  width: 11px;\
-  margin-left: -6px;\
-  height: 0;\
-  border-top: 2px solid rgb(32, 168, 177);\
-}\
-.ui-dialog-titlebar-button-close::after {\
-  transform: translateY(3.5px) rotate(45deg);\
-  -webkit-transform: translateY(3.5px) rotate(45deg);\
-}\
-.ui-dialog-titlebar-button-close::before {\
-  transform: translateY(3.5px) rotate(-45deg);\
-  -webkit-transform: translateY(3.5px) rotate(-45deg);\
-}\
-.ui-dialog-titlebar-button.ui-state-active::after,\
-.ui-dialog-titlebar-button.ui-state-active::before,\
-.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed::after,\
-.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed::before,\
-.ui-dialog-titlebar-button:active::after,\
-.ui-dialog-titlebar-button:active::before {\
-  border-top-color: rgba(8, 60, 78, 0.9);\
-}\
-\
-.ui-dialog-content {\
-  padding: 12px;\
-  overflow: auto;\
-  position: relative;\
-\
-  /* Limiting the height of dialog content on small screens */\
-  /* 57px – height .ui-dialog-titlebar + .ui-dialog-buttonpane */\
-  /* 24px – padding 12px * 2 */\
-  /*  2px – border 1px * 2 */\
-  max-height: calc(100vh - 57px - 24px - 2px) !important;\
-}\
-\
-.ui-dialog {\
-  max-width: calc(100vw - 2px);\
-}\
-\
-@media (min-width: 700px) {\
-  .ui-dialog {\
-    max-width: 600px;\
-  }\
-}\
-\
-.ui-dialog-content-hidden {\
-  display: none !important;\
-}\
-\
-.ui-dialog-buttonpane {\
-  padding: 6px;\
-  border-top: 1px solid #20A8B1;\
-}\
-\
-.ui-dialog-buttonset {\
-  text-align: right;\
-}\
-\
-.ui-dialog-buttonset button,\
-.ui-dialog-content button {\
-  padding: 2px;\
-  min-width: 40px;\
-  color: #FFCE00;\
-  border: 1px solid #FFCE00;\
-  background-color: rgba(8, 48, 78, 0.9);\
-}\
-\
-.ui-dialog-buttonset button:hover {\
-  text-decoration: underline;\
-}\
-\
-td {\
-  padding: 0;\
-  vertical-align: top;\
-}\
-\
-td + td {\
-  padding-left: 4px;\
-}\
-\
-#qrcode > canvas {\
-  border: 8px solid white;\
-}\
-\
-/* redeem results *****************************************************/\
-.redeemReward {\
-  font-family: Inconsolata, Consolas, Menlo, "Courier New", monospace;\
-  list-style-type: none;\
-  padding: 0;\
-  font-size: 14px;\
-}\
-.redeemReward .itemlevel {\
-  font-weight: bold;\
-  text-shadow: 0 0 1px #000; /* L8 is hard to read on blue background */\
-}\
-/*\
-.redeem-result-table {\
-  font-size: 14px;\
-  table-layout: fixed;\
-}\
-\
-.redeem-result tr > td:first-child {\
-  width: 50px;\
-  text-align: right;\
-}\
-\
-.redeem-result-html {\
-  font-family: Inconsolata, Consolas, Menlo, "Courier New", monospace;\
-}\
-*/\
-\
-.pl_nudge_date:after {\
-  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\
-  position:absolute;\
-  content:"";\
-  height:20px;\
-  width: 5px;\
-  right:-5px;\
-  top:-1px\
-}\
-\
-.pl_nudge_date {\
-  background-color: #724510;\
-  border-left: 1px solid #ffd652;\
-  border-bottom: 1px solid #ffd652;\
-  border-top: 1px solid #ffd652;\
-  color: #ffd652;\
-  display: block;\
-  position:relative;\
-  height: 18px;\
-  width: 36px;\
-  padding-left: 2px;\
-  left: -2px;\
-}\
-\
-.pl_nudge_player {\
-  cursor: pointer;\
-}\
-\
-.pl_nudge_me {\
-  color: #ffd652;\
-}\
-\
-.RESISTANCE {\
-  color: #00c2ff;\
-}\
-\
-.ALIENS, .ENLIGHTENED {\
-  color: #28f428;\
-}\
-\
-#portal_highlight_select {\
-  position: absolute;\
-  top:5px;\
-  left:10px;\
-  z-index: 2500;\
-  font-size:11px;\
-  background-color:#0E3C46;\
-  color:#ffce00;\
-\
-}\
-\
-\
-\
-.portal_details th, .portal_details td {\
-  vertical-align: top;\
-  text-align: left;\
-}\
-\
-.portal_details th {\
-  white-space: nowrap;\
-  padding-right: 1em;\
-}\
-\
-.portal_details tr.padding-top th, .portal_details tr.padding-top td {\
-  padding-top: 0.7em;\
-}\
-\
-#play_button {\
-  display: none;\
-}\
-\
-\
-/** artifact dialog *****************/\
-table.artifact tr > * {\
-  background: rgba(8, 48, 78, 0.9);\
-}\
-\
-table.artifact td.info {\
-  min-width: 110px; /* min-width for info column, to ensure really long portal names don\'t crowd things out */\
-}\
-\
-table.artifact .portal {\
-  min-width: 200px; /* min-width for portal names, to ensure really long lists of artifacts don\'t crowd names out */\
-}\
-\
-\
-/* leaflet popups - restyle to match the theme of IITC */\
-#map .leaflet-popup {\
-  pointer-events: none;\
-}\
-\
-#map .leaflet-popup-content-wrapper {\
-  border-radius: 0px;\
-  -webkit-border-radius: 0px;\
-  border: 1px solid #20A8B1;\
-  background: #0e3d4e;\
-  pointer-events: auto;\
-}\
-\
-#map .leaflet-popup-content {\
-  color: #ffce00;\
-  margin: 5px 8px;\
-}\
-\
-#map .leaflet-popup-close-button {\
-  padding: 2px 1px 0 0;\
-  font-size: 12px;\
-  line-height: 8px;\
-  width: 10px;\
-  height: 10px;\
-  pointer-events: auto;\
-}\
-\
-\
-#map .leaflet-popup-tip {\
-  /* change the tip from an arrow to a simple line */\
-  background: #20A8B1;\
-  width: 1px;\
-  height: 20px;\
-  padding: 0;\
-  margin: 0 0 0 20px;\
-  -webkit-transform: none;\
-  -moz-transform: none;\
-  -ms-transform: none;\
-  -o-transform: none;\
-  transform: none;\
-}\
-\
-\
-/* misc */\
-.layer_off_warning {\
-  color: #FFCE00;\
-  margin: 8px;\
-  text-align: center;\
-}\
-\
-.cursor_help {\
-  cursor: help;\
-}\
-\
-/* region scores */\
-.cellscore .ui-accordion-header, .cellscore .ui-accordion-content {\
-	border: 1px solid #20a8b1;\
-	margin-top: -1px;\
-	display: block;\
-}\
-.cellscore .ui-accordion-header {\
-	color: #ffce00;\
-	outline: none\
-}\
-.cellscore .ui-accordion-header:before {\
-	font-size: 18px;\
-	margin-right: 2px;\
-	content: "⊞";\
-}\
-.cellscore .ui-accordion-header-active:before {\
-	content: "⊟";\
-}\
-.cellscore table {\
-	width: 90%;\
-	max-width: 360px; /* prevent width change on scrollbar appearance (after animation) */\
-}\
-\
-/* prevent nonfunctional horizontal scrollbar in Chrome (perhaps jQuery issue) */\
-.cellscore .historychart > div {\
-  overflow: auto;\
-}\
-\
-.cellscore .logscale {\
-  vertical-align: middle;\
-  margin-top: 0;\
-}\
-\
-@-moz-document url-prefix() {\
- .cellscore .logscale {\
-    transform: scale(0.8);\
-  }\
-\
-  /* prevent nonfunctional vertical scrollbar in Firefox (perhaps jQuery issue) */\
-  .cellscore > .historychart {\
-    overflow-y: hidden !important;\
-  }\
-}\
-\
-g.checkpoint:hover circle {\
-  fill-opacity: 1;\
-  stroke-width: 2px;\
-}\
-\
-.cellscore th, .cellscore td {\
-	text-align: left;\
-	padding-left: 5px;\
-}\
-.checkpoint_table {\
-	border-collapse: collapse;\
-}\
-.checkpoint_table th, .checkpoint_table td {\
-	text-align: right;\
-}\
-\
-.cellscore #overview {\
-  width: 100%;\
-}\
-\
-.cellscore #overview td {\
-  white-space: nowrap;\
-  width: 1%;\
-  text-align: right;\
-}\
-\
-.cellscore #overview th {\
-  white-space: nowrap;\
-  width: 1%;\
-  text-align: left;\
-  padding-left: 4px;\
-}\
-\
-.checkpointtooltip {\
-  min-width: 180px;\
-}\
-\
-.checkpoint_timers table {\
-  padding-top: 4px;\
-  width: 100%;\
-}\
-\
-/* tabs */\
-.ui-tabs-nav {\
-	display: block;\
-	border-bottom: 1px solid #20a8b1;\
-	border-top: 1px solid transparent;\
-	margin: 3px 0 0;\
-	padding: 0;\
-}\
-.ui-tabs-nav::after {\
-	content: \'\';\
-	clear: left;\
-	display: block;\
-	height: 0;\
-	width: 0;\
-}\
-.ui-tabs-nav li {\
-	list-style: none;\
-	display: block;\
-	float:left;\
-	margin: 0 0 -1px;\
-	border: 1px solid #20a8b1;\
-}\
-.ui-tabs-nav li.ui-tabs-active {\
-	border-bottom-color: #0F2C3F;\
-	background: #0F2C3F;\
-	border-width: 2px 2px 1px;\
-	font-weight: bold;\
-	margin: -1px 1px;\
-}\
-.ui-tabs-nav a {\
-	display: inline-block;\
-	padding: 0.2em 0.7em;\
-}\
-.ui-tabs-nav .ui-icon {\
-	display: inline-block;\
-	font-size: 0;\
-	height: 22px;\
-	overflow: hidden;\
+.ui-resizable {\
 	position: relative;\
-	vertical-align: top;\
-	width: 16px;\
 }\
-.ui-tabs-nav .ui-icon-close::before {\
-	content: "×";\
-	font-size: 16px;\
-	height: 16px;\
+.ui-resizable-handle {\
 	position: absolute;\
-	text-align: center;\
-	top: 2px;\
-	vertical-align: baseline;\
-	width: 16px;\
-	cursor: pointer;\
+	font-size: 0.1px;\
+	display: block;\
+	-ms-touch-action: none;\
+	touch-action: none;\
 }\
-\
-svg.icon-button {\
-	fill: currentColor;\
+.ui-resizable-disabled .ui-resizable-handle,\
+.ui-resizable-autohide .ui-resizable-handle {\
+	display: none;\
 }\
-\
-.leaflet-marker-icon > svg {\
-	height: inherit;\
-	width: inherit;\
+.ui-resizable-n {\
+	cursor: n-resize;\
+	height: 7px;\
+	width: 100%;\
+	top: -5px;\
+	left: 0;\
 }\
-\
-/* Warning text */\
-.warning {\
-  color: #f77;\
-  font-weight: bold;\
-  text-shadow: 1px 1px black, -1px -1px black;\
-  text-align: center;\
+.ui-resizable-s {\
+	cursor: s-resize;\
+	height: 7px;\
+	width: 100%;\
+	bottom: -5px;\
+	left: 0;\
 }\
-\
-.ui-dialog-aboutIITC .plugin-is-standard {\
-  color: darkgray;\
+.ui-resizable-e {\
+	cursor: e-resize;\
+	width: 7px;\
+	right: -5px;\
+	top: 0;\
+	height: 100%;\
 }\
-\
-.ui-dialog-aboutIITC .plugin-error {\
-  text-decoration: line-through;\
+.ui-resizable-w {\
+	cursor: w-resize;\
+	width: 7px;\
+	left: -5px;\
+	top: 0;\
+	height: 100%;\
 }\
-\
-.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child {\
-  display: none;\
+.ui-resizable-se {\
+	cursor: se-resize;\
+	width: 12px;\
+	height: 12px;\
+	right: 1px;\
+	bottom: 1px;\
 }\
-\
-.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2) {\
-  float: left;\
+.ui-resizable-sw {\
+	cursor: sw-resize;\
+	width: 9px;\
+	height: 9px;\
+	left: -5px;\
+	bottom: -5px;\
+}\
+.ui-resizable-nw {\
+	cursor: nw-resize;\
+	width: 9px;\
+	height: 9px;\
+	left: -5px;\
+	top: -5px;\
+}\
+.ui-resizable-ne {\
+	cursor: ne-resize;\
+	width: 9px;\
+	height: 9px;\
+	right: -5px;\
+	top: -5px;\
 }\
 ' +
   '</style>' +
@@ -2314,83 +929,1553 @@ svg.leaflet-image-layer.leaflet-interactive path {\
   '</style>' +
   '<style>' +
   '\
-/*!\
- * jQuery UI Resizable 1.12.1\
- * http://jqueryui.com\
- *\
- * Copyright jQuery Foundation and other contributors\
- * Released under the MIT license.\
- * http://jquery.org/license\
+/* general rules ******************************************************/\
+\
+/* for printing directly from the browser, hide all UI components\
+ * NOTE: @media needs to be first?\
  */\
-.ui-resizable {\
-	position: relative;\
+@media print {\
+  .leaflet-control-container { display: none !important; }\
+  #chatcontrols, #chat, #chatinput { display: none !important; }\
+  #sidebartoggle, #sidebar { display: none !important; }\
+  #updatestatus { display: none !important; }\
+  #portal_highlight_select { display: none !important; }\
 }\
-.ui-resizable-handle {\
-	position: absolute;\
-	font-size: 0.1px;\
+\
+.text-overflow-ellipsis {\
+  display: inline-block;\
+  overflow: hidden;\
+  white-space: nowrap;\
+  text-overflow: ellipsis;\
+  vertical-align: text-bottom;\
+  width: 100%;\
+}\
+\
+\
+html, body {\
+  height: 100%;\
+  width: 100%;\
+  overflow: hidden; /* workaround for #373 */\
+  background: #0e3d4e;\
+}\
+\
+#map {\
+  overflow: visible;\
+  height: 100%;\
+  width: 100%;\
+}\
+\
+\
+body {\
+  font-size: 14px;\
+  font-family: Roboto, "Helvetica Neue", Helvetica, sans-serif;\
+  margin: 0;\
+}\
+\
+/* Material Icons */\
+.material-icons {\
+  width: 24px;\
+  height: 24px;\
+}\
+\
+.icon-button {\
+  cursor: pointer;\
+}\
+\
+i.tiny { font-size: 1rem; }\
+i.small { font-size: 2rem; }\
+i.medium { font-size: 4rem; }\
+i.large { font-size: 6rem; }\
+\
+#scrollwrapper {\
+  overflow-x: hidden;\
+  overflow-y: auto;\
+  position: fixed;\
+  right: -38px;\
+  top: 0;\
+  width: 340px;\
+  bottom: 45px;\
+  z-index: 3001;\
+  pointer-events: none;\
+}\
+\
+#sidebar {\
+  background-color: rgba(8, 48, 78, 0.9);\
+  border-left: 1px solid #20A8B1;\
+  color: #888;\
+  position: relative;\
+  left: 0;\
+  top: 0;\
+  max-height: 100%;\
+  overflow-y:scroll;\
+  overflow-x:hidden;\
+  pointer-events: auto;\
+}\
+\
+#sidebartoggle {\
+  display: block;\
+  padding: 20px 5px;\
+  margin-top: -31px; /* -(toggle height / 2) */\
+  line-height: 10px;\
+  position: absolute;\
+  top: 108px;\
+  z-index: 3002;\
+  background-color: rgba(8, 48, 78, 0.9);\
+  color: #FFCE00;\
+  border: 1px solid #20A8B1;\
+  border-right: none;\
+  border-radius: 5px 0 0 5px;\
+  text-decoration: none;\
+  right: -50px; /* overwritten later by the script with SIDEBAR_WIDTH */\
+}\
+\
+.enl {\
+  color: #03fe03;\
+}\
+\
+.res {\
+  color: #00c5ff;\
+}\
+\
+.mac {\
+  color: #ff2020;\
+}\
+\
+.none {\
+  color: #fff;\
+}\
+\
+.nickname {\
+  cursor: pointer;\
+}\
+\
+a {\
+  color: #ffce00;\
+  cursor: pointer;\
+  text-decoration: none;\
+}\
+\
+a:hover {\
+  text-decoration: underline;\
+}\
+\
+.leaflet-control-layers-overlays label.disabled {\
+  text-decoration: line-through;\
+  cursor: help;\
+}\
+\
+/* base layer selection - first column */\
+.leaflet-control-layers-base {\
+  float: left;\
+  overflow-y: auto;\
+  max-height: 600px;\
+}\
+\
+/* overlays layer selection - 2nd column */\
+.leaflet-control-layers-overlays {\
+  float: left;\
+  margin-left: 8px;\
+  border-left: 1px solid #DDDDDD;\
+  padding-left: 8px;\
+  overflow-y: auto;\
+  max-height: 600px;\
+}\
+\
+/* hide the usual separator */\
+.leaflet-control-layers-separator {\
+  display: none;\
+}\
+\
+\
+/* shift controls when chat is expanded */\
+.leaflet-left .leaflet-control.chat-expand {\
+  margin-left: 720px;\
+}\
+\
+/* leaflet controls */\
+.leaflet-left, .leaflet-right {\
+  display: grid;\
+  grid-gap: 10px;\
+  justify-items: baseline;\
+}\
+\
+.leaflet-right {\
+  justify-items: end;\
+}\
+\
+.leaflet-left .leaflet-control,\
+.leaflet-right .leaflet-control {\
+  margin: 0;\
+}\
+\
+.leaflet-top {\
+  top: 10px;\
+}\
+.leaflet-right {\
+  right: 10px;\
+}\
+.leaflet-bottom {\
+  bottom: 10px;\
+}\
+.leaflet-left {\
+  left: 10px;\
+}\
+\
+.help {\
+  cursor: help;\
+}\
+\
+.toggle {\
+  display: block;\
+  height: 0;\
+  width: 0;\
+}\
+\
+/* field mu count */\
+.fieldmu {\
+  color: #FFCE00;\
+  font-size: 13px;\
+  font-family: Roboto, "Helvetica Neue", Helvetica, sans-serif; /*override leaflet-container */\
+  text-align: center;\
+  text-shadow: 0 0 0.2em black, 0 0 0.2em black, 0 0 0.2em black;\
+  pointer-events: none;\
+}\
+\
+\
+/* chat ***************************************************************/\
+\
+#chatcontrols {\
+  color: #FFCE00;\
+  background: rgba(8, 48, 78, 0.9);\
+  position: absolute;\
+  left: 0;\
+  z-index: 3000;\
+  height: 26px;\
+  padding-left:1px;\
+}\
+\
+#chatcontrols.expand {\
+  top: 0;\
+  bottom: auto;\
+}\
+\
+#chatcontrols a {\
+  margin-left: -1px;\
+  display: inline-block;\
+  width: 94px;\
+  text-align: center;\
+  height: 24px;\
+  line-height: 24px;\
+  border: 1px solid #20A8B1;\
+  vertical-align: top;\
+}\
+\
+#chatcontrols a:first-child {\
+  letter-spacing:-1px;\
+  text-decoration: none;\
+}\
+\
+#chatcontrols a.active {\
+  border-color: #FFCE00;\
+  border-bottom-width:0px;\
+  font-weight:bold;\
+  background: rgb(8, 48, 78);\
+}\
+\
+#chatcontrols a.active + a {\
+  border-left-color: #FFCE00\
+}\
+\
+\
+#chatcontrols .toggle {\
+  border-left: 10px solid transparent;\
+  border-right: 10px solid transparent;\
+  border-bottom: 10px solid #FFCE00;\
+  margin: 6px auto auto;\
+}\
+\
+#chatcontrols.expand .toggle {\
+  border-top: 10px solid #FFCE00;\
+  border-bottom: none;\
+}\
+\
+#chatcontrols .loading {\
+  background-color: rgba(255,0,0,0.3);\
+  -webkit-animation: chatloading 1.2s infinite linear;\
+  -moz-animation: chatloading 1.2s infinite linear;\
+  animation: chatloading 1.2s infinite linear;\
+}\
+\
+@-webkit-keyframes chatloading {\
+    0% { background-color: rgba(255,0,0,0.4) }\
+   50% { background-color: rgba(255,0,0,0.1) }\
+  100% { background-color: rgba(255,0,0,0.4) }\
+}\
+\
+@-moz-keyframes chatloading {\
+    0% { background-color: rgba(255,0,0,0.4) }\
+   50% { background-color: rgba(255,0,0,0.1) }\
+  100% { background-color: rgba(255,0,0,0.4) }\
+}\
+\
+@keyframes chatloading {\
+    0% { background-color: rgba(255,0,0,0.4) }\
+   50% { background-color: rgba(255,0,0,0.1) }\
+  100% { background-color: rgba(255,0,0,0.4) }\
+}\
+\
+\
+\
+#chat {\
+  position: absolute;\
+  width: 708px;\
+  bottom: 23px;\
+  left: 0;\
+  z-index: 3000;\
+  background: rgba(8, 48, 78, 0.9);\
+  line-height: 15px;\
+  color: #eee;\
+  border: 1px solid #20A8B1;\
+  border-bottom: 0;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+}\
+\
+em {\
+  color: red;\
+  font-style: normal;\
+}\
+\
+#chat.expand {\
+  height:auto;\
+  top: 25px;\
+}\
+\
+\
+#chat > div {\
+  overflow-x:hidden;\
+  overflow-y:scroll;\
+  height: 100%;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+  padding: 2px;\
+  position:relative;\
+}\
+\
+#chat table, #chatinput table {\
+  width: 100%;\
+  table-layout: fixed;\
+  border-spacing: 0;\
+  border-collapse: collapse;\
+  /* make the table always scrollable */\
+  min-height: 100%;\
+  margin-bottom: 1px;\
+}\
+\
+/* expand last row if needed */\
+#chat table tr:last-child {\
+    height: 100%;\
+}\
+\
+#chatinput table {\
+  height: 100%;\
+}\
+\
+#chatinput.public mark,\
+#chatinput.public input {\
+  color: #f66;\
+}\
+\
+#chatinput.alerts mark {\
+  color: #bbb;\
+}\
+\
+#chat td, #chatinput td {\
+  font-size: 13px;\
+  vertical-align: top;\
+  padding-bottom: 3px;\
+}\
+\
+#chat .divider {\
+  color: #bbb;\
+}\
+\
+#chat .divider td:nth-child(2) {\
+  text-align: center;\
+}\
+\
+/* time */\
+#chat td:first-child, #chatinput td:first-child {\
+  width: 44px;\
+  overflow: hidden;\
+  padding-left: 2px;\
+  color: #bbb;\
+  white-space: nowrap;\
+}\
+\
+#chat time {\
+  cursor: help;\
+}\
+\
+/* nick */\
+#chat td:nth-child(2), #chatinput td:nth-child(2) {\
+  width: 91px;\
+  overflow: hidden;\
+  padding-left: 2px;\
+  white-space: nowrap;\
+}\
+\
+#chat td.system_narrowcast {\
+  color: #f66;\
+}\
+\
+#chatall tr.faction td:nth-child(3):before,\
+#chatalerts tr.faction td:nth-child(3):before {\
+  content: \'[faction]\';\
+  color: #f88;\
+  background-color: #500;\
+  margin-right: .2rem;\
+}\
+\
+#chatall tr.public td:nth-child(3):before,\
+#chatalerts tr.public td:nth-child(3):before {\
+  content: \'[public]\';\
+  color: #ff6;\
+  background-color: #550;\
+  margin-right: .2rem;\
+}\
+\
+mark {\
+  background: transparent;\
+}\
+\
+.invisep {\
+  display: inline-block;\
+  width: 1px;\
+  height: 1px;\
+  overflow:hidden;\
+  color: transparent;\
+}\
+\
+/* divider */\
+summary {\
+  color: #bbb;\
+  display: inline-block;\
+  height: 16px;\
+  overflow: hidden;\
+  padding: 0 2px;\
+  white-space: nowrap;\
+  width: 100%;\
+}\
+\
+#chatinput {\
+  position: absolute;\
+  bottom: 0;\
+  left: 0;\
+  padding: 0 2px;\
+  background: rgba(8, 48, 78, 0.9);\
+  width: 708px;\
+  height: 23px;\
+  border: 1px solid #20A8B1;\
+  z-index: 3001;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+}\
+\
+#chatinput td {\
+  padding-bottom: 1px;\
+  vertical-align: middle;\
+}\
+\
+\
+#chatinput input {\
+  background: transparent;\
+  color: #EEEEEE;\
+  width: 100%;\
+  height: 100%;\
+  padding:3px 4px 1px 4px;\
+}\
+\
+.bidi-isolate {\
+    unicode-bidi: isolate;\
+}\
+\
+\
+/* sidebar ************************************************************/\
+\
+#sidebar > * {\
+  border-bottom: 1px solid #20A8B1;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+}\
+\
+\
+\
+#sidebartoggle .toggle {\
+  border-bottom: 10px solid transparent;\
+  border-top: 10px solid transparent;\
+}\
+\
+#sidebartoggle .open {\
+  border-right: 10px solid #FFCE00;\
+}\
+\
+#sidebartoggle .close {\
+  border-left: 10px solid #FFCE00;\
+}\
+\
+/* player stats */\
+#playerstat {\
+  height: 30px;\
+}\
+\
+h2 {\
+  color: #ffce00;\
+  font-size: 21px;\
+  padding: 0 4px;\
+  margin: 0;\
+  cursor:help;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+  width: 100%;\
+}\
+\
+h2 #name {\
+  font-weight: 300;\
+  display: inline;\
+  vertical-align: top;\
+  white-space: nowrap;\
+}\
+\
+h2 #name .playername {\
+  max-width: 70%;\
+  display: inline-block;\
+  overflow: hidden;\
+  text-overflow: ellipsis;\
+}\
+\
+h2 #stats {\
+  float: right;\
+  height: 100%;\
+  overflow: hidden;\
+}\
+\
+#signout {\
+  font-size: 12px;\
+  font-weight: normal;\
+  padding: 0 4px;\
+  background-color: rgba(8, 48, 78, 0.5);\
+  display: none; /* starts hidden */\
+  vertical-align: text-top;\
+}\
+#name:hover .playername {\
+  max-width: 50%;\
+}\
+#name:hover #signout {\
+  display: inline-block;\
+}\
+\
+h2 sup, h2 sub {\
+  display: block;\
+  font-size: 11px;\
+  margin-bottom: -2px;\
+}\
+\
+\
+/* gamestats */\
+#gamestat span {\
+  display: inline-block;\
+  font-weight: bold;\
+  cursor:help;\
+  padding: 0 3px;\
+  box-sizing: border-box;\
+}\
+\
+#gamestat .res {\
+  background: #005684;\
+}\
+\
+#gamestat .enl {\
+  background: #017f01;\
+}\
+\
+\
+/* search input, and others */\
+input:not([type]), .input,\
+input[type="text"], input[type="password"],\
+input[type="number"], input[type="email"],\
+input[type="search"], input[type="url"] {\
+  background-color: rgba(0, 0, 0, 0.3);\
+  color: #ffce00;\
+  height: 24px;\
+  padding:0px 4px 0px 4px;\
+  font-size: 12px;\
+  border:0;\
+  font-family:inherit;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+}\
+\
+#searchwrapper {\
+  position: relative;\
+}\
+#search {\
+  width: 100%;\
+  padding-left: 24px;\
+  padding-right: 36px;\
+}\
+#search::-webkit-search-cancel-button {\
+  -webkit-appearance: none;\
+}\
+#searchicon, #searchcancel, #buttongeolocation {\
+  display: flex;\
+  align-items: center;\
+  position: absolute;\
+  margin: 0;\
+  border: 0 none transparent;\
+  padding: 0 2px;\
+  height: 24px;\
+  background-color: transparent;\
+}\
+#searchicon img, #searchcancel img, #buttongeolocation img {\
+  height: 20px;\
+}\
+#searchicon {\
+  left: 0;\
+}\
+#searchcancel {\
+  right: 24px;\
+  cursor: pointer;\
+  opacity: 0;\
+  pointer-events: none;\
+  transition: opacity 0.3s ease;\
+}\
+#searchcancel.visible {\
+  opacity: 1;\
+  pointer-events: auto;\
+}\
+#buttongeolocation {\
+  right: 0;\
+  cursor: pointer;\
+}\
+#buttongeolocation:focus {\
+  outline: 1px dotted #ffce00;\
+}\
+.searchquery {\
+  max-height: 25em;\
+  overflow-y: auto;\
+}\
+#searchwrapper h3 {\
+  padding: 0 0 0 25px;\
+  position: relative;\
+  font-size: 1em;\
+  height: auto;\
+  cursor: pointer;\
+}\
+#searchwrapper h3::before {\
+  position: absolute;\
+  left: 5px;\
+  font-size: 14px;\
+  margin-right: 2px;\
+  font-weight: normal;\
+  content: "▲";\
+  transition: transform 0.3s ease;\
+}\
+#searchwrapper .searchquery.collapsed h3::before {\
+  transform: rotate(180deg);\
+}\
+#searchwrapper ul {\
+  max-height: 100%;\
+  padding-left: 16px;\
+  overflow: hidden;\
+}\
+#searchwrapper li {\
+  cursor: pointer;\
+}\
+#searchwrapper .searchquery.collapsed ul {\
+  max-height: 0;\
+}\
+#searchwrapper li a {\
+  margin-left: -14px;\
+  padding-left: 14px;\
+  background-position: 1px center;\
+  background-repeat: no-repeat;\
+  background-size: 12px 12px;\
+}\
+#searchwrapper li:focus a, #searchwrapper li:hover a {\
+  text-decoration: underline;\
+}\
+#searchwrapper li em {\
+  color: #ccc;\
+  font-size: 0.9em;\
+}\
+\
+::-webkit-input-placeholder {\
+  font-style: italic;\
+}\
+\
+:-moz-placeholder {\
+  font-style: italic;\
+}\
+\
+::-moz-placeholder {\
+  font-style: italic;\
+}\
+\
+.leaflet-control-layers input {\
+  height: auto;\
+  padding: 0;\
+}\
+\
+\
+/* portal title and image */\
+h3.title {\
+  padding-right: 17px; /* to not overlap with close button */\
+  margin: 2px 0;\
+  line-height: 24px;\
+  overflow: hidden;\
+  text-overflow: ellipsis;\
+  white-space: nowrap;\
+}\
+\
+.imgpreview {\
+  height: 190px;\
+  background: no-repeat center center;\
+  background-size: contain;\
+  cursor: help;\
+  overflow: hidden;\
+  position: relative;\
+}\
+\
+.imgpreview img.hide {\
+  display: none;\
+}\
+\
+.imgpreview .portalDetails {\
+  display: none;\
+}\
+\
+#level {\
+  font-size: 40px;\
+  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;\
+  display: block;\
+  margin-right: 15px;\
+  text-align:right;\
+  float: right;\
+}\
+\
+/* portal mods */\
+.mods {\
+  margin: 3px auto 1px auto;\
+  width: 296px;\
+  height: 67px;\
+  text-align: center;\
+}\
+\
+.mods span {\
+  background-color: rgba(0, 0, 0, 0.3);\
+  /* can’t use inline-block because Webkit\'s implementation is buggy and\
+   * introduces additional margins in random cases. No clear necessary,\
+   * as that’s solved by setting height on .mods. */\
+  display: block;\
+  float:left;\
+  height: 63px;\
+  margin: 0 2px;\
+  overflow: hidden;\
+  padding: 2px;\
+  text-align: center;\
+  width: 63px;\
+  cursor:help;\
+  border: 1px solid #666;\
+}\
+\
+.mods span:not([title]) {\
+  cursor: auto;\
+}\
+\
+.res .mods span, .res .meter {\
+  border: 1px solid #0076b6;\
+}\
+.enl .mods span, .enl .meter {\
+  border: 1px solid #017f01;\
+}\
+\
+/* random details, resonator details */\
+#randdetails, #resodetails {\
+  width: 100%;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+  padding: 0 4px;\
+  table-layout: fixed;\
+  border-spacing: 0m;\
+  border-collapse: collapse;\
+}\
+\
+#randdetails td, #resodetails td {\
+  overflow: hidden;\
+  text-overflow: ellipsis;\
+  vertical-align: top;\
+  white-space: nowrap;\
+  width: 50%;\
+}\
+\
+#randdetails th, #resodetails th {\
+  font-weight: normal;\
+  text-align: right;\
+  width: 62px;\
+  padding:0px;\
+  padding-right:4px;\
+  padding-left:4px;\
+}\
+\
+#randdetails th + th, #resodetails th + th {\
+  text-align: left;\
+  padding-right: 4px;\
+  padding-left: 4px;\
+}\
+\
+#randdetails td:first-child, #resodetails td:first-child {\
+  text-align: right;\
+  padding-left: 2px;\
+}\
+\
+#randdetails td:last-child, #resodetails td:last-child {\
+  text-align: left;\
+  padding-right: 2px;\
+}\
+\
+\
+#randdetails {\
+  margin-top: 4px;\
+  margin-bottom: 5px;\
+}\
+\
+\
+#randdetails tt {\
+  font-family: inherit;\
+  cursor: help;\
+}\
+\
+#artifact_target, #artifact_fragments {\
+  margin-top: 4px;\
+  margin-bottom: 4px;\
+\
+  margin-left: 8px;\
+  margin-right: 8px;\
+}\
+\
+\
+/* resonators */\
+#resodetails {\
+  margin-bottom: 0px;\
+}\
+\
+.meter {\
+  background: #000;\
+  cursor: help;\
+  display: inline-block;\
+  height: 18px;\
+  padding: 1px;\
+  width: 100%;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+  position: relative;\
+  left: 0;\
+  top: 0;\
+}\
+\
+.meter.north {\
+  overflow: hidden;\
+}\
+.meter.north:before {\
+  content: "";\
+  background-color: red;\
+  border: 1px solid #000000;\
+  border-radius: 100%;\
+  display: block;\
+  height: 6px;\
+  width: 6px;\
+  left: 50%;\
+  top: -3px;\
+  margin-left: -4px;\
+  position: absolute;\
+}\
+\
+.meter span {\
+  display: block;\
+  height: 14px;\
+}\
+\
+.meter-level {\
+  position: absolute;\
+  left: 0;\
+  right: 0;\
+  top: -2px;\
+  text-shadow: 0.0em 0.0em 0.3em #808080;\
+  text-align: center;\
+  word-spacing: 4px; /* to leave some space for the north indicator */\
+}\
+\
+/* links below resos */\
+\
+.linkdetails {\
+  margin-bottom: 0px;\
+  text-align: center;\
+}\
+\
+.linkdetails aside {\
+  display: inline-block;\
+  white-space: nowrap;\
+  margin-left: 5px;\
+  margin-right: 5px;\
+}\
+\
+#toolbox {\
+  display: none !important;\
+}\
+\
+#toolbox, #toolbox_component {\
+  text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\
+}\
+\
+#toolbox > a, #toolbox_component > a {\
+  margin-left: 5px;\
+  margin-right: 5px;\
+  white-space: nowrap;\
+  display: inline-block;\
+}\
+\
+/* a common portal display takes this much space (prevents moving\
+ * content when first selecting a portal) */\
+\
+#portaldetails {\
+  min-height: 63px;\
+  position: relative; /* so the below \'#portaldetails .close\' is relative to this */\
+}\
+\
+#portaldetails .close {\
+  position: absolute;\
+  top: -2px;\
+  right: 2px;\
+  cursor: pointer;\
+  color: #FFCE00;\
+  font-size: 16px;\
+}\
+\
+/* history details */\
+#historydetails {\
+  text-align: center;\
+  color: #ffce00;\
+}\
+\
+#historydetails .missing {\
+}\
+\
+#historydetails span {\
+  color: #ff4a4a;\
+}\
+\
+#historydetails span.completed {\
+  color: #03fe03;\
+}\
+\
+/* update status */\
+#updatestatus {\
+  background-color: rgba(8, 48, 78, 0.9);\
+  border-bottom: 0;\
+  border-top: 1px solid #20A8B1;\
+  border-left: 1px solid #20A8B1;\
+  bottom: 0;\
+  color: #ffce00;\
+  font-size:13px;\
+  padding: 4px;\
+  position: fixed;\
+  right: 0;\
+  z-index: 3002;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+}\
+\
+#updatestatus .map {\
+  margin-left: 8px;\
+}\
+\
+#loadlevel {\
+  background: #FFF;\
+  color: #000000;\
+  display: inline-block;\
+  min-width: 1.8em;\
+  border: 1px solid #20A8B1;\
+  border-width: 0 1px;\
+  margin: -4px 0;\
+  padding: 4px 0.2em;\
+}\
+\
+/* Dialogs\
+ */\
+.ui-tooltip, .ui-dialog {\
+  position: absolute;\
+  z-index: 9500;\
+  background-color: rgba(8, 48, 78, 0.9);\
+  border: 1px solid #20A8B1;\
+  color: #eee;\
+  font-size: 13px;\
+  line-height: 15px;\
+  padding: 2px 4px;\
+}\
+\
+.ui-tooltip {\
+  max-width: 300px;\
+}\
+\
+.ui-widget-overlay {\
+  height: 100%;\
+  left: 0;\
+  position: fixed;\
+  top: 0;\
+  width: 100%;\
+  z-index: 10000;\
+  background:  #444;\
+  opacity: 0.6;\
+}\
+\
+.ui-modal {\
+  z-index: 10001 !important;\
+}\
+\
+.ui-tooltip {\
+  z-index: 10002 !important;\
+}\
+\
+.ui-tooltip, .ui-dialog a {\
+  color: #FFCE00;\
+}\
+\
+.ui-dialog {\
+  padding: 0;\
+  border-radius: 2px;\
+}\
+\
+.ui-dialog-modal .ui-dialog-titlebar-close {\
+  display: none;\
+}\
+\
+.ui-dialog-titlebar {\
+  font-size: 13px;\
+  line-height: 15px;\
+  text-align: center;\
+  padding: 4px;\
+  background-color: rgba(8, 60, 78, 0.9);\
+}\
+\
+.ui-dialog-title {\
+  font-weight: bold;\
+  margin-left: 8px;\
+  margin-right: 45px;\
+  width: calc(100% - 45px);\
+}\
+\
+.ui-dialog-title-active {\
+  color: #ffce00;\
+}\
+\
+.ui-dialog-title-inactive {\
+  color: #ffffff;\
+}\
+\
+.ui-dialog-titlebar-button {\
+  position: absolute;\
+  display: table-cell;\
+  vertical-align: middle;\
+  text-align: center;\
+  width: 17px;\
+  height: 17px;\
+  top: 3px;\
+  cursor: pointer;\
+  border: 1px solid rgb(32, 168, 177);\
+  background-color: rgba(0, 0, 0, 0);\
+  padding: 0;\
+}\
+\
+.ui-dialog-titlebar-button:active {\
+  background-color: rgb(32, 168, 177);\
+}\
+\
+.ui-dialog-titlebar-button-close {\
+  right: 4px;\
+}\
+\
+.ui-dialog-titlebar-button-collapse {\
+  right: 25px;\
+}\
+\
+.ui-dialog-titlebar-button-collapse-expanded {\
+  /* For future changes */\
+}\
+\
+.ui-dialog-titlebar-button-collapse-collapsed {\
+  background-color: rgb(32, 168, 177);\
+}\
+\
+.ui-dialog-titlebar-button-collapse::after,\
+.ui-dialog-titlebar-button-close::after,\
+.ui-dialog-titlebar-button-close::before {\
+  content: "";\
+  position: absolute;\
+  top: 3px;\
+  left: 50%;\
+  width: 11px;\
+  margin-left: -6px;\
+  height: 0;\
+  border-top: 2px solid rgb(32, 168, 177);\
+}\
+.ui-dialog-titlebar-button-close::after {\
+  transform: translateY(3.5px) rotate(45deg);\
+  -webkit-transform: translateY(3.5px) rotate(45deg);\
+}\
+.ui-dialog-titlebar-button-close::before {\
+  transform: translateY(3.5px) rotate(-45deg);\
+  -webkit-transform: translateY(3.5px) rotate(-45deg);\
+}\
+.ui-dialog-titlebar-button.ui-state-active::after,\
+.ui-dialog-titlebar-button.ui-state-active::before,\
+.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed::after,\
+.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed::before,\
+.ui-dialog-titlebar-button:active::after,\
+.ui-dialog-titlebar-button:active::before {\
+  border-top-color: rgba(8, 60, 78, 0.9);\
+}\
+\
+.ui-dialog-content {\
+  padding: 12px;\
+  overflow: auto;\
+  position: relative;\
+\
+  /* Limiting the height of dialog content on small screens */\
+  /* 57px – height .ui-dialog-titlebar + .ui-dialog-buttonpane */\
+  /* 24px – padding 12px * 2 */\
+  /*  2px – border 1px * 2 */\
+  max-height: calc(100vh - 57px - 24px - 2px) !important;\
+}\
+\
+.ui-dialog {\
+  max-width: calc(100vw - 2px);\
+}\
+\
+@media (min-width: 700px) {\
+  .ui-dialog {\
+    max-width: 600px;\
+  }\
+}\
+\
+.ui-dialog-content-hidden {\
+  display: none !important;\
+}\
+\
+.ui-dialog-buttonpane {\
+  padding: 6px;\
+  border-top: 1px solid #20A8B1;\
+}\
+\
+.ui-dialog-buttonset {\
+  text-align: right;\
+}\
+\
+.ui-dialog-buttonset button,\
+.ui-dialog-content button {\
+  padding: 2px;\
+  min-width: 40px;\
+  color: #FFCE00;\
+  border: 1px solid #FFCE00;\
+  background-color: rgba(8, 48, 78, 0.9);\
+}\
+\
+.ui-dialog-buttonset button:hover {\
+  text-decoration: underline;\
+}\
+\
+td {\
+  padding: 0;\
+  vertical-align: top;\
+}\
+\
+td + td {\
+  padding-left: 4px;\
+}\
+\
+#qrcode > canvas {\
+  border: 8px solid white;\
+}\
+\
+/* redeem results *****************************************************/\
+.redeemReward {\
+  font-family: Inconsolata, Consolas, Menlo, "Courier New", monospace;\
+  list-style-type: none;\
+  padding: 0;\
+  font-size: 14px;\
+}\
+.redeemReward .itemlevel {\
+  font-weight: bold;\
+  text-shadow: 0 0 1px #000; /* L8 is hard to read on blue background */\
+}\
+/*\
+.redeem-result-table {\
+  font-size: 14px;\
+  table-layout: fixed;\
+}\
+\
+.redeem-result tr > td:first-child {\
+  width: 50px;\
+  text-align: right;\
+}\
+\
+.redeem-result-html {\
+  font-family: Inconsolata, Consolas, Menlo, "Courier New", monospace;\
+}\
+*/\
+\
+.pl_nudge_date:after {\
+  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\
+  position:absolute;\
+  content:"";\
+  height:20px;\
+  width: 5px;\
+  right:-5px;\
+  top:-1px\
+}\
+\
+.pl_nudge_date {\
+  background-color: #724510;\
+  border-left: 1px solid #ffd652;\
+  border-bottom: 1px solid #ffd652;\
+  border-top: 1px solid #ffd652;\
+  color: #ffd652;\
+  display: block;\
+  position:relative;\
+  height: 18px;\
+  width: 36px;\
+  padding-left: 2px;\
+  left: -2px;\
+}\
+\
+.pl_nudge_player {\
+  cursor: pointer;\
+}\
+\
+.pl_nudge_me {\
+  color: #ffd652;\
+}\
+\
+.RESISTANCE {\
+  color: #00c2ff;\
+}\
+\
+.ALIENS, .ENLIGHTENED {\
+  color: #28f428;\
+}\
+\
+#portal_highlight_select {\
+  z-index: 2500;\
+  font-size:11px;\
+  background-color:#0E3C46;\
+  color:#ffce00;\
+  order: -100;\
+}\
+\
+.leaflet-control-scale {\
+  order: -90;\
+}\
+\
+.leaflet-bar {\
+  border: 2px solid rgba(0, 0, 0, 0.2);\
+  box-shadow: none;\
+}\
+\
+.leaflet-bar a {\
+  text-decoration: none;\
+}\
+\
+.leaflet-control-zoom-in, .leaflet-control-zoom-out {\
+  background-size: 18px;\
+  font-size: 0 !important;\
+}\
+\
+.leaflet-control-zoom-in {\
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E");\
+}\
+\
+.leaflet-control-zoom-out {\
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E");\
+}\
+\
+\
+.portal_details th, .portal_details td {\
+  vertical-align: top;\
+  text-align: left;\
+}\
+\
+.portal_details th {\
+  white-space: nowrap;\
+  padding-right: 1em;\
+}\
+\
+.portal_details tr.padding-top th, .portal_details tr.padding-top td {\
+  padding-top: 0.7em;\
+}\
+\
+#play_button {\
+  display: none;\
+}\
+\
+\
+/** artifact dialog *****************/\
+table.artifact tr > * {\
+  background: rgba(8, 48, 78, 0.9);\
+}\
+\
+table.artifact td.info {\
+  min-width: 110px; /* min-width for info column, to ensure really long portal names don\'t crowd things out */\
+}\
+\
+table.artifact .portal {\
+  min-width: 200px; /* min-width for portal names, to ensure really long lists of artifacts don\'t crowd names out */\
+}\
+\
+\
+/* leaflet popups - restyle to match the theme of IITC */\
+#map .leaflet-popup {\
+  pointer-events: none;\
+}\
+\
+#map .leaflet-popup-content-wrapper {\
+  border-radius: 0px;\
+  -webkit-border-radius: 0px;\
+  border: 1px solid #20A8B1;\
+  background: #0e3d4e;\
+  pointer-events: auto;\
+}\
+\
+#map .leaflet-popup-content {\
+  color: #ffce00;\
+  margin: 5px 8px;\
+}\
+\
+#map .leaflet-popup-close-button {\
+  padding: 2px 1px 0 0;\
+  font-size: 12px;\
+  line-height: 8px;\
+  width: 10px;\
+  height: 10px;\
+  pointer-events: auto;\
+}\
+\
+\
+#map .leaflet-popup-tip {\
+  /* change the tip from an arrow to a simple line */\
+  background: #20A8B1;\
+  width: 1px;\
+  height: 20px;\
+  padding: 0;\
+  margin: 0 0 0 20px;\
+  -webkit-transform: none;\
+  -moz-transform: none;\
+  -ms-transform: none;\
+  -o-transform: none;\
+  transform: none;\
+}\
+\
+\
+/* misc */\
+.layer_off_warning {\
+  color: #FFCE00;\
+  margin: 8px;\
+  text-align: center;\
+}\
+\
+.cursor_help {\
+  cursor: help;\
+}\
+\
+/* region scores */\
+.cellscore .ui-accordion-header, .cellscore .ui-accordion-content {\
+	border: 1px solid #20a8b1;\
+	margin-top: -1px;\
 	display: block;\
-	-ms-touch-action: none;\
-	touch-action: none;\
 }\
-.ui-resizable-disabled .ui-resizable-handle,\
-.ui-resizable-autohide .ui-resizable-handle {\
-	display: none;\
+.cellscore .ui-accordion-header {\
+	color: #ffce00;\
+	outline: none\
 }\
-.ui-resizable-n {\
-	cursor: n-resize;\
-	height: 7px;\
-	width: 100%;\
-	top: -5px;\
-	left: 0;\
+.cellscore .ui-accordion-header:before {\
+	font-size: 18px;\
+	margin-right: 2px;\
+	content: "⊞";\
 }\
-.ui-resizable-s {\
-	cursor: s-resize;\
-	height: 7px;\
-	width: 100%;\
-	bottom: -5px;\
-	left: 0;\
+.cellscore .ui-accordion-header-active:before {\
+	content: "⊟";\
 }\
-.ui-resizable-e {\
-	cursor: e-resize;\
-	width: 7px;\
-	right: -5px;\
-	top: 0;\
-	height: 100%;\
+.cellscore table {\
+	width: 90%;\
+	max-width: 360px; /* prevent width change on scrollbar appearance (after animation) */\
 }\
-.ui-resizable-w {\
-	cursor: w-resize;\
-	width: 7px;\
-	left: -5px;\
-	top: 0;\
-	height: 100%;\
+\
+/* prevent nonfunctional horizontal scrollbar in Chrome (perhaps jQuery issue) */\
+.cellscore .historychart > div {\
+  overflow: auto;\
 }\
-.ui-resizable-se {\
-	cursor: se-resize;\
-	width: 12px;\
-	height: 12px;\
-	right: 1px;\
-	bottom: 1px;\
+\
+.cellscore .logscale {\
+  vertical-align: middle;\
+  margin-top: 0;\
 }\
-.ui-resizable-sw {\
-	cursor: sw-resize;\
-	width: 9px;\
-	height: 9px;\
-	left: -5px;\
-	bottom: -5px;\
+\
+@-moz-document url-prefix() {\
+ .cellscore .logscale {\
+    transform: scale(0.8);\
+  }\
+\
+  /* prevent nonfunctional vertical scrollbar in Firefox (perhaps jQuery issue) */\
+  .cellscore > .historychart {\
+    overflow-y: hidden !important;\
+  }\
 }\
-.ui-resizable-nw {\
-	cursor: nw-resize;\
-	width: 9px;\
-	height: 9px;\
-	left: -5px;\
-	top: -5px;\
+\
+g.checkpoint:hover circle {\
+  fill-opacity: 1;\
+  stroke-width: 2px;\
 }\
-.ui-resizable-ne {\
-	cursor: ne-resize;\
-	width: 9px;\
-	height: 9px;\
-	right: -5px;\
-	top: -5px;\
+\
+.cellscore th, .cellscore td {\
+	text-align: left;\
+	padding-left: 5px;\
+}\
+.checkpoint_table {\
+	border-collapse: collapse;\
+}\
+.checkpoint_table th, .checkpoint_table td {\
+	text-align: right;\
+}\
+\
+.cellscore #overview {\
+  width: 100%;\
+}\
+\
+.cellscore #overview td {\
+  white-space: nowrap;\
+  width: 1%;\
+  text-align: right;\
+}\
+\
+.cellscore #overview th {\
+  white-space: nowrap;\
+  width: 1%;\
+  text-align: left;\
+  padding-left: 4px;\
+}\
+\
+.checkpointtooltip {\
+  min-width: 180px;\
+}\
+\
+.checkpoint_timers table {\
+  padding-top: 4px;\
+  width: 100%;\
+}\
+\
+/* tabs */\
+.ui-tabs-nav {\
+	display: block;\
+	border-bottom: 1px solid #20a8b1;\
+	border-top: 1px solid transparent;\
+	margin: 3px 0 0;\
+	padding: 0;\
+}\
+.ui-tabs-nav::after {\
+	content: \'\';\
+	clear: left;\
+	display: block;\
+	height: 0;\
+	width: 0;\
+}\
+.ui-tabs-nav li {\
+	list-style: none;\
+	display: block;\
+	float:left;\
+	margin: 0 0 -1px;\
+	border: 1px solid #20a8b1;\
+}\
+.ui-tabs-nav li.ui-tabs-active {\
+	border-bottom-color: #0F2C3F;\
+	background: #0F2C3F;\
+	border-width: 2px 2px 1px;\
+	font-weight: bold;\
+	margin: -1px 1px;\
+}\
+.ui-tabs-nav a {\
+	display: inline-block;\
+	padding: 0.2em 0.7em;\
+}\
+.ui-tabs-nav .ui-icon {\
+	display: inline-block;\
+	font-size: 0;\
+	height: 22px;\
+	overflow: hidden;\
+	position: relative;\
+	vertical-align: top;\
+	width: 16px;\
+}\
+.ui-tabs-nav .ui-icon-close::before {\
+	content: "×";\
+	font-size: 16px;\
+	height: 16px;\
+	position: absolute;\
+	text-align: center;\
+	top: 2px;\
+	vertical-align: baseline;\
+	width: 16px;\
+	cursor: pointer;\
+}\
+\
+svg.icon-button {\
+	fill: currentColor;\
+}\
+\
+.leaflet-marker-icon > svg {\
+	height: inherit;\
+	width: inherit;\
+}\
+\
+/* Warning text */\
+.warning {\
+  color: #f77;\
+  font-weight: bold;\
+  text-shadow: 1px 1px black, -1px -1px black;\
+  text-align: center;\
+}\
+\
+.ui-dialog-aboutIITC .plugin-is-standard {\
+  color: darkgray;\
+}\
+\
+.ui-dialog-aboutIITC .plugin-error {\
+  text-decoration: line-through;\
+}\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child {\
+  display: none;\
+}\
+\
+.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2) {\
+  float: left;\
 }\
 ' +
   '</style>' +
@@ -2416,10 +2501,18 @@ document.body.innerHTML =
   '    <div id="playerstat">t</div>' +
   '    <div id="gamestat">&nbsp;loading global control stats</div>' +
   '    <div id="searchwrapper">' +
-  '      <button title="Current location" id="buttongeolocation"><img src="' +
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNjM1OTRFNUE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNjM1OTRFNkE0RTIxMUUxODNBMUZBQ0ZFQkJDNkRBQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE2MzU5NEUzQTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE2MzU5NEU0QTRFMjExRTE4M0ExRkFDRkVCQkM2REFCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+kxvtEgAAAWVJREFUeNqsVctRwzAUlDTccQlxB3RA0kHSQXLxNXEFgQrsHO1L6AA6cKgAd4BLEBXAU2YfszY2oMCb2Rlbelqv3s+2qiozYjPBVjAX3Az2WsFJcBB0WZb1Nt0IWSF4FexGyAzWdvAp6rpOpgjDxgucg3lBKViRzz3WPN6Db8OkjsgaUvQgSAW54IkI77CWwkcVN0PCPZFtAG+mzZPfmVRUhlAZK0mZIR6qbGPi7ChY4zl1yKZ+NTfxltNttg6loep8LJuUjad4zh3F7s1cbs8ayxDD9xEH+0uiL2ed+WdjwhWU2YjzVmJoUfCfhC2eb/8g7Fr73KHRDWopiWVC22kdnhymhrZfcYG6goQcAmGHhleV64lsjlUD+5cSz85RtbfUSscfrp+Qn87Ic2KuyGlBEyd8dYkO4IJfInkc70C2QMf0CD1I95hzCc1GtcfBe7hm/l1he5p3JYVh+AsoaV727EOAAQAWgF3ledLuQAAAAABJRU5ErkJggg==' +
+  '      <div id="searchbox">' +
+  '        <div id="searchicon"><img src="' +
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjQkJCQkJCIj48cGF0aCBkPSJNNzg0LTEyMCA1MzItMzcycS0zMCAyNC02OSAzOHQtODMgMTRxLTEwOSAwLTE4NC41LTc1LjVUMTIwLTU4MHEwLTEwOSA3NS41LTE4NC41VDM4MC04NDBxMTA5IDAgMTg0LjUgNzUuNVQ2NDAtNTgwcTAgNDQtMTQgODN0LTM4IDY5bDI1MiAyNTItNTYgNTZaTTM4MC00MDBxNzUgMCAxMjcuNS01Mi41VDU2MC01ODBxMC03NS01Mi41LTEyNy41VDM4MC03NjBxLTc1IDAtMTI3LjUgNTIuNVQyMDAtNTgwcTAgNzUgNTIuNSAxMjcuNVQzODAtNDAwWiIvPjwvc3ZnPg==' +
+  '" alt="Search"/></div>' +
+  '        <div id="searchcancel"><img src="' +
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjQkJCQkJCIj48cGF0aCBkPSJtMzM2LTI4MC01Ni01NiAxNDQtMTQ0LTE0NC0xNDMgNTYtNTYgMTQ0IDE0NCAxNDMtMTQ0IDU2IDU2LTE0NCAxNDMgMTQ0IDE0NC01NiA1Ni0xNDMtMTQ0LTE0NCAxNDRaIi8+PC9zdmc+' +
+  '" alt="Cancel search"/></div>' +
+  '        <button title="Current location" id="buttongeolocation"><img src="' +
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjQkJCQkJCIj48cGF0aCBkPSJNNDQwLTQydi04MHEtMTI1LTE0LTIxNC41LTEwMy41VDEyMi00NDBINDJ2LTgwaDgwcTE0LTEyNSAxMDMuNS0yMTQuNVQ0NDAtODM4di04MGg4MHY4MHExMjUgMTQgMjE0LjUgMTAzLjVUODM4LTUyMGg4MHY4MGgtODBxLTE0IDEyNS0xMDMuNSAyMTQuNVQ1MjAtMTIydjgwaC04MFptNDAtMTU4cTExNiAwIDE5OC04MnQ4Mi0xOThxMC0xMTYtODItMTk4dC0xOTgtODJxLTExNiAwLTE5OCA4MnQtODIgMTk4cTAgMTE2IDgyIDE5OHQxOTggODJabTAtMTIwcS02NiAwLTExMy00N3QtNDctMTEzcTAtNjYgNDctMTEzdDExMy00N3E2NiAwIDExMyA0N3Q0NyAxMTNxMCA2Ni00NyAxMTN0LTExMyA0N1ptMC04MHEzMyAwIDU2LjUtMjMuNVQ1NjAtNDgwcTAtMzMtMjMuNS01Ni41VDQ4MC01NjBxLTMzIDAtNTYuNSAyMy41VDQwMC00ODBxMCAzMyAyMy41IDU2LjVUNDgwLTQwMFptMC04MFoiLz48L3N2Zz4=' +
   '" alt="Current location"/></button>' +
-  '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>' +
+  '        <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>' +
+  '      </div>' +
   '    </div>' +
   '    <div id="portaldetails"></div>' +
   '    <input id="redeem" placeholder="Redeem code…" type="text"/>' +
@@ -2942,7 +3035,7 @@ const ulog = (function (module) {
 // *** module: _deprecated.js ***
 (function () {
 var log = ulog('_deprecated');
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 /**
  * @file This file contains functions that are not use by IITC itself
@@ -3105,6 +3198,31 @@ window.findPortalLatLng = function (guid) {
 
   // no luck finding portal lat/lng
   return undefined;
+};
+
+// to be ovewritten in app.js
+/**
+ * Finds the latitude and longitude for a portal using all available data sources.
+ * This includes the list of portals, cached portal details, and information from links and fields.
+ *
+ * @deprecated
+ * @function androidCopy
+ */
+window.androidCopy = function () {
+  return true; // i.e. execute other actions
+};
+
+/**
+ * Given the entity detail data, returns the team the entity belongs to.
+ * Uses TEAM_* enum values.
+ *
+ * @deprecated
+ * @function getTeam
+ * @param {Object} details - The details hash of an entity.
+ * @returns {number} The team ID the entity belongs to.
+ */
+window.getTeam = function (details) {
+  return IITC.utils.getTeamId(details.team);
 };
 
 
@@ -3995,7 +4113,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2024-10-31-180336');
+  log.log('loading done, booting. Built: ' + '2025-02-18-082800');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -18782,17 +18900,9 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 	// 🍂extends GridLayer
 	L.GridLayer.GoogleMutant = L.GridLayer.extend({
 		options: {
-			minZoom: 0,
 			maxZoom: 21, // can be 23, but ugly if more than maxNativeZoom
-			tileSize: 256,
-			subdomains: "abc",
-			errorTileUrl: "",
-			attribution: "", // The mutant container will add its own attribution anyways.
-			opacity: 1,
-			continuousWorld: false,
-			noWrap: false,
 			// 🍂option type: String = 'roadmap'
-			// Google's map type. Valid values are 'roadmap', 'satellite' or 'terrain'. 'hybrid' is not really supported.
+			// Google's map type. Valid values are 'roadmap', 'satellite', 'terrain' or 'hybrid'.
 			type: "roadmap",
 			maxNativeZoom: 21,
 		},
@@ -18810,7 +18920,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 		},
 
 		onAdd: function (map) {
-			var this$1 = this;
+			var this$1$1 = this;
 
 			L.GridLayer.prototype.onAdd.call(this, map);
 			this._initMutantContainer();
@@ -18826,18 +18936,18 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 			}
 
 			waitForAPI(function () {
-				if (!this$1._map) {
+				if (!this$1$1._map) {
 					return;
 				}
-				this$1._initMutant();
+				this$1$1._initMutant();
 
 				//handle layer being added to a map for which there are no Google tiles at the given zoom
-				google.maps.event.addListenerOnce(this$1._mutant, "idle", function () {
-					if (!this$1._map) {
+				google.maps.event.addListenerOnce(this$1$1._mutant, "idle", function () {
+					if (!this$1$1._map) {
 						return;
 					}
-					this$1._checkZoomLevels();
-					this$1._mutantIsReady = true;
+					this$1$1._checkZoomLevels();
+					this$1$1._mutantIsReady = true;
 				});
 			});
 		},
@@ -18863,14 +18973,14 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 		// currently following values supported: 'TrafficLayer', 'TransitLayer', 'BicyclingLayer'.
 		// `options`: see https://developers.google.com/maps/documentation/javascript/reference/map
 		addGoogleLayer: function (googleLayerName, options) {
-			var this$1 = this;
+			var this$1$1 = this;
 
 			if (!this._subLayers) { this._subLayers = {}; }
 			this.whenReady(function () {
 				var Constructor = google.maps[googleLayerName];
 				var googleLayer = new Constructor(options);
-				googleLayer.setMap(this$1._mutant);
-				this$1._subLayers[googleLayerName] = googleLayer;
+				googleLayer.setMap(this$1$1._mutant);
+				this$1$1._subLayers[googleLayerName] = googleLayer;
 			});
 			return this;
 		},
@@ -18878,13 +18988,13 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 		// 🍂method removeGoogleLayer(name: String): this
 		// Removes layer with the given name from the google Map instance.
 		removeGoogleLayer: function (googleLayerName) {
-			var this$1 = this;
+			var this$1$1 = this;
 
 			this.whenReady(function () {
-				var googleLayer = this$1._subLayers && this$1._subLayers[googleLayerName];
+				var googleLayer = this$1$1._subLayers && this$1$1._subLayers[googleLayerName];
 				if (googleLayer) {
 					googleLayer.setMap(null);
-					delete this$1._subLayers[googleLayerName];
+					delete this$1$1._subLayers[googleLayerName];
 				}
 			});
 			return this;
@@ -18897,8 +19007,8 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 					"leaflet-google-mutant leaflet-top leaflet-left"
 				);
 				this._mutantContainer.id = "_MutantContainer_" + L.Util.stamp(this._mutantContainer);
-				this._mutantContainer.style.zIndex = 800; //leaflet map pane at 400, controls at 1000
 				this._mutantContainer.style.pointerEvents = "none";
+				this._mutantContainer.style.visibility = "hidden";
 
 				L.DomEvent.off(this._mutantContainer);
 			}
@@ -18920,13 +19030,11 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 		},
 
 		_initMutant: function () {
-			var this$1 = this;
-
 			if (this._mutant) {
 				return;
 			}
 
-			var map = new google.maps.Map(this._mutantContainer, {
+			var options = {
 				center: { lat: 0, lng: 0 },
 				zoom: 0,
 				tilt: 0,
@@ -18936,25 +19044,24 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 				draggable: false,
 				disableDoubleClickZoom: true,
 				scrollwheel: false,
-				streetViewControl: false,
-				styles: this.options.styles || {},
+				styles: this.options.styles || [],
 				backgroundColor: "transparent",
-			});
+			};
+			if (this.options.mapId != null) {
+				options.mapId = this.options.mapId;
+			}
+			var map = new google.maps.Map(this._mutantContainer, options);
 
 			this._mutant = map;
-
-			google.maps.event.addListenerOnce(map, "idle", function () {
-				var nodes = this$1._mutantContainer.querySelectorAll("a");
-				for (var i = 0; i < nodes.length; ++i) {
-					nodes[i].style.pointerEvents = "auto";
-				}
-			});
 
 			this._update();
 
 			// 🍂event spawned
 			// Fired when the mutant has been created.
 			this.fire("spawned", { mapObject: map });
+
+			this._waitControls();
+			this.once('controls_ready', this._setupAttribution);
 		},
 
 		_attachObserver: function _attachObserver(node) {
@@ -18966,6 +19073,46 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 			// if we are reusing an old _mutantContainer, we must manually detect
 			// all existing tiles in it
 			Array.prototype.forEach.call(node.querySelectorAll("img"), this._boundOnMutatedImage);
+		},
+
+		_waitControls: function () {
+			var this$1$1 = this;
+
+			var id = setInterval(function () {
+				var layoutManager = this$1$1._mutant.__gm.layoutManager;
+				if (!layoutManager) { return; }
+				clearInterval(id);
+				var positions;
+				// iterate through obfuscated key names to find positions set (atm: layoutManager.o)
+				Object.keys(layoutManager).forEach(function(key) {
+					var el = layoutManager[key];
+					if (el.get) {
+						if (el.get(1) instanceof Node) {
+							positions = el;
+						}
+					}
+				});
+				// 🍂event controls_ready
+				// Fired when controls positions get available (passed in `positions` property).
+				this$1$1.fire("controls_ready", { positions: positions });
+			}, 50);
+		},
+
+		_setupAttribution: function (ev) {
+			if (!this._map) {
+				return;
+			}
+			// https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
+			var pos = google.maps.ControlPosition;
+			var ctr = this._attributionContainer = ev.positions.get(pos.BOTTOM_RIGHT);
+			L.DomUtil.addClass(ctr, "leaflet-control leaflet-control-attribution");
+			L.DomEvent.disableClickPropagation(ctr);
+			ctr.style.height = "14px";
+			this._map._controlCorners.bottomright.appendChild(ctr);
+
+			this._logoContainer = ev.positions.get(pos.BOTTOM_LEFT);
+			this._logoContainer.style.pointerEvents = "auto";
+			this._map._controlCorners.bottomleft.appendChild(this._logoContainer);
 		},
 
 		_onMutations: function _onMutations(mutations) {
@@ -18981,51 +19128,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 							node.querySelectorAll("img"),
 							this._boundOnMutatedImage
 						);
-
-						// Check for, and remove, the "Google Maps can't load correctly" div.
-						// You *are* loading correctly, you dumbwit.
-						if (node.style.backgroundColor === "white") {
-							L.DomUtil.remove(node);
-						}
-
-						// Check for, and remove, the "For development purposes only" divs on the aerial/hybrid tiles.
-						if (node.textContent.indexOf("For development purposes only") === 0) {
-							L.DomUtil.remove(node);
-						}
-
-						// Check for, and remove, the "Sorry, we have no imagery here"
-						// empty <div>s. The [style*="text-align: center"] selector
-						// avoids matching the attribution notice.
-						// This empty div doesn't have a reference to the tile
-						// coordinates, so it's not possible to mark the tile as
-						// failed.
-						Array.prototype.forEach.call(
-							node.querySelectorAll('div[draggable=false][style*="text-align: center"]'),
-							L.DomUtil.remove
-						);
-
-						// Move Google attributions to leaflet's bottom-right control container
-						if (
-							node.querySelectorAll(".gmnoprint").length > 0 ||
-							node.querySelectorAll('a[title="Click to see this area on Google Maps"]')
-								.length > 0
-						) {
-							var ctr = (this._attributionContainer = L.DomUtil.create(
-								"div",
-								"leaflet-control leaflet-control-attribution"
-							));
-							L.DomEvent.disableClickPropagation(ctr);
-							ctr.style.height = "14px";
-							ctr.style.background = "none";
-							this._map._controlCorners.bottomright.appendChild(ctr);
-							ctr.appendChild(node);
-						}
-
-						// Move Google logo to leaflet's bottom-left control container
-						if (node.style.zIndex == 1000000) {
-							this._map._controlCorners.bottomleft.appendChild(node);
-							this._logoContainer = node;
-						}
 					}
 				}
 			}
@@ -19034,14 +19136,10 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 		// Only images which 'src' attrib match this will be considered for moving around.
 		// Looks like some kind of string-based protobuf, maybe??
 		// Only the roads (and terrain, and vector-based stuff) match this pattern
-		_roadRegexp: /!1i(\d+)!2i(\d+)!3i(\d+)!/,
+		_roadRegexp: /!1i(\d+)!2i(\d+)!3i(\d+|VinaFnapurmBegrtn)!/,
 
 		// On the other hand, raster imagery matches this other pattern
-		_satRegexp: /x=(\d+)&y=(\d+)&z=(\d+)/,
-
-		// On small viewports, when zooming in/out, a static image is requested
-		// This will not be moved around, just removed from the DOM.
-		_staticRegExp: /StaticMapService\.GetMapImage/,
+		_satRegexp: /x=(\d+)&y=(\d+)&z=(\d+|VinaFnapurmBegrtn)/,
 
 		_onMutatedImage: function _onMutatedImage(imgNode) {
 			var coords;
@@ -19074,7 +19172,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 			if (coords) {
 				var tileKey = this._tileCoordsToKey(coords);
 				imgNode.style.position = "absolute";
-				imgNode.style.visibility = "hidden";
 
 				var key = tileKey + "/" + sublayer;
 				// Cache img so it can also be used in subsequent tile requests
@@ -19085,8 +19182,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 					this._tileCallbacks[key].forEach(function (callback) { return callback(imgNode); });
 					delete this._tileCallbacks[key];
 				}
-			} else if (imgNode.src.match(this._staticRegExp)) {
-				imgNode.style.visibility = "hidden";
 			}
 		},
 
@@ -19199,7 +19294,7 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
 		return new L.GridLayer.GoogleMutant(options);
 	};
 
-}());
+})();
 //# sourceMappingURL=Leaflet.GoogleMutant.js.map
 
 
@@ -20231,7 +20326,12 @@ chat.show = function (name) {
 chat.chooser = function (event) {
   var t = $(event.target);
   var tab = t.data('channel');
-  chat.chooseTab(tab);
+
+  if (window.isSmartphone() && !window.useAppPanes()) {
+    window.show(tab);
+  } else {
+    chat.chooseTab(tab);
+  }
 };
 
 /**
@@ -20704,7 +20804,7 @@ function _initChannelData(id) {
  * @memberof IITC.comm
  */
 let portalTemplate =
-  '<a onclick="window.selectPortalByLatLng({{ lat }}, {{ lng }});return false" title="{{ title }}" href="{{ url }}" class="help" style="unicode-bidi: isolate;">{{ portal_name }}</a>';
+  '<a onclick="window.selectPortalByLatLng({{ lat }}, {{ lng }});return false" title="{{ title }}" href="{{ url }}" class="bidi-isolate help">{{ portal_name }}</a>';
 /**
  * Template for time cell.
  * @type {String}
@@ -22764,48 +22864,6 @@ window.decodeArray.portalDetail = function (a) {
 })();
 
 
-// *** module: entity_info.js ***
-(function () {
-var log = ulog('entity_info');
-/* exported setup --eslint */
-
-/**
- * Entity Details Tools
- * Functions to extract useful data from entity details, such as portals, links, and fields.
- * @module entity_info
- */
-
-/**
- * Given the entity detail data, returns the team the entity belongs to.
- * Uses TEAM_* enum values.
- *
- * @function getTeam
- * @param {Object} details - The details hash of an entity.
- * @returns {number} The team ID the entity belongs to.
- */
-window.getTeam = function (details) {
-  return window.teamStringToId(details.team);
-};
-
-/**
- * Converts a team string to a team ID.
- *
- * @function teamStringToId
- * @param {string} teamStr - The team string to convert.
- * @returns {number} The team ID corresponding to the team string.
- */
-window.teamStringToId = function (teamStr) {
-  var teamIndex = window.TEAM_CODENAMES.indexOf(teamStr);
-  if (teamIndex >= 0) return teamIndex;
-  teamIndex = window.TEAM_CODES.indexOf(teamStr);
-  if (teamIndex >= 0) return teamIndex;
-  return window.TEAM_NONE;
-};
-
-
-})();
-
-
 // *** module: extract_niantic_parameters.js ***
 (function () {
 var log = ulog('extract_niantic_parameters');
@@ -24434,6 +24492,32 @@ window.setupMap = function () {
 
   map.attributionControl.setPrefix('');
 
+  /**
+   * Override default Google Maps attribution to use Leaflet's native attribution control
+   * instead of creating separate DOM elements. Extracts text content from Google's
+   * attribution container and adds it to Leaflet's control.
+   */
+  L.GridLayer.GoogleMutant.prototype._setupAttribution = function (ev) {
+    if (!this._map?.attributionControl) {
+      return;
+    }
+    // eslint-disable-next-line
+    const pos = google.maps.ControlPosition;
+    const container = ev.positions.get(pos.BOTTOM_RIGHT);
+    const attribution = container?.querySelector('span')?.textContent;
+    if (attribution) {
+      this._attributionText = attribution; // Сохраняем текст атрибуции
+      this._map.attributionControl.addAttribution(attribution);
+    }
+  };
+  const originalGoogleMutantOnRemove = L.GridLayer.GoogleMutant.prototype.onRemove;
+  L.GridLayer.GoogleMutant.prototype.onRemove = function (map) {
+    originalGoogleMutantOnRemove.call(this, map);
+    if (this._attributionText && map.attributionControl) {
+      map.attributionControl.removeAttribution(this._attributionText);
+    }
+  };
+
   window.map = map;
 
   map.on('moveend', function () {
@@ -24938,7 +25022,9 @@ window.Render.prototype.clearPortalsOutsideBounds = function (bounds) {
     var p = window.portals[guid];
     // clear portals outside visible bounds - unless it's the selected portal, or it's relevant to artifacts
     if (!bounds.contains(p.getLatLng()) && guid !== window.selectedPortal && !window.artifact.isInterestingPortal(guid)) {
-      this.deletePortalEntity(guid);
+      // remove the marker as a layer first
+      // deletion will be done at endRenderPass
+      p.remove();
     }
   }
 };
@@ -25099,11 +25185,6 @@ window.Render.prototype.endRenderPass = function () {
 
   // reorder portals to be after links/fields
   this.bringPortalsToFront();
-
-  // re-select the selected portal, to re-render the side-bar. ensures that any data calculated from the map data is up to date
-  if (window.selectedPortal) {
-    window.renderPortalDetails(window.selectedPortal);
-  }
 };
 
 /**
@@ -25197,6 +25278,7 @@ window.Render.prototype.deleteFieldEntity = function (guid) {
  * @param {number} latE6 - The latitude of the portal in E6 format.
  * @param {number} lngE6 - The longitude of the portal in E6 format.
  * @param {string} team - The team faction of the portal.
+ * @param {number} [timestamp=0] - Timestamp of the portal data. Defaults to 0 to allow newer data sources to override
  * @param {number} [timestamp] - The timestamp of the portal data.
  */
 window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
@@ -25211,7 +25293,7 @@ window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, l
 
   var ent = [
     guid, // ent[0] = guid
-    -1, // ent[1] = timestamp - zero will mean any other source of portal data will have a higher timestamp
+    timestamp, // ent[1] = timestamp
     // ent[2] = an array with the entity data
     [
       'p', // 0 - a portal
@@ -25221,22 +25303,7 @@ window.Render.prototype.createPlaceholderPortalEntity = function (guid, latE6, l
     ],
   ];
 
-  // placeholder portals don't have a useful timestamp value - so the standard code that checks for updated
-  // portal details doesn't apply
-  // so, check that the basic details are valid and delete the existing portal if out of date
-  var portalMoved = false;
-  if (guid in window.portals) {
-    var p = window.portals[guid];
-    portalMoved = latE6 !== p.options.data.latE6 || lngE6 !== p.options.data.lngE6;
-    if (team !== p.options.data.team && p.options.timestamp < timestamp) {
-      // team - delete existing portal
-      this.deletePortalEntity(guid);
-    }
-  }
-
-  if (!portalMoved) {
-    this.createPortalEntity(ent, 'core'); // placeholder
-  }
+  this.createPortalEntity(ent, 'core'); // placeholder
 };
 
 /**
@@ -25254,102 +25321,99 @@ window.Render.prototype.createPortalEntity = function (ent, details) {
   var previousData = undefined;
 
   var data = window.decodeArray.portal(ent[2], details);
+  var guid = ent[0];
+
+  // add missing fields
+  data.guid = guid;
+  if (!data.timestamp) {
+    data.timestamp = ent[1];
+  }
+
+  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
+  data.ent = ent;
 
   // check if entity already exists
-  if (ent[0] in window.portals) {
-    // yes. now check to see if the entity data we have is newer than that in place
-    var p = window.portals[ent[0]];
+  const oldPortal = guid in window.portals;
 
-    if (!data.history || p.options.data.history === data.history)
-      if (p.options.timestamp >= ent[1]) {
-        return; // this data is identical or older - abort processing
-      }
+  if (oldPortal) {
+    // yes. now check to see if the entity data we have is newer than that in place
+    var p = window.portals[guid];
+
+    if (!p.willUpdate(data)) {
+      // this data doesn't bring new detail - abort processing
+      // re-add the portal to the relevant layer (does nothing if already in the correct layer)
+      // useful for portals outside the view
+      this.addPortalToMapLayer(p);
+      return p;
+    }
 
     // the data we have is newer. many data changes require re-rendering of the portal
     // (e.g. level changed, so size is different, or stats changed so highlighter is different)
-    // so to keep things simple we'll always re-create the entity in this case
 
     // remember the old details, for the callback
-
-    previousData = p.options.data;
-
-    // preserve history
-    if (!data.history) {
-      data.history = previousData.history;
-    }
-
-    this.deletePortalEntity(ent[0]);
+    previousData = $.extend(true, {}, p.getDetails());
   }
-
-  var portalLevel = parseInt(data.level) || 0;
-  var team = window.teamStringToId(data.team);
-  // the data returns unclaimed portals as level 1 - but IITC wants them treated as level 0
-  if (team === window.TEAM_NONE) portalLevel = 0;
 
   var latlng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
 
-  var dataOptions = {
-    level: portalLevel,
-    team: team,
-    ent: ent, // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
-    guid: ent[0],
-    timestamp: ent[1],
-    data: data,
-  };
-
-  window.pushPortalGuidPositionCache(ent[0], data.latE6, data.lngE6);
-
-  var marker = window.createMarker(latlng, dataOptions);
-
-  function handler_portal_click(e) {
-    window.renderPortalDetails(e.target.options.guid);
-  }
-  function handler_portal_dblclick(e) {
-    window.renderPortalDetails(e.target.options.guid);
-    window.map.setView(e.target.getLatLng(), window.DEFAULT_ZOOM);
-  }
-  function handler_portal_contextmenu(e) {
-    window.renderPortalDetails(e.target.options.guid);
-    if (window.isSmartphone()) {
-      window.show('info');
-    } else if (!$('#scrollwrapper').is(':visible')) {
-      $('#sidebartoggle').click();
-    }
-  }
-
-  marker.on('click', handler_portal_click);
-  marker.on('dblclick', handler_portal_dblclick);
-  marker.on('contextmenu', handler_portal_contextmenu);
-
-  window.runHooks('portalAdded', { portal: marker, previousData: previousData });
-
-  window.portals[ent[0]] = marker;
+  window.pushPortalGuidPositionCache(data.guid, data.latE6, data.lngE6);
 
   // check for URL links to portal, and select it if this is the one
-  if (window.urlPortalLL && window.urlPortalLL[0] === marker.getLatLng().lat && window.urlPortalLL[1] === marker.getLatLng().lng) {
+  if (window.urlPortalLL && window.urlPortalLL[0] === latlng.lat && window.urlPortalLL[1] === latlng.lng) {
     // URL-passed portal found via pll parameter - set the guid-based parameter
-    log.log('urlPortalLL ' + window.urlPortalLL[0] + ',' + window.urlPortalLL[1] + ' matches portal GUID ' + ent[0]);
+    log.log('urlPortalLL ' + window.urlPortalLL[0] + ',' + window.urlPortalLL[1] + ' matches portal GUID ' + data.guid);
 
-    window.urlPortal = ent[0];
+    window.urlPortal = data.guid;
     window.urlPortalLL = undefined; // clear the URL parameter so it's not matched again
   }
-  if (window.urlPortal === ent[0]) {
+  if (window.urlPortal === data.guid) {
     // URL-passed portal found via guid parameter - set it as the selected portal
     log.log('urlPortal GUID ' + window.urlPortal + ' found - selecting...');
-    window.selectedPortal = ent[0];
+    window.selectedPortal = data.guid;
     window.urlPortal = undefined; // clear the URL parameter so it's not matched again
   }
 
-  // (re-)select the portal, to refresh the sidebar on any changes
-  if (ent[0] === window.selectedPortal) {
-    log.log('portal guid ' + ent[0] + ' is the selected portal - re-rendering portal details');
-    window.renderPortalDetails(window.selectedPortal);
+  let marker = undefined;
+  if (oldPortal) {
+    // update marker style/highlight and layer
+    marker = window.portals[data.guid];
+    marker.updateDetails(data);
+
+    if (window.portalDetail.isFresh(guid)) {
+      var oldDetails = window.portalDetail.get(guid);
+      if (data.timestamp > oldDetails.timestamp) {
+        // data is more recent than the cached details so we remove them from the cache
+        window.portalDetail.remove(guid);
+      }
+    }
+
+    window.runHooks('portalAdded', { portal: marker, previousData: previousData });
+  } else {
+    marker = window.createMarker(latlng, data);
+
+    // in case of incomplete data while having fresh details in cache, update the portal with those details
+    if (window.portalDetail.isFresh(guid)) {
+      var oldDetails = window.portalDetail.get(guid);
+      if (data.timestamp > oldDetails.timestamp) {
+        // data is more recent than the cached details so we remove them from the cache
+        window.portalDetail.remove(guid);
+      } else if (marker.willUpdate(oldDetails)) {
+        marker.updateDetails(oldDetails);
+      }
+    }
+
+    window.runHooks('portalAdded', { portal: marker });
+
+    window.portals[data.guid] = marker;
   }
+
 
   window.ornaments.addPortal(marker);
 
   // TODO? postpone adding to the map layer
   this.addPortalToMapLayer(marker);
+
+  return marker;
 };
 
 /**
@@ -25374,7 +25438,7 @@ window.Render.prototype.createFieldEntity = function (ent) {
   // create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
   for (var i = 0; i < 3; i++) {
     var p = data.points[i];
-    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, data.timestamp);
+    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, 0);
   }
 
   // check if entity already exists
@@ -25600,14 +25664,6 @@ window.MapDataRequest = function () {
 
   // ensure we have some initial map status
   this.setStatus('startup', undefined, -1);
-
-  // add a portalDetailLoaded hook, so we can use the extended details to update portals on the map
-  var _this = this;
-  window.addHook('portalDetailLoaded', function (data) {
-    if (data.success) {
-      _this.render.createPortalEntity(data.ent, 'detailed');
-    }
-  });
 };
 
 /**
@@ -26868,6 +26924,8 @@ window.isSystemPlayer = function (name) {
 // *** module: portal_data.js ***
 (function () {
 var log = ulog('portal_data');
+/* global L -- eslint */
+
 /**
  * @file Contain misc functions to get portal info
  * @module portal_data
@@ -26941,6 +26999,50 @@ window.getPortalFields = function (guid) {
 window.getPortalFieldsCount = function (guid) {
   var fields = window.getPortalFields(guid);
   return fields.length;
+};
+
+/**
+ * Zooms the map to a specific portal and shows its details if available.
+ *
+ * @function zoomToAndShowPortal
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
+ */
+window.zoomToAndShowPortal = function (guid, latlng) {
+  window.map.setView(latlng, window.DEFAULT_ZOOM);
+  // if the data is available, render it immediately. Otherwise defer
+  // until it becomes available.
+  if (window.portals[guid]) window.renderPortalDetails(guid);
+  else window.urlPortal = guid;
+};
+
+/**
+ * Selects a portal by its latitude and longitude.
+ *
+ * @function selectPortalByLatLng
+ * @param {number|Array|L.LatLng} lat - The latitude of the portal
+ *                                      or an array or L.LatLng object containing both latitude and longitude.
+ * @param {number} [lng] - The longitude of the portal.
+ */
+window.selectPortalByLatLng = function (lat, lng) {
+  if (lng === undefined && lat instanceof Array) {
+    lng = lat[1];
+    lat = lat[0];
+  } else if (lng === undefined && lat instanceof L.LatLng) {
+    lng = lat.lng;
+    lat = lat.lat;
+  }
+  for (var guid in window.portals) {
+    var latlng = window.portals[guid].getLatLng();
+    if (latlng.lat === lat && latlng.lng === lng) {
+      window.renderPortalDetails(guid);
+      return;
+    }
+  }
+
+  // not currently visible
+  window.urlPortalLL = [lat, lng];
+  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
 };
 
 (function () {
@@ -27082,27 +27184,29 @@ window.portalDetail.isFresh = function (guid) {
   return cache.isFresh(guid);
 };
 
+window.portalDetail.remove = function (guid) {
+  return cache.remove(guid);
+};
+
 var handleResponse = function (deferred, guid, data, success) {
   if (!data || data.error || !data.result) {
     success = false;
   }
 
   if (success) {
+    // Parse portal details
     var dict = window.decodeArray.portal(data.result, 'detailed');
-
-    // entity format, as used in map data
-    var ent = [guid, dict.timestamp, data.result];
-
     cache.store(guid, dict);
 
-    // FIXME..? better way of handling sidebar refreshing...
+    // entity format, as used in map data
+    var ent = [guid, data.result[13], data.result];
+    var portal = window.mapDataRequest.render.createPortalEntity(ent, 'detailed');
 
-    if (guid === window.selectedPortal) {
-      window.renderPortalDetails(guid);
-    }
+    // Update cache with from current map
+    cache.store(guid, portal.options.data);
 
-    deferred.resolve(dict);
-    window.runHooks('portalDetailLoaded', { guid: guid, success: success, details: dict, ent: ent });
+    deferred.resolve(portal.options.data);
+    window.runHooks('portalDetailLoaded', { guid: guid, success: success, details: portal.options.data, ent: ent, portal: portal });
   } else {
     if (data && data.error === 'RETRY') {
       // server asked us to try again
@@ -27223,13 +27327,17 @@ window.renderPortalUrl = function (lat, lng, title, guid) {
 };
 
 /**
- * Renders the details of a portal in the sidebar.
+ * Selects a portal, refresh its data and renders the details of the portal in the sidebar.
  *
  * @function renderPortalDetails
  * @param {string|null} guid - The globally unique identifier of the portal to display details for.
+ * @param {boolean} [forceSelect=false] - If true, forces the portal to be selected even if it's already the current portal.
  */
-window.renderPortalDetails = function (guid) {
-  window.selectPortal(window.portals[guid] ? guid : null);
+window.renderPortalDetails = function (guid, forceSelect) {
+  if (forceSelect || window.selectedPortal !== guid) {
+    window.selectPortal(guid && window.portals[guid] ? guid : null, 'renderPortalDetails');
+  }
+
   if ($('#sidebar').is(':visible')) {
     window.resetScrollOnNewPortal();
     window.renderPortalDetails.lastVisible = guid;
@@ -27239,10 +27347,7 @@ window.renderPortalDetails = function (guid) {
     window.portalDetail.request(guid);
   }
 
-  // TODO? handle the case where we request data for a particular portal GUID, but it *isn't* in
-  // window.portals....
-
-  if (!window.portals[guid]) {
+  if (!guid || !window.portals[guid]) {
     window.urlPortal = guid;
     $('#portaldetails').html('');
     if (window.isSmartphone()) {
@@ -27252,35 +27357,40 @@ window.renderPortalDetails = function (guid) {
     return;
   }
 
-  var portal = window.portals[guid];
-  var data = portal.options.data;
-  var details = window.portalDetail.get(guid);
-  var historyDetails = window.getPortalHistoryDetails(data);
+  window.renderPortalToSideBar(window.portals[guid]);
+};
 
-  // details and data can get out of sync. if we have details, construct a matching 'data'
-  if (details) {
-    data = window.getPortalSummaryData(details);
-  }
+/**
+ * Renders the details of a portal in the sidebar.
+ *
+ * @function renderPortalToSideBar
+ * @param {L.PortalMarker} portal - The portal marker object holding portal details.
+ */
+window.renderPortalToSideBar = function (portal) {
+  var guid = portal.options.guid;
+  var details = portal.getDetails();
+  var hasFullDetails = portal.hasFullDetails();
+  var historyDetails = window.getPortalHistoryDetails(details);
 
-  var modDetails = details ? '<div class="mods">' + window.getModDetails(details) + '</div>' : '';
-  var miscDetails = details ? window.getPortalMiscDetails(guid, details) : '';
-  var resoDetails = details ? window.getResonatorDetails(details) : '';
+  var modDetails = hasFullDetails ? '<div class="mods">' + window.getModDetails(details) + '</div>' : '';
+  var miscDetails = hasFullDetails ? window.getPortalMiscDetails(guid, details) : '';
+  var resoDetails = hasFullDetails ? window.getResonatorDetails(details) : '';
 
   // TODO? other status details...
-  var statusDetails = details ? '' : '<div id="portalStatus">Loading details...</div>';
+  var statusDetails = hasFullDetails ? '' : '<div id="portalStatus">Loading details...</div>';
 
-  var img = window.fixPortalImageUrl(details ? details.image : data.image);
-  var title = (details && details.title) || (data && data.title) || 'null';
+  var img = window.fixPortalImageUrl(details.image);
+  var title = details.title || 'null';
 
-  var lat = data.latE6 / 1e6;
-  var lng = data.lngE6 / 1e6;
+  var lat = details.latE6 / 1e6;
+  var lng = details.lngE6 / 1e6;
 
   var imgTitle = title + '\n\nClick to show full image.';
 
   // portal level. start with basic data - then extend with fractional info in tooltip if available
-  var levelInt = window.teamStringToId(data.team) === window.TEAM_NONE ? 0 : data.level;
+  var levelInt = portal.options.level;
   var levelDetails = levelInt;
-  if (details) {
+  if (hasFullDetails) {
     levelDetails = window.getPortalLevel(details);
     if (levelDetails !== 8) {
       if (levelDetails === Math.ceil(levelDetails)) levelDetails += '\n8';
@@ -27294,7 +27404,7 @@ window.renderPortalDetails = function (guid) {
 
   $('#portaldetails')
     .html('') // to ensure it's clear
-    .attr('class', window.TEAM_TO_CSS[window.teamStringToId(data.team)])
+    .attr('class', window.TEAM_TO_CSS[window.teamStringToId(details.team)])
     .append(
       $('<h3>', { class: 'title' })
         .text(title)
@@ -27305,7 +27415,7 @@ window.renderPortalDetails = function (guid) {
               style: 'float: left',
             })
             .click(function () {
-              window.zoomToAndShowPortal(guid, [data.latE6 / 1e6, data.lngE6 / 1e6]);
+              window.zoomToAndShowPortal(guid, [details.latE6 / 1e6, details.lngE6 / 1e6]);
               if (window.isSmartphone()) {
                 window.show('map');
               }
@@ -27321,9 +27431,6 @@ window.renderPortalDetails = function (guid) {
         .text('X')
         .click(function () {
           window.renderPortalDetails(null);
-          if (window.isSmartphone()) {
-            window.show('map');
-          }
         }),
 
       // help cursor via ".imgpreview img"
@@ -27345,9 +27452,12 @@ window.renderPortalDetails = function (guid) {
 
   window.renderPortalUrl(lat, lng, title, guid);
 
+  // compatibility
+  var data = hasFullDetails ? window.getPortalSummaryData(details) : details;
+
   // only run the hooks when we have a portalDetails object - most plugins rely on the extended data
   // TODO? another hook to call always, for any plugins that can work with less data?
-  if (details) {
+  if (hasFullDetails) {
     window.runHooks('portalDetailsUpdated', { guid: guid, portal: portal, portalDetails: details, portalData: data });
   }
 };
@@ -27495,7 +27605,7 @@ window.setPortalIndicators = function (p) {
  * @param {string} guid - The GUID of the portal to select.
  * @returns {boolean} True if the same portal is re-selected (just an update), false if a different portal is selected.
  */
-window.selectPortal = function (guid) {
+window.selectPortal = function (guid, event) {
   var update = window.selectedPortal === guid;
   var oldPortalGuid = window.selectedPortal;
   window.selectedPortal = guid;
@@ -27504,21 +27614,78 @@ window.selectPortal = function (guid) {
   var newPortal = window.portals[guid];
 
   // Restore style of unselected portal
-  if (!update && oldPortal) window.setMarkerStyle(oldPortal, false);
+  if (!update && oldPortal) oldPortal.setSelected(false);
 
   // Change style of selected portal
-  if (newPortal) {
-    window.setMarkerStyle(newPortal, true);
-
-    if (window.map.hasLayer(newPortal)) {
-      newPortal.bringToFront();
-    }
-  }
+  if (newPortal) newPortal.setSelected(true);
 
   window.setPortalIndicators(newPortal);
 
-  window.runHooks('portalSelected', { selectedPortalGuid: guid, unselectedPortalGuid: oldPortalGuid });
+  window.runHooks('portalSelected', {
+    selectedPortalGuid: guid,
+    unselectedPortalGuid: oldPortalGuid,
+    event: event,
+  });
   return update;
+};
+
+/**
+ * Changes the coordinates and map scale to show the range for portal links.
+ *
+ * @function rangeLinkClick
+ */
+window.rangeLinkClick = function () {
+  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
+  if (window.isSmartphone()) window.show('map');
+};
+
+/**
+ * Creates a link to open a specific portal in Ingress Prime.
+ *
+ * @function makePrimeLink
+ * @param {string} guid - The globally unique identifier of the portal.
+ * @param {number} lat - The latitude of the portal.
+ * @param {number} lng - The longitude of the portal.
+ * @returns {string} The Ingress Prime link for the portal
+ */
+window.makePrimeLink = function (guid, lat, lng) {
+  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
+};
+
+/**
+ * Generates a permalink URL based on the specified latitude and longitude and additional options.
+ *
+ * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
+ *                              Can be omitted to create mapview-only permalink.
+ * @param {Object} [options] - Additional options for permalink generation.
+ * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
+ * @param {boolean} [options.fullURL] - Generate a fully qualified URL (default: relative link).
+ * @returns {string} The generated permalink URL.
+ */
+window.makePermalink = function (latlng, options) {
+  options = options || {};
+
+  function round(l) {
+    // ensures that lat,lng are with same precision as in stock intel permalinks
+    return Math.floor(l * 1e6) / 1e6;
+  }
+  var args = [];
+  if (!latlng || options.includeMapView) {
+    var c = window.map.getCenter();
+    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
+  }
+  if (latlng) {
+    if ('lat' in latlng) {
+      latlng = [latlng.lat, latlng.lng];
+    }
+    args.push('pll=' + latlng.join(','));
+  }
+  var url = '';
+  if (options.fullURL) {
+    url += new URL(document.baseURI).origin;
+  }
+  url += '/';
+  return url + '?' + args.join('&');
 };
 
 
@@ -27842,6 +28009,30 @@ window.getMitigationText = function (d, linkCount) {
   return ['shielding', mitigationShort, title];
 };
 
+/**
+ * Displays a dialog with links to show the specified location on various map services.
+ *
+ * @function showPortalPosLinks
+ * @param {number} lat - Latitude of the location.
+ * @param {number} lng - Longitude of the location.
+ * @param {string} name - Name of the location.
+ */
+window.showPortalPosLinks = function (lat, lng, name) {
+  var encoded_name = encodeURIComponent(name);
+  var qrcode = '<div id="qrcode"></div>';
+  var script = "<script>$('#qrcode').qrcode({text:'GEO:" + lat + ',' + lng + "'});</script>";
+  var gmaps = '<a href="https://maps.google.com/maps?ll=' + lat + ',' + lng + '&q=' + lat + ',' + lng + '%20(' + encoded_name + ')">Google Maps</a>';
+  var bingmaps =
+    '<a href="https://www.bing.com/maps/?v=2&cp=' + lat + '~' + lng + '&lvl=16&sp=Point.' + lat + '_' + lng + '_' + encoded_name + '___">Bing Maps</a>';
+  var osm = '<a href="https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=16">OpenStreetMap</a>';
+  var latLng = '<span>' + lat + ',' + lng + '</span>';
+  window.dialog({
+    html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
+    title: name,
+    id: 'poslinks',
+  });
+};
+
 
 })();
 
@@ -27912,12 +28103,10 @@ window.updatePortalHighlighterControl = function () {
 
   if (window._highlighters !== null) {
     if ($('#portal_highlight_select').length === 0) {
-      $('body').append("<select id='portal_highlight_select'></select>");
+      $('.leaflet-top.leaflet-left').first().append("<select id='portal_highlight_select' class='leaflet-control'></select>");
       $('#portal_highlight_select').change(function () {
         window.changePortalHighlights($(this).val());
       });
-      $('.leaflet-top.leaflet-left').css('padding-top', '20px');
-      $('.leaflet-control-scale-line').css('margin-top', '25px');
     }
     $('#portal_highlight_select').html('');
     $('#portal_highlight_select').append($('<option>').attr('value', window._no_highlighter).text(window._no_highlighter));
@@ -27964,7 +28153,7 @@ window.changePortalHighlights = function (name) {
  */
 window.highlightPortal = function (p) {
   if (window._highlighters !== null && window._highlighters[window._current_highlighter] !== undefined) {
-    window._highlighters[window._current_highlighter].highlight({ portal: p });
+    return window._highlighters[window._current_highlighter].highlight({ portal: p });
   }
 };
 
@@ -28045,6 +28234,21 @@ window.getCurrentPortalEnergy = function (d) {
     nrg += parseInt(reso.energy);
   });
   return nrg;
+};
+
+/**
+ * Calculates the health percentage of a portal based on its current and total energy.
+ *
+ * @function getPortalHealth
+ * @param {Object} d - The portal detail object containing resonator information.
+ * @returns {number} The portal health as a percentage (0-100).
+ *                   Returns 0 if the portal has no total energy.
+ */
+window.getPortalHealth = function (d) {
+  var max = window.getTotalPortalEnergy(d);
+  var cur = window.getCurrentPortalEnergy(d);
+
+  return max > 0 ? Math.floor((cur / max) * 100) : 0;
 };
 
 /**
@@ -28425,12 +28629,272 @@ window.getPortalAttackValues = function (d) {
 // *** module: portal_marker.js ***
 (function () {
 var log = ulog('portal_marker');
-/* global L -- eslint */
+/* global IITC, L, log -- eslint */
 
 /**
  * @file This file contains the code related to creating and updating portal markers on the map.
  * @module portal_marker
  */
+
+// portal hooks
+function handler_portal_click(e) {
+  window.selectPortal(e.target.options.guid, e.type);
+  window.renderPortalDetails(e.target.options.guid);
+}
+
+function handler_portal_dblclick(e) {
+  window.selectPortal(e.target.options.guid, e.type);
+  window.renderPortalDetails(e.target.options.guid);
+  window.map.setView(e.target.getLatLng(), window.DEFAULT_ZOOM);
+}
+
+function handler_portal_contextmenu(e) {
+  window.selectPortal(e.target.options.guid, e.type);
+  window.renderPortalDetails(e.target.options.guid);
+  if (window.isSmartphone()) {
+    window.show('info');
+  } else if (!$('#scrollwrapper').is(':visible')) {
+    $('#sidebartoggle').click();
+  }
+}
+
+L.PortalMarker = L.CircleMarker.extend({
+  options: {},
+
+  statics: {
+    // base style
+    portalBaseStyle: {
+      stroke: true,
+      opacity: 1,
+      fill: true,
+      fillOpacity: 0.5,
+      interactive: true,
+    },
+    // placeholder style
+    placeholderStyle: {
+      dashArray: '1,2',
+      weight: 1,
+    },
+    // portal level   0  1  2  3  4  5  6  7  8
+    LEVEL_TO_WEIGHT: [2, 2, 2, 2, 2, 3, 3, 4, 4],
+    LEVEL_TO_RADIUS: [7, 7, 7, 7, 8, 8, 9, 10, 11],
+  },
+
+  initialize: function (latlng, data) {
+    L.CircleMarker.prototype.initialize.call(this, latlng);
+    this._selected = data.guid === window.selectedPortal;
+    this.updateDetails(data);
+
+    this.on('click', handler_portal_click);
+    this.on('dblclick', handler_portal_dblclick);
+    this.on('contextmenu', handler_portal_contextmenu);
+  },
+
+  willUpdate: function (details) {
+    // details are from a placeholder
+    if (details.level === undefined) {
+      // if team differs and corresponding link is more recent (ignore field)
+      return this._details.timestamp < details.timestamp && this._details.team !== details.team;
+    }
+    // more recent timestamp, this occurs when the data has changed because of:
+    //  - resonator deploy/upgrade
+    //  - mod deploy
+    //  - recharge/damage/decay
+    //  - portal edit (title, location, portal main picture)
+    if (this._details.timestamp < details.timestamp) {
+      return true;
+    }
+    // current marker is a placeholder, and details is real data
+    if (this.isPlaceholder() && this._details.team === details.team) {
+      return true;
+    }
+    // even if we get history that was missing ? is it even possible ?
+    if (this._details.timestamp > details.timestamp) {
+      return false;
+    }
+
+    // this._details.timestamp === details.timestamp
+
+    // get new history
+    if (details.history) {
+      if (!this._details.history) {
+        return true;
+      }
+      if (this._details.history._raw !== details.history._raw) {
+        return true;
+      }
+    }
+
+    // get details portal data
+    if (!this._details.mods && details.mods) {
+      return true;
+    }
+
+    return false;
+  },
+
+  updateDetails: function (details) {
+    if (this._details) {
+      // portal has been moved
+      if (this._details.latE6 !== details.latE6 || this._details.lngE6 !== details.lngE6) {
+        this.setLatLng(L.latLng(details.latE6 / 1e6, details.lngE6 / 1e6));
+      }
+
+      // core data from a placeholder
+      if (details.level === undefined) {
+        // if team has changed
+        if (this._details.timestamp < details.timestamp && this._details.team !== details.team) {
+          // keep history, title, image
+          details.title = this._details.title;
+          details.image = this._details.image;
+          details.history = this._details.history;
+          this._details = details;
+        }
+      } else if (this._details.timestamp === details.timestamp) {
+        // we got more details (core/summary -> summary/detailed/extended)
+        var localThis = this;
+        [
+          'level',
+          'health',
+          'resCount',
+          'image',
+          'title',
+          'ornaments',
+          'mission',
+          'mission50plus',
+          'artifactBrief',
+          'mods',
+          'resonators',
+          'owner',
+          'artifactDetail',
+        ].forEach(function (prop) {
+          if (details[prop]) localThis._details[prop] = details[prop];
+        });
+        // smarter update for history (cause it's missing sometimes)
+        if (details.history) {
+          if (!this._details.history) {
+            this._details.history = details.history;
+          } else {
+            if (this._details.history._raw && details.history._raw !== this._details.history._raw) {
+              log.warn('new portal data has lost some history');
+            }
+            this._details.history._raw |= details.history._raw;
+            ['visited', 'captured', 'scoutControlled'].forEach(function (prop) {
+              localThis._details.history[prop] ||= details.history[prop];
+            });
+          }
+        }
+        // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
+        this._details.ent = details.ent;
+      } else {
+        // permanent data (history only)
+        if (!details.history) {
+          details.history = this._details.history;
+        }
+
+        this._details = details;
+      }
+    } else {
+      this._details = details;
+    }
+
+    this._level = parseInt(this._details.level) || 0;
+    this._team = IITC.utils.getTeamId(this._details.team);
+
+    // the data returns unclaimed portals as level 1 - but IITC wants them treated as level 0
+    if (this._team === window.TEAM_NONE) {
+      this._level = 0;
+    }
+
+    // compatibility
+    var dataOptions = {
+      guid: this._details.guid,
+      level: this._level,
+      team: this._team,
+      ent: this._details.ent, // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
+      timestamp: this._details.timestamp,
+      data: this._details,
+    };
+    L.setOptions(this, dataOptions);
+
+    this.setSelected();
+  },
+
+  getDetails: function () {
+    return this._details;
+  },
+
+  isPlaceholder: function () {
+    return this._details.level === undefined;
+  },
+
+  hasFullDetails: function () {
+    return !!this._details.mods;
+  },
+
+  setStyle: function (style) {
+    // stub for highlighters
+    L.Util.setOptions(this, style);
+    return this;
+  },
+
+  setMarkerStyle: function (style) {
+    var styleOptions = L.Util.extend(this._style(), style);
+    L.Util.setOptions(this, styleOptions);
+
+    L.Util.setOptions(this, window.highlightPortal(this));
+
+    var selected = L.extend({ radius: this.options.radius }, this._selected && { color: window.COLOR_SELECTED_PORTAL });
+    return L.CircleMarker.prototype.setStyle.call(this, selected);
+  },
+
+  setSelected: function (selected) {
+    if (selected === false) {
+      this._selected = false;
+    } else {
+      this._selected = this._selected || selected;
+    }
+
+    this.setMarkerStyle();
+
+    if (this._selected && window.map.hasLayer(this)) {
+      this.bringToFront();
+    }
+  },
+
+  _style: function () {
+    var dashArray = null;
+    // dashed outline for placeholder portals
+    if (this.isPlaceholder()) {
+      dashArray = L.PortalMarker.placeholderStyle.dashArray;
+    }
+
+    return L.extend(this._scale(), L.PortalMarker.portalBaseStyle, {
+      color: window.COLORS[this._team],
+      fillColor: window.COLORS[this._team],
+      dashArray: dashArray,
+    });
+  },
+
+  _scale: function () {
+    var scale = window.portalMarkerScale();
+
+    var level = Math.floor(this._level || 0);
+
+    var lvlWeight = L.PortalMarker.LEVEL_TO_WEIGHT[level] * Math.sqrt(scale);
+    var lvlRadius = L.PortalMarker.LEVEL_TO_RADIUS[level] * scale;
+
+    // thinner outline for placeholder portals
+    if (this.isPlaceholder()) {
+      lvlWeight = L.PortalMarker.placeholderStyle.weight;
+    }
+
+    return {
+      radius: lvlRadius,
+      weight: lvlWeight,
+    };
+  },
+});
 
 /**
  * Calculates the scale of portal markers based on the current zoom level of the map.
@@ -28450,39 +28914,21 @@ window.portalMarkerScale = function () {
  * @function createMarker
  * @param {L.LatLng} latlng - The latitude and longitude where the marker will be placed.
  * @param {Object} data - The IITC-specific entity data to be stored in the marker options.
- * @returns {L.circleMarker} A Leaflet circle marker representing the portal.
+ * @returns {L.PortalMarker} A Leaflet circle marker representing the portal.
  */
 window.createMarker = function (latlng, data) {
-  var styleOptions = window.getMarkerStyleOptions(data);
-
-  var options = L.extend({}, data, styleOptions, { interactive: true });
-
-  var marker = L.circleMarker(latlng, options);
-
-  window.highlightPortal(marker);
-
-  return marker;
+  return new L.PortalMarker(latlng, data);
 };
 
 /**
  * Sets the style of a portal marker, including options for when the portal is selected.
  *
  * @function setMarkerStyle
- * @param {L.circleMarker} marker - The portal marker whose style will be set.
+ * @param {L.PortalMarker} marker - The portal marker whose style will be set.
  * @param {boolean} selected - Indicates if the portal is selected.
  */
 window.setMarkerStyle = function (marker, selected) {
-  var styleOptions = window.getMarkerStyleOptions(marker.options);
-
-  marker.setStyle(styleOptions);
-
-  // FIXME? it's inefficient to set the marker style (above), then do it again inside the highlighter
-  // the highlighter API would need to be changed for this to be improved though. will it be too slow?
-  window.highlightPortal(marker);
-
-  if (selected) {
-    marker.setStyle({ color: window.COLOR_SELECTED_PORTAL });
-  }
+  marker.setSelected(selected);
 };
 
 /**
@@ -28495,33 +28941,30 @@ window.setMarkerStyle = function (marker, selected) {
 window.getMarkerStyleOptions = function (details) {
   var scale = window.portalMarkerScale();
 
-  //   portal level      0  1  2  3  4  5  6  7  8
-  var LEVEL_TO_WEIGHT = [2, 2, 2, 2, 2, 3, 3, 4, 4];
-  var LEVEL_TO_RADIUS = [7, 7, 7, 7, 8, 8, 9, 10, 11];
-
   var level = Math.floor(details.level || 0);
 
-  var lvlWeight = LEVEL_TO_WEIGHT[level] * Math.sqrt(scale);
-  var lvlRadius = LEVEL_TO_RADIUS[level] * scale;
+  var lvlWeight = L.PortalMarker.LEVEL_TO_WEIGHT[level] * Math.sqrt(scale);
+  var lvlRadius = L.PortalMarker.LEVEL_TO_RADIUS[level] * scale;
 
   var dashArray = null;
   // thinner and dashed outline for placeholder portals
   if (details.team !== window.TEAM_NONE && level === 0) {
-    lvlWeight = 1;
-    dashArray = '1,2';
+    lvlWeight = L.PortalMarker.placeholderStyle.weight;
+    dashArray = L.PortalMarker.placeholderStyle.dashArray;
   }
 
-  var options = {
-    radius: lvlRadius,
-    stroke: true,
-    color: window.COLORS[details.team],
-    weight: lvlWeight,
-    opacity: 1,
-    fill: true,
-    fillColor: window.COLORS[details.team],
-    fillOpacity: 0.5,
-    dashArray: dashArray,
-  };
+  var options = L.extend(
+    {
+      radius: lvlRadius,
+      weight: lvlWeight,
+    },
+    L.PortalMarker.portalBaseStyle,
+    {
+      color: window.COLORS[details.team],
+      fillColor: window.COLORS[details.team],
+      dashArray: dashArray,
+    }
+  );
 
   return options;
 };
@@ -29197,26 +29640,26 @@ window.RegionScoreboardSetup = (function () {
     $('#cycletimer', mainDialog).html(formatMinutes(Math.max(0, Math.floor(d / 1000))));
   }
 
+  function pad(n) {
+    return window.zeroPad(n, 2);
+  }
+
   function formatMinutes(sec) {
     var hours = Math.floor(sec / 3600);
     var minutes = Math.floor((sec % 3600) / 60);
     sec = sec % 60;
 
-    var time = '';
-    time += hours + ':';
-    if (minutes < 10) time += '0';
-    time += minutes;
-    time += ':';
-    if (sec < 10) time += '0';
-    time += sec;
-    return time;
+    return hours + ':' + pad(minutes) + ':' + pad(sec);
   }
 
   function formatHours(time) {
-    return ('0' + time.getHours()).slice(-2) + ':00';
+    return pad(time.getHours()) + ':' + pad(time.getMinutes());
+  }
+  function formatDay(time) {
+    return pad(time.getDate()) + '.' + pad(time.getMonth() + 1);
   }
   function formatDayHours(time) {
-    return ('0' + time.getDate()).slice(-2) + '.' + ('0' + (time.getMonth() + 1)).slice(-2) + ' ' + ('0' + time.getHours()).slice(-2) + ':00';
+    return formatDay(time) + ' ' + formatHours(time);
   }
 
   return function setup() {
@@ -29587,7 +30030,7 @@ window.requests.addRefreshFunction = function (f) {
 // *** module: search.js ***
 (function () {
 var log = ulog('search');
-/* global L -- eslint */
+/* global IITC -- eslint */
 
 /**
  * Provides functionality for the search system within the application.
@@ -29595,357 +30038,471 @@ var log = ulog('search');
  * You can implement your own result provider by listening to the search hook:
  * ```window.addHook('search', function(query) {});```.
  *
- * The `query` object has the following members:
- * - `term`: The term for which the user has searched.
- * - `confirmed`: A boolean indicating if the user has pressed enter after searching.
- *   You should not search online or do heavy processing unless the user has confirmed the search term.
- * - `addResult(result)`: A method to add a result to the query.
+ * @example
+ * // Adding a search result
+ * window.addHook('search', function(query) {
+ *   query.addResult({
+ *     title: 'My Result',
+ *     position: L.latLng(0, 0)
+ *   });
+ * });
  *
- * The `result` object can have the following members (`title` is required, as well as one of `position` and `bounds`):
- * - `title`: The label for this result. Will be interpreted as HTML, so make sure to escape properly.
- * - `description`: Secondary information for this result. Will be interpreted as HTML, so make sure to escape properly.
- * - `position`: A L.LatLng object describing the position of this result.
- * - `bounds`: A L.LatLngBounds object describing the bounds of this result.
- * - `layer`: An ILayer to be added to the map when the user selects this search result.
- *   Will be generated if not set. Set to `null` to prevent the result from being added to the map.
- * - `icon`: A URL to an icon to display in the result list. Should be 12x12 pixels.
- * - `onSelected(result, event)`: A handler to be called when the result is selected.
- *   May return `true` to prevent the map from being repositioned. You may reposition the map yourself or do other work.
- * - `onRemove(result)`: A handler to be called when the result is removed from the map
- *   (because another result has been selected or the search was cancelled by the user).
- *  @namespace window.search
+ *  @namespace IITC.search
+ *  @memberof IITC
  */
-window.search = {
+
+/**
+ * @memberOf IITC.search
+ * @typedef {Object} SearchQuery
+ * @property {string} term - The term for which the user has searched.
+ * @property {boolean} confirmed - Indicates if the user has pressed enter after searching.
+ *           You should not search online or do heavy processing unless the user has confirmed the search term.
+ * @property {IITC.search.Query.addResult} addResult - Method to add a result to the query.
+ * @property {IITC.search.Query.addPortalResult} addPortalResult - Method to add a portal to the query.
+ */
+
+IITC.search = {
   lastSearch: null,
-};
-
-/**
- * Represents a search query.
- *
- * @memberof window.search
- * @class
- * @name window.search.Query
- * @param {string} term - The search term.
- * @param {boolean} confirmed - Indicates if the search is confirmed (e.g., by pressing Enter).
- */
-window.search.Query = function (term, confirmed) {
-  this.term = term;
-  this.confirmed = confirmed;
-  this.init();
-};
-
-/**
- * Initializes the search query, setting up the DOM elements and triggering the 'search' hook.
- *
- * @function
- */
-window.search.Query.prototype.init = function () {
-  this.results = [];
-
-  this.container = $('<div>').addClass('searchquery');
-
-  this.header = $('<h3>')
-    .text(
-      this.confirmed
-        ? this.term
-        : (this.term.length > 16 ? this.term.substr(0, 8) + '…' + this.term.substr(this.term.length - 8, 8) : this.term) + ' (Return to load more)'
-    )
-    .appendTo(this.container);
-
-  this.list = $('<ul>')
-    .appendTo(this.container)
-    .append($('<li>').text(this.confirmed ? 'No local results, searching online...' : 'No local results.'));
-
-  this.container.accordion({
-    collapsible: true,
-    heightStyle: 'content',
-  });
-
-  window.runHooks('search', this);
-};
-
-/**
- * Displays the search query results in the search wrapper.
- *
- * @function
- */
-window.search.Query.prototype.show = function () {
-  this.container.appendTo('#searchwrapper');
-};
-
-/**
- * Hides the search query results and cleans up.
- *
- * @function
- */
-window.search.Query.prototype.hide = function () {
-  this.container.remove();
-  this.removeSelectedResult();
-  this.removeHoverResult();
-};
-
-/**
- * Adds a search result to this query.
- *
- * @function
- * @param {Object} result - The search result object to add.
- */
-window.search.Query.prototype.addResult = function (result) {
-  if (this.results.length === 0) {
-    // remove 'No results'
-    this.list.empty();
-  }
-
-  this.results.push(result);
-  var item = $('<li>')
-    .appendTo(this.list)
-    .attr('tabindex', '0')
-    .on(
-      'click dblclick',
-      function (ev) {
-        this.onResultSelected(result, ev);
-      }.bind(this)
-    )
-    .on(
-      'mouseover',
-      function (ev) {
-        this.onResultHoverStart(result, ev);
-      }.bind(this)
-    )
-    .on(
-      'mouseout',
-      function (ev) {
-        this.onResultHoverEnd(result, ev);
-      }.bind(this)
-    )
-    .keypress(function (ev) {
-      if ((ev.keyCode || ev.charCode || ev.which) === 32) {
-        ev.preventDefault();
-        ev.type = 'click';
-        $(this).trigger(ev);
-        return;
-      }
-      if ((ev.keyCode || ev.charCode || ev.which) === 13) {
-        ev.preventDefault();
-        ev.type = 'dblclick';
-        $(this).trigger(ev);
-        return;
-      }
-    });
-
-  var link = $('<a>').append(result.title).appendTo(item);
-
-  if (result.icon) {
-    link.css('background-image', 'url("' + result.icon + '")');
-    item.css('list-style', 'none');
-  }
-
-  if (result.description) {
-    item.append($('<br>')).append($('<em>').append(result.description));
-  }
-};
-
-/**
- * Creates and returns a layer for the given search result, which could be markers or shapes on the map.
- *
- * @function
- * @param {Object} result - The search result object.
- * @returns {L.Layer} The layer created for this result.
- */
-window.search.Query.prototype.resultLayer = function (result) {
-  if (result.layer !== null && !result.layer) {
-    result.layer = L.layerGroup();
-
-    if (result.position) {
-      L.marker(result.position, {
-        icon: L.divIcon.coloredSvg('red'),
-        title: result.title,
-      }).addTo(result.layer);
-    }
-
-    if (result.bounds) {
-      L.rectangle(result.bounds, {
-        title: result.title,
-        interactive: false,
-        color: 'red',
-        fill: false,
-      }).addTo(result.layer);
-    }
-  }
-  return result.layer;
-};
-
-/**
- * Handles the selection of a search result, including map view adjustments and layer management.
- *
- * @function
- * @param {Object} result - The selected search result object.
- * @param {Event} ev - The event associated with the selection.
- */
-window.search.Query.prototype.onResultSelected = function (result, ev) {
-  this.removeHoverResult();
-  this.removeSelectedResult();
-  this.selectedResult = result;
-
-  if (result.onSelected) {
-    if (result.onSelected(result, ev)) return;
-  }
-
-  if (ev.type === 'dblclick') {
-    if (result.position) {
-      window.map.setView(result.position, window.DEFAULT_ZOOM);
-    } else if (result.bounds) {
-      window.map.fitBounds(result.bounds, { maxZoom: window.DEFAULT_ZOOM });
-    }
-  } else {
-    // ev.type != 'dblclick'
-    if (result.bounds) {
-      window.map.fitBounds(result.bounds, { maxZoom: window.DEFAULT_ZOOM });
-    } else if (result.position) {
-      window.map.setView(result.position);
-    }
-  }
-
-  result.layer = this.resultLayer(result);
-
-  if (result.layer) window.map.addLayer(result.layer);
-
-  if (window.isSmartphone()) window.show('map');
-};
-
-/**
- * Removes the currently selected search result from the map and performs cleanup.
- *
- * @function
- */
-window.search.Query.prototype.removeSelectedResult = function () {
-  if (this.selectedResult) {
-    if (this.selectedResult.layer) window.map.removeLayer(this.selectedResult.layer);
-    if (this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
-  }
-};
-
-/**
- * Handles the start of a hover over a search result. Adds the layer for the result to the map if not already selected.
- *
- * @function
- * @param {Object} result - The search result object being hovered over.
- */
-window.search.Query.prototype.onResultHoverStart = function (result) {
-  this.removeHoverResult();
-  this.hoverResult = result;
-
-  if (result === this.selectedResult) return;
-
-  result.layer = this.resultLayer(result);
-
-  if (result.layer) window.map.addLayer(result.layer);
-};
-
-/**
- * Removes the hover result layer from the map unless it's the selected result.
- *
- * @function
- */
-window.search.Query.prototype.removeHoverResult = function () {
-  if (this.hoverResult !== this.selectedResult) {
-    if (this.hoverResult) {
-      if (this.hoverResult.layer) {
-        window.map.removeLayer(this.hoverResult.layer);
-      }
-    }
-  }
-  this.hoverResult = null;
-};
-
-/**
- * Handles the end of a hover over a search result. Removes the hover result layer from the map.
- */
-window.search.Query.prototype.onResultHoverEnd = function () {
-  this.removeHoverResult();
 };
 
 /**
  * Initiates a search with the specified term and confirmation status.
  *
- * @function window.search.doSearch
+ * @function IITC.search.doSearch
  * @param {string} term - The search term.
  * @param {boolean} confirmed - Indicates if the search term is confirmed.
  */
-window.search.doSearch = function (term, confirmed) {
-  term = term.trim();
+IITC.search.doSearch = function (term, confirmed) {
+  const searchTerm = term.trim();
+  const searchCancelButton = document.querySelector('#searchcancel');
 
-  // minimum 3 characters for automatic search
-  if (term.length < 3 && !confirmed) return;
+  if (searchCancelButton) {
+    searchCancelButton.classList.toggle('visible', searchTerm.length > 0);
+  }
 
-  // don't clear last confirmed search
-  if (window.search.lastSearch && window.search.lastSearch.confirmed && !confirmed) return;
+  // Minimum 3 characters for automatic search
+  if (searchTerm.length < 3 && !confirmed) return;
 
-  // don't make the same query again
-  if (window.search.lastSearch && window.search.lastSearch.confirmed === confirmed && window.search.lastSearch.term === term) return;
+  // Avoid clearing last confirmed search
+  const lastSearch = IITC.search.lastSearch;
+  if (lastSearch?.confirmed && !confirmed) return;
 
-  if (window.search.lastSearch) window.search.lastSearch.hide();
-  window.search.lastSearch = null;
+  // Prevent repeat of identical query
+  if (lastSearch?.confirmed === confirmed && lastSearch.term === searchTerm) return;
 
-  // clear results
-  if (term === '') return;
+  if (lastSearch) lastSearch.hide();
+  IITC.search.lastSearch = null;
+
+  if (searchTerm === '') return;
 
   if (window.useAppPanes()) window.show('info');
 
-  $('.ui-tooltip').remove();
+  document.querySelectorAll('.ui-tooltip').forEach((tooltip) => tooltip.remove());
 
-  window.search.lastSearch = new window.search.Query(term, confirmed);
-  window.search.lastSearch.show();
+  IITC.search.lastSearch = new IITC.search.Query(searchTerm, confirmed);
+  IITC.search.lastSearch.show();
 };
 
 /**
  * Sets up the search input field and button functionality.
  *
- * @function window.search.setup
+ * @function IITC.search.setup
  */
-window.search.setup = function () {
-  $('#search')
-    .keypress(function (e) {
-      if ((e.keyCode ? e.keyCode : e.which) !== 13) return;
+IITC.search.setup = function () {
+  const searchInput = document.querySelector('#search');
+  const searchCancelButton = document.querySelector('#searchcancel');
+  const geoLocationButton = document.querySelector('#buttongeolocation');
+  let searchTimer;
+
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
       e.preventDefault();
 
-      var term = $(this).val();
-
-      clearTimeout(window.search.timer);
-      window.search.doSearch(term, true);
-    })
-    .on('keyup keypress change paste', function () {
-      clearTimeout(window.search.timer);
-      window.search.timer = setTimeout(
-        function () {
-          var term = $(this).val();
-          window.search.doSearch(term, false);
-        }.bind(this),
-        500
-      );
+      const term = searchInput.value.trim();
+      clearTimeout(searchTimer);
+      IITC.search.doSearch(term, true);
     });
-  $('#buttongeolocation').click(function () {
-    window.map.locate({ setView: true, maxZoom: 13 });
-  });
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        const term = searchInput.value.trim();
+        IITC.search.doSearch(term, false);
+      }, 100);
+    });
+  }
+
+  if (searchCancelButton) {
+    searchCancelButton.classList.remove('visible');
+
+    searchCancelButton.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+        searchCancelButton.classList.remove('visible');
+
+        // Clear the current search
+        clearTimeout(searchTimer);
+        IITC.search.doSearch('', true);
+      }
+    });
+  }
+
+  if (geoLocationButton) {
+    geoLocationButton.addEventListener('click', () => {
+      window.map.locate({ setView: true, maxZoom: 13 });
+    });
+  }
 };
 
-/**
- * Adds a search result for a portal to the search query results.
- *
- * @function window.search.addSearchResult
- * @param {Object} query - The search query object to which the result will be added.
- * @param {Object} data - The data for the search result. This includes information such as title, team, level, health, etc.
- * @param {string} guid - GUID if the portal.
+// Redirect all window.search access to IITC.search
+Object.defineProperty(window, 'search', {
+  get() {
+    return IITC.search;
+  },
+  set(value) {
+    IITC.search = value;
+  },
+  configurable: true,
+});
+
+/*
+ * @deprecated - use query.addPortalResult
  */
 window.search.addSearchResult = function (query, data, guid) {
-  var team = window.teamStringToId(data.team);
-  var color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
-  var latLng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
-  query.addResult({
-    title: data.title,
-    description: window.TEAM_SHORTNAMES[team] + ', L' + data.level + ', ' + data.health + '%, ' + data.resCount + ' Resonators',
-    position: latLng,
-    icon: 'data:image/svg+xml;base64,' + btoa('\
+  query.addPortalResult(data, guid);
+};
+
+
+})();
+
+
+// *** module: search_hooks.js ***
+(function () {
+var log = ulog('search_hooks');
+/* global L -- eslint */
+
+/**
+ * Handles search-related hooks for the IITC.search module, adding various search result types.
+ *
+ * These functions supply default search results to the IITC search system by responding to `search` hooks with
+ * data for portals, geographic coordinates, OpenStreetMap locations, and portal GUIDs.
+ *
+ * @namespace hooks
+ * @memberof IITC.search
+ */
+
+/**
+ * Searches for portals by matching the query term against portal titles and adds matched results.
+ *
+ * @param {Object} query - The search query object.
+ * @fires hook#search
+ */
+window.addHook('search', (query) => {
+  const term = query.term.toLowerCase();
+
+  for (const [guid, portal] of Object.entries(window.portals)) {
+    const data = portal.options.data;
+    if (!data.title) continue;
+
+    if (data.title.toLowerCase().includes(term)) {
+      window.search.addSearchResult(query, data, guid);
+    }
+  }
+});
+
+/**
+ * Searches for geographical coordinates formatted as latitude, longitude and adds the results.
+ * Supports both decimal format (e.g., 51.5074, -0.1278) and DMS format (e.g., 50°31'03.8"N 7°59'05.3"E).
+ *
+ * @param {Object} query - The search query object.
+ * @fires hook#search
+ */
+window.addHook('search', (query) => {
+  const added = new Set();
+
+  // Regular expression for decimal coordinates
+  const decimalRegex = /[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g;
+  // Regular expression for DMS coordinates
+  const dmsRegex = /(\d{1,3})°(\d{1,2})'(\d{1,2}(?:\.\d+)?)?"\s*([NS]),?\s*(\d{1,3})°(\d{1,2})'(\d{1,2}(?:\.\d+)?)?"\s*([EW])/g;
+
+  // Convert DMS to decimal format
+  const parseDMS = (deg, min, sec, dir) => {
+    const decimal = parseFloat(deg) + parseFloat(min) / 60 + parseFloat(sec) / 3600;
+    return dir === 'S' || dir === 'W' ? -decimal : decimal;
+  };
+
+  // Universal function for adding search result
+  const addResult = (lat, lng) => {
+    const latLngString = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+    if (added.has(latLngString)) return;
+    added.add(latLngString);
+
+    query.addResult({
+      title: latLngString,
+      description: 'geo coordinates',
+      position: L.latLng(lat, lng),
+      onSelected: (result) => {
+        for (const [guid, portal] of Object.entries(window.portals)) {
+          const { lat: pLat, lng: pLng } = portal.getLatLng();
+          if (`${pLat.toFixed(6)},${pLng.toFixed(6)}` === latLngString) {
+            window.renderPortalDetails(guid);
+            return;
+          }
+        }
+        window.urlPortalLL = [result.position.lat, result.position.lng];
+      },
+    });
+  };
+
+  // Search and process decimal coordinates
+  const decimalMatches = query.term.replace(/%2C/gi, ',').match(decimalRegex);
+  if (decimalMatches) {
+    decimalMatches.forEach((location) => {
+      const [lat, lng] = location.split(',').map(Number);
+      addResult(lat, lng);
+    });
+  }
+
+  // Search and process DMS coordinates
+  const dmsMatches = Array.from(query.term.matchAll(dmsRegex));
+  dmsMatches.forEach((match) => {
+    const lat = parseDMS(match[1], match[2], match[3], match[4]);
+    const lng = parseDMS(match[5], match[6], match[7], match[8]);
+    addResult(lat, lng);
+  });
+});
+
+/**
+ * Searches for results on OpenStreetMap based on the query term, considering map view boundaries.
+ *
+ * @param {Object} query - The search query object.
+ * @fires hook#search
+ */
+window.addHook('search', async (query) => {
+  if (!query.confirmed) return;
+
+  const mapBounds = window.map.getBounds();
+  const viewbox = `&viewbox=${mapBounds.getSouthWest().lng},${mapBounds.getSouthWest().lat},${mapBounds.getNorthEast().lng},${mapBounds.getNorthEast().lat}`;
+  // Bounded search allows amenity-only searches (e.g. "amenity=toilet") via special phrases
+  // https://wiki.openstreetmap.org/wiki/Nominatim/Special_Phrases/EN
+  const bounded = '&bounded=1';
+
+  const resultMap = new Set();
+  let resultCount = 0;
+
+  async function fetchResults(isViewboxResult) {
+    try {
+      const response = await fetch(`${window.NOMINATIM}${encodeURIComponent(query.term)}${isViewboxResult ? viewbox + bounded : viewbox}`);
+      const data = await response.json();
+
+      if (isViewboxResult && data.length === 0) {
+        // If no results found within the viewbox, try a broader search
+        await fetchResults(false);
+        return;
+      } else if (!isViewboxResult && resultCount === 0 && data.length === 0) {
+        // If no results at all
+        query.addResult({
+          title: 'No results on OpenStreetMap',
+          icon: '//www.openstreetmap.org/favicon.ico',
+          onSelected: () => true,
+        });
+        return;
+      }
+
+      resultCount += data.length;
+
+      data.forEach((item) => {
+        if (resultMap.has(item.place_id)) return; // duplicate
+        resultMap.add(item.place_id);
+
+        const result = {
+          title: item.display_name,
+          description: `Type: ${item.type}`,
+          position: L.latLng(parseFloat(item.lat), parseFloat(item.lon)),
+          icon: item.icon,
+        };
+
+        if (item.geojson) {
+          result.layer = L.geoJson(item.geojson, {
+            interactive: false,
+            color: 'red',
+            opacity: 0.7,
+            weight: 2,
+            fill: false,
+            pointToLayer: (featureData, latLng) =>
+              L.marker(latLng, {
+                icon: L.divIcon.coloredSvg('red'),
+                title: item.display_name,
+              }),
+          });
+        }
+
+        if (item.boundingbox) {
+          const [south, north, west, east] = item.boundingbox;
+          result.bounds = new L.LatLngBounds(L.latLng(parseFloat(south), parseFloat(west)), L.latLng(parseFloat(north), parseFloat(east)));
+        }
+
+        query.addResult(result);
+      });
+    } catch (error) {
+      console.error('Error fetching OSM data:', error);
+    }
+  }
+
+  // Start with viewbox-bounded search
+  await fetchResults(true);
+});
+
+/**
+ * Searches by GUID in the query term.
+ *
+ * @param {Object} query - The search query object.
+ * @fires hook#search
+ */
+window.addHook('search', async (query) => {
+  const guidRegex = /[0-9a-f]{32}\.[0-9a-f]{2}/;
+  const match = query.term.match(guidRegex);
+
+  if (match) {
+    const guid = match[0];
+    const data = window.portalDetail.get(guid);
+
+    if (data) {
+      window.search.addSearchResult(query, data, guid);
+    } else {
+      try {
+        const fetchedData = await window.portalDetail.request(guid);
+        window.search.addSearchResult(query, fetchedData, guid);
+      } catch (error) {
+        console.error('Error fetching portal details:', error);
+      }
+    }
+  }
+});
+
+
+})();
+
+
+// *** module: search_query.js ***
+(function () {
+var log = ulog('search_query');
+/* global IITC, L -- eslint */
+
+/**
+ * @memberOf IITC.search.Query
+ * @typedef {Object} SearchResult
+ * @property {string} title - The label for this result (HTML-formatted).
+ * @property {string} [description] - Secondary information for this result (HTML-formatted).
+ * @property {L.LatLng} [position] - Position of this result.
+ * @property {L.LatLngBounds} [bounds] - Bounds of this result.
+ * @property {L.Layer|null} [layer] - Layer to be added to the map on result selection.
+ * @property {string} [icon] - URL to a 12x12px icon for the result list.
+ * @property {IITC.search.Query.onSelectedCallback} [onSelected] - Handler called when result is selected.
+ *           May return `true` to prevent the map from being repositioned.
+ *           You may reposition the map yourself or do other work.
+ * @property {IITC.search.Query.onRemoveCallback} [onRemove] - Handler called when result is removed from map.
+ *           (because another result has been selected or the search was cancelled by the user).
+ */
+
+/**
+ * @memberOf IITC.search.Query
+ * @callback onSelectedCallback
+ * @param {IITC.search.Query.SearchResult} result - The selected search result.
+ * @param {Event} event - The event that triggered the selection.
+ * @returns {boolean} - Returns true to prevent map repositioning.
+ */
+
+/**
+ * @memberOf IITC.search.Query
+ * @callback onRemoveCallback
+ * @param {IITC.search.Query.SearchResult} result - The search result that is being removed.
+ * @returns {void} - No return value.
+ */
+
+/**
+ * Represents a search query within the IITC search module, managing query state, results, and UI rendering.
+ *
+ * This class provides functionality to handle search operations such as displaying and interacting with results,
+ * including selection, hover actions, and map adjustments. Hooks for custom search actions are triggered when
+ * a new search query is initialized.
+ *
+ * @memberof IITC.search
+ * @class
+ */
+class Query {
+  /**
+   * Initializes the search query, setting up UI elements and triggering the 'search' hook.
+   *
+   * @constructor
+   * @param {string} term - The search term.
+   * @param {boolean} confirmed - Indicates if the search is confirmed (e.g., by pressing Enter).
+   */
+  constructor(term, confirmed) {
+    this.term = term;
+    this.confirmed = confirmed;
+    this.results = [];
+    this.resultsView = new IITC.search.QueryResultsView(term, confirmed);
+
+    window.runHooks('search', this);
+  }
+
+  /**
+   * Displays the search query results in the specified resultsView container.
+   *
+   * @memberof IITC.search.Query
+   * @function show
+   * @private
+   */
+  show() {
+    this.resultsView.renderIn('#searchwrapper');
+  }
+
+  /**
+   * Hides and removes the current search results, clearing selection and hover states.
+   *
+   * @memberof IITC.search.Query
+   * @function show
+   * @private
+   */
+  hide() {
+    this.resultsView.remove();
+    this.removeSelectedResult();
+    this.removeHoverResult();
+  }
+
+  /**
+   * Adds a search result to the query and triggers re-rendering of the results list.
+   *
+   * @memberof IITC.search.Query
+   * @function addResult
+   * @param {IITC.search.Query.SearchResult} result - The search result to add, including title, position, and interactions.
+   */
+  addResult(result) {
+    this.results.push(result);
+    this.renderResults();
+  }
+
+  /**
+   * Adds a search result for a portal to the search query results.
+   *
+   * @memberof IITC.search.Query
+   * @function addPortalResult
+   * @param {Object} data - The portal data for the search result. This includes information such as title, team, level, health, etc.
+   * @param {string} guid - GUID if the portal.
+   */
+  addPortalResult(data, guid) {
+    const team = window.teamStringToId(data.team);
+    const color = team === window.TEAM_NONE ? '#CCC' : window.COLORS[team];
+    const latLng = L.latLng(data.latE6 / 1e6, data.lngE6 / 1e6);
+
+    this.addResult({
+      title: data.title,
+      description: `${window.TEAM_SHORTNAMES[team]}, L${data.level}, ${data.health}%, ${data.resCount} Resonators`,
+      position: latLng,
+      icon: `data:image/svg+xml;base64,${btoa('\
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\
 	<g style="fill:%COLOR%;stroke:none">\
 		<path d="m 6,12 -2,-12  4,0 z" />\
@@ -29953,169 +30510,415 @@ window.search.addSearchResult = function (query, data, guid) {
 		<path d="m 6,12 -6, -4 12,0 z" />\
 	</g>\
 </svg>\
-'.replace(/%COLOR%/g, color)),
-    onSelected: function (result, event) {
-      if (event.type === 'dblclick') {
-        window.zoomToAndShowPortal(guid, latLng);
-      } else if (window.portals[guid]) {
-        if (!window.map.getBounds().contains(result.position)) {
-          window.map.setView(result.position);
-        }
-        window.renderPortalDetails(guid);
-      } else {
-        window.selectPortalByLatLng(latLng);
-      }
-      return true; // prevent default behavior
-    },
-  });
-};
+'.replace(/%COLOR%/g, color))}`,
 
-// search for portals
-window.addHook('search', function (query) {
-  var term = query.term.toLowerCase();
+      onSelected(result, event) {
+        const { position } = result;
 
-  $.each(window.portals, function (guid, portal) {
-    var data = portal.options.data;
-    if (!data.title) return;
-
-    if (data.title.toLowerCase().indexOf(term) !== -1) {
-      window.search.addSearchResult(query, data, guid);
-    }
-  });
-});
-
-// search for locations
-// TODO: recognize 50°31'03.8"N 7°59'05.3"E and similar formats
-window.addHook('search', function (query) {
-  var locations = query.term.replaceAll(/%2C/gi, ',').match(/[+-]?\d+\.\d+, ?[+-]?\d+\.\d+/g);
-  var added = {};
-  if (!locations) return;
-  locations.forEach(function (location) {
-    var pair = location.split(',').map(function (s) {
-      return parseFloat(s.trim()).toFixed(6);
-    });
-    var ll = pair.join(',');
-    var latlng = L.latLng(
-      pair.map(function (s) {
-        return parseFloat(s);
-      })
-    );
-    if (added[ll]) return;
-    added[ll] = true;
-
-    query.addResult({
-      title: ll,
-      description: 'geo coordinates',
-      position: latlng,
-      onSelected: function (result) {
-        for (var guid in window.portals) {
-          var p = window.portals[guid].getLatLng();
-          if (p.lat.toFixed(6) + ',' + p.lng.toFixed(6) === ll) {
-            window.renderPortalDetails(guid);
-            return;
+        if (event.type === 'dblclick') {
+          window.zoomToAndShowPortal(guid, latLng);
+        } else if (window.portals[guid]) {
+          if (!window.map.getBounds().contains(position)) {
+            window.map.setView(position);
           }
+          window.renderPortalDetails(guid);
+        } else {
+          window.selectPortalByLatLng(latLng);
         }
-
-        window.urlPortalLL = [result.position.lat, result.position.lng];
+        return true;
       },
-    });
-  });
-});
-
-// search on OpenStreetMap
-window.addHook('search', function (query) {
-  if (!query.confirmed) return;
-
-  // Viewbox search orders results so they're closer to the viewbox
-  var mapBounds = window.map.getBounds();
-  var viewbox =
-    '&viewbox=' + mapBounds.getSouthWest().lng + ',' + mapBounds.getSouthWest().lat + ',' + mapBounds.getNorthEast().lng + ',' + mapBounds.getNorthEast().lat;
-
-  var resultCount = 0;
-  var resultMap = {};
-  function onQueryResult(isViewboxResult, data) {
-    resultCount += data.length;
-    if (isViewboxResult) {
-      // Search for things outside the viewbox
-      $.getJSON(window.NOMINATIM + encodeURIComponent(query.term) + viewbox, onQueryResult.bind(null, false));
-      if (resultCount === 0) {
-        return;
-      }
-    } else {
-      if (resultCount === 0) {
-        query.addResult({
-          title: 'No results on OpenStreetMap',
-          icon: '//www.openstreetmap.org/favicon.ico',
-          onSelected: function () {
-            return true;
-          },
-        });
-        return;
-      }
-    }
-
-    data.forEach(function (item) {
-      if (resultMap[item.place_id]) {
-        return;
-      } // duplicate
-      resultMap[item.place_id] = true;
-
-      var result = {
-        title: item.display_name,
-        description: 'Type: ' + item.type,
-        position: L.latLng(parseFloat(item.lat), parseFloat(item.lon)),
-        icon: item.icon,
-      };
-
-      if (item.geojson) {
-        result.layer = L.geoJson(item.geojson, {
-          interactive: false,
-          color: 'red',
-          opacity: 0.7,
-          weight: 2,
-          fill: false,
-          pointToLayer: function (featureData, latLng) {
-            return L.marker(latLng, {
-              icon: L.divIcon.coloredSvg('red'),
-              title: item.display_name,
-            });
-          },
-        });
-      }
-
-      var b = item.boundingbox;
-      if (b) {
-        var southWest = new L.LatLng(b[0], b[2]),
-          northEast = new L.LatLng(b[1], b[3]);
-        result.bounds = new L.LatLngBounds(southWest, northEast);
-      }
-
-      query.addResult(result);
     });
   }
 
-  // Bounded search allows amenity-only searches (e.g. "amenity=toilet") via special phrases
-  // http://wiki.openstreetmap.org/wiki/Nominatim/Special_Phrases/EN
-  var bounded = '&bounded=1';
+  /**
+   * Handles keyboard interactions for selecting a result with Enter or Space keys.
+   *
+   * @memberof IITC.search.Query
+   * @function handleKeyPress
+   * @param {Event} ev - The keyboard event.
+   * @param {Object} result - The result being interacted with.
+   * @private
+   */
+  handleKeyPress(ev, result) {
+    if (ev.key === ' ' || ev.key === 'Enter') {
+      ev.preventDefault();
+      const type = ev.key === ' ' ? 'click' : 'dblclick';
+      this.onResultSelected(result, { ...ev, type });
+    }
+  }
 
-  $.getJSON(window.NOMINATIM + encodeURIComponent(query.term) + viewbox + bounded, onQueryResult.bind(null, true));
-});
+  /**
+   * Renders all search results through the resultsView class and sets up event handling for each result.
+   *
+   * @memberof IITC.search.Query
+   * @function renderResults
+   * @private
+   */
+  renderResults() {
+    this.resultsView.renderResults(this.results, (result, event) => this.handleResultInteraction(result, event));
+  }
 
-// search on guid
-window.addHook('search', function (query) {
-  const guid_re = /[0-9a-f]{32}\.[0-9a-f]{2}/;
-  const res = query.term.match(guid_re);
-  if (res) {
-    const guid = res[0];
-    const data = window.portalDetail.get(guid);
-    if (data) window.search.addSearchResult(query, data, guid);
-    else {
-      window.portalDetail.request(guid).then(function (data) {
-        window.search.addSearchResult(query, data, guid);
+  /**
+   * Manages interactions with search results, such as clicks, hovers, and keyboard events.
+   *
+   * @memberof IITC.search.Query
+   * @function handleResultInteraction
+   * @param {Object} result - The result being interacted with.
+   * @param {Event} event - The event associated with the interaction.
+   * @private
+   */
+  handleResultInteraction(result, event) {
+    switch (event.type) {
+      case 'click':
+      case 'dblclick':
+        this.onResultSelected(result, event);
+        break;
+      case 'mouseover':
+        this.onResultHoverStart(result);
+        break;
+      case 'mouseout':
+        this.onResultHoverEnd();
+        break;
+      case 'keydown':
+        this.handleKeyPress(event, result);
+        break;
+    }
+  }
+
+  /**
+   * Creates and returns a map layer for the given search result, which could include markers or shapes.
+   *
+   * @memberof IITC.search.Query
+   * @function resultLayer
+   * @param {Object} result - The search result object.
+   * @returns {L.Layer} - The generated layer for the result.
+   * @private
+   */
+  resultLayer(result) {
+    if (!result.layer) {
+      result.layer = L.layerGroup();
+
+      if (result.position) {
+        L.marker(result.position, {
+          icon: L.divIcon.coloredSvg('red'),
+          title: result.title,
+        }).addTo(result.layer);
+      }
+
+      if (result.bounds) {
+        L.rectangle(result.bounds, {
+          title: result.title,
+          interactive: false,
+          color: 'red',
+          fill: false,
+        }).addTo(result.layer);
+      }
+    }
+    return result.layer;
+  }
+
+  /**
+   * Handles the selection of a search result, adjusting the map view and adding its layer to the map.
+   *
+   * @memberof IITC.search.Query
+   * @function onResultSelected
+   * @param {Object} result - The selected search result object.
+   * @param {Event} event - The event associated with the selection.
+   * @private
+   */
+  onResultSelected(result, event) {
+    this.removeHoverResult();
+    this.removeSelectedResult();
+    this.selectedResult = result;
+
+    if (result.onSelected && result.onSelected(result, event)) return;
+
+    const { position, bounds } = result;
+    if (event.type === 'dblclick') {
+      if (position) {
+        window.map.setView(position, window.DEFAULT_ZOOM);
+      } else if (bounds) {
+        window.map.fitBounds(bounds, { maxZoom: window.DEFAULT_ZOOM });
+      }
+    } else {
+      if (bounds) {
+        window.map.fitBounds(bounds, { maxZoom: window.DEFAULT_ZOOM });
+      } else if (position) {
+        window.map.setView(position);
+      }
+    }
+
+    result.layer = this.resultLayer(result);
+
+    if (result.layer) window.map.addLayer(result.layer);
+    if (window.isSmartphone()) window.show('map');
+  }
+
+  /**
+   * Removes the currently selected search result from the map and performs necessary cleanup.
+   *
+   * @memberof IITC.search.Query
+   * @function removeSelectedResult
+   * @private
+   */
+  removeSelectedResult() {
+    if (this.selectedResult) {
+      if (this.selectedResult.layer) window.map.removeLayer(this.selectedResult.layer);
+      if (this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
+    }
+  }
+
+  /**
+   * Starts a hover interaction on a search result, displaying its layer on the map.
+   *
+   * @memberof IITC.search.Query
+   * @function onResultHoverStart
+   * @param {Object} result - The result being hovered over.
+   * @private
+   */
+  onResultHoverStart(result) {
+    this.removeHoverResult();
+    this.hoverResult = result;
+
+    if (result === this.selectedResult) return;
+
+    result.layer = this.resultLayer(result);
+
+    if (result.layer) window.map.addLayer(result.layer);
+  }
+
+  /**
+   * Ends a hover interaction by removing the hover layer from the map if it is not selected.
+   *
+   * @memberof IITC.search.Query
+   * @function removeHoverResult
+   * @private
+   */
+  removeHoverResult() {
+    if (this.hoverResult && this.hoverResult.layer && this.hoverResult !== this.selectedResult) {
+      window.map.removeLayer(this.hoverResult.layer);
+    }
+    this.hoverResult = null;
+  }
+
+  /**
+   * Handles the end of a hover event, removing the hover layer from the map.
+   *
+   * @memberof IITC.search.Query
+   * @function onResultHoverEnd
+   * @private
+   */
+  onResultHoverEnd() {
+    this.removeHoverResult();
+  }
+}
+
+IITC.search.Query = Query;
+
+
+})();
+
+
+// *** module: search_query_results_view.js ***
+(function () {
+var log = ulog('search_query_results_view');
+/* global IITC -- eslint */
+
+/**
+ * Represents the view for displaying search query results in the IITC search module.
+ *
+ * @memberof IITC.search
+ * @class
+ */
+class QueryResultsView {
+  /**
+   * Initializes the query results view, setting up the display elements for the search term.
+   *
+   * @constructor
+   * @param {string} term - The search term.
+   * @param {boolean} confirmed - Indicates if the search is confirmed (e.g., by pressing Enter).
+   */
+  constructor(term, confirmed) {
+    this.term = term;
+    this.confirmed = confirmed;
+    this.container = this.createContainer();
+    this.header = this.createHeader();
+    this.list = this.createList();
+    this.setupAccordion();
+  }
+
+  /**
+   * Creates and returns the main container element for the query results.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function createContainer
+   * @returns {HTMLElement} - The container element for the results.
+   * @private
+   */
+  createContainer() {
+    const container = document.createElement('div');
+    container.classList.add('searchquery');
+    return container;
+  }
+
+  /**
+   * Creates and appends a header to the container based on the search term.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function createHeader
+   * @returns {HTMLElement} - The header element displaying the search term or a loading message.
+   * @private
+   */
+  createHeader() {
+    const header = document.createElement('h3');
+    let headerText;
+
+    if (this.confirmed) {
+      headerText = this.term;
+    } else {
+      if (this.term.length > 16) {
+        const start = this.term.slice(0, 8);
+        const end = this.term.slice(-8);
+        headerText = `${start}…${end} (Return to load more)`;
+      } else {
+        headerText = `${this.term} (Return to load more)`;
+      }
+    }
+
+    header.textContent = headerText;
+    this.container.appendChild(header);
+    return header;
+  }
+
+  /**
+   * Creates and appends an initial list element to display the search results.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function createList
+   * @returns {HTMLElement} - The list element for displaying the results.
+   * @private
+   */
+  createList() {
+    const list = document.createElement('ul');
+    const initialItem = document.createElement('li');
+    initialItem.textContent = this.confirmed ? 'No local results, searching online...' : 'No local results.';
+    list.appendChild(initialItem);
+    this.container.appendChild(list);
+    return list;
+  }
+
+  /**
+   * Sets up the accordion functionality for expanding and collapsing results.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function setupAccordion
+   * @private
+   */
+  setupAccordion() {
+    this.header.addEventListener('click', () => {
+      this.container.classList.toggle('collapsed');
+    });
+  }
+
+  /**
+   * Renders the search results within the list container and sets up event interactions.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function renderResults
+   * @param {Array<Object>} results - An array of search result objects to display.
+   * @param {Function} onResultInteraction - A callback function for handling interaction events on results.
+   */
+  renderResults(results, onResultInteraction) {
+    this.clearList();
+
+    if (results.length === 0) {
+      const noResultsItem = document.createElement('li');
+      noResultsItem.textContent = 'No results found.';
+      this.list.appendChild(noResultsItem);
+    } else {
+      results.forEach((result) => {
+        const item = this.createListItem(result);
+        item.addEventListener('click', (ev) => onResultInteraction(result, ev));
+        item.addEventListener('dblclick', (ev) => onResultInteraction(result, ev));
+        item.addEventListener('mouseover', (ev) => onResultInteraction(result, ev));
+        item.addEventListener('mouseout', (ev) => onResultInteraction(result, ev));
+        item.addEventListener('keydown', (ev) => onResultInteraction(result, ev));
+        this.list.appendChild(item);
       });
     }
   }
-});
+
+  /**
+   * Creates and returns a list item for an individual search result.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function createListItem
+   * @param {Object} result - The search result object with properties such as title, description, and icon.
+   * @returns {HTMLElement} - The list item element representing the search result.
+   * @private
+   */
+  createListItem(result) {
+    const item = document.createElement('li');
+    item.tabIndex = 0;
+
+    const link = document.createElement('a');
+    link.innerHTML = result.title;
+
+    if (result.icon) {
+      link.style.backgroundImage = `url("${result.icon}")`;
+      item.style.listStyle = 'none';
+    }
+
+    item.appendChild(link);
+
+    if (result.description) {
+      const description = document.createElement('em');
+      description.innerHTML = result.description;
+      item.appendChild(document.createElement('br'));
+      item.appendChild(description);
+    }
+
+    return item;
+  }
+
+  /**
+   * Appends the results container to a specified selector on the page.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function renderIn
+   * @param {string} selector - The selector string for the target container.
+   */
+  renderIn(selector) {
+    const target = document.querySelector(selector);
+    if (target) target.appendChild(this.container);
+  }
+
+  /**
+   * Removes the results container from the page.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function remove
+   * @private
+   */
+  remove() {
+    if (this.container.parentNode) {
+      this.container.parentNode.removeChild(this.container);
+    }
+  }
+
+  /**
+   * Clears all items from the results list.
+   *
+   * @memberof IITC.search.QueryResultsView
+   * @function clearList
+   * @private
+   */
+  clearList() {
+    this.list.innerHTML = '';
+  }
+}
+
+IITC.search.QueryResultsView = QueryResultsView;
 
 
 })();
@@ -30280,6 +31083,9 @@ window.setupSidebar = function () {
   setupLargeImagePreview();
   setupAddons();
   $('#sidebar').show();
+  // setup portal detail display update
+  window.addHook('portalAdded', sidebarOnPortalAdded);
+  window.addHook('portalDetailLoaded', sidebarOnPortalDetailLoaded);
 };
 
 /**
@@ -30475,6 +31281,28 @@ function setupAddons() {
   window.RegionScoreboardSetup();
 }
 
+/**
+ * portalAdded callback to update the sidebar
+ *
+ * @function sidebarOnPortalAdded
+ */
+function sidebarOnPortalAdded(data) {
+  if (data.portal.options.guid === window.selectedPortal) {
+    window.renderPortalDetails(window.selectedPortal);
+  }
+}
+
+/**
+ * portalDetailLoaded callback to update the sidebar
+ *
+ * @function sidebarOnPortalDetailLoaded
+ */
+function sidebarOnPortalDetailLoaded(data) {
+  if (data.success && data.guid === window.selectedPortal) {
+    window.renderPortalToSideBar(data.portal);
+  }
+}
+
 
 })();
 
@@ -30663,15 +31491,6 @@ body {\
   margin-left: 4px;\
 }\
 \
-#sidebar, #chatcontrols, #chat, #chatinput {\
-  background: transparent !important;\
-}\
-\
-.leaflet-top .leaflet-control {\
-  margin-top: 5px !important;\
-  margin-left: 5px !important;\
-}\
-\
 #searchwrapper .ui-accordion-header {\
   padding: 0.3em 0;\
 }\
@@ -30795,7 +31614,37 @@ body {\
    https://github.com/IITC-CE/ingress-intel-total-conversion/issues/89\
 */\
 .leaflet-bottom { bottom: 5px; }\
-'));
+\
+/* Controls for mobile view without an app */\
+:root {\
+  --top-controls-height: 38px;\
+}\
+\
+body.show_controls #chatcontrols {\
+  display: flex !important;\
+  top: 0;\
+  overflow-x: auto;\
+  width: calc(100% - 1px);\
+}\
+\
+body.show_controls #chatcontrols a {\
+  flex: 1;\
+  min-width: fit-content;\
+  padding: 0 5px;\
+}\
+\
+body.show_controls #map {\
+  height: calc(100vh - var(--top-controls-height) - 25px);\
+  margin-top: var(--top-controls-height);\
+}\
+\
+body.show_controls #scrollwrapper {\
+  margin-top: var(--top-controls-height)\
+}\
+\
+body.show_controls #chat {\
+  top: var(--top-controls-height) !important;\
+}'));
   document.head.appendChild(style);
 
   // don’t need many of those
@@ -30812,20 +31661,26 @@ body {\
   };
 
   window.smartphone.mapButton = $('<a>map</a>').click(function () {
+    window.show('map');
     $('#map').css({ visibility: 'visible', opacity: '1' });
     $('#updatestatus').show();
-    $('#chatcontrols a .active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('map')").addClass('active');
   });
 
   window.smartphone.sideButton = $('<a>info</a>').click(function () {
+    window.show('info');
     $('#scrollwrapper').show();
     window.resetScrollOnNewPortal();
-    $('.active').removeClass('active');
+    $('#chatcontrols a.active').removeClass('active');
     $("#chatcontrols a:contains('info')").addClass('active');
   });
 
   $('#chatcontrols').append(window.smartphone.mapButton).append(window.smartphone.sideButton);
+
+  if (!window.useAppPanes()) {
+    document.body.classList.add('show_controls');
+  }
 
   window.addHook('portalDetailsUpdated', function () {
     var x = $('.imgpreview img').removeClass('hide');
@@ -30941,10 +31796,6 @@ window.runOnSmartphonesAfterBoot = function () {
         $('#sidebar').animate({ scrollTop: newTop }, 200);
       }
     });
-
-  // make buttons in action bar flexible
-  var l = $('#chatcontrols a:visible');
-  l.css('width', 100 / l.length + '%');
 };
 
 
@@ -31295,6 +32146,582 @@ IITC.toolbox._syncWithLegacyToolbox();
 })();
 
 
+// *** module: utils.js ***
+(function () {
+var log = ulog('utils');
+/* global IITC, L -- eslint */
+
+/**
+ * Namespace for IITC utils
+ *
+ * @memberof IITC
+ * @namespace utils
+ */
+
+// The sv-SE locale is one of the closest to the ISO format among all locales
+const timeWithSecondsFormatter = new Intl.DateTimeFormat('sv-SE', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+});
+
+const timeFormatter = new Intl.DateTimeFormat('sv-SE', {
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+/**
+ * Retrieves a parameter from the URL query string.
+ *
+ * @memberof IITC.utils
+ * @function getURLParam
+ * @param {string} param - The name of the parameter to retrieve.
+ * @returns {string} The value of the parameter, or an empty string if not found.
+ */
+const getURLParam = (param) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param) || '';
+};
+
+/**
+ * Retrieves the value of a cookie by name.
+ *
+ * @memberof IITC.utils
+ * @function getCookie
+ * @param {string} name - The name of the cookie to retrieve.
+ * @returns {string|undefined} The value of the cookie, or undefined if not found.
+ */
+const getCookie = (name) => {
+  const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+    const [key, value] = cookie.split('=');
+    acc[key] = decodeURIComponent(value);
+    return acc;
+  }, {});
+
+  return cookies[name];
+};
+
+/**
+ * Sets a cookie with a specified name and value, with a default expiration of 10 years.
+ *
+ * @memberof IITC.utils
+ * @function setCookie
+ * @param {string} name - The name of the cookie.
+ * @param {string} value - The value of the cookie.
+ * @param {number} [days=3650] - Optional: the number of days until the cookie expires (default is 10 years).
+ */
+const setCookie = (name, value, days = 3650) => {
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
+
+/**
+ * Deletes a cookie by name.
+ *
+ * @memberof IITC.utils
+ * @function deleteCookie
+ * @param {string} name - The name of the cookie to delete.
+ */
+const deleteCookie = (name) => {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+};
+
+/**
+ * Formats a number with thousand separators (thin spaces).
+ * see https://en.wikipedia.org/wiki/Space_(punctuation)#Table_of_spaces
+ *
+ * @memberof IITC.utils
+ * @function formatNumber
+ * @param {number} num - The number to format.
+ * @returns {string} The formatted number with thousand separators.
+ */
+const formatNumber = (num) => {
+  if (num === null || num === undefined) return '';
+  // Convert number to string and use a thin space (U+2009) as thousand separator
+  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, '\u2009');
+};
+
+/**
+ * Pads a number with zeros up to a specified length.
+ *
+ * @memberof IITC.utils
+ * @function zeroPad
+ * @param {number} number - The number to pad.
+ * @param {number} length - The desired length of the output string.
+ * @returns {string} The padded number as a string.
+ */
+const zeroPad = (number, length) => number.toString().padStart(length, '0');
+
+/**
+ * Converts a UNIX timestamp to a human-readable string.
+ * If the timestamp is from today, returns the time (HH:mm:ss format); otherwise, returns the date (YYYY-MM-DD).
+ *
+ * @memberof IITC.utils
+ * @function unixTimeToString
+ * @param {number|string} timestamp - The UNIX timestamp in milliseconds to convert.
+ * @param {boolean} [full=false] - If true, returns both date and time in "YYYY-MM-DD <locale time>" format.
+ * @returns {string|null} The formatted date and/or time string, or null if no timestamp provided.
+ */
+const unixTimeToString = (timestamp, full = false) => {
+  if (!timestamp) return null;
+
+  const dateObj = new Date(Number(timestamp));
+  const today = new Date();
+
+  // Check if the date is today
+  const isToday = dateObj.getFullYear() === today.getFullYear() && dateObj.getMonth() === today.getMonth() && dateObj.getDate() === today.getDate();
+
+  const time = timeWithSecondsFormatter.format(dateObj);
+  const date = dateFormatter.format(dateObj);
+
+  if (full) return `${date} ${time}`;
+  return isToday ? time : date;
+};
+
+/**
+ * Converts a UNIX timestamp to a precise date and time string in the local timezone.
+ * Formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone.
+ *
+ * @memberof IITC.utils
+ * @function unixTimeToDateTimeString
+ * @param {number} time - The UNIX timestamp to convert.
+ * @param {boolean} [millisecond] - Whether to include millisecond precision.
+ * @returns {string|null} The formatted date and time string.
+ */
+const unixTimeToDateTimeString = (time, millisecond) => {
+  if (!time) return null;
+  const date = new Date(Number(time));
+  const pad = (num) => IITC.utils.zeroPad(num, 2);
+
+  const dateString = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  const timeString = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  const dateTimeString = `${dateString} ${timeString}`;
+  return millisecond ? `${dateTimeString}.${IITC.utils.zeroPad(date.getMilliseconds(), 3)}` : dateTimeString;
+};
+
+/**
+ * Converts a UNIX timestamp to a time string formatted as HH:mm.
+ *
+ * @memberof IITC.utils
+ * @function unixTimeToHHmm
+ * @param {number|string} time - The UNIX timestamp to convert.
+ * @returns {string|null} Formatted time as HH:mm.
+ */
+const unixTimeToHHmm = (time) => {
+  if (!time) return null;
+  return timeFormatter.format(new Date(Number(time)));
+};
+
+/**
+ * Formats an interval of time given in seconds into a human-readable string.
+ *
+ * @memberof IITC.utils
+ * @function formatInterval
+ * @param {number} seconds - The interval in seconds.
+ * @param {number} [maxTerms] - The maximum number of time units to include.
+ * @returns {string} The formatted time interval.
+ */
+const formatInterval = (seconds, maxTerms) => {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  // Collect terms if they have a non-zero value
+  const terms = [days ? `${days}d` : null, hours ? `${hours}h` : null, minutes ? `${minutes}m` : null, secs ? `${secs}s` : null].filter(Boolean);
+
+  // Limit terms to maxTerms if specified
+  return (maxTerms ? terms.slice(0, maxTerms) : terms).join(' ') || '0s';
+};
+
+/**
+ * Formats a distance in meters, converting to kilometers with appropriate precision
+ * based on the distance range.
+ *
+ * For distances:
+ * - Under 1000m: shows in meters, rounded to whole numbers
+ * - 1000m to 9999m: shows in kilometers with 1 decimal place
+ * - 10000m and above: shows in whole kilometers
+ *
+ * @memberof IITC.utils
+ * @function formatDistance
+ * @param {number} distance - The distance in meters.
+ * @returns {string} The formatted distance.
+ */
+const formatDistance = (distance) => {
+  if (distance === null || distance === undefined) return '';
+  let value, unit;
+
+  if (distance >= 10000) {
+    // For 10km and above: show whole kilometers
+    value = Math.round(distance / 1000);
+    unit = 'km';
+  } else if (distance >= 1000) {
+    // For 1km to 9.9km: show kilometers with one decimal
+    value = Math.round(distance / 100) / 10;
+    unit = 'km';
+  } else {
+    // For under 1km: show in meters
+    value = Math.round(distance);
+    unit = 'm';
+  }
+
+  return `${IITC.utils.formatNumber(value)}${unit}`;
+};
+
+/**
+ * Formats the time difference between two timestamps (in milliseconds) as a string.
+ *
+ * @memberof IITC.utils
+ * @function formatAgo
+ * @param {number} time - The past timestamp in milliseconds.
+ * @param {number} now - The current timestamp in milliseconds.
+ * @param {Object} [options] - Options for formatting.
+ * @param {boolean} [options.showSeconds=false] - Whether to include seconds in the result.
+ * @returns {string} The formatted time difference (e.g., "45s", "5m", "2h 45m", "1d 3h 45m")
+ */
+const formatAgo = (time, now, options = { showSeconds: false }) => {
+  const secondsTotal = Math.floor(Math.max(0, (now - time) / 1000));
+
+  // Calculate time units
+  const days = Math.floor(secondsTotal / 86400);
+  const hours = Math.floor((secondsTotal % 86400) / 3600);
+  const minutes = Math.floor((secondsTotal % 3600) / 60);
+  const seconds = secondsTotal % 60;
+
+  const result = [];
+
+  // Include units conditionally based on non-zero values
+  if (days > 0) result.push(`${days}d`);
+  if (hours > 0 || result.length !== 0) result.push(`${hours}h`);
+  if (minutes > 0 || result.length !== 0) result.push(`${minutes}m`);
+  if (options.showSeconds && (result.length === 0 || seconds > 0)) result.push(`${seconds}s`);
+
+  // If no units were added, show "0" with the smallest available unit
+  if (result.length === 0) {
+    return options.showSeconds ? '0s' : '0m';
+  }
+
+  return result.join(' ');
+};
+
+/**
+ * Checks if the device is a touch-enabled device.
+ * Alias for `L.Browser.touch()`
+ *
+ * @memberof IITC.utils
+ * @function isTouchDevice
+ * @returns {boolean} True if the device is touch-enabled, otherwise false.
+ */
+const isTouchDevice = () => L.Browser.touch;
+
+/**
+ * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
+ *
+ * @memberof IITC.utils
+ * @function scrollBottom
+ * @param {string|HTMLElement|jQuery} elm - The element or selector to calculate the scroll bottom for.
+ * @returns {number} The number of pixels from the bottom.
+ */
+const scrollBottom = (elm) => {
+  // Ensure elm is an HTMLElement: resolve selector strings or extract DOM element from jQuery object
+  const element = typeof elm === 'string' ? document.querySelector(elm) : elm instanceof jQuery ? elm[0] : elm;
+  return element.scrollHeight - element.clientHeight - element.scrollTop;
+};
+
+/**
+ * Escapes special characters in a string for use in JavaScript.
+ * (for strings passed as parameters to html onclick="..." for example)
+ *
+ * @memberof IITC.utils
+ * @function escapeJS
+ * @param {string} str - The string to escape.
+ * @returns {string} The escaped string.
+ */
+const escapeJS = function (str) {
+  return (str + '').replace(/[\\"']/g, '\\$&');
+};
+
+/**
+ * Escapes HTML special characters in a string.
+ *
+ * @memberof IITC.utils
+ * @function escapeHtml
+ * @param {string} str - The string to escape.
+ * @returns {string} The escaped string.
+ */
+const escapeHtml = function (str) {
+  const escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return str.replace(/[&<>"']/g, (char) => escapeMap[char]);
+};
+
+/**
+ * Formats the energy of a portal, converting to "k" units if over 1000.
+ *
+ * @memberof IITC.utils
+ * @function prettyEnergy
+ * @param {number} nrg - The energy value to format.
+ * @returns {string|number} The formatted energy value.
+ */
+const prettyEnergy = (nrg) => (nrg > 1000 ? `${Math.round(nrg / 1000)}k` : nrg);
+
+/**
+ * Converts a list of items into a unique array, removing duplicates.
+ *
+ * @memberof IITC.utils
+ * @function uniqueArray
+ * @param {Array} arr - The array to process.
+ * @returns {Array} A new array containing only unique elements.
+ */
+const uniqueArray = function (arr) {
+  return [...new Set(arr)];
+};
+
+/**
+ * Generates a four-column HTML table from an array of data blocks.
+ *
+ * @memberof IITC.utils
+ * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
+ * @returns {string} HTML string representing the constructed table.
+ */
+const genFourColumnTable = function (blocks) {
+  const rows = blocks
+    .map((detail, index) => {
+      if (!detail) return '';
+      const title = detail[2] ? ` title="${IITC.utils.escapeHtml(detail[2])}"` : '';
+
+      if (index % 2 === 0) {
+        // If index is even, start a new row and add <td> for data and <th> for header
+        return `<tr><td${title}>${detail[1]}</td><th${title}>${detail[0]}</th>`;
+      } else {
+        // If index is odd, complete the row with <th> for header and <td> for data, then close </tr>
+        return `<th${title}>${detail[0]}</th><td${title}>${detail[1]}</td></tr>`;
+      }
+    })
+    .join('');
+
+  // If total number of blocks is odd, add empty cells to complete the last row
+  const isOdd = blocks.length % 2 === 1;
+  return isOdd ? rows + '<td></td><td></td></tr>' : rows;
+};
+
+/**
+ * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
+ *
+ * @memberof IITC.utils
+ * @function textToTable
+ * @param {string} text - The text to convert.
+ * @returns {string} The resulting HTML table.
+ */
+const textToTable = function (text) {
+  // If no tabs are present, replace newlines with <br> and return
+  if (!text.includes('\t')) return text.replace(/\n/g, '<br>');
+
+  // Split text into rows and columns, tracking the max column count
+  const rows = text.split('\n').map((row) => row.split('\t'));
+  const columnCount = Math.max(...rows.map((row) => row.length));
+
+  // Build the table rows
+  const tableRows = [];
+  for (const row of rows) {
+    let rowHtml = '<tr>';
+    for (let k = 0; k < row.length; k++) {
+      const cell = IITC.utils.escapeHtml(row[k]);
+      const colspan = k === 0 && row.length < columnCount ? ` colspan="${columnCount - row.length + 1}"` : '';
+      rowHtml += `<td${colspan}>${cell}</td>`;
+    }
+    rowHtml += '</tr>';
+    tableRows.push(rowHtml);
+  }
+
+  // Combine all rows into a single table HTML
+  return `<table>${tableRows.join('')}</table>`;
+};
+
+/**
+ * Clamps a given value between a minimum and maximum value.
+ * Simple implementation for internal use.
+ *
+ * @memberof IITC.utils
+ * @private
+ * @function clamp
+ * @param {number} n - The value to clamp.
+ * @param {number} max - The maximum allowed value.
+ * @param {number} min - The minimum allowed value.
+ * @returns {number} The clamped value.
+ */
+const clamp = function (n, max, min) {
+  if (n === 0) return 0;
+  return n > 0 ? Math.min(n, max) : Math.max(n, min);
+};
+
+/**
+ * The maximum absolute latitude that can be represented in Web Mercator projection (EPSG:3857).
+ * This value is taken from L.Projection.SphericalMercator.MAX_LATITUDE
+ *
+ * @memberof IITC.utils
+ * @constant {Number}
+ */
+const MAX_LATITUDE = 85.051128;
+
+/**
+ * Clamps a latitude and longitude to the maximum and minimum valid values.
+ *
+ * @memberof IITC.utils
+ * @function clampLatLng
+ * @param {L.LatLng} latlng - The latitude and longitude to clamp.
+ * @returns {Array<number>} The clamped latitude and longitude.
+ */
+const clampLatLng = function (latlng) {
+  // Ingress accepts requests only for this range
+  return [clamp(latlng.lat, MAX_LATITUDE, -MAX_LATITUDE), clamp(latlng.lng, 179.999999, -180)];
+};
+
+/**
+ * Clamps a latitude and longitude bounds to the maximum and minimum valid values.
+ *
+ * @memberof IITC.utils
+ * @function clampLatLngBounds
+ * @param {L.LatLngBounds} bounds - The bounds to clamp.
+ * @returns {L.LatLngBounds} The clamped bounds.
+ */
+const clampLatLngBounds = function (bounds) {
+  var SW = bounds.getSouthWest(),
+    NE = bounds.getNorthEast();
+  return L.latLngBounds(window.clampLatLng(SW), window.clampLatLng(NE));
+};
+
+/**
+ * Determines if a point is inside a polygon.
+ *
+ * @memberof IITC.utils
+ * @param {Array<L.LatLng>} polygon - The vertices of the polygon.
+ * @param {L.LatLng} point - The point to test.
+ * @returns {boolean} True if the point is inside the polygon, false otherwise.
+ */
+const isPointInPolygon = (polygon, point) => {
+  let inside = 0;
+  // j records previous value. Also handles wrapping around.
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    inside ^=
+      polygon[i].y > point.y !== polygon[j].y > point.y &&
+      point.x - polygon[i].x < ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) / (polygon[j].y - polygon[i].y);
+  }
+  // Let's make js as magical as C. Yay.
+  return !!inside;
+};
+
+/**
+ * Converts a team string or object to a team ID.
+ * Accepts either team string directly (e.g. "RESISTANCE", "R") or an object with team property.
+ * Returns TEAM_NONE if no match found.
+ *
+ * @memberof IITC.utils
+ * @function getTeamId
+ * @param {(Object|string)} input - Input to convert to team ID
+ * @param {string} [input.team] - Team string when input is an object
+ * @returns {number} The team ID corresponding to the team string.
+ */
+const getTeamId = (input) => {
+  const teamStr = typeof input === 'string' ? input : input?.team;
+  if (window.TEAM_CODENAMES.includes(teamStr)) {
+    return window.TEAM_CODENAMES.indexOf(teamStr);
+  }
+  if (window.TEAM_CODES.includes(teamStr)) {
+    return window.TEAM_CODES.indexOf(teamStr);
+  }
+  return window.TEAM_NONE;
+};
+
+IITC.utils = {
+  getURLParam,
+  getCookie,
+  setCookie,
+  deleteCookie,
+  formatNumber,
+  zeroPad,
+  unixTimeToString,
+  unixTimeToDateTimeString,
+  unixTimeToHHmm,
+  formatInterval,
+  formatDistance,
+  formatAgo,
+  isTouchDevice,
+  scrollBottom,
+  escapeJS,
+  escapeHtml,
+  prettyEnergy,
+  uniqueArray,
+  genFourColumnTable,
+  textToTable,
+  clamp,
+  clampLatLng,
+  clampLatLngBounds,
+  isPointInPolygon,
+  getTeamId,
+};
+
+// Map of legacy function names to their new names (or the same name if not renamed)
+const legacyFunctionMappings = {
+  getURLParam: 'getURLParam',
+  readCookie: 'getCookie',
+  writeCookie: 'setCookie',
+  eraseCookie: 'deleteCookie',
+  digits: 'formatNumber',
+  zeroPad: 'zeroPad',
+  unixTimeToString: 'unixTimeToString',
+  unixTimeToDateTimeString: 'unixTimeToDateTimeString',
+  unixTimeToHHmm: 'unixTimeToHHmm',
+  formatInterval: 'formatInterval',
+  formatDistance: 'formatDistance',
+  isTouchDevice: 'isTouchDevice',
+  scrollBottom: 'scrollBottom',
+  escapeJavascriptString: 'escapeJS',
+  escapeHtmlSpecialChars: 'escapeHtml',
+  prettyEnergy: 'prettyEnergy',
+  uniqueArray: 'uniqueArray',
+  genFourColumnTable: 'genFourColumnTable',
+  convertTextToTableMagic: 'textToTable',
+  clamp: 'clamp',
+  clampLatLng: 'clampLatLng',
+  clampLatLngBounds: 'clampLatLngBounds',
+  pnpoly: 'isPointInPolygon',
+  teamStringToId: 'getTeamId',
+};
+
+// Set up synchronization between `window` and `IITC.utils` with new names
+Object.entries(legacyFunctionMappings).forEach(([oldName, newName]) => {
+  // Initialize IITC.utils[newName] if not already defined
+  window.IITC.utils[newName] = window.IITC.utils[newName] || function () {};
+
+  // Define a getter/setter on `window` to synchronize with `IITC.utils`
+  Object.defineProperty(window, oldName, {
+    get() {
+      return window.IITC.utils[newName];
+    },
+    set(newFunc) {
+      window.IITC.utils[newName] = newFunc;
+    },
+    configurable: true,
+  });
+});
+
+
+})();
+
+
 // *** module: utils_file.js ***
 (function () {
 var log = ulog('utils_file');
@@ -31627,561 +33054,14 @@ L.FileListLoader.loadFiles = function (options) {
 })();
 
 
-// *** module: utils_misc.js ***
+// *** module: utils_polyfills.js ***
 (function () {
-var log = ulog('utils_misc');
-/* global L -- eslint */
-
+var log = ulog('utils_polyfills');
 /**
- * @file Misc utils
+ * @file Misc polyfills
  *
- * @module utils_misc
+ * @module utils_polyfills
  */
-
-/**
- * Retrieves a parameter from the URL query string.
- *
- * @function getURLParam
- * @param {string} param - The name of the parameter to retrieve.
- * @returns {string} The value of the parameter, or an empty string if not found.
- */
-window.getURLParam = function (param) {
-  var items = window.location.search.substr(1).split('&');
-
-  for (var i = 0; i < items.length; i++) {
-    var item = items[i].split('=');
-
-    if (item[0] === param) {
-      var val = item.length === 1 ? '' : decodeURIComponent(item[1].replace(/\+/g, ' '));
-      return val;
-    }
-  }
-
-  return '';
-};
-
-/**
- * Reads a cookie by name.
- * @see http://stackoverflow.com/a/5639455/1684530
- *
- * @function readCookie
- * @param {string} name - The name of the cookie to read.
- * @returns {string} The value of the cookie, or undefined if not found.
- */
-window.readCookie = function (name) {
-  var C,
-    i,
-    c = document.cookie.split('; ');
-  var cookies = {};
-  for (i = c.length - 1; i >= 0; i--) {
-    C = c[i].split('=');
-    cookies[C[0]] = unescape(C[1]);
-  }
-  return cookies[name];
-};
-
-/**
- * Writes a cookie with a specified name and value.
- *
- * @function writeCookie
- * @param {string} name - The name of the cookie.
- * @param {string} val - The value of the cookie.
- */
-window.writeCookie = function (name, val) {
-  var d = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = name + '=' + val + '; expires=' + d + '; path=/';
-};
-
-/**
- * Erases a cookie with a specified name.
- *
- * @function eraseCookie
- * @param {string} name - The name of the cookie to erase.
- */
-window.eraseCookie = function (name) {
-  document.cookie = name + '=; expires=Thu, 1 Jan 1970 00:00:00 GMT; path=/';
-};
-
-/**
- * Adds thousand separators to a given number.
- * @see http://stackoverflow.com/a/1990590/1684530
- *
- * @function digits
- * @param {number} d - The number to format.
- * @returns {string} The formatted number with thousand separators.
- */
-window.digits = function (d) {
-  // U+2009 - Thin Space. Recommended for use as a thousands separator...
-  // https://en.wikipedia.org/wiki/Space_(punctuation)#Table_of_spaces
-  return (d + '').replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1&#8201;');
-};
-
-/**
- * Pads a number with zeros up to a specified length.
- *
- * @function zeroPad
- * @param {number} number - The number to pad.
- * @param {number} pad - The desired length of the output string.
- * @returns {string} The padded number as a string.
- */
-window.zeroPad = function (number, pad) {
-  number = number.toString();
-  var zeros = pad - number.length;
-  return Array(zeros > 0 ? zeros + 1 : 0).join('0') + number;
-};
-
-/**
- * Converts a UNIX timestamp to a human-readable string.
- * If the timestamp is from today, returns the time (HH:mm:ss format); otherwise, returns the date (YYYY-MM-DD).
- *
- * @function unixTimeToString
- * @param {number} timestamp - The UNIX timestamp to convert.
- * @param {boolean} [full] - If true, returns both date and time.
- * @returns {string|null} The formatted date and/or time.
- */
-window.unixTimeToString = function (timestamp, full) {
-  if (!timestamp) return null;
-  var d = new Date(typeof timestamp === 'string' ? parseInt(timestamp) : timestamp);
-  var time = d.toLocaleTimeString();
-  //  var time = zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+':'+zeroPad(d.getSeconds(),2);
-  var date = d.getFullYear() + '-' + window.zeroPad(d.getMonth() + 1, 2) + '-' + window.zeroPad(d.getDate(), 2);
-  if (typeof full !== 'undefined' && full) return date + ' ' + time;
-  if (d.toDateString() === new Date().toDateString()) return time;
-  else return date;
-};
-
-/**
- * Converts a UNIX timestamp to a precise date and time string in the local timezone.
- * Formatted in ISO-style YYYY-MM-DD hh:mm:ss.mmm - but using local timezone
- *
- * @function unixTimeToDateTimeString
- * @param {number} time - The UNIX timestamp to convert.
- * @param {boolean} [millisecond] - Whether to include millisecond precision.
- * @returns {string|null} The formatted date and time string.
- */
-window.unixTimeToDateTimeString = function (time, millisecond) {
-  if (!time) return null;
-  var d = new Date(typeof time === 'string' ? parseInt(time) : time);
-  return (
-    d.getFullYear() +
-    '-' +
-    window.zeroPad(d.getMonth() + 1, 2) +
-    '-' +
-    window.zeroPad(d.getDate(), 2) +
-    ' ' +
-    window.zeroPad(d.getHours(), 2) +
-    ':' +
-    window.zeroPad(d.getMinutes(), 2) +
-    ':' +
-    window.zeroPad(d.getSeconds(), 2) +
-    (millisecond ? '.' + window.zeroPad(d.getMilliseconds(), 3) : '')
-  );
-};
-
-/**
- * Converts a UNIX timestamp to a time string formatted as HH:mm.
- *
- * @function unixTimeToHHmm
- * @param {number|string} time - The UNIX timestamp to convert.
- * @returns {string|null} Formatted time as HH:mm.
- */
-window.unixTimeToHHmm = function (time) {
-  if (!time) return null;
-  var d = new Date(typeof time === 'string' ? parseInt(time) : time);
-  var h = '' + d.getHours();
-  h = h.length === 1 ? '0' + h : h;
-  var s = '' + d.getMinutes();
-  s = s.length === 1 ? '0' + s : s;
-  return h + ':' + s;
-};
-
-/**
- * Formats an interval of time given in seconds into a human-readable string.
- *
- * @function formatInterval
- * @param {number} seconds - The interval in seconds.
- * @param {number} [maxTerms] - The maximum number of time units to include.
- * @returns {string} The formatted time interval.
- */
-window.formatInterval = function (seconds, maxTerms) {
-  var d = Math.floor(seconds / 86400);
-  var h = Math.floor((seconds % 86400) / 3600);
-  var m = Math.floor((seconds % 3600) / 60);
-  var s = seconds % 60;
-
-  var terms = [];
-  if (d > 0) terms.push(d + 'd');
-  if (h > 0) terms.push(h + 'h');
-  if (m > 0) terms.push(m + 'm');
-  if (s > 0 || terms.length === 0) terms.push(s + 's');
-
-  if (maxTerms) terms = terms.slice(0, maxTerms);
-
-  return terms.join(' ');
-};
-
-/**
- * Formats a distance in meters, converting to kilometers if the distance is over 10,000 meters.
- *
- * @function formatDistance
- * @param {number} distance - The distance in meters.
- * @returns {string} The formatted distance.
- */
-window.formatDistance = function (distance) {
-  return window.digits(distance > 10000 ? (distance / 1000).toFixed(2) + 'km' : Math.round(distance) + 'm');
-};
-
-/**
- * Changes the coordinates and map scale to show the range for portal links.
- *
- * @function rangeLinkClick
- */
-window.rangeLinkClick = function () {
-  if (window.portalRangeIndicator) window.map.fitBounds(window.portalRangeIndicator.getBounds());
-  if (window.isSmartphone()) window.show('map');
-};
-
-/**
- * Displays a dialog with links to show the specified location on various map services.
- *
- * @function showPortalPosLinks
- * @param {number} lat - Latitude of the location.
- * @param {number} lng - Longitude of the location.
- * @param {string} name - Name of the location.
- */
-window.showPortalPosLinks = function (lat, lng, name) {
-  var encoded_name = encodeURIComponent(name);
-  var qrcode = '<div id="qrcode"></div>';
-  var script = "<script>$('#qrcode').qrcode({text:'GEO:" + lat + ',' + lng + "'});</script>";
-  var gmaps = '<a href="https://maps.google.com/maps?ll=' + lat + ',' + lng + '&q=' + lat + ',' + lng + '%20(' + encoded_name + ')">Google Maps</a>';
-  var bingmaps =
-    '<a href="https://www.bing.com/maps/?v=2&cp=' + lat + '~' + lng + '&lvl=16&sp=Point.' + lat + '_' + lng + '_' + encoded_name + '___">Bing Maps</a>';
-  var osm = '<a href="https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=16">OpenStreetMap</a>';
-  var latLng = '<span>' + lat + ',' + lng + '</span>';
-  window.dialog({
-    html: '<div style="text-align: center;">' + qrcode + script + gmaps + '; ' + bingmaps + '; ' + osm + '<br />' + latLng + '</div>',
-    title: name,
-    id: 'poslinks',
-  });
-};
-
-/**
- * Checks if the device is a touch-enabled device.
- *
- * @function isTouchDevice
- * @returns {boolean} True if the device is touch-enabled, otherwise false.
- */
-window.isTouchDevice = function () {
-  return (
-    'ontouchstart' in window || // works on most browsers
-    'onmsgesturechange' in window
-  ); // works on ie10
-};
-
-// !!deprecated
-// to be ovewritten in app.js
-window.androidCopy = function () {
-  return true; // i.e. execute other actions
-};
-
-/**
- * Calculates the number of pixels left to scroll down before reaching the bottom of an element.
- *
- * @function scrollBottom
- * @param {string|jQuery} elm - The element to calculate the scroll bottom for.
- * @returns {number} The number of pixels from the bottom.
- */
-window.scrollBottom = function (elm) {
-  if (typeof elm === 'string') elm = $(elm);
-  return elm.get(0).scrollHeight - elm.innerHeight() - elm.scrollTop();
-};
-
-/**
- * Zooms the map to a specific portal and shows its details if available.
- *
- * @function zoomToAndShowPortal
- * @param {string} guid - The globally unique identifier of the portal.
- * @param {L.LatLng|number[]} latlng - The latitude and longitude of the portal.
- */
-window.zoomToAndShowPortal = function (guid, latlng) {
-  window.map.setView(latlng, window.DEFAULT_ZOOM);
-  // if the data is available, render it immediately. Otherwise defer
-  // until it becomes available.
-  if (window.portals[guid]) window.renderPortalDetails(guid);
-  else window.urlPortal = guid;
-};
-
-/**
- * Selects a portal by its latitude and longitude.
- *
- * @function selectPortalByLatLng
- * @param {number|Array|L.LatLng} lat - The latitude of the portal
- *                                      or an array or L.LatLng object containing both latitude and longitude.
- * @param {number} [lng] - The longitude of the portal.
- */
-window.selectPortalByLatLng = function (lat, lng) {
-  if (lng === undefined && lat instanceof Array) {
-    lng = lat[1];
-    lat = lat[0];
-  } else if (lng === undefined && lat instanceof L.LatLng) {
-    lng = lat.lng;
-    lat = lat.lat;
-  }
-  for (var guid in window.portals) {
-    var latlng = window.portals[guid].getLatLng();
-    if (latlng.lat === lat && latlng.lng === lng) {
-      window.renderPortalDetails(guid);
-      return;
-    }
-  }
-
-  // not currently visible
-  window.urlPortalLL = [lat, lng];
-  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
-};
-
-/**
- * Escapes special characters in a string for use in JavaScript.
- * (for strings passed as parameters to html onclick="..." for example)
- *
- * @function escapeJavascriptString
- * @param {string} str - The string to escape.
- * @returns {string} The escaped string.
- */
-window.escapeJavascriptString = function (str) {
-  return (str + '').replace(/[\\"']/g, '\\$&');
-};
-
-/**
- * Escapes HTML special characters in a string.
- *
- * @function escapeHtmlSpecialChars
- * @param {string} str - The string to escape.
- * @returns {string} The escaped string.
- */
-window.escapeHtmlSpecialChars = function (str) {
-  var div = document.createElement('div');
-  var text = document.createTextNode(str);
-  div.appendChild(text);
-  return div.innerHTML;
-};
-
-/**
- * Formats energy of portal.
- *
- * @function prettyEnergy
- * @param {number} nrg - The energy value to format.
- * @returns {string} The formatted energy value.
- */
-window.prettyEnergy = function (nrg) {
-  return nrg > 1000 ? Math.round(nrg / 1000) + ' k' : nrg;
-};
-
-/**
- * Converts a list of items into a unique array, removing duplicates.
- *
- * @function uniqueArray
- * @param {Array} arr - The array to process.
- * @returns {Array} A new array containing only unique elements.
- */
-window.uniqueArray = function (arr) {
-  return $.grep(arr, function (v, i) {
-    return $.inArray(v, arr) === i;
-  });
-};
-
-/**
- * Generates a four-column HTML table from an array of data blocks.
- *
- * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
- * @returns {string} HTML string representing the constructed table.
- */
-window.genFourColumnTable = function (blocks) {
-  let t = $.map(blocks, function (detail, index) {
-    if (!detail) return '';
-    const title = detail[2] ? ' title="' + window.escapeHtmlSpecialChars(detail[2]) + '"' : '';
-    if (index % 2 === 0) {
-      return '<tr><td' + title + '>' + detail[1] + '</td><th' + title + '>' + detail[0] + '</th>';
-    } else {
-      return '<th' + title + '>' + detail[0] + '</th><td' + title + '>' + detail[1] + '</td></tr>';
-    }
-  }).join('');
-
-  // If the total number of rows is odd, add empty cells to complete the last row
-  if (blocks.length % 2 === 1) {
-    t += '<td></td><td></td></tr>';
-  }
-
-  return t;
-};
-
-/**
- * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
- *
- * @function convertTextToTableMagic
- * @param {string} text - The text to convert.
- * @returns {string} The resulting HTML table.
- */
-window.convertTextToTableMagic = function (text) {
-  // check if it should be converted to a table
-  if (!text.match(/\t/)) return text.replace(/\n/g, '<br>');
-
-  var data = [];
-  var columnCount = 0;
-
-  // parse data
-  var rows = text.split('\n');
-  $.each(rows, function (i, row) {
-    data[i] = row.split('\t');
-    if (data[i].length > columnCount) columnCount = data[i].length;
-  });
-
-  // build the table
-  var table = '<table>';
-  $.each(data, function (i) {
-    table += '<tr>';
-    $.each(data[i], function (k, cell) {
-      var attributes = '';
-      if (k === 0 && data[i].length < columnCount) {
-        attributes = ' colspan="' + (columnCount - data[i].length + 1) + '"';
-      }
-      table += '<td' + attributes + '>' + cell + '</td>';
-    });
-    table += '</tr>';
-  });
-  table += '</table>';
-  return table;
-};
-
-/**
- * Clamps a given value between a minimum and maximum value.
- *
- * @private
- * @function clamp
- * @param {number} n - The value to clamp.
- * @param {number} max - The maximum allowed value.
- * @param {number} min - The minimum allowed value.
- * @returns {number} The clamped value.
- */
-function clamp(n, max, min) {
-  if (n === 0) return 0;
-  return n > 0 ? Math.min(n, max) : Math.max(n, min);
-}
-
-var MAX_LATITUDE = 85.051128; // L.Projection.SphericalMercator.MAX_LATITUDE
-
-/**
- * Clamps a latitude and longitude to the maximum and minimum valid values.
- *
- * @function clampLatLng
- * @param {L.LatLng} latlng - The latitude and longitude to clamp.
- * @returns {Array<number>} The clamped latitude and longitude.
- */
-window.clampLatLng = function (latlng) {
-  // Ingress accepts requests only for this range
-  return [clamp(latlng.lat, MAX_LATITUDE, -MAX_LATITUDE), clamp(latlng.lng, 179.999999, -180)];
-};
-
-/**
- * Clamps a latitude and longitude bounds to the maximum and minimum valid values.
- *
- * @function clampLatLngBounds
- * @param {L.LatLngBounds} bounds - The bounds to clamp.
- * @returns {L.LatLngBounds} The clamped bounds.
- */
-window.clampLatLngBounds = function (bounds) {
-  var SW = bounds.getSouthWest(),
-    NE = bounds.getNorthEast();
-  return L.latLngBounds(window.clampLatLng(SW), window.clampLatLng(NE));
-};
-
-/*
-pnpoly Copyright (c) 1970-2003, Wm. Randolph Franklin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following conditions:
-
-  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-     disclaimers.
-  2. Redistributions in binary form must reproduce the above copyright notice in the documentation and/or other
-     materials provided with the distribution.
-  3. The name of W. Randolph Franklin may not be used to endorse or promote products derived from this Software without
-     specific prior written permission.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-/**
- * Determines if a point is inside a polygon.
- *
- * @param {Array<L.LatLng>} polygon - The vertices of the polygon.
- * @param {L.LatLng} point - The point to test.
- * @returns {boolean} True if the point is inside the polygon, false otherwise.
- */
-window.pnpoly = function (polygon, point) {
-  var inside = 0;
-  // j records previous value. Also handles wrapping around.
-  for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    inside ^=
-      polygon[i].y > point.y !== polygon[j].y > point.y &&
-      point.x - polygon[i].x < ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) / (polygon[j].y - polygon[i].y);
-  }
-  // Let's make js as magical as C. Yay.
-  return !!inside;
-};
-
-/**
- * Creates a link to open a specific portal in Ingress Prime.
- *
- * @function makePrimeLink
- * @param {string} guid - The globally unique identifier of the portal.
- * @param {number} lat - The latitude of the portal.
- * @param {number} lng - The longitude of the portal.
- * @returns {string} The Ingress Prime link for the portal
- */
-window.makePrimeLink = function (guid, lat, lng) {
-  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
-};
-
-/**
- * Generates a permalink URL based on the specified latitude and longitude and additional options.
- *
- * @param {L.LatLng|number[]} [latlng] - The latitude and longitude for the permalink.
- *                              Can be omitted to create mapview-only permalink.
- * @param {Object} [options] - Additional options for permalink generation.
- * @param {boolean} [options.includeMapView] - Include current map view in the permalink.
- * @param {boolean} [options.fullURL] - Generate a fully qualified URL (default: relative link).
- * @returns {string} The generated permalink URL.
- */
-window.makePermalink = function (latlng, options) {
-  options = options || {};
-
-  function round(l) {
-    // ensures that lat,lng are with same precision as in stock intel permalinks
-    return Math.floor(l * 1e6) / 1e6;
-  }
-  var args = [];
-  if (!latlng || options.includeMapView) {
-    var c = window.map.getCenter();
-    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
-  }
-  if (latlng) {
-    if ('lat' in latlng) {
-      latlng = [latlng.lat, latlng.lng];
-    }
-    args.push('pll=' + latlng.join(','));
-  }
-  var url = '';
-  if (options.fullURL) {
-    url += new URL(document.baseURI).origin;
-  }
-  url += '/';
-  return url + '?' + args.join('&');
-};
 
 if (!String.prototype.capitalize) {
   Object.defineProperty(String.prototype, 'capitalize', {
@@ -32271,6 +33151,29 @@ if (!Element.prototype.closest) {
       el = el.parentElement || el.parentNode;
     } while (el !== null && el.nodeType === 1);
     return null;
+  };
+}
+
+// https://github.com/KhaledElAnsari/String.prototype.padStart/blob/master/index.js
+if (!String.prototype.padStart) {
+  String.prototype.padStart = function (targetLength, padString) {
+    targetLength = Math.floor(targetLength) || 0;
+    if (targetLength < this.length) return String(this);
+
+    padString = padString ? String(padString) : ' ';
+
+    var pad = '';
+    var len = targetLength - this.length;
+    var i = 0;
+    while (pad.length < len) {
+      if (!padString[i]) {
+        i = 0;
+      }
+      pad += padString[i];
+      i++;
+    }
+
+    return pad + String(this).slice(0);
   };
 }
 
