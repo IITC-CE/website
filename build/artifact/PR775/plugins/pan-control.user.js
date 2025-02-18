@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Pan control
 // @category       Controls
-// @version        0.2.5.20241031.180336
+// @version        0.2.5.20250218.082800
 // @description    Show a panning control on the map.
 // @id             pan-control
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-31-180336';
+plugin_info.dateTimeVersion = '2025-02-18-082800';
 plugin_info.pluginId = 'pan-control';
 //END PLUGIN AUTHORS NOTE
 
@@ -61,28 +61,8 @@ function setup() {
   if (!panControl.options.position) {
     // default: 'topleft'
     // to be above all controls
-    $('.leaflet-top.leaflet-left .leaflet-control').first().before(panControl.control.getContainer());
+    $('.leaflet-top.leaflet-left').first().append(panControl.control.getContainer());
   }
-
-  // L.Control.Pan.css tries to align zoom control with the pan control, but the result sucks
-  // so here is our attempt to make it better
-  // (adapted from https://github.com/kartena/Leaflet.Pancontrol/pull/20)
-  $('<style>')
-    .html(
-      '\
-    .leaflet-left.has-leaflet-pan-control .leaflet-control-zoom,\
-    .leaflet-left.has-leaflet-pan-control .leaflet-control-zoomslider { left: unset; }\
-    .leaflet-left.has-leaflet-pan-control .leaflet-control-scale { left: -24.5px; }\
-    .leaflet-left.has-leaflet-pan-control { left: 24.5px; }\
-    .leaflet-left .leaflet-control-pan { left: -24.5px; }\
-    .leaflet-control-pan { width: 75px; height: 75px; }\
-    .leaflet-touch .leaflet-left.has-leaflet-pan-control { left: 26px; }\
-    .leaflet-touch .leaflet-left .leaflet-control-pan { left: -26px; }\
-    .leaflet-touch .leaflet-control-pan { width: 86px; height: 114px; }\
-    .leaflet-touch .leaflet-left .leaflet-control-pan { margin-left: 10px; }\
-  '
-    )
-    .appendTo('head');
 }
 setup.priority = 'low';
 
@@ -336,6 +316,25 @@ function loadLeafletPancontrol() {
 .leaflet-touch .leaflet-control-pan-down-wrap {\
   left:26px;\
   top:80px;\
+}\
+').appendTo('head');
+    $('<style>').html('\
+.leaflet-left.has-leaflet-pan-control .leaflet-bar {\
+	left: 24.5px;\
+}\
+\
+.leaflet-touch .leaflet-left.has-leaflet-pan-control .leaflet-bar {\
+  left: 34px\
+}\
+\
+.leaflet-control-pan {\
+    order: -50;\
+}\
+\
+.leaflet-control-pan div {\
+  border: 2px solid rgba(0, 0, 0, 0.2);\
+  box-shadow: none;\
+  border-radius: 4px;\
 }\
 ').appendTo('head');
   } catch (e) {

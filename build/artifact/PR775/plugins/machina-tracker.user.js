@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.0.1.20241031.180336
+// @version        1.1.0.20250218.082800
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-31-180336';
+plugin_info.dateTimeVersion = '2025-02-18-082800';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L */
+/* global IITC, L */
 
 var changelog = [
+  {
+    version: '1.1.0',
+    changes: ['Using `IITC.utils.formatAgo` instead of the plugin own function'],
+  },
   {
     version: '1.0.1',
     changes: ['Version upgrade due to a change in the wrapper: plugin icons are now vectorized'],
@@ -201,17 +205,6 @@ machinaTracker.processNewData = function (data) {
   });
 };
 
-machinaTracker.ago = function (time, now) {
-  var s = (now - time) / 1000;
-  var h = Math.floor(s / 3600);
-  var m = Math.floor((s % 3600) / 60);
-  var returnVal = m + 'm';
-  if (h > 0) {
-    returnVal = h + 'h' + returnVal;
-  }
-  return returnVal + ' ago';
-};
-
 machinaTracker.createPortalLink = function (portal) {
   return $('<a>')
     .addClass('text-overflow-ellipsis')
@@ -243,7 +236,7 @@ machinaTracker.drawData = function () {
     var ageBucket = Math.min((now - event.time) / split, 3);
     var position = event.from.latLng;
 
-    var title = isTouchDev ? '' : machinaTracker.ago(event.time, now);
+    var title = isTouchDev ? '' : IITC.utils.formatAgo(event.time, now) + ' ago';
     var icon = machinaTracker.icon;
     var opacity = 1 - 0.2 * ageBucket;
 
@@ -254,7 +247,11 @@ machinaTracker.drawData = function () {
     linkList.appendTo(popup);
 
     event.to.forEach((to) => {
-      $('<li>').append(machinaTracker.createPortalLink(to)).append(' ').append(machinaTracker.ago(to.time, now)).appendTo(linkList);
+      $('<li>')
+        .append(machinaTracker.createPortalLink(to))
+        .append(' ')
+        .append(IITC.utils.formatAgo(to.time, now) + ' ago')
+        .appendTo(linkList);
     });
 
     var m = L.marker(position, { icon: icon, opacity: opacity, desc: popup[0], title: title });

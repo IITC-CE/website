@@ -2,7 +2,7 @@
 // @author         fragger
 // @name           IITC plugin: Zoom slider
 // @category       Controls
-// @version        0.2.4.20241031.180336
+// @version        0.2.4.20250218.082800
 // @description    Show a zoom slider on the map instead of the zoom buttons.
 // @id             zoom-slider
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2024-10-31-180336';
+plugin_info.dateTimeVersion = '2025-02-18-082800';
 plugin_info.pluginId = 'zoom-slider';
 //END PLUGIN AUTHORS NOTE
 
@@ -63,12 +63,6 @@ function setup() {
     map.zoomControl.remove();
   }
   zoomSlider.control = L.control.zoomslider(zoomSlider.options).addTo(map);
-
-  // L.Control.Zoomslider.css defines non-standard border for `.leaflet-control-zoomslider`
-  // which makes zoomslider not aligning with other leaflet controls
-  // Here we are trying to unset it (make the same as general `.leaflet-control`)
-  // (adapted from https://github.com/kartena/Leaflet.zoomslider/pull/74)
-  $('<style>').html('.leaflet-touch .leaflet-control-zoomslider { border: 2px solid rgba(0,0,0,0.2) }').appendTo('head');
 }
 
 function loadLeafletZoomslider() {
@@ -422,6 +416,13 @@ function loadLeafletZoomslider() {
 }\
 .leaflet-oldie .leaflet-control-zoomslider-out {\
 	*zoom: expression( this.runtimeStyle[\'zoom\'] = \'1\', this.innerHTML = \'\\u2212\');\
+}\
+').appendTo('head');
+    $('<style>').html('\
+.leaflet-container .leaflet-control-zoomslider {\
+    margin-left: 0;\
+    margin-top: 0;\
+    order: -40;\
 }\
 ').appendTo('head');
   } catch (e) {
