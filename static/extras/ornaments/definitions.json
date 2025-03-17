@@ -32,6 +32,16 @@
       "layer": "Anomaly",
       "url": "https://iitc.app/extras/ornaments/ornament-ap2_v.svg"
     },
+    "ap5": {
+      "name": "Anomaly Portal 2",
+      "layer": "Anomaly",
+      "url": "https://iitc.app/extras/ornaments/ornament-ap5.svg"
+    },
+    "ap5_v": {
+      "name": "Anomaly Portal 2, volatile",
+      "layer": "Anomaly",
+      "url": "https://iitc.app/extras/ornaments/ornament-ap5_v.svg"
+    },
     "peTOASTY": {
       "name": "TOASTY",
       "offset": [0,0.5],
