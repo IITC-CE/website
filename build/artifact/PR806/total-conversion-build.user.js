@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20250402.074243
+// @version        0.39.1.20250418.100705
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-04-02-074243';
+plugin_info.dateTimeVersion = '2025-04-18-100705';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -125,7 +125,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-04-02-074243';
+window.iitcBuildDate = '2025-04-18-100705';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4141,7 +4141,7 @@ function prepPluginsToLoad() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-04-02-074243');
+  log.log('loading done, booting. Built: ' + '2025-04-18-100705');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -31876,6 +31876,27 @@ IITC.statusbar.portalTemplates = {
  * Called after IITC boot process is complete
  */
 IITC.statusbar.init = function () {
+  // Determine display modes for portal and map status
+  const usePortalApi = window.isApp && window.app.setPortalStatus;
+  const useMapApi = window.isApp && window.app.setMapStatus;
+
+  // Set display flags based on API availability
+  this.showHtmlPortalInfo = window.isSmartphone() && !usePortalApi;
+  this.showHtmlMapInfo = !useMapApi;
+
+  // Create HTML elements only if needed
+  if (this.showHtmlPortalInfo) {
+    document.getElementById('updatestatus').insertAdjacentHTML('afterbegin', '<div id="mobileinfo" onclick="show(\'info\')"></div>');
+  }
+
+  // Hide map status if using API for map
+  if (!this.showHtmlMapInfo) {
+    const innerstatus = document.getElementById('innerstatus');
+    if (innerstatus) {
+      innerstatus.style.display = 'none';
+    }
+  }
+
   // Set up portal selection hook - initial update with basic data
   window.addHook('portalSelected', (data) => {
     IITC.statusbar.portal.update(data);
@@ -31888,10 +31909,8 @@ IITC.statusbar.init = function () {
     }
   });
 
-  // Create mobile info element only in smartphone mode
-  if (window.isSmartphone()) {
-    document.getElementById('updatestatus').insertAdjacentHTML('afterbegin', '<div id="mobileinfo" onclick="show(\'info\')"></div>');
-    // Set initial message
+  // Initial update if needed
+  if (this.showHtmlPortalInfo) {
     IITC.statusbar.portal.update();
   }
 };
@@ -32032,7 +32051,7 @@ IITC.statusbar.map = {
 
     if (window.isApp) {
       if (window.app.setMapStatus) {
-        window.app.setMapStatus(data);
+        window.app.setMapStatus(data.portalLevels, data.mapStatus, data.requests);
       }
 
       if (window.app.setProgress) {
@@ -32040,16 +32059,18 @@ IITC.statusbar.map = {
       }
     }
 
-    // Delay status update to the next event loop for better performance
-    if (this._timer) clearTimeout(this._timer);
+    if (IITC.statusbar.showHtmlMapInfo) {
+      // Delay status update to the next event loop for better performance
+      if (this._timer) clearTimeout(this._timer);
 
-    this._timer = setTimeout(() => {
-      this._timer = undefined;
-      const innerstatus = document.getElementById('innerstatus');
-      if (innerstatus) {
-        innerstatus.innerHTML = this.render(data);
-      }
-    }, 0);
+      this._timer = setTimeout(() => {
+        this._timer = undefined;
+        const innerstatus = document.getElementById('innerstatus');
+        if (innerstatus) {
+          innerstatus.innerHTML = this.render(data);
+        }
+      }, 0);
+    }
   },
 };
 
@@ -32102,10 +32123,7 @@ IITC.statusbar.portal = {
       title: data.title,
       health: healthPct,
       resonators: [],
-      ui: {
-        teamCss: window.TEAM_TO_CSS[IITC.utils.getTeamId(data.team)] || '',
-        levelColor: !isNeutral ? window.COLORS_LVL[data.level] : null,
-      },
+      levelColor: !isNeutral ? window.COLORS_LVL[data.level] : null,
     };
 
     // Process resonators if available
@@ -32118,9 +32136,7 @@ IITC.statusbar.portal = {
         energy: 0,
         maxEnergy: 0,
         healthPct: 0,
-        ui: {
-          color: window.COLORS_LVL[0],
-        },
+        levelColor: window.COLORS_LVL[0],
       }));
 
       // Process each resonator
@@ -32158,9 +32174,7 @@ IITC.statusbar.portal = {
             energy,
             maxEnergy,
             healthPct,
-            ui: {
-              color: window.COLORS_LVL[level],
-            },
+            levelColor: window.COLORS_LVL[level],
           };
         }
       }
@@ -32187,9 +32201,11 @@ IITC.statusbar.portal = {
 
     // Create level badge with appropriate team color
     const levelBadge = renderTemplate(templates.levelBadge, {
-      style: data.ui.levelColor ? `background: ${data.ui.levelColor};` : '',
+      style: data.levelColor ? `background: ${data.levelColor};` : '',
       level: data.isNeutral ? '0' : data.level,
     });
+
+    const teamCss = window.TEAM_TO_CSS[IITC.utils.getTeamId(data.team)] || '';
 
     // Create resonator visualizations
     let resonators = '';
@@ -32197,10 +32213,10 @@ IITC.statusbar.portal = {
       data.resonators.forEach((reso) => {
         if (reso.energy > 0) {
           resonators += renderTemplate(templates.resonator, {
-            className: `${data.ui.teamCss}${reso.direction === 'N' ? ' north' : ''}`,
+            className: `${teamCss}${reso.direction === 'N' ? ' north' : ''}`,
             slot: reso.displayOrder,
             percentage: reso.healthPct,
-            borderColor: reso.ui.color,
+            borderColor: reso.levelColor,
           });
         } else {
           // Render empty slots
@@ -32229,7 +32245,7 @@ IITC.statusbar.portal = {
    */
   update(selectedPortalData) {
     // Early exit if we don't need portal status (not in app and not smartphone)
-    if (!window.isSmartphone() && !(window.isApp && window.app.setPortalStatus)) {
+    if (!IITC.statusbar.showHtmlPortalInfo && !(window.isApp && window.app.setPortalStatus)) {
       return;
     }
 
@@ -32237,13 +32253,19 @@ IITC.statusbar.portal = {
     const data = this.getData(guid);
 
     if (window.isApp && window.app.setPortalStatus) {
-      window.app.setPortalStatus(data);
+      if (data) {
+        window.app.setPortalStatus(data.guid, data.team, data.level, data.title, data.health, data.resonators, data.levelColor);
+      } else {
+        window.app.setPortalStatus(null, null, null, null, null, null, null);
+      }
     }
 
     // Update UI in smartphone mode
-    const mobileinfo = document.getElementById('mobileinfo');
-    if (window.isSmartphone() && mobileinfo) {
-      mobileinfo.innerHTML = this.render(data);
+    if (IITC.statusbar.showHtmlPortalInfo) {
+      const mobileinfo = document.getElementById('mobileinfo');
+      if (mobileinfo) {
+        mobileinfo.innerHTML = this.render(data);
+      }
     }
   },
 };
