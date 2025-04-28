@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.12.0.20250421.080614
+// @version        0.11.0.20250428.080653
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-04-21-080614';
+plugin_info.dateTimeVersion = '2025-04-28-080653';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,10 +29,6 @@ plugin_info.pluginId = 'draw-tools';
 /* exported setup, changelog --eslint */
 
 var changelog = [
-  {
-    version: '0.12.0',
-    changes: ['request confirmation before clear all'],
-  },
   {
     version: '0.11.0',
     changes: ['Custom paste dialog', 'Import multiple files'],
@@ -59,7 +55,7 @@ var changelog = [
 // custom hook for draw tools to share it's activity with other plugins
 
 // use own namespace for plugin
-window.plugin.drawTools = function () { };
+window.plugin.drawTools = function () {};
 
 window.plugin.drawTools.KEY_STORAGE = 'plugin-draw-tools-layer';
 
@@ -127,15 +123,6 @@ window.plugin.drawTools.setDrawColor = function (color) {
 
 // renders the draw control buttons in the top left corner
 window.plugin.drawTools.addDrawControl = function () {
-
-  // Add Confirm request to Delete-All command
-  var original = L.EditToolbar.Delete.prototype.removeAllLayers;
-  L.EditToolbar.Delete.prototype.removeAllLayers = function () {
-    if (confirm('Are you sure?')) {
-      original.call(this);
-    }
-  };
-
   var drawControl = new L.Control.Draw({
     draw: {
       rectangle: false,
@@ -6417,6 +6404,25 @@ L.EditToolbar.Edit.include({
 	}
 });
 })(L.EditToolbar.Edit.prototype._backupLayer,L.EditToolbar.Edit.prototype._revertLayer);
+
+
+;
+
+    // eslint-disable-next-line
+    // *** included: external/leaflet.draw-confirm.js ***
+
+(function (removeAllLayers) {
+    L.EditToolbar.Delete.include({
+        removeAllLayers: function () {
+            if (confirm('Are you sure?')) {
+                removeAllLayers.call(this);
+            }
+        },
+        removeAllLayersDirect: function () {
+            removeAllLayers.call(this);
+        }
+    });
+})(L.EditToolbar.Delete.prototype.removeAllLayers);
 
 
 ;
