@@ -32,6 +32,16 @@
       "layer": "Anomaly",
       "url": "https://iitc.app/extras/ornaments/ornament-ap2_v.svg"
     },
+    "ap3": {
+      "name": "Anomaly Portal 3",
+      "layer": "Anomaly",
+      "url": "https://iitc.app/extras/ornaments/ornament-ap3.svg"
+    },
+    "ap2_v": {
+      "name": "Anomaly Portal 3, volatile",
+      "layer": "Anomaly",
+      "url": "https://iitc.app/extras/ornaments/ornament-ap3_v.svg"
+    },
     "ap5": {
       "name": "Anomaly Portal 2",
       "layer": "Anomaly",
