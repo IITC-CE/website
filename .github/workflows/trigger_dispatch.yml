@@ -109,11 +109,33 @@ jobs:
           echo "${{ secrets.KEYSTORE_P12 }}" | base64 -d - > ./website/static/fdroid/keystore.p12
           echo "${{ secrets.CONFIG_YML }}" | base64 -d - > ./website/static/fdroid/config.yml
 
+      # Temporary workaround for F-Droid server issue
+      # Reference: https://gitlab.com/fdroid/docker-executable-fdroidserver/-/issues/28
+      # This step builds a custom Docker image with updated androguard to fix KeyError: 'resources.arsc'
+      - name: Build patched F-Droid server image
+        if: ${{ env.BUILD_TYPE != 'PR' }}
+        run: |
+          cat > Dockerfile.fdroid-patched << 'EOF'
+          FROM registry.gitlab.com/fdroid/docker-executable-fdroidserver:master
+
+          RUN apt-get -y update && \
+              apt-get -y dist-upgrade && \
+              apt-get -y install python3-pip
+
+          # Install a recent version of androguard to fix APK parsing issues
+          RUN git clone --recursive https://github.com/androguard/androguard.git && \
+              cd androguard && \
+              git reset --hard v4.1.2 && \
+              pip install . --break-system-packages
+          EOF
+          
+          docker build -t fdroid-server-patched -f Dockerfile.fdroid-patched .
+
       - name: Pull F-Droid server and update repo
         if: ${{ env.BUILD_TYPE != 'PR' }}
         uses: addnab/docker-run-action@v3
         with:
-          image: registry.gitlab.com/fdroid/docker-executable-fdroidserver:master
+          image: fdroid-server-patched
           options: -v ${{ github.workspace }}/website/static/fdroid/:/repo
           run: |
             /home/vagrant/fdroidserver/fdroid update
