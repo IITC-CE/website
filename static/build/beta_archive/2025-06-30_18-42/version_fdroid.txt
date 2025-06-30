@@ -1,0 +1,2 @@
+versionName=0.40.0-beta-2025.06.30-18:42
+versionCode=1751308925
