@@ -27,11 +27,11 @@ jobs:
       - name: Set base env
         run: |
           if [[ '${{ github.event.action }}' == 'new_iitc_build' ]]; then
-            echo "BUILD_TYPE=$(cat ./artifact/.metadata/build_type)" >> "$GITHUB_ENV"
             echo "BUILD_ZIP_FILENAME=$(cat ./artifact/.metadata/zip_filename)" >> "$GITHUB_ENV"
           elif [[ '${{ github.event.action }}' == 'new_iitc_prime_build' ]]; then
-            echo "BUILD_TYPE=prime" >> "$GITHUB_ENV"
+            echo "IS_PRIME_BUILD=true" >> "$GITHUB_ENV"
           fi
+          echo "BUILD_TYPE=$(cat ./artifact/.metadata/build_type)" >> "$GITHUB_ENV"
           echo "COMMIT_HASH=$(cat ./artifact/.metadata/commit)" >> "$GITHUB_ENV"
           echo "BUILD_APK_FILENAME=$(cat ./artifact/.metadata/apk_filename)" >> "$GITHUB_ENV"
           echo "BUILDSTAMP=$(cat ./artifact/.metadata/buildstamp)" >> "$GITHUB_ENV"
@@ -41,7 +41,7 @@ jobs:
         run: |
           if [[ '${{ env.BUILD_TYPE }}' == 'release' ]]; then
             echo "TARGET_DIR=build/release_archive/${{ env.BUILDSTAMP }}/" >> "$GITHUB_ENV"
-            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Mobile-Release-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Mobile-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
           fi
           if [[ '${{ env.BUILD_TYPE }}' == 'beta' ]]; then
             echo "TARGET_DIR=build/beta_archive/${{ env.BUILDSTAMP }}/" >> "$GITHUB_ENV"
@@ -53,9 +53,13 @@ jobs:
           fi
 
       - name: Set env for IITC Prime builds
-        if: github.event.action == 'new_iitc_prime_build'
+        if: env.IS_PRIME_BUILD == 'true'
         run: |
-          echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Prime-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          if [[ '${{ env.BUILD_TYPE }}' == 'beta' ]]; then
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Prime-Beta-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          else
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Prime-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          fi
 
       - name: Restore correct mtime
         run: |
@@ -101,7 +105,7 @@ jobs:
           cp ./artifact/build/${{ env.BUILD_APK_FILENAME }} ./website/static/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }}
 
       - name: Setup F-Droid server
-        if: ${{ env.BUILD_TYPE != 'PR' }}
+        if: env.BUILD_TYPE != 'PR'
         uses: ./website/.github/actions/setup-fdroid
         with:
           keystore_p12: ${{ secrets.KEYSTORE_P12 }}
@@ -119,8 +123,8 @@ jobs:
           COMMIT_URL="https://github.com/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/commit/${{ env.COMMIT_HASH }}"
           if [[ '${{ env.BUILD_TYPE }}' == 'PR' ]]; then
             git commit -m "🤖 New build PR №${{ env.PR_NUMBER }} from $COMMIT_URL"
-          elif [[ '${{ env.BUILD_TYPE }}' == 'prime' ]]; then
-            git commit -m "🤖 New IITC Prime build from $COMMIT_URL"
+          elif [[ '${{ env.IS_PRIME_BUILD }}' == 'true' ]]; then
+            git commit -m "🤖 New IITC Prime ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
           else
             git commit -m "🤖 New IITC ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
           fi
