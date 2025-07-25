@@ -1,0 +1,46 @@
+name: 'Setup F-Droid Repository'
+description: 'Configure and update F-Droid repository'
+
+inputs:
+  keystore_p12:
+    description: 'Base64 encoded keystore.p12 file'
+    required: true
+  config_yml:
+    description: 'Base64 encoded config.yml file'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up F-Droid repo secrets
+      shell: bash
+      run: |
+        echo "${{ inputs.keystore_p12 }}" | base64 -d - > ./website/static/fdroid/keystore.p12
+        echo "${{ inputs.config_yml }}" | base64 -d - > ./website/static/fdroid/config.yml
+
+    - name: Build patched F-Droid server image
+      shell: bash
+      run: |
+        cat > Dockerfile.fdroid-patched << 'EOF'
+        FROM registry.gitlab.com/fdroid/docker-executable-fdroidserver:master
+
+        RUN apt-get -y update && \
+            apt-get -y dist-upgrade && \
+            apt-get -y install python3-pip
+
+        # Install a recent version of androguard to fix APK parsing issues
+        RUN git clone --recursive https://github.com/androguard/androguard.git && \
+            cd androguard && \
+            git reset --hard v4.1.2 && \
+            pip install . --break-system-packages
+        EOF
+        
+        docker build -t fdroid-server-patched -f Dockerfile.fdroid-patched .
+
+    - name: Pull F-Droid server and update repo
+      uses: addnab/docker-run-action@v3
+      with:
+        image: fdroid-server-patched
+        options: -v ${{ github.workspace }}/website/static/fdroid/:/repo
+        run: |
+          /home/vagrant/fdroidserver/fdroid update

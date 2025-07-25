@@ -1,0 +1,22 @@
+name: 'Download Build Artifact'
+description: 'Download and extract build artifact from repository dispatch'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Receive artifact
+      uses: actions/github-script@v7
+      with:
+        script: |
+          let download = await github.rest.actions.downloadArtifact({
+             owner: '${{ github.event.client_payload.repo.owner }}',
+             repo: '${{ github.event.client_payload.repo.repo }}',
+             artifact_id: '${{ github.event.client_payload.artifact_id }}',
+             archive_format: 'zip',
+          });
+          let fs = require('fs');
+          fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/build.zip`, Buffer.from(download.data));
+
+    - name: Unzip artifact
+      shell: bash
+      run: unzip build.zip -d artifact

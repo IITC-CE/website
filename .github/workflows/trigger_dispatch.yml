@@ -3,10 +3,10 @@ name: Remote Dispatch Action Responder
 on: [repository_dispatch]
 
 jobs:
-  receive_new_build_job:
-    name: New IITC Release/Beta/PR build
+  process_build:
+    name: Process IITC build
     runs-on: ubuntu-latest
-    if: github.event.action == 'new_iitc_build'
+    if: github.event.action == 'new_iitc_build' || github.event.action == 'new_iitc_prime_build'
     steps:
 
       - uses: actions/checkout@v4
@@ -18,41 +18,30 @@ jobs:
           # creates a shallow checkout.
           fetch-depth: 0
 
-      - name: Setup git config
-        run: |
-          cd ./website/
-          git config user.name "github-actions"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Setup git
+        uses: ./website/.github/actions/setup-git
 
-      - name: Receive artifact
-        uses: actions/github-script@v7
-        with:
-          script: |
-            let download = await github.rest.actions.downloadArtifact({
-               owner: '${{ github.event.client_payload.repo.owner }}',
-               repo: '${{ github.event.client_payload.repo.repo }}',
-               artifact_id: '${{ github.event.client_payload.artifact_id }}',
-               archive_format: 'zip',
-            });
-            let fs = require('fs');
-            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/build.zip`, Buffer.from(download.data));
-
-      - name: Unzip artifact
-        run: unzip build.zip -d artifact
+      - name: Download artifact
+        uses: ./website/.github/actions/download-artifact
 
       - name: Set base env
         run: |
+          if [[ '${{ github.event.action }}' == 'new_iitc_build' ]]; then
+            echo "BUILD_ZIP_FILENAME=$(cat ./artifact/.metadata/zip_filename)" >> "$GITHUB_ENV"
+          elif [[ '${{ github.event.action }}' == 'new_iitc_prime_build' ]]; then
+            echo "IS_PRIME_BUILD=true" >> "$GITHUB_ENV"
+          fi
           echo "BUILD_TYPE=$(cat ./artifact/.metadata/build_type)" >> "$GITHUB_ENV"
           echo "COMMIT_HASH=$(cat ./artifact/.metadata/commit)" >> "$GITHUB_ENV"
           echo "BUILD_APK_FILENAME=$(cat ./artifact/.metadata/apk_filename)" >> "$GITHUB_ENV"
-          echo "BUILD_ZIP_FILENAME=$(cat ./artifact/.metadata/zip_filename)" >> "$GITHUB_ENV"
           echo "BUILDSTAMP=$(cat ./artifact/.metadata/buildstamp)" >> "$GITHUB_ENV"
 
-      - name: Set env for Release/Beta/PR build
+      - name: Set env for IITC Release/Beta/PR build
+        if: github.event.action == 'new_iitc_build'
         run: |
           if [[ '${{ env.BUILD_TYPE }}' == 'release' ]]; then
             echo "TARGET_DIR=build/release_archive/${{ env.BUILDSTAMP }}/" >> "$GITHUB_ENV"
-            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Mobile-Release-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Mobile-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
           fi
           if [[ '${{ env.BUILD_TYPE }}' == 'beta' ]]; then
             echo "TARGET_DIR=build/beta_archive/${{ env.BUILDSTAMP }}/" >> "$GITHUB_ENV"
@@ -63,6 +52,15 @@ jobs:
             echo "TARGET_DIR=build/artifact/PR$(cat ./artifact/.metadata/pr_number)/" >> "$GITHUB_ENV"
           fi
 
+      - name: Set env for IITC Prime builds
+        if: env.IS_PRIME_BUILD == 'true'
+        run: |
+          if [[ '${{ env.BUILD_TYPE }}' == 'beta' ]]; then
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Prime-Beta-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          else
+            echo "TARGET_APK_FILENAME_FOR_FDROID=IITC-Prime-${{ env.BUILDSTAMP }}.apk" >> "$GITHUB_ENV"
+          fi
+
       - name: Restore correct mtime
         run: |
           sudo apt install git-restore-mtime
@@ -70,6 +68,7 @@ jobs:
           git restore-mtime
 
       - name: Delete old builds
+        if: github.event.action == 'new_iitc_build'
         run: |
           # Getting the list of open PRs sorted by last update date
           open_prs=$(curl -s "https://api.github.com/repos/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/pulls?state=open&sort=updated&direction=desc" | jq -r '.[].number')
@@ -93,52 +92,24 @@ jobs:
           # Deleting old beta versions
           ls -trd ./static/build/beta_archive/* | head -n -50 | xargs --no-run-if-empty git rm -r
 
-      - name: Copy files to website
+      - name: Copy IITC files to website
+        if: github.event.action == 'new_iitc_build'
         run: |
           mkdir -p ./website/static/${{ env.TARGET_DIR }}
-          mkdir -p ./website/static/fdroid/repo/
-
           cp -r ./artifact/build/* ./website/static/${{ env.TARGET_DIR }}
-          if [[ '${{ env.TARGET_APK_FILENAME_FOR_FDROID }}' != "" ]]; then
-            cp ./artifact/build/${{ env.BUILD_APK_FILENAME }} ./website/static/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }}
-          fi
 
-      - name: Set up F-Droid repo secrets
-        if: ${{ env.BUILD_TYPE != 'PR' }}
+      - name: Copy APK to F-Droid repo
+        if: env.TARGET_APK_FILENAME_FOR_FDROID != ''
         run: |
-          echo "${{ secrets.KEYSTORE_P12 }}" | base64 -d - > ./website/static/fdroid/keystore.p12
-          echo "${{ secrets.CONFIG_YML }}" | base64 -d - > ./website/static/fdroid/config.yml
+          mkdir -p ./website/static/fdroid/repo/
+          cp ./artifact/build/${{ env.BUILD_APK_FILENAME }} ./website/static/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }}
 
-      # Temporary workaround for F-Droid server issue
-      # Reference: https://gitlab.com/fdroid/docker-executable-fdroidserver/-/issues/28
-      # This step builds a custom Docker image with updated androguard to fix KeyError: 'resources.arsc'
-      - name: Build patched F-Droid server image
-        if: ${{ env.BUILD_TYPE != 'PR' }}
-        run: |
-          cat > Dockerfile.fdroid-patched << 'EOF'
-          FROM registry.gitlab.com/fdroid/docker-executable-fdroidserver:master
-
-          RUN apt-get -y update && \
-              apt-get -y dist-upgrade && \
-              apt-get -y install python3-pip
-
-          # Install a recent version of androguard to fix APK parsing issues
-          RUN git clone --recursive https://github.com/androguard/androguard.git && \
-              cd androguard && \
-              git reset --hard v4.1.2 && \
-              pip install . --break-system-packages
-          EOF
-          
-          docker build -t fdroid-server-patched -f Dockerfile.fdroid-patched .
-
-      - name: Pull F-Droid server and update repo
-        if: ${{ env.BUILD_TYPE != 'PR' }}
-        uses: addnab/docker-run-action@v3
+      - name: Setup F-Droid server
+        if: env.BUILD_TYPE != 'PR'
+        uses: ./website/.github/actions/setup-fdroid
         with:
-          image: fdroid-server-patched
-          options: -v ${{ github.workspace }}/website/static/fdroid/:/repo
-          run: |
-            /home/vagrant/fdroidserver/fdroid update
+          keystore_p12: ${{ secrets.KEYSTORE_P12 }}
+          config_yml: ${{ secrets.CONFIG_YML }}
 
       - name: Save changes
         run: |
@@ -152,6 +123,8 @@ jobs:
           COMMIT_URL="https://github.com/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/commit/${{ env.COMMIT_HASH }}"
           if [[ '${{ env.BUILD_TYPE }}' == 'PR' ]]; then
             git commit -m "🤖 New build PR №${{ env.PR_NUMBER }} from $COMMIT_URL"
+          elif [[ '${{ env.IS_PRIME_BUILD }}' == 'true' ]]; then
+            git commit -m "🤖 New IITC Prime ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
           else
             git commit -m "🤖 New IITC ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
           fi
