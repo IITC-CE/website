@@ -1,0 +1,18 @@
+AntiFeatures:
+  - NonFreeNet
+  - Tracking
+Categories:
+  - Games
+License: ISC
+WebSite: https://iitc.app/
+SourceCode: https://github.com/IITC-CE/iitc-prime
+IssueTracker: https://github.com/IITC-CE/IITC-Prime/issues
+Changelog: https://github.com/IITC-CE/IITC-Prime/commits/master
+
+AutoName: IITC Prime Beta
+Summary: 'A new and modern way to use IITC on mobile'
+
+RepoType: git
+Repo: https://github.com/IITC-CE/IITC-Prime
+
+CurrentVersionCode: 0
