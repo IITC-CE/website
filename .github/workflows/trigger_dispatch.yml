@@ -21,6 +21,9 @@ jobs:
       - name: Setup git
         uses: ./website/.github/actions/setup-git
 
+      - name: Setup Cloudflare Wrangler
+        run: npm install -g wrangler@latest
+        
       - name: Download artifact
         uses: ./website/.github/actions/download-artifact
 
@@ -98,11 +101,40 @@ jobs:
           mkdir -p ./website/static/${{ env.TARGET_DIR }}
           cp -r ./artifact/build/* ./website/static/${{ env.TARGET_DIR }}
 
-      - name: Copy APK to F-Droid repo
+      - name: Download existing APKs from R2
         if: env.TARGET_APK_FILENAME_FOR_FDROID != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           mkdir -p ./website/static/fdroid/repo/
+
+          echo "Downloading existing APKs from R2..."
+          while read -r filename; do
+            if [ -n "$filename" ]; then
+              echo "Downloading $filename..."
+              wrangler r2 object get ${{ secrets.R2_BUCKET_NAME }}/fdroid/repo/$filename --file "./website/static/fdroid/repo/$filename" --remote || echo "Failed to download $filename"
+            fi
+          done < "./website/static/fdroid/r2_apk_list.txt"
+
+      - name: Copy APK to F-Droid repo
+        if: env.TARGET_APK_FILENAME_FOR_FDROID != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Copy new APK
           cp ./artifact/build/${{ env.BUILD_APK_FILENAME }} ./website/static/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }}
+          
+          # Upload new APK to R2
+          echo "Uploading new APK to R2..."
+          wrangler r2 object put ${{ secrets.R2_BUCKET_NAME }}/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }} \
+            --file ./website/static/fdroid/repo/${{ env.TARGET_APK_FILENAME_FOR_FDROID }} --remote
+          
+          # Add new APK to the list (if not already there)
+          if ! grep -q "${{ env.TARGET_APK_FILENAME_FOR_FDROID }}" "./website/static/fdroid/r2_apk_list.txt"; then
+            echo "${{ env.TARGET_APK_FILENAME_FOR_FDROID }}" >> "./website/static/fdroid/r2_apk_list.txt"
+          fi
 
       - name: Setup F-Droid server
         if: env.BUILD_TYPE != 'PR'
@@ -111,11 +143,34 @@ jobs:
           keystore_p12: ${{ secrets.KEYSTORE_P12 }}
           config_yml: ${{ secrets.CONFIG_YML }}
 
+      - name: Clean up archived APKs from R2 and remove local APKs
+        if: env.TARGET_APK_FILENAME_FOR_FDROID != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Remove archived APKs from R2 (F-Droid moves old versions to archive/)
+          if [ -d "./website/static/fdroid/archive" ]; then
+            echo "Cleaning up archived APKs from R2..."
+            find ./website/static/fdroid/archive -name "*.apk" -type f | while read -r archived_apk; do
+              filename=$(basename "$archived_apk")
+              echo "Removing $filename from R2..."
+              wrangler r2 object delete ${{ secrets.R2_BUCKET_NAME }}/fdroid/repo/$filename --remote || echo "Failed to delete $filename from R2"
+              
+              # Remove from APK list file
+              grep -v "^$filename$" "./website/static/fdroid/r2_apk_list.txt" > "./website/static/fdroid/r2_apk_list.txt.tmp" || true
+              mv "./website/static/fdroid/r2_apk_list.txt.tmp" "./website/static/fdroid/r2_apk_list.txt"
+            done
+          fi
+          
+          echo "Removing local APK files..."
+          find ./website/static/fdroid/repo -name "*.apk" -type f -delete || echo "No APK files to remove"
+
       - name: Save changes
         run: |
           cd ./website/
           rm -rf ./website/static/fdroid/archive
-          git add -A static/build/ static/fdroid/repo/
+          git add -A static/build/ static/fdroid/repo/ static/fdroid/r2_apk_list.txt
 
       - name: Commit and push changes
         run: |
