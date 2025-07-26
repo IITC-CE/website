@@ -110,11 +110,15 @@ jobs:
         with:
           keystore_p12: ${{ secrets.KEYSTORE_P12 }}
           config_yml: ${{ secrets.CONFIG_YML }}
+          r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Save changes
         run: |
           cd ./website/
           rm -rf ./website/static/fdroid/archive
+          rm -f static/fdroid/repo/*.apk
           git add -A static/build/ static/fdroid/repo/
 
       - name: Commit and push changes

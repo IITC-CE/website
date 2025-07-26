@@ -8,6 +8,15 @@ inputs:
   config_yml:
     description: 'Base64 encoded config.yml file'
     required: true
+  r2_access_key_id:
+    description: 'R2 Access Key ID'
+    required: true
+  r2_secret_access_key:
+    description: 'R2 Secret Access Key'
+    required: true
+  cloudflare_account_id:
+    description: 'Cloudflare Account ID'
+    required: true
 
 runs:
   using: 'composite'
@@ -17,6 +26,17 @@ runs:
       run: |
         echo "${{ inputs.keystore_p12 }}" | base64 -d - > ./website/static/fdroid/keystore.p12
         echo "${{ inputs.config_yml }}" | base64 -d - > ./website/static/fdroid/config.yml
+        
+        # Create rclone config for Cloudflare R2
+        mkdir -p ./website/static/fdroid/.config/rclone
+        cat > ./website/static/fdroid/.config/rclone/rclone.conf << EOF
+        [r2-config]
+        type = s3
+        provider = Cloudflare
+        access_key_id = ${{ inputs.r2_access_key_id }}
+        secret_access_key = ${{ inputs.r2_secret_access_key }}
+        endpoint = https://${{ inputs.cloudflare_account_id }}.r2.cloudflarestorage.com
+        EOF
 
     - name: Build patched F-Droid server image
       shell: bash
@@ -26,21 +46,32 @@ runs:
 
         RUN apt-get -y update && \
             apt-get -y dist-upgrade && \
-            apt-get -y install python3-pip
+            apt-get -y install python3-pip curl unzip
 
         # Install a recent version of androguard to fix APK parsing issues
         RUN git clone --recursive https://github.com/androguard/androguard.git && \
             cd androguard && \
             git reset --hard v4.1.2 && \
             pip install . --break-system-packages
+
+        # Install rclone for cloud storage support
+        RUN curl https://rclone.org/install.sh | bash
         EOF
         
         docker build -t fdroid-server-patched -f Dockerfile.fdroid-patched .
+
+    - name: Download existing APKs from R2
+      uses: addnab/docker-run-action@v3
+      with:
+        image: fdroid-server-patched
+        options: -v ${{ github.workspace }}/website/static/fdroid/:/repo -v ${{ github.workspace }}/website/static/fdroid/.config/rclone:/root/.config/rclone
+        run: |
+          rclone copy r2-config:iitc/fdroid/repo /repo/repo --include="*.apk" -v
 
     - name: Pull F-Droid server and update repo
       uses: addnab/docker-run-action@v3
       with:
         image: fdroid-server-patched
-        options: -v ${{ github.workspace }}/website/static/fdroid/:/repo
+        options: -v ${{ github.workspace }}/website/static/fdroid/:/repo -v ${{ github.workspace }}/website/static/fdroid/.config/rclone:/root/.config/rclone
         run: |
-          /home/vagrant/fdroidserver/fdroid update
+          /home/vagrant/fdroidserver/fdroid update -v && /home/vagrant/fdroidserver/fdroid deploy -v
