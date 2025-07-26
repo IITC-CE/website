@@ -1,1 +1,0 @@
-{"/etc/issue.net":"Debian GNU/Linux 12","commandLine":["/home/vagrant/fdroidserver/fdroid deploy","-v"],"endTimestamp":1753534771098,"fdroidserver":{"commitId":"6ad3c74bb46765c6e787f3efa7a5031684697df3","isDirty":false,"modifiedFiles":[],"untrackedFiles":[]},"startTimestamp":1753534762000,"subcommand":"deploy"}

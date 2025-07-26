@@ -117,8 +117,7 @@ jobs:
       - name: Save changes
         run: |
           cd ./website/
-          rm -rf ./website/static/fdroid/archive
-          rm -f static/fdroid/repo/*.apk
+          rm -rf static/fdroid/repo/index* static/fdroid/repo/entry* static/fdroid/repo/status static/fdroid/repo/icons* static/fdroid/repo/*.apk static/fdroid/archive
           git add -A static/build/ static/fdroid/repo/
 
       - name: Commit and push changes
