@@ -31,6 +31,9 @@ jobs:
           sudo apt install git-restore-mtime
           git restore-mtime
 
+      - name: Remove fdroid folder from deployment
+        run: rm -rf static/fdroid
+
       - name: Build website
         run: python3 update.py
 
