@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Missions
 // @category       Info
-// @version        0.3.4.20250418.100705
+// @version        0.3.4.20250731.111658
 // @description    View missions. Marking progress on waypoints/missions basis. Showing mission paths on the map.
 // @id             missions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-04-18-100705';
+plugin_info.dateTimeVersion = '2025-07-31-111658';
 plugin_info.pluginId = 'missions';
 //END PLUGIN AUTHORS NOTE
 
@@ -157,19 +157,14 @@ window.plugin.missions = {
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASAQMAAABsABwUAAAABlBMVEWq+02y+/jJjgLNAAAAAXRSTlMAQObYZgAAADdJREFUCNdjYAAC9gMMDDwPgIwEIAbSjA0MDMwgzADBIMAsAMQSQIYMA8P9fwfAGMRmAIkJMAAAQKIJxqg43P4AAAAASUVORK5CYII=',
   ],
 
-  onPortalSelected: function () {
-    if (window.selectedPortal === null) {
+  onPortalDetailsUpdated: function (data) {
+    if (!data.portalDetails.mission && !data.portalDetails.mission50plus) {
       return;
     }
-    var portal = window.portals[window.selectedPortal];
-    if (!portal || (!portal.options.data.mission && !portal.options.data.mission50plus)) {
-      return;
-    }
-    // After select.
-    setTimeout(function () {
-      // #resodetails
-      $('.linkdetails').append('<aside><a tabindex="0" onclick="plugin.missions.openPortalMissions();" >Missions</a></aside>');
-    }, 0);
+    var missionHtml = $('<a>')
+      .click(this.openPortalMissions.bind(this))
+      .text('Missions');
+    $('.linkdetails').append($('<aside>').append(missionHtml));
   },
 
   openTopMissions: function (bounds) {
@@ -1491,7 +1486,7 @@ window.plugin.missions = {
     }
 
     // window.addPortalHighlighter('Mission start point', this.highlight.bind(this));
-    window.addHook('portalSelected', this.onPortalSelected.bind(this));
+    window.addHook('portalDetailsUpdated', this.onPortalDetailsUpdated.bind(this));
 
     window.addHook('search', this.onSearch.bind(this));
 
