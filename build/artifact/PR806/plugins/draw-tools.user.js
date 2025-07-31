@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.10.4.20250418.100705
+// @version        0.11.0.20250731.111658
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-04-18-100705';
+plugin_info.dateTimeVersion = '2025-07-31-111658';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'draw-tools';
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.11.0',
+    changes: ['Custom paste dialog', 'Import multiple files'],
+  },
   {
     version: '0.10.4',
     changes: ['Refactoring: fix eslint'],
@@ -676,7 +680,7 @@ window.plugin.drawTools.snapToPortals = function () {
     if (minGuid) {
       var pll = window.portals[minGuid].getLatLng();
       if (pll.lat !== latlng.lat || pll.lng !== latlng.lng) {
-        return L.latLng(pll);
+        return new L.LatLng(pll.lat, pll.lng);
       }
     }
   };
@@ -6400,6 +6404,25 @@ L.EditToolbar.Edit.include({
 	}
 });
 })(L.EditToolbar.Edit.prototype._backupLayer,L.EditToolbar.Edit.prototype._revertLayer);
+
+
+;
+
+    // eslint-disable-next-line
+    // *** included: external/leaflet.draw-confirm.js ***
+
+(function (removeAllLayers) {
+    L.EditToolbar.Delete.include({
+        removeAllLayers: function () {
+            if (confirm('Are you sure?')) {
+                removeAllLayers.call(this);
+            }
+        },
+        removeAllLayersDirect: function () {
+            removeAllLayers.call(this);
+        }
+    });
+})(L.EditToolbar.Delete.prototype.removeAllLayers);
 
 
 ;

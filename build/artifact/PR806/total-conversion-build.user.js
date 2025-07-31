@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.39.1.20250418.100705
+// @version        0.40.0.20250731.111658
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-04-18-100705';
+plugin_info.dateTimeVersion = '2025-07-31-111658';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -37,6 +37,18 @@ window.IITC = IITC;
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.40.0',
+    changes: [
+      'Added interface controls for the mobile version of IITC without the need for an app installation',
+      'Introduced the IITC.utils API — a set of utility functions (see more: https://github.com/IITC-CE/ingress-intel-total-conversion/wiki/IITC-plugin-migration-guide#utils-api)',
+      'Implemented portal object persistence: portal markers are retained and updated until explicitly removed from rendering (e.g., when zooming out significantly)',
+      'Element positioning in Leaflet is now done using CSS Grid — an internal code improvement with no impact on the interface',
+      'Added the IITC.search API — providing search capabilities (see more: https://github.com/IITC-CE/ingress-intel-total-conversion/wiki/IITC-plugin-migration-guide#search-api)',
+      'Region Score: fixed display of the next control period (CP) time for time zones with a 30-minute offset — now shows the correct time',
+      'Disabled right-to-left (RTL) text support for portal names',
+    ],
+  },
   {
     version: '0.39.1',
     changes: ['Fix Machina color in chat'],
@@ -125,7 +137,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-04-18-100705';
+window.iitcBuildDate = '2025-07-31-111658';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -1059,6 +1071,22 @@ a:hover {\
   text-decoration: underline;\
 }\
 \
+.leaflet-control {\
+  user-select: none; \
+}\
+\
+.leaflet-control-container .leaflet-top.leaflet-left {\
+  width: 700px;  /* chat default width */\
+  height: calc(100% - 126px); /* chat default start */\
+  max-height: 90%;\
+  display: flex;\
+  flex-direction: column;\
+  flex-wrap: wrap;\
+  align-content: flex-start;\
+  align-items: flex-start;\
+}\
+\
+\
 .leaflet-control-layers-overlays label.disabled {\
   text-decoration: line-through;\
   cursor: help;\
@@ -1357,17 +1385,6 @@ mark {\
   height: 1px;\
   overflow:hidden;\
   color: transparent;\
-}\
-\
-/* divider */\
-summary {\
-  color: #bbb;\
-  display: inline-block;\
-  height: 16px;\
-  overflow: hidden;\
-  padding: 0 2px;\
-  white-space: nowrap;\
-  width: 100%;\
 }\
 \
 #chatinput {\
@@ -2188,11 +2205,13 @@ td + td {\
 }\
 \
 #portal_highlight_select {\
+  position: absolute;\
+  top:5px;\
+  left:10px;\
   z-index: 2500;\
   font-size:11px;\
   background-color:#0E3C46;\
   color:#ffce00;\
-  order: -100;\
 }\
 \
 .leaflet-control-scale {\
@@ -2633,12 +2652,12 @@ window.COLORS_LVL = ['#000', '#FECE5A', '#FFA630', '#FF7315', '#E40000', '#FD299
 /**
  * Colour values for displaying mods, consistent with Ingress. Very Rare also used for AXA shields and Ultra Links.
  * @type {object}
- * @property {string} VERY_RARE=#b08cff
- * @property {string} RARE=#73a8ff
- * @property {string} COMMON=#8cffbf
+ * @property {string} VERY_RARE=#F781FF
+ * @property {string} RARE=#B68BFF
+ * @property {string} COMMON=#49EBC3
  * @memberof config_options
  */
-window.COLORS_MOD = { VERY_RARE: '#b08cff', RARE: '#73a8ff', COMMON: '#8cffbf' };
+window.COLORS_MOD = { VERY_RARE: '#F781FF', RARE: '#B68BFF', COMMON: '#49EBC3' };
 
 /**
  * What colour should the hacking range circle be (the small circle that appears around a selected portal,
@@ -2810,6 +2829,7 @@ window.MAX_RESO_PER_PLAYER = [0, 8, 4, 4, 4, 2, 2, 1, 1];
  * @memberof ingress_constants
  */
 window.BASE_HACK_COOLDOWN = 300; // 5 mins - 300 seconds
+window.FACTION_HACK_COOLDOWN = 180; // 3 min - 180 seconds
 
 /**
  * Base value, how many times at most you can hack the portal.
@@ -4136,12 +4156,22 @@ function prepPluginsToLoad() {
 }
 
 /**
+ * update Z-Index of plugins buttons in leaflet container
+ */
+function updateControlBarZIndex() {
+  $('.leaflet-control-container .leaflet-top.leaflet-left').children().each((index, element) => {
+    element.style.zIndex = (10100 - index).toString();
+  });
+}
+
+
+/**
  * The main boot function that initializes IITC. It is responsible for setting up the map,
  * loading plugins, and initializing various components of IITC.
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-04-18-100705');
+  log.log('loading done, booting. Built: ' + '2025-07-31-111658');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -4180,6 +4210,8 @@ function boot() {
 
   window.iitcLoaded = true;
   window.runHooks('iitcLoaded');
+
+  updateControlBarZIndex();
 }
 
 try {
@@ -25593,6 +25625,8 @@ window.Render.prototype.rescalePortalMarkers = function () {
     // NOTE: we're not calling this because it resets highlights - we're calling it as it
     // resets the style (inc size) of all portal markers, applying the new scale
     window.resetHighlightedPortals();
+
+    window.ornaments.reload();    
   }
 };
 
@@ -27668,6 +27702,9 @@ window.rangeLinkClick = function () {
 /**
  * Creates a link to open a specific portal in Ingress Prime.
  *
+ * It is using Firebase's Dynamic Links feature.
+ * https://firebase.google.com/docs/dynamic-links/create-manually
+ *
  * @function makePrimeLink
  * @param {string} guid - The globally unique identifier of the portal.
  * @param {number} lat - The latitude of the portal.
@@ -27675,7 +27712,26 @@ window.rangeLinkClick = function () {
  * @returns {string} The Ingress Prime link for the portal
  */
 window.makePrimeLink = function (guid, lat, lng) {
-  return `https://link.ingress.com/?link=https%3A%2F%2Fintel.ingress.com%2Fportal%2F${guid}&apn=com.nianticproject.ingress&isi=576505181&ibi=com.google.ingress&ifl=https%3A%2F%2Fapps.apple.com%2Fapp%2Fingress%2Fid576505181&ofl=https%3A%2F%2Fintel.ingress.com%2Fintel%3Fpll%3D${lat}%2C${lng}`;
+  const base = 'https://link.ingress.com/';
+  const link = {
+    'link': `https://intel.ingress.com/portal/${guid}`,
+  };
+  const android = {
+    'apn': 'com.nianticproject.ingress',
+  };
+  const ios = {
+    'isi': '576505181',
+    'ibi': 'com.google.ingress',
+    'ifl': 'https://apps.apple.com/app/ingress/id576505181',
+  };
+  const other = {
+    'ofl': `https://intel.ingress.com/intel?pll=${lat},${lng}`,
+  };
+  const url = new URL(base);
+  for (const [key, value] of Object.entries({...link, ...android, ...ios, ...other})) {
+    url.searchParams.set(key, value);
+  }
+  return url.toString();
 };
 
 /**
@@ -27710,7 +27766,7 @@ window.makePermalink = function (latlng, options) {
   if (options.fullURL) {
     url += new URL(document.baseURI).origin;
   }
-  url += '/';
+  url += document.location.pathname;
   return url + '?' + args.join('&');
 };
 
@@ -28129,10 +28185,12 @@ window.updatePortalHighlighterControl = function () {
 
   if (window._highlighters !== null) {
     if ($('#portal_highlight_select').length === 0) {
-      $('.leaflet-top.leaflet-left').first().append("<select id='portal_highlight_select' class='leaflet-control'></select>");
+      $('body').append("<select id='portal_highlight_select'></select>");
       $('#portal_highlight_select').change(function () {
         window.changePortalHighlights($(this).val());
       });
+      $('.leaflet-top.leaflet-left').css('padding-top', '20px');
+      $('.leaflet-control-scale-line').css('margin-top', '25px');
     }
     $('#portal_highlight_select').html('');
     $('#portal_highlight_select').append($('<option>').attr('value', window._no_highlighter).text(window._no_highlighter));
@@ -28552,7 +28610,8 @@ window.getPortalHackDetails = function (d) {
   // first mod of type is fully effective, the others are only 50% effective
   var effectivenessReduction = [1, 0.5, 0.5, 0.5];
 
-  var cooldownTime = window.BASE_HACK_COOLDOWN;
+  var isFriendly = window.teamStringToId(d.team) === window.teamStringToId(window.PLAYER.team); 
+  var cooldownTime = isFriendly ? FACTION_HACK_COOLDOWN : window.BASE_HACK_COOLDOWN; 
 
   $.each(heatsinks, function (index, mod) {
     var hackSpeed = parseInt(mod.stats.HACK_SPEED) / 1000000;
@@ -31440,6 +31499,11 @@ body {\
   -moz-box-sizing: border-box;\
   -webkit-box-sizing: border-box;\
   box-sizing: border-box;\
+  transition: opacity 0.2s ease;\
+}\
+\
+#mobileinfo.loading {\
+  opacity: 0.6;\
 }\
 \
 #mobileinfo .portallevel {\
@@ -32081,23 +32145,34 @@ IITC.statusbar.map = {
  */
 IITC.statusbar.portal = {
   _data: null,
+  _lastSentData: null, // Keep last sent data to avoid sending empty info
 
   /**
    * Gets detailed data about a specific portal.
    *
    * @function IITC.statusbar.portal.getData
    * @param {string} guid - The portal's globally unique identifier
-   * @returns {Object|null} Structured portal data including team, level, health, and resonators,
+   * @returns {Object|null} Structured portal data including team, level, health, resonators, and loading state,
    *                        or null if the portal is not found
    */
   getData(guid) {
-    if (!guid || !window.portals[guid]) return null;
+    if (!guid) {
+      this._lastSentData = null;
+      return null;
+    }
+
+    // If portal doesn't exist or has no basic data, return previous data with loading state
+    if (!window.portals[guid]) {
+      return this._lastSentData ? { ...this._lastSentData, isLoading: true } : null;
+    }
 
     const portal = window.portals[guid];
     const data = portal.options.data;
 
-    // Early return if we don't have the basic data
-    if (typeof data.title === 'undefined') return null;
+    // If we don't have basic data, return previous data with loading state
+    if (typeof data.title === 'undefined') {
+      return this._lastSentData ? { ...this._lastSentData, isLoading: true } : null;
+    }
 
     // Get portal details object if available
     const details = window.portalDetail.get(guid);
@@ -32114,6 +32189,11 @@ IITC.statusbar.portal = {
     // Determine if portal is neutral
     const isNeutral = data.team === 'N' || data.team === 'NEUTRAL';
 
+    // Determine if we have complete portal details
+    // For neutral portals, having details object is enough (they don't have resonators)
+    // For occupied portals, we need details with resonators
+    const hasCompleteDetails = details && (isNeutral || (details.resonators && details.resonators.length > 0));
+
     // Build structured result data
     const result = {
       guid,
@@ -32124,10 +32204,11 @@ IITC.statusbar.portal = {
       health: healthPct,
       resonators: [],
       levelColor: !isNeutral ? window.COLORS_LVL[data.level] : null,
+      isLoading: !hasCompleteDetails, // True until we have complete portal details
     };
 
-    // Process resonators if available
-    if (details && details.resonators && details.resonators.length > 0) {
+    // Process resonators if available (only for non-neutral portals)
+    if (hasCompleteDetails && !isNeutral && details.resonators && details.resonators.length > 0) {
       // Create empty array with placeholders for all 8 positions
       result.resonators = COMPASS_DIRECTIONS.map((direction, index) => ({
         direction,
@@ -32180,6 +32261,7 @@ IITC.statusbar.portal = {
       }
     }
 
+    this._lastSentData = result;
     this._data = result;
     return result;
   },
@@ -32254,9 +32336,9 @@ IITC.statusbar.portal = {
 
     if (window.isApp && window.app.setPortalStatus) {
       if (data) {
-        window.app.setPortalStatus(data.guid, data.team, data.level, data.title, data.health, data.resonators, data.levelColor);
+        window.app.setPortalStatus(data.guid, data.team, data.level, data.title, data.health, data.resonators, data.levelColor, data.isLoading);
       } else {
-        window.app.setPortalStatus(null, null, null, null, null, null, null);
+        window.app.setPortalStatus(null, null, null, null, null, null, null, false);
       }
     }
 
@@ -32265,6 +32347,11 @@ IITC.statusbar.portal = {
       const mobileinfo = document.getElementById('mobileinfo');
       if (mobileinfo) {
         mobileinfo.innerHTML = this.render(data);
+        if (data && data.isLoading) {
+          mobileinfo.classList.add('loading');
+        } else {
+          mobileinfo.classList.remove('loading');
+        }
       }
     }
   },
