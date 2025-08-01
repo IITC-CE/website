@@ -1,2 +1,0 @@
-versionName=0.38.0-beta-2024.09.06-08:56
-versionCode=1725612968

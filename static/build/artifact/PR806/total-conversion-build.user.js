@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.40.0.20250731.111658
+// @version        0.40.0.20250801.184006
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-07-31-111658';
+plugin_info.dateTimeVersion = '2025-08-01-184006';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -137,7 +137,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-07-31-111658';
+window.iitcBuildDate = '2025-08-01-184006';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4171,7 +4171,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-07-31-111658');
+  log.log('loading done, booting. Built: ' + '2025-08-01-184006');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -31859,6 +31859,9 @@ const COMPASS_DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 // Game uses East=0 as starting point, going counter-clockwise
 const GAME_OCTANTS = ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'];
 
+// Fast lookup map for direction to index conversion (performance optimization)
+const DIRECTION_TO_INDEX = new Map(COMPASS_DIRECTIONS.map((dir, i) => [dir, i]));
+
 IITC.statusbar = {};
 
 /**
@@ -31874,10 +31877,13 @@ IITC.statusbar = {};
  */
 IITC.statusbar.renderTemplate = (template, replacements) => {
   let result = template;
-  Object.entries(replacements).forEach(([key, value]) => {
-    const replacement = value !== undefined && value !== null ? value : '';
-    result = result.replace(new RegExp(`{{ ${key} }}`, 'g'), replacement);
-  });
+  for (const key in replacements) {
+    if (Object.hasOwn(replacements, key)) {
+      const value = replacements[key];
+      const replacement = value !== undefined && value !== null ? value : '';
+      result = result.replace(`{{ ${key} }}`, replacement);
+    }
+  }
   return result;
 };
 
@@ -31984,8 +31990,8 @@ IITC.statusbar.init = function () {
  * @namespace IITC.statusbar.map
  */
 IITC.statusbar.map = {
-  _data: null,
   _timer: null,
+  _innerstatusElement: null,
 
   /**
    * Gets current map status data including portal levels, map loading progress, and active requests.
@@ -32002,7 +32008,7 @@ IITC.statusbar.map = {
     const minLinkLength = tileParams.minLinkLength;
 
     // Build comprehensive status data object
-    this._data = {
+    return {
       portalLevels: {
         hasPortals: tileParams.hasPortals,
         minLinkLength,
@@ -32024,8 +32030,6 @@ IITC.statusbar.map = {
         hasFailed: window.failedRequestCount > 0,
       },
     };
-
-    return this._data;
   },
 
   /**
@@ -32111,30 +32115,38 @@ IITC.statusbar.map = {
    * @fires app.setProgress - When in app mode
    */
   update() {
-    const data = this.getData();
-
-    if (window.isApp) {
-      if (window.app.setMapStatus) {
-        window.app.setMapStatus(data.portalLevels, data.mapStatus, data.requests);
-      }
-
-      if (window.app.setProgress) {
-        window.app.setProgress(data.mapStatus.progress);
-      }
+    // Early exit if we don't need map status updates
+    if (!IITC.statusbar.showHtmlMapInfo && !(window.isApp && (window.app.setMapStatus || window.app.setProgress))) {
+      return;
     }
 
-    if (IITC.statusbar.showHtmlMapInfo) {
-      // Delay status update to the next event loop for better performance
-      if (this._timer) clearTimeout(this._timer);
+    if (this._timer) clearTimeout(this._timer);
 
-      this._timer = setTimeout(() => {
-        this._timer = undefined;
-        const innerstatus = document.getElementById('innerstatus');
-        if (innerstatus) {
-          innerstatus.innerHTML = this.render(data);
+    this._timer = setTimeout(() => {
+      this._timer = undefined;
+
+      const data = this.getData();
+
+      if (window.isApp) {
+        if (window.app.setMapStatus) {
+          window.app.setMapStatus(data.portalLevels, data.mapStatus, data.requests);
         }
-      }, 0);
-    }
+
+        if (window.app.setProgress) {
+          window.app.setProgress(data.mapStatus.progress);
+        }
+      }
+
+      if (IITC.statusbar.showHtmlMapInfo) {
+        if (!this._innerstatusElement) {
+          this._innerstatusElement = document.getElementById('innerstatus');
+        }
+
+        if (this._innerstatusElement) {
+          this._innerstatusElement.innerHTML = this.render(data);
+        }
+      }
+    }, 0);
   },
 };
 
@@ -32144,8 +32156,9 @@ IITC.statusbar.map = {
  * @namespace IITC.statusbar.portal
  */
 IITC.statusbar.portal = {
-  _data: null,
   _lastSentData: null, // Keep last sent data to avoid sending empty info
+  _mobileinfoElement: null,
+  _timer: null,
 
   /**
    * Gets detailed data about a specific portal.
@@ -32202,23 +32215,15 @@ IITC.statusbar.portal = {
       isNeutral,
       title: data.title,
       health: healthPct,
-      resonators: [],
+      resonators: null,
       levelColor: !isNeutral ? window.COLORS_LVL[data.level] : null,
       isLoading: !hasCompleteDetails, // True until we have complete portal details
     };
 
     // Process resonators if available (only for non-neutral portals)
     if (hasCompleteDetails && !isNeutral && details.resonators && details.resonators.length > 0) {
-      // Create empty array with placeholders for all 8 positions
-      result.resonators = COMPASS_DIRECTIONS.map((direction, index) => ({
-        direction,
-        displayOrder: index,
-        level: 0,
-        energy: 0,
-        maxEnergy: 0,
-        healthPct: 0,
-        levelColor: window.COLORS_LVL[0],
-      }));
+      // Create sparse array - only populate slots that have resonators
+      result.resonators = new Array(8).fill(null);
 
       // Process each resonator
       for (let i = 0; i < details.resonators.length; i++) {
@@ -32244,13 +32249,12 @@ IITC.statusbar.portal = {
         direction = GAME_OCTANTS[octant];
 
         // Get display position from compass direction
-        displayOrder = COMPASS_DIRECTIONS.indexOf(direction);
+        displayOrder = DIRECTION_TO_INDEX.get(direction);
 
         // Update resonator at the correct position
-        if (displayOrder >= 0) {
+        if (displayOrder !== undefined) {
           result.resonators[displayOrder] = {
             direction,
-            displayOrder,
             level,
             energy,
             maxEnergy,
@@ -32262,7 +32266,6 @@ IITC.statusbar.portal = {
     }
 
     this._lastSentData = result;
-    this._data = result;
     return result;
   },
 
@@ -32291,19 +32294,20 @@ IITC.statusbar.portal = {
 
     // Create resonator visualizations
     let resonators = '';
-    if (data.resonators && data.resonators.length > 0) {
-      data.resonators.forEach((reso) => {
-        if (reso.energy > 0) {
+    if (data.resonators) {
+      data.resonators.forEach((reso, index) => {
+        if (reso && reso.energy > 0) {
+          // Render filled resonator
           resonators += renderTemplate(templates.resonator, {
             className: `${teamCss}${reso.direction === 'N' ? ' north' : ''}`,
-            slot: reso.displayOrder,
+            slot: index,
             percentage: reso.healthPct,
             borderColor: reso.levelColor,
           });
         } else {
-          // Render empty slots
+          // Render empty slot
           resonators += renderTemplate(templates.emptyResonator, {
-            slot: reso.displayOrder,
+            slot: index,
           });
         }
       });
@@ -32331,29 +32335,37 @@ IITC.statusbar.portal = {
       return;
     }
 
-    const guid = selectedPortalData ? selectedPortalData.selectedPortalGuid : undefined;
-    const data = this.getData(guid);
+    if (this._timer) clearTimeout(this._timer);
 
-    if (window.isApp && window.app.setPortalStatus) {
-      if (data) {
-        window.app.setPortalStatus(data.guid, data.team, data.level, data.title, data.health, data.resonators, data.levelColor, data.isLoading);
-      } else {
-        window.app.setPortalStatus(null, null, null, null, null, null, null, false);
-      }
-    }
+    this._timer = setTimeout(() => {
+      this._timer = undefined;
 
-    // Update UI in smartphone mode
-    if (IITC.statusbar.showHtmlPortalInfo) {
-      const mobileinfo = document.getElementById('mobileinfo');
-      if (mobileinfo) {
-        mobileinfo.innerHTML = this.render(data);
-        if (data && data.isLoading) {
-          mobileinfo.classList.add('loading');
+      const guid = selectedPortalData ? selectedPortalData.selectedPortalGuid : undefined;
+      const data = this.getData(guid);
+
+      if (window.isApp && window.app.setPortalStatus) {
+        if (data) {
+          window.app.setPortalStatus(data.guid, data.team, data.level, data.title, data.health, data.resonators, data.levelColor, data.isLoading);
         } else {
-          mobileinfo.classList.remove('loading');
+          window.app.setPortalStatus(null, null, null, null, null, null, null, false);
         }
       }
-    }
+
+      if (IITC.statusbar.showHtmlPortalInfo) {
+        if (!this._mobileinfoElement) {
+          this._mobileinfoElement = document.getElementById('mobileinfo');
+        }
+
+        if (this._mobileinfoElement) {
+          this._mobileinfoElement.innerHTML = this.render(data);
+          if (data && data.isLoading) {
+            this._mobileinfoElement.classList.add('loading');
+          } else {
+            this._mobileinfoElement.classList.remove('loading');
+          }
+        }
+      }
+    }, 0);
   },
 };
 
