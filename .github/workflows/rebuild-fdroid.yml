@@ -1,0 +1,25 @@
+name: Rebuild F-Droid repo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rebuild_fdroid:
+    name: Rebuild F-Droid repo
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          path: "./website"
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+
+      - name: Setup F-Droid server
+        uses: ./website/.github/actions/setup-fdroid
+        with:
+          keystore_p12: ${{ secrets.KEYSTORE_P12 }}
+          config_yml: ${{ secrets.CONFIG_YML }}
+          r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          r2_bucket_name: ${{ vars.R2_BUCKET_NAME }}
