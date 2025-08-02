@@ -66,7 +66,7 @@ runs:
         image: fdroid-server-patched
         options: -v ${{ github.workspace }}/website/static/fdroid/:/repo -v ${{ github.workspace }}/website/static/fdroid/.config/rclone:/root/.config/rclone
         run: |
-          rclone copy r2-config:iitc/fdroid/repo /repo/repo --include="*.apk" -v
+          rclone copy r2-config:iitc/fdroid/repo /repo/repo --include="*.apk" --metadata --modify-window=1s -v
 
     - name: Pull F-Droid server and update repo
       uses: addnab/docker-run-action@v3
