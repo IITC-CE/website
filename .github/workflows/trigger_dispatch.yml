@@ -113,6 +113,7 @@ jobs:
           r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          r2_bucket_name: ${{ vars.R2_BUCKET_NAME }}
 
       - name: Save changes
         run: |
@@ -123,12 +124,16 @@ jobs:
       - name: Commit and push changes
         run: |
           cd ./website/
-          COMMIT_URL="https://github.com/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/commit/${{ env.COMMIT_HASH }}"
-          if [[ '${{ env.BUILD_TYPE }}' == 'PR' ]]; then
-            git commit -m "🤖 New build PR №${{ env.PR_NUMBER }} from $COMMIT_URL"
-          elif [[ '${{ env.IS_PRIME_BUILD }}' == 'true' ]]; then
-            git commit -m "🤖 New IITC Prime ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit"
           else
-            git commit -m "🤖 New IITC ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
+            COMMIT_URL="https://github.com/${{ github.event.client_payload.repo.owner }}/${{ github.event.client_payload.repo.repo }}/commit/${{ env.COMMIT_HASH }}"
+            if [[ '${{ env.BUILD_TYPE }}' == 'PR' ]]; then
+              git commit -m "🤖 New build PR №${{ env.PR_NUMBER }} from $COMMIT_URL"
+            elif [[ '${{ env.IS_PRIME_BUILD }}' == 'true' ]]; then
+              git commit -m "🤖 New IITC Prime ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
+            else
+              git commit -m "🤖 New IITC ${{ env.BUILD_TYPE }} build from $COMMIT_URL"
+            fi
+            git push origin master
           fi
-          git push origin master
