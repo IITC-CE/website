@@ -113,6 +113,7 @@ jobs:
           r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          r2_bucket_name: ${{ vars.R2_BUCKET_NAME }}
 
       - name: Save changes
         run: |
