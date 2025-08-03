@@ -77,4 +77,4 @@ runs:
         image: fdroid-server-patched
         options: -v ${{ github.workspace }}/website/static/fdroid/:/repo -v ${{ github.workspace }}/website/static/fdroid/.config/rclone:/root/.config/rclone
         run: |
-          /home/vagrant/fdroidserver/fdroid update -v && /home/vagrant/fdroidserver/fdroid deploy -v
+          /home/vagrant/fdroidserver/fdroid update --use-date-from-apk -v && /home/vagrant/fdroidserver/fdroid deploy -v
