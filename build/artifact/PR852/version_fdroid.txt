@@ -1,0 +1,2 @@
+versionName=0.40.0-test-2025.08.09-08:54
+versionCode=1754729631
