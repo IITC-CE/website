@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Direction of links on map
 // @category       Tweaks
-// @version        0.2.4.20250809.085750
+// @version        0.2.4.20250809.094909
 // @description    Show the direction of links on the map by adding short dashes to the line at the origin portal.
 // @id             link-show-direction
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
