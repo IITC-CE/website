@@ -2,7 +2,7 @@
 // @author         yavidor
 // @name           IITC plugin: Traveling Agent
 // @category       Misc
-// @version        0.0.2.20250901.154149
+// @version        0.0.2.20250901.162129
 // @description    Calculates the best route between the player's location and a series of portals
 // @id             get-best-route
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

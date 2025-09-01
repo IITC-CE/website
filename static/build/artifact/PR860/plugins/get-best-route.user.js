@@ -2,7 +2,7 @@
 // @author         yavidor
 // @name           IITC plugin: Traveling Agent
 // @category       Misc
-// @version        0.0.2.20250901.154149
+// @version        0.0.2.20250901.162129
 // @description    Calculates the best route between the player's location and a series of portals
 // @id             get-best-route
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-09-01-154149';
+plugin_info.dateTimeVersion = '2025-09-01-162129';
 plugin_info.pluginId = 'get-best-route';
 //END PLUGIN AUTHORS NOTE
 
