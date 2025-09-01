@@ -1,2 +1,2 @@
-versionName=0.41.0-test-2025.09.01-17:15
-versionCode=1756746890
+versionName=0.41.0-test-2025.09.01-17:22
+versionCode=1756747299
