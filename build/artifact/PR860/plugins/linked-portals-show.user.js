@@ -2,7 +2,7 @@
 // @author         fstopienski
 // @name           IITC plugin: Linked portals
 // @category       Portal Info
-// @version        0.4.3.20250901.154149
+// @version        0.4.3.20250901.162129
 // @description    Try to show the linked portals (image, name and link direction) in portal detail view and jump to linked portal on click.  Some details may not be available if the linked portal is not in the current view.
 // @id             linked-portals-show
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-09-01-154149';
+plugin_info.dateTimeVersion = '2025-09-01-162129';
 plugin_info.pluginId = 'linked-portals-show';
 //END PLUGIN AUTHORS NOTE
 
