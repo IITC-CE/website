@@ -5,6 +5,7 @@
     --secondary-main: #000000;
     --secondary-higher: #444444;
     --accent-main: #26A69A;
+    --important: #FFF3CD;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,6 +15,7 @@
         --primary-lower: #3E4043;
         --secondary-main: #FFFFFF;
         --secondary-higher: #BBBBBB;
+        --important: #423922;
     }
 }
 
