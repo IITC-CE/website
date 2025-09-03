@@ -1,0 +1,12 @@
+.privacy .metadata {
+    background: var(--primary-higher);
+    padding: 15px;
+    border-left: 4px solid var(--accent-main);
+    margin-bottom: 25px;
+    font-size: 0.9em;
+}
+
+.privacy .important {
+    background-color: var(--important);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
