@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.41.0.20250913.125438
+// @version        0.41.0.20250914.141928
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-09-13-125438';
+plugin_info.dateTimeVersion = '2025-09-14-141928';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -148,7 +148,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-09-13-125438';
+window.iitcBuildDate = '2025-09-14-141928';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4182,7 +4182,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-09-13-125438');
+  log.log('loading done, booting. Built: ' + '2025-09-14-141928');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -31465,6 +31465,10 @@ window.runOnSmartphonesBeforeBoot = function () {
   var style = document.createElement('style');
   style.type = 'text/css';
   style.appendChild(document.createTextNode('\
+:root {\
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);\
+}\
+\
 body {\
   color: #fff;\
 }\
@@ -31475,6 +31479,7 @@ body {\
   color: #d4d5d6;\
   border: 0;\
   padding: 0;\
+  padding-bottom: var(--safe-area-inset-bottom);\
 }\
 \
 #updatestatus .map {\
@@ -31644,16 +31649,18 @@ body {\
 }\
 \
 #chat {\
-  left:0;\
-  right:0;\
+  left: 0;\
+  right: 0;\
   top: 1px !important;\
-  bottom:30px;\
+  bottom: 30px;\
   width: auto;\
+  margin-bottom: var(--safe-area-inset-bottom);\
 }\
 \
 #chatinput {\
   width: 100%;\
   height: 30px;\
+  margin-bottom: var(--safe-area-inset-bottom);\
 }\
 \
 #chat td:nth-child(2), #chatinput td:nth-child(2) {\
@@ -31735,7 +31742,10 @@ body {\
    Permanent solution should include fixes for attribution control too\
    https://github.com/IITC-CE/ingress-intel-total-conversion/issues/89\
 */\
-.leaflet-bottom { bottom: 5px; }\
+.leaflet-bottom {\
+  bottom: 5px;\
+  margin-bottom: calc(22px + var(--safe-area-inset-bottom));\
+}\
 \
 /* Controls for mobile view without an app */\
 :root {\
