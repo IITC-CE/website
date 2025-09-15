@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.1.1.20250914.141928
+// @version        1.1.1.20250915.175505
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
