@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight inactive portals
 // @category       Highlighter
-// @version        0.2.3.20250916.073050
+// @version        0.2.3.20250916.190201
 // @description    Use the portal fill color to denote if the portal is unclaimed with no recent activity. Shades of red from one week to one month, then tinted to purple for longer. May also highlight captured portals that are stuck and fail to decay every 24 hours.
 // @id             highlight-forgotten
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
