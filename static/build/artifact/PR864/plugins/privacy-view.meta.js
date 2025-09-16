@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Privacy view on Intel
 // @category       Misc
-// @version        1.2.2.20250915.175505
+// @version        1.2.2.20250916.073050
 // @description    Hide info from intel which shouldn't leak to players of the other faction.
 // @id             privacy-view
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
