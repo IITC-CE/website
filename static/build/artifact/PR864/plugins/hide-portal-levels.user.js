@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Hide portal levels
 // @category       Layer
-// @version        0.1.3.20250916.190201
+// @version        0.1.3.20250916.191329
 // @description    Replace all levels with single layerChooser's entry; reverting on longclick
 // @id             hide-portal-levels
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-09-16-190201';
+plugin_info.dateTimeVersion = '2025-09-16-191329';
 plugin_info.pluginId = 'hide-portal-levels';
 //END PLUGIN AUTHORS NOTE
 
