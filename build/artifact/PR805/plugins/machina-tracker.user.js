@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.1.0.20250328.101509
+// @version        1.1.1.20250923.091620
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-03-28-101509';
+plugin_info.dateTimeVersion = '2025-09-23-091620';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'machina-tracker';
 /* global IITC, L */
 
 var changelog = [
+  {
+    version: '1.1.1',
+    changes: ['Fix decayed messages attributed to Machina'],
+  },
   {
     version: '1.1.0',
     changes: ['Using `IITC.utils.formatAgo` instead of the plugin own function'],
@@ -188,7 +192,7 @@ machinaTracker.processNewData = function (data) {
   data.result.forEach((json) => {
     if (json[1] >= limit) {
       var newEvent = machinaTracker.createEvent(json);
-      if (newEvent.from && newEvent.to && [window.TEAM_MAC, window.TEAM_NONE].includes(window.teamStringToId(newEvent.team))) {
+      if (newEvent.from && newEvent.to && newEvent.team && [window.TEAM_MAC, window.TEAM_NONE].includes(window.teamStringToId(newEvent.team))) {
         var prevEvent = machinaTracker.events.find((e) => e.from.latLng.equals(newEvent.from.latLng));
         if (!prevEvent) {
           machinaTracker.events.push(newEvent);

@@ -2,8 +2,8 @@
 // @author         morph
 // @name           IITC plugin: Wayfarer portal submission range
 // @category       Layer
-// @version        0.1.0.20250328.101509
-// @description    Add a 20m range around portals, to aid Wayfarer portals submissions
+// @version        0.2.0.20250923.091620
+// @description    Add a 20m range around portals and drawn markers, to aid Wayfarer portals submissions
 // @id             wayfarer-range
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR805/plugins/wayfarer-range.meta.js
