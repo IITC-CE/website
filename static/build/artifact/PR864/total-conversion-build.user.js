@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.41.0.20250923.082211
+// @version        0.41.0.20250923.134833
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-09-23-082211';
+plugin_info.dateTimeVersion = '2025-09-23-134833';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -148,7 +148,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-09-23-082211';
+window.iitcBuildDate = '2025-09-23-134833';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4182,7 +4182,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-09-23-082211');
+  log.log('loading done, booting. Built: ' + '2025-09-23-134833');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -29490,7 +29490,7 @@ window.RegionScoreboardSetup = (function () {
     var text = 'Loading regional scores...';
     if (window.useAppPanes()) {
       var style = 'position: absolute; top: 0; width: 100%; max-width: 412px';
-      mainDialog = $('<div>', { style: style }).html(text).appendTo(document.body);
+      mainDialog = $('<div>', { class: 'safe-area-insets', style: style }).html(text).appendTo(document.body);
     } else {
       mainDialog = window.dialog({
         title: 'Region scores',
@@ -31466,7 +31466,10 @@ window.runOnSmartphonesBeforeBoot = function () {
   style.type = 'text/css';
   style.appendChild(document.createTextNode('\
 :root {\
+  --safe-area-inset-top: env(safe-area-inset-top);\
   --safe-area-inset-bottom: env(safe-area-inset-bottom);\
+  --safe-area-inset-left: env(safe-area-inset-left);\
+  --safe-area-inset-right: env(safe-area-inset-right);\
 }\
 \
 body {\
@@ -31654,13 +31657,18 @@ body {\
   top: 1px !important;\
   bottom: 30px;\
   width: auto;\
+  margin-top: var(--safe-area-inset-top);\
   margin-bottom: var(--safe-area-inset-bottom);\
+  padding-left: var(--safe-area-inset-left);\
+  padding-right: var(--safe-area-inset-right);\
 }\
 \
 #chatinput {\
   width: 100%;\
   height: 30px;\
   margin-bottom: var(--safe-area-inset-bottom);\
+  padding-left: var(--safe-area-inset-left);\
+  padding-right: var(--safe-area-inset-right);\
 }\
 \
 #chat td:nth-child(2), #chatinput td:nth-child(2) {\
@@ -31686,7 +31694,8 @@ body {\
   max-height: none !important;\
   width: 100% !important;\
   right: 0;\
-  left:0;\
+  left: 0;\
+  box-sizing: border-box;\
 }\
 \
 #sidebar {\
@@ -31737,6 +31746,31 @@ body {\
   margin-top: 2px;\
 }\
 \
+/* Position fix for edge-to-edge screens */\
+.safe-area-insets,\
+#scrollwrapper {\
+  padding-top: var(--safe-area-inset-top);\
+  padding-bottom: var(--safe-area-inset-bottom);\
+  padding-left: var(--safe-area-inset-left);\
+  padding-right: var(--safe-area-inset-right);\
+}\
+\
+.leaflet-top {\
+  margin-top: var(--safe-area-inset-top);\
+}\
+\
+.leaflet-bottom {\
+  margin-bottom: calc(22px + var(--safe-area-inset-bottom));\
+}\
+\
+.leaflet-left {\
+  margin-left: var(--safe-area-inset-left);\
+}\
+\
+.leaflet-bottom {\
+  margin-right: var(--safe-area-inset-right);\
+}\
+\
 /* FIX ME\
    Quick and dirty hack to fix scale-bar position\
    Permanent solution should include fixes for attribution control too\
@@ -31744,7 +31778,6 @@ body {\
 */\
 .leaflet-bottom {\
   bottom: 5px;\
-  margin-bottom: calc(22px + var(--safe-area-inset-bottom));\
 }\
 \
 /* Controls for mobile view without an app */\
