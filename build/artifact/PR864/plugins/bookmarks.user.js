@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.6.20250923.082211
+// @version        0.4.6.20250923.134833
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-09-23-082211';
+plugin_info.dateTimeVersion = '2025-09-23-134833';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -1915,17 +1915,21 @@ window.plugin.bookmarks.setupCSS = function () {
 /**********************************************\
 	MOBILE\
 **********************************************/\
-#bookmarksBox.mobile{\
-	position:absolute !important;\
-	width: 100% !important;\
-	height: 100% !important;\
-	top: 0 !important;\
-	left: 0 !important;\
-	margin: 0 !important;\
-	padding: 0 !important;\
-	border: 0 !important;\
-	background: transparent !important;\
-	overflow:auto !important;\
+#bookmarksBox.mobile {\
+  position: absolute !important;\
+  width: 100% !important;\
+  height: 100% !important;\
+  top: 0 !important;\
+  left: 0 !important;\
+  margin: 0 !important;\
+  border: 0 !important;\
+  background: transparent !important;\
+  overflow: auto !important;\
+  box-sizing: border-box;\
+  padding-top: var(--safe-area-inset-top);\
+  padding-bottom: var(--safe-area-inset-bottom);\
+  padding-left: var(--safe-area-inset-left);\
+  padding-right: var(--safe-area-inset-right);\
 }\
 #bookmarksBox.mobile .bookmarkList ul,\
 #bookmarksBox.mobile .bookmarkList ul li,\
