@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.41.0.20251007.100610
+// @version        0.41.0.20251007.101158
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-07-100610';
+plugin_info.dateTimeVersion = '2025-10-07-101158';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -148,7 +148,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-10-07-100610';
+window.iitcBuildDate = '2025-10-07-101158';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4192,7 +4192,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-10-07-100610');
+  log.log('loading done, booting. Built: ' + '2025-10-07-101158');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26615,7 +26615,7 @@ window.ornaments = {
    */
   setup: function () {
     this._portals = {};
-    this.layerGroup = new L.LayerGroup();
+    this.layerGroup = () => new L.LayerGroup();
     if (window.map.options.preferCanvas && L.Browser.canvas && !window.DISABLE_CANVASICONLAYER) {
       this.layerGroup = L.canvasIconLayer;
       L.CanvasIconLayer.mergeOptions({ padding: L.Canvas.prototype.options.padding });
