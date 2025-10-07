@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Portal Names
 // @category       Layer
-// @version        0.2.4.20251007.101158
+// @version        0.2.4.20251007.114259
 // @description    Show portal names on the map.
 // @id             portal-names
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-07-101158';
+plugin_info.dateTimeVersion = '2025-10-07-114259';
 plugin_info.pluginId = 'portal-names';
 //END PLUGIN AUTHORS NOTE
 
@@ -44,7 +44,7 @@ var changelog = [
 ];
 
 // use own namespace for plugin
-window.plugin.portalNames = function () { };
+window.plugin.portalNames = function () {};
 
 window.plugin.portalNames.NAME_WIDTH = 80;
 window.plugin.portalNames.NAME_HEIGHT = 23;
@@ -57,21 +57,21 @@ window.plugin.portalNames.setupCSS = function () {
     .prop('type', 'text/css')
     .html(
       '' +
-      '.plugin-portal-names{' +
-      'color:#FFFFBB;' +
-      'font-size:11px;line-height:12px;' +
-      'text-align:center;padding: 2px;' + // padding needed so shadow doesn't clip
-      'overflow:hidden;' +
-      // could try this if one-line names are used
-      //    +'white-space: nowrap;text-overflow:ellipsis;'
+        '.plugin-portal-names{' +
+        'color:#FFFFBB;' +
+        'font-size:11px;line-height:12px;' +
+        'text-align:center;padding: 2px;' + // padding needed so shadow doesn't clip
+        'overflow:hidden;' +
+        // could try this if one-line names are used
+        //    +'white-space: nowrap;text-overflow:ellipsis;'
 
-      // webkit-only multiline ellipsis
-      'display: -webkit-box;' +
-      '-webkit-line-clamp: 2;' +
-      '-webkit-box-orient: vertical;' +
-      'text-shadow: 0 0 1px black, 0 0 1em black, 0 0 0.2em black;' +
-      'pointer-events:none;' +
-      '}'
+        // webkit-only multiline ellipsis
+        'display: -webkit-box;' +
+        '-webkit-line-clamp: 2;' +
+        '-webkit-box-orient: vertical;' +
+        'text-shadow: 0 0 1px black, 0 0 1em black, 0 0 0.2em black;' +
+        'pointer-events:none;' +
+        '}'
     )
     .appendTo('head');
 };

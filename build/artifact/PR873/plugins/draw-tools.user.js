@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.12.0.20251007.101158
+// @version        0.12.0.20251007.114259
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-07-101158';
+plugin_info.dateTimeVersion = '2025-10-07-114259';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -59,7 +59,7 @@ var changelog = [
 // custom hook for draw tools to share it's activity with other plugins
 
 // use own namespace for plugin
-window.plugin.drawTools = function () { };
+window.plugin.drawTools = function () {};
 
 window.plugin.drawTools.KEY_STORAGE = 'plugin-draw-tools-layer';
 
@@ -570,8 +570,7 @@ window.plugin.drawTools.promptImport = function (promptAction) {
     } else {
       if (window.plugin.drawTools.merge.status) {
         promptAction =
-          typeof window.localStorage[window.plugin.drawTools.KEY_STORAGE] !== 'undefined' &&
-            window.localStorage[window.plugin.drawTools.KEY_STORAGE].length > 4
+          typeof window.localStorage[window.plugin.drawTools.KEY_STORAGE] !== 'undefined' && window.localStorage[window.plugin.drawTools.KEY_STORAGE].length > 4
             ? window.localStorage[window.plugin.drawTools.KEY_STORAGE].slice(0, -1) + ',' + promptAction.slice(1)
             : promptAction;
       }
@@ -819,9 +818,9 @@ window.plugin.drawTools.boot = function () {
 
   $('head').append(
     '<style>' +
-    '.drawtoolsSetbox > a { display:block; color:#ffce00; border:1px solid #ffce00; padding:3px 0; margin:10px auto; width:80%; text-align:center; background:rgba(8,48,78,.9); }' +
-    '.ui-dialog-drawtoolsSet-copy textarea { width:96%; height:150px; resize:vertical; }' +
-    '</style>'
+      '.drawtoolsSetbox > a { display:block; color:#ffce00; border:1px solid #ffce00; padding:3px 0; margin:10px auto; width:80%; text-align:center; background:rgba(8,48,78,.9); }' +
+      '.ui-dialog-drawtoolsSet-copy textarea { width:96%; height:150px; resize:vertical; }' +
+      '</style>'
   );
 };
 
@@ -921,7 +920,7 @@ window.plugin.drawTools.initMPE = function () {
     // Native value of localstorage key
     defaultKey: 'plugin-draw-tools-layer',
     // This function is run before the localstorage key change
-    func_pre: function () { },
+    func_pre: function () {},
     // This function is run after the localstorage key change
     func_post: function () {
       window.plugin.drawTools.drawnItems.clearLayers();
@@ -1022,7 +1021,7 @@ function loadExternals() {
   try {
     // https://github.com/Leaflet/Leaflet.draw
     // eslint-disable-next-line
-    // *** included: external/leaflet.draw-src.js ***
+    (// *** included: external/leaflet.draw-src.js ***
 /*
  Leaflet.draw 1.0.4, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
@@ -5798,7 +5797,7 @@ L.EditToolbar.Delete = L.Handler.extend({
 }(window, document));
 //# sourceMappingURL=leaflet.draw-src.map
 
-;
+);
     $('<style>').html('\
 /* ================================================================== */\
 /* Toolbars\
@@ -6184,7 +6183,7 @@ L.EditToolbar.Delete = L.Handler.extend({
 ').appendTo('head');
 
     // eslint-disable-next-line
-    // *** included: external/leaflet.draw-snap.js ***
+    (// *** included: external/leaflet.draw-snap.js ***
 // L.Draw extension to support options.snapPoint
 
 L.Draw.Polyline.include({
@@ -6224,10 +6223,10 @@ L.Draw.Polyline.include({
 })(L.Draw.Marker.prototype._onClick);
 
 
-;
+);
 
     // eslint-disable-next-line
-    // *** included: external/leaflet.draw-geodesic.js ***
+    (// *** included: external/leaflet.draw-geodesic.js ***
 // L.Draw extension to support L.Geodesic*
 
 L.Draw.Polyline.include({
@@ -6341,22 +6340,22 @@ L.Edit.PolyVerticesEdit.include({
 // ^^^^^^
 
 (function (_getMiddleLatLng) {
-	var coeff = Math.PI / 180.0 * 6367000.0 / 2.01;
-	L.Edit.PolyVerticesEdit.include({
-		_getMiddleLatLng: function (marker1, marker2) {
-			if (this._poly._geodesicConvert) {
-				var start = marker1.getLatLng(), end = marker2.getLatLng();
-				// todo: implement relevant function/method in L.Geodesic* instead of following hack
-				var geoline = L.geodesicPolyline([start, end], {
-					segmentsCoeff: (start.lng - end.lng) * coeff
-				});
-				if (geoline._latlngs.length > 2) {
-					return geoline._latlngs[1];
-				}
+var coeff =  Math.PI/180.0 * 6367000.0 / 2.01;
+L.Edit.PolyVerticesEdit.include({
+	_getMiddleLatLng: function (marker1, marker2) {
+		if (this._poly._geodesicConvert) {
+			var start = marker1.getLatLng(), end = marker2.getLatLng();
+			// todo: implement relevant function/method in L.Geodesic* instead of following hack
+			var geoline = L.geodesicPolyline([start, end], {
+				segmentsCoeff: (start.lng-end.lng) * coeff
+			});
+			if (geoline._latlngs.length > 2) {
+				return geoline._latlngs[1];
 			}
-			return _getMiddleLatLng.call(this, marker1, marker2);
 		}
-	});
+		return _getMiddleLatLng.call(this, marker1, marker2);
+	}
+});
 })(L.Edit.PolyVerticesEdit.prototype._getMiddleLatLng);
 
 L.GeodesicCircle.addInitHook(function () { // todo check if this does not conflict with L.Polyline.addInitHook
@@ -6376,44 +6375,44 @@ L.Edit.Circle.include({
 	}
 });
 
-(function (_backupLayer, _revertLayer) { // GeodesicCircle has to be processed first as it is also instance of L.Polyline
-	L.EditToolbar.Edit.include({
-		_backupLayer: function (layer) {
-			var id = L.Util.stamp(layer);
+(function (_backupLayer,_revertLayer) { // GeodesicCircle has to be processed first as it is also instance of L.Polyline
+L.EditToolbar.Edit.include({
+	_backupLayer: function (layer) {
+		var id = L.Util.stamp(layer);
 
-			if (!this._uneditedLayerProps[id]) {
-				if (layer instanceof L.GeodesicCircle) {
-					this._uneditedLayerProps[id] = {
-						latlng: L.LatLngUtil.cloneLatLng(layer.getLatLng()),
-						radius: layer.getRadius()
-					};
-				} else {
-					_backupLayer.call(this, layer);
-				}
-			}
-		},
-
-		_revertLayer: function (layer) {
-			var id = L.Util.stamp(layer);
-			layer.edited = false;
-			if (this._uneditedLayerProps.hasOwnProperty(id)) {
-				if (layer instanceof L.GeodesicCircle) {
-					layer.setLatLng(this._uneditedLayerProps[id].latlng);
-					layer.setRadius(this._uneditedLayerProps[id].radius);
-					layer.fire('revert-edited', { layer: layer });
-				} else {
-					_revertLayer.call(this, layer);
-				}
+		if (!this._uneditedLayerProps[id]) {
+			if (layer instanceof L.GeodesicCircle) {
+				this._uneditedLayerProps[id] = {
+					latlng: L.LatLngUtil.cloneLatLng(layer.getLatLng()),
+					radius: layer.getRadius()
+				};
+			} else {
+				_backupLayer.call(this,layer);
 			}
 		}
-	});
-})(L.EditToolbar.Edit.prototype._backupLayer, L.EditToolbar.Edit.prototype._revertLayer);
+	},
+
+	_revertLayer: function (layer) {
+		var id = L.Util.stamp(layer);
+		layer.edited = false;
+		if (this._uneditedLayerProps.hasOwnProperty(id)) {
+			if (layer instanceof L.GeodesicCircle) {
+				layer.setLatLng(this._uneditedLayerProps[id].latlng);
+				layer.setRadius(this._uneditedLayerProps[id].radius);
+				layer.fire('revert-edited', {layer: layer});
+			} else {
+				_revertLayer.call(this,layer);
+			}
+		}
+	}
+});
+})(L.EditToolbar.Edit.prototype._backupLayer,L.EditToolbar.Edit.prototype._revertLayer);
 
 
-;
+);
 
     // eslint-disable-next-line
-    // *** included: external/leaflet.draw-confirm.js ***
+    (// *** included: external/leaflet.draw-confirm.js ***
 
 (function (removeAllLayers) {
     L.EditToolbar.Delete.include({
@@ -6429,7 +6428,7 @@ L.Edit.Circle.include({
 })(L.EditToolbar.Delete.prototype.removeAllLayers);
 
 
-;
+);
 
     // support Leaflet >= 1
     // https://github.com/Leaflet/Leaflet.draw/pull/911
@@ -6459,7 +6458,7 @@ L.Edit.Circle.include({
   try {
     // https://github.com/bgrins/spectrum
     // eslint-disable-next-line
-    // *** included: external/spectrum.js ***
+    (// *** included: external/spectrum.js ***
 // Spectrum Colorpicker v1.8.1
 // https://github.com/bgrins/spectrum
 // Author: Brian Grinstead
@@ -8803,7 +8802,7 @@ L.Edit.Circle.include({
 });
 
 
-;
+);
     $('<style>').html('\
 /***\
 Spectrum Colorpicker v1.8.0\

@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.6.20251007.101158
+// @version        0.4.6.20251007.114259
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-07-101158';
+plugin_info.dateTimeVersion = '2025-10-07-114259';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -142,6 +142,7 @@ window.plugin.bookmarks.upgradeToNewStorage = function () {
     var oldStor_1 = JSON.parse(localStorage['plugin-bookmarks-maps-data']);
     var oldStor_2 = JSON.parse(localStorage['plugin-bookmarks-portals-data']);
 
+    window.plugin.bookmarks.bkmrksObj = {};
     window.plugin.bookmarks.bkmrksObj.maps = oldStor_1.bkmrk_maps;
     window.plugin.bookmarks.bkmrksObj.portals = oldStor_2.bkmrk_portals;
     window.plugin.bookmarks.saveStorage();
@@ -154,6 +155,7 @@ window.plugin.bookmarks.upgradeToNewStorage = function () {
 
 window.plugin.bookmarks.createStorage = function () {
   if (!localStorage[window.plugin.bookmarks.KEY_STORAGE]) {
+    window.plugin.bookmarks.bkmrksObj = {};
     window.plugin.bookmarks.bkmrksObj.maps = { idOthers: { label: 'Others', state: 1, bkmrk: {} } };
     window.plugin.bookmarks.bkmrksObj.portals = { idOthers: { label: 'Others', state: 1, bkmrk: {} } };
     window.plugin.bookmarks.saveStorage();
@@ -618,7 +620,7 @@ window.plugin.bookmarks.onSearch = function (query) {
         title: window.escapeHtmlSpecialChars(bookmark.label),
         description: `Map in folder "${window.escapeHtmlSpecialChars(folder.label)}"`,
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADYSURBVCiRldExLoRxEAXw33xZ4QIKB9BQWPl0yFKJA4hCo1CqXMABVA6gcgkFnc7/s7VQaByAgoYdhU3sZr9NmGSaee/NvJeJUkr6R3WgrusYm/ajJ7zr5t3ouGmarFrXpFPpuA2aFDSxIWxjXz/mWy25jx3hEAsqS0NsFi/68YxHlXPK8MKbGwR6GN06g0XhwYrrX0tb+enJAS5b8pzp5gk5GM+wl1/C1YQgfEwPPbA+JN3iAgMsTxeEOWlXNzet5pHKGl7HOKWUzEx/6VJKdvj54IT3KfUNvrNZ/jYm+uoAAAAASUVORK5CYII=',
-        position: new L.LatLng(bookmark.latlng.split(',')),
+        position: new L.LatLng(...bookmark.latlng.split(',')),
         zoom: bookmark.z,
         onSelected: window.plugin.bookmarks.onSearchResultSelected,
       });
@@ -633,7 +635,7 @@ window.plugin.bookmarks.onSearch = function (query) {
         title: window.escapeHtmlSpecialChars(bookmark.label),
         description: `Bookmark in folder "${window.escapeHtmlSpecialChars(folder.label)}"`,
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADFSURBVCiRrdEtTkMBEATgb19C0gsgEEgMFW2TooAURzgACoNAorgAB6jqAVBcghBQYPmxBAQeBYYQ4C2CJvTlPUibMG53ZpKZ3chMs6Bo3N7EwG2sTG9Ih9J+ExW1SFexpnCBNyzq5VPdcB2bwi4WsIz5Mf+OR9wrjHTy9DvSi3MEBhNimMOScKfj7KfDRn54sIPjhj5D3Twgy2rp7fwUTuotvU6O1SuVVseiSxyhRPt3Q2hJW7q5rpd7Cn08VyT/8+k/8AVY7Dd1pA43RAAAAABJRU5ErkJggg==',
-        position: new L.LatLng(bookmark.latlng.split(',')),
+        position: new L.LatLng(...bookmark.latlng.split(',')),
         guid: bookmark.guid,
         onSelected: window.plugin.bookmarks.onSearchResultSelected,
       });
@@ -985,13 +987,13 @@ window.plugin.bookmarks.autoDrawOnSelect = function () {
   }
 
   if (latlngs.length === 2) {
-    var distance = new L.LatLng(latlngs[0]).distanceTo(latlngs[1]);
+    var distance = new L.LatLng(...latlngs[0]).distanceTo(latlngs[1]);
     text = 'Distance between portals: ' + distanceElement(distance);
     color = '';
   } else if (latlngs.length === 3) {
     var distances = latlngs.map(function (ll1, i, latlngs) {
       var ll2 = latlngs[(i + 1) % 3];
-      return distanceElement(new L.LatLng(ll1).distanceTo(ll2));
+      return distanceElement(new L.LatLng(...ll1).distanceTo(ll2));
     });
     text = 'Distances: ' + distances.join(', ');
     color = '';

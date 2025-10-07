@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.41.0.20251007.101158
+// @version        0.41.0.20251007.114259
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-07-101158';
+plugin_info.dateTimeVersion = '2025-10-07-114259';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -148,7 +148,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-10-07-101158';
+window.iitcBuildDate = '2025-10-07-114259';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4192,7 +4192,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-10-07-101158');
+  log.log('loading done, booting. Built: ' + '2025-10-07-114259');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -18522,14 +18522,14 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
         // Backwards compatibility with 0.7.x factory (latlng, radius, options?)
         options = L.extend({}, legacyOptions, {radius: options});
       }
-      this._latlng = new L.LatLng(latlng.lat, latlng.lng);
+      this._latlng = latlng.clone();
       this._radius = options.radius; // note: https://github.com/Leaflet/Leaflet/issues/6656
       var points = this._calcPoints();
       L.Polygon.prototype.initialize.call(this, points, options);
     },
 
     setLatLng: function (latlng) {
-      this._latlng = new L.LatLng(latlng);
+      this._latlng = latlng.clone();
       var points = this._calcPoints();
       this.setLatLngs(points);
     },
@@ -33224,7 +33224,7 @@ const legacyFunctionMappings = {
 // Set up synchronization between `window` and `IITC.utils` with new names
 Object.entries(legacyFunctionMappings).forEach(([oldName, newName]) => {
   // Initialize IITC.utils[newName] if not already defined
-  window.IITC.utils[newName] = window.IITC.utils[newName] || function () { };
+  window.IITC.utils[newName] = window.IITC.utils[newName] || function () {};
 
   // Define a getter/setter on `window` to synchronize with `IITC.utils`
   Object.defineProperty(window, oldName, {
