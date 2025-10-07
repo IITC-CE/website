@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player level guess
 // @category       Info
-// @version        0.5.11.20251007.085620
+// @version        0.5.11.20251007.090452
 // @description    Try to determine player levels from the data available in the current view.
 // @id             player-level-guess
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
