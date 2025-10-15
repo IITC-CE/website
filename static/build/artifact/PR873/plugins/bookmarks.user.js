@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.6.20251011.201030
+// @version        0.4.6.20251015.173432
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-11-201030';
+plugin_info.dateTimeVersion = '2025-10-15-173432';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -161,6 +161,7 @@ window.plugin.bookmarks.createStorage = function () {
     window.plugin.bookmarks.saveStorage();
   }
   if (!localStorage[window.plugin.bookmarks.KEY_STATUS_BOX]) {
+    window.plugin.bookmarks.statusBox = {};
     window.plugin.bookmarks.statusBox.show = 1;
     window.plugin.bookmarks.statusBox.page = 0;
     window.plugin.bookmarks.statusBox.pos = { x: 100, y: 100 };

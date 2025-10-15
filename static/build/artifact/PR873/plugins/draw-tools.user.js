@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.12.0.20251011.201030
+// @version        0.12.0.20251015.173432
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-10-11-201030';
+plugin_info.dateTimeVersion = '2025-10-15-173432';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -1021,7 +1021,7 @@ function loadExternals() {
   try {
     // https://github.com/Leaflet/Leaflet.draw
     // eslint-disable-next-line
-    (// *** included: external/leaflet.draw-src.js ***
+    // *** included: external/leaflet.draw-src.js ***
 /*
  Leaflet.draw 1.0.4, a plugin that adds drawing and editing tools to Leaflet powered maps.
  (c) 2012-2017, Jacob Toye, Jon West, Smartrak, Leaflet
@@ -5797,7 +5797,7 @@ L.EditToolbar.Delete = L.Handler.extend({
 }(window, document));
 //# sourceMappingURL=leaflet.draw-src.map
 
-);
+;
     $('<style>').html('\
 /* ================================================================== */\
 /* Toolbars\
@@ -6183,7 +6183,7 @@ L.EditToolbar.Delete = L.Handler.extend({
 ').appendTo('head');
 
     // eslint-disable-next-line
-    (// *** included: external/leaflet.draw-snap.js ***
+    // *** included: external/leaflet.draw-snap.js ***
 // L.Draw extension to support options.snapPoint
 
 L.Draw.Polyline.include({
@@ -6223,10 +6223,10 @@ L.Draw.Polyline.include({
 })(L.Draw.Marker.prototype._onClick);
 
 
-);
+;
 
     // eslint-disable-next-line
-    (// *** included: external/leaflet.draw-geodesic.js ***
+    // *** included: external/leaflet.draw-geodesic.js ***
 // L.Draw extension to support L.Geodesic*
 
 L.Draw.Polyline.include({
@@ -6409,10 +6409,10 @@ L.EditToolbar.Edit.include({
 })(L.EditToolbar.Edit.prototype._backupLayer,L.EditToolbar.Edit.prototype._revertLayer);
 
 
-);
+;
 
     // eslint-disable-next-line
-    (// *** included: external/leaflet.draw-confirm.js ***
+    // *** included: external/leaflet.draw-confirm.js ***
 
 (function (removeAllLayers) {
     L.EditToolbar.Delete.include({
@@ -6428,7 +6428,7 @@ L.EditToolbar.Edit.include({
 })(L.EditToolbar.Delete.prototype.removeAllLayers);
 
 
-);
+;
 
     // support Leaflet >= 1
     // https://github.com/Leaflet/Leaflet.draw/pull/911
@@ -6458,7 +6458,7 @@ L.EditToolbar.Edit.include({
   try {
     // https://github.com/bgrins/spectrum
     // eslint-disable-next-line
-    (// *** included: external/spectrum.js ***
+    // *** included: external/spectrum.js ***
 // Spectrum Colorpicker v1.8.1
 // https://github.com/bgrins/spectrum
 // Author: Brian Grinstead
@@ -8802,7 +8802,7 @@ L.EditToolbar.Edit.include({
 });
 
 
-);
+;
     $('<style>').html('\
 /***\
 Spectrum Colorpicker v1.8.0\
