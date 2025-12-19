@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.41.0.20251219.091615
+// @version        0.42.0.20251219.111731
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-12-19-091615';
+plugin_info.dateTimeVersion = '2025-12-19-111731';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -37,6 +37,10 @@ window.IITC = IITC;
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.42.0',
+    changes: ['Update and supplement ingress constants for access points'],
+  },
   {
     version: '0.41.0',
     changes: [
@@ -148,7 +152,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-12-19-091615';
+window.iitcBuildDate = '2025-12-19-111731';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2791,7 +2795,7 @@ window.DESTROY_FIELD = 750;
  * @const
  * @memberof ingress_constants
  */
-window.CAPTURE_PORTAL = 500;
+window.CAPTURE_PORTAL = 675;
 
 /**
  * AP for deploying a resonator
@@ -2800,6 +2804,14 @@ window.CAPTURE_PORTAL = 500;
  * @memberof ingress_constants
  */
 window.DEPLOY_RESONATOR = 125;
+
+/**
+ * AP for creating a link
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.CREATE_LINK = 313;
 
 /**
  * AP for deploying all resonators on portal
@@ -2816,6 +2828,30 @@ window.COMPLETION_BONUS = 250;
  * @memberof ingress_constants
  */
 window.UPGRADE_ANOTHERS_RESONATOR = 65;
+
+/**
+ * AP for reclaiming a machina portal
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.RECLAIM_PORTAL_FROM_MACHINA = 1331;
+
+/**
+ * AP for applying a portal mod
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.APPLY_PORTAL_MOD = 125;
+
+/**
+ * AP for destroying a portal mod
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.DESTROY_PORTAL_MOD = 80;
 
 /**
  * Maximum portal level.
@@ -4190,7 +4226,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-12-19-091615');
+  log.log('loading done, booting. Built: ' + '2025-12-19-111731');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
