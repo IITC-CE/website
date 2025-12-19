@@ -2,7 +2,7 @@
 // @author         Hollow011
 // @name           IITC plugin: Available AP statistics
 // @category       Info
-// @version        0.4.6.20251219.111731
+// @version        0.4.6.20251219.114313
 // @description    Displays the per-team AP gains available in the current view.
 // @id             ap-stats
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-12-19-111731';
+plugin_info.dateTimeVersion = '2025-12-19-114313';
 plugin_info.pluginId = 'ap-stats';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-
-// contributor: Heistergand
 
 var changelog = [
   {
@@ -101,6 +99,7 @@ window.plugin.compAPStats.update = function (hasFinished) {
       `Destroy and capture ${data.destroyPortals} portals\n` +
       `Destroy ${data.destroyLinks} links and ${data.destroyFields} fields\n` +
       `Capture ${data.capturePortals} neutral portals, complete ${data.finishPortals} portals\n` +
+      `Reclaim ${data.reclaimPortals} machina portals\n` +
       `(unknown additional AP for links/fields)`;
     return `<tr><td>${team}</td><td style="text-align:right" title="${title}">${window.digits(data.AP)}</td></tr>`;
   };
@@ -112,8 +111,8 @@ window.plugin.compAPStats.update = function (hasFinished) {
 
 window.plugin.compAPStats.compAPStats = function () {
   var result = {
-    res: { AP: 0, destroyPortals: 0, capturePortals: 0, finishPortals: 0, destroyLinks: 0, destroyFields: 0 },
-    enl: { AP: 0, destroyPortals: 0, capturePortals: 0, finishPortals: 0, destroyLinks: 0, destroyFields: 0 },
+    res: { AP: 0, destroyPortals: 0, capturePortals: 0, finishPortals: 0, destroyLinks: 0, destroyFields: 0, reclaimPortals: 0 },
+    enl: { AP: 0, destroyPortals: 0, capturePortals: 0, finishPortals: 0, destroyLinks: 0, destroyFields: 0, reclaimPortals: 0 },
   };
 
   var displayBounds = window.map.getBounds();
