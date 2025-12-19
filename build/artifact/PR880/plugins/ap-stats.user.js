@@ -2,7 +2,7 @@
 // @author         Hollow011
 // @name           IITC plugin: Available AP statistics
 // @category       Info
-// @version        0.4.6.20251219.091615
+// @version        0.4.6.20251219.111731
 // @description    Displays the per-team AP gains available in the current view.
 // @id             ap-stats
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-12-19-091615';
+plugin_info.dateTimeVersion = '2025-12-19-111731';
 plugin_info.pluginId = 'ap-stats';
 //END PLUGIN AUTHORS NOTE
 
@@ -153,13 +153,16 @@ window.plugin.compAPStats.compAPStats = function () {
       }
     } else if (portal.options.team === window.TEAM_MAC) {
       // it's a machina portal, destroy AP for both teams.
-      result.enl.AP += destroyAp + PORTAL_FULL_DEPLOY_AP;
-      result.res.AP += destroyAp + PORTAL_FULL_DEPLOY_AP;
+      result.enl.AP += destroyAp + PORTAL_FULL_DEPLOY_AP + window.RECLAIM_PORTAL_FROM_MACHINA;
+      result.res.AP += destroyAp + PORTAL_FULL_DEPLOY_AP + window.RECLAIM_PORTAL_FROM_MACHINA;
 
       result.enl.destroyPortals++;
       result.res.destroyPortals++;
+
+      result.enl.reclaimPortals++;
+      result.res.reclaimPortals++;
     } else {
-      // it's a neutral or machina portal, potential for both teams.
+      // it's a neutral portal, potential for both teams. by definition no fields or edges
       result.enl.AP += PORTAL_FULL_DEPLOY_AP;
       result.res.AP += PORTAL_FULL_DEPLOY_AP;
 
