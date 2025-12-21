@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.0.20251219.114313
+// @version        0.42.0.20251221.200138
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2025-12-19-114313';
+plugin_info.dateTimeVersion = '2025-12-21-200138';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -152,7 +152,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2025-12-19-114313';
+window.iitcBuildDate = '2025-12-21-200138';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2814,6 +2814,14 @@ window.DEPLOY_RESONATOR = 125;
 window.CREATE_LINK = 313;
 
 /**
+ * AP for creating a control field
+ * @type {number}
+ * @const
+ * @memberof ingress_constants
+ */
+window.CREATE_CONTROL_FIELD = 1250;
+
+/**
  * AP for deploying all resonators on portal
  * @type {number}
  * @const
@@ -4226,7 +4234,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2025-12-19-114313');
+  log.log('loading done, booting. Built: ' + '2025-12-21-200138');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
