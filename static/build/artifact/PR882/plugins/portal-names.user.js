@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Portal Names
 // @category       Layer
-// @version        0.3.0.20260222.001532
+// @version        0.3.0.20260222.001838
 // @description    Show portal names on the map.
 // @id             portal-names
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-02-22-001532';
+plugin_info.dateTimeVersion = '2026-02-22-001838';
 plugin_info.pluginId = 'portal-names';
 //END PLUGIN AUTHORS NOTE
 
@@ -89,7 +89,7 @@ window.plugin.portalNames._clamp = function (value, min, max) {
 };
 
 window.plugin.portalNames._escapeHtml = function (text) {
-  return String(text).replace(/&/g,·'&amp;').replace(/</g,·'&lt;').replace(/>/g,·'&gt;').replace(/"/g,·'&quot;').replace(/'/g, '&#039;');
+  return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 };
 
 window.plugin.portalNames.loadSettings = function () {
