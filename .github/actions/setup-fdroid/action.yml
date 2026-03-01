@@ -51,12 +51,6 @@ runs:
             apt-get -y dist-upgrade && \
             apt-get -y install python3-pip curl unzip
 
-        # Install a recent version of androguard to fix APK parsing issues
-        RUN git clone --recursive https://github.com/androguard/androguard.git && \
-            cd androguard && \
-            git reset --hard v4.1.2 && \
-            pip install . --break-system-packages
-
         # Install rclone for cloud storage support
         RUN curl https://rclone.org/install.sh | bash
         EOF
