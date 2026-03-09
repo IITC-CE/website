@@ -1,0 +1,2 @@
+versionName=0.42.1
+versionCode=1773069278
