@@ -12,16 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (hash) {
         document.querySelector(hash)?.querySelector('.plugin-info').click();
     }
-
-    if (document.getElementsByClassName('remark42__counter').length) {
-        comments_counter_observer();
-        window.remark_config = {
-            host: "https://remark42.iitc.app",
-            site_id: 'store-iitc-app',
-            components: ['counter']
-        };
-        init_remark(window.remark_config);
-    }
     fixSidenavIndexHref();
     initPluginsView();
 });
@@ -93,21 +83,7 @@ function modal_move_content(plugin_info, modal_id) {
     document.getElementById(modal_id).innerHTML = plugin_info.innerHTML;
 }
 
-function init_modal_remark(plugin, el, url) {
-    let name = el.querySelector(".plugin-name span").textContent;
-
-    window.remark_config = {
-        host: "https://remark42.iitc.app",
-        site_id: 'store-iitc-app',
-        components: ['embed'],
-        url: url,
-        page_title: name+" — "+document.title,
-        theme: 'light'
-    };
-    init_remark(window.remark_config);
-}
-
-function init_custom_modal(plugin_unique_id, modal_id, el, url) {
+function init_custom_modal(plugin_unique_id, modal_id, el) {
     window.location.hash = el.id;
     const plugin_info = document.getElementById(plugin_unique_id+"_info");
     modal_move_content(plugin_info, modal_id);
@@ -120,39 +96,11 @@ function init_custom_modal(plugin_unique_id, modal_id, el, url) {
 
     set_modal_data(modal_footer, ".homepage-plugin", plugin_info.dataset.homepage);
     set_modal_data(modal_footer, ".issue-tracker-plugin", plugin_info.dataset.issueTracker);
-
-    document.getElementById("remark42").innerHTML = "";
-    init_modal_remark(plugin_unique_id, el, url);
 }
 
 function set_modal_data(modal_footer, btn_class, href) {
     modal_footer.querySelector(btn_class).href = (href) ? href : "#";
     modal_footer.querySelector(btn_class).style.display = (href) ? "inline-flex" : "none";
-}
-
-function init_remark(remark_config) {
-    (function (c) {
-        for (var i = 0; i < c.length; i++) {
-            var d = document, s = d.createElement('script');
-            s.src = window.remark_config.host + '/web/' + c[i] + '.js';
-            s.defer = true;
-            (d.head || d.body).appendChild(s);
-        }
-    })(window.remark_config.components || ['embed']);
-}
-
-function comments_counter_observer() {
-    let target = document.getElementsByClassName('remark42__counter')[0];
-    const config = { characterData: true, childList: true };
-
-    const callback = function (ob) {
-        for (let el of document.getElementsByClassName('remark42__counter')) {
-            el.parentElement.style.display = 'inline';
-        }
-    };
-
-    const observer = new MutationObserver(callback);
-    observer.observe(target, config);
 }
 
 function img_lazy() {
