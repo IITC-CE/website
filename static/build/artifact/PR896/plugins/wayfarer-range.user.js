@@ -2,7 +2,7 @@
 // @author         morph
 // @name           IITC plugin: Wayfarer portal submission range
 // @category       Layer
-// @version        0.2.0.20260319.074851
+// @version        0.2.0.20260319.075746
 // @description    Add a 20m range around portals and drawn markers, to aid Wayfarer portals submissions
 // @id             wayfarer-range
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-03-19-074851';
+plugin_info.dateTimeVersion = '2026-03-19-075746';
 plugin_info.pluginId = 'wayfarer-range';
 //END PLUGIN AUTHORS NOTE
 
