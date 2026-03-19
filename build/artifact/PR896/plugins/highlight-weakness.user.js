@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portal weakness
 // @category       Highlighter
-// @version        0.8.3.20260319.074851
+// @version        0.8.3.20260319.075746
 // @description    Use the fill color of the portals to denote if the portal is weak. Stronger red indicates recharge required, missing resonators, or both.
 // @id             highlight-weakness
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-03-19-074851';
+plugin_info.dateTimeVersion = '2026-03-19-075746';
 plugin_info.pluginId = 'highlight-weakness';
 //END PLUGIN AUTHORS NOTE
 
