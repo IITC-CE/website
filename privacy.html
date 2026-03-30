@@ -93,7 +93,7 @@
 
                     <div class="metadata">
                         <strong>Effective Date:</strong> 29 August 2025<br>
-                        <strong>Last Updated:</strong> 29 August 2025
+                        <strong>Last Updated:</strong> 30 March 2026
                     </div>
 
                     <h3>Overview</h3>
@@ -112,6 +112,29 @@
                         <li>Do not track user behavior or usage patterns</li>
                         <li>Do not require user accounts or registration</li>
                     </ul>
+
+                    <h3>Crash and Error Reporting (Sentry)</h3>
+                    <p>To improve app stability and diagnose issues, IITC-CE applications may use <a href="https://sentry.io" target="_blank">Sentry</a>, a third-party error tracking service, to automatically send crash and error reports when the application encounters a problem.</p>
+
+                    <p><strong>Each error report may include the following non-personal technical data:</strong></p>
+                    <ul>
+                        <li><strong>Error details:</strong> error type, stack trace, and related diagnostic information</li>
+                        <li><strong>App information:</strong> application version, build number, and foreground/background state</li>
+                        <li><strong>Device information:</strong> device manufacturer, model, screen resolution, processor count, total and available memory and storage</li>
+                        <li><strong>Operating system:</strong> OS name, version, build number, and kernel version</li>
+                        <li><strong>Runtime context:</strong> battery level, charging status, network connection type (e.g. Wi-Fi or cellular), device orientation, and device locale/timezone</li>
+                        <li><strong>Random device identifier:</strong> a randomly generated ID used solely to group errors from the same device — it is not linked to any user account or personal identity</li>
+                    </ul>
+
+                    <p><strong>What is NOT collected:</strong></p>
+                    <ul>
+                        <li>No personally identifiable information (names, email addresses, or user accounts)</li>
+                        <li>No IP addresses — IP address storage is disabled in our Sentry configuration</li>
+                        <li>No user-generated content or gameplay data</li>
+                        <li>No screenshots, screen recordings, or session replays — these Sentry features are explicitly disabled</li>
+                    </ul>
+
+                    <p>This data is used solely to identify and fix application errors and is not used for analytics, advertising, or profiling. Data is processed by Sentry in accordance with their <a href="https://sentry.io/privacy/" target="_blank">Privacy Policy</a>.</p>
 
                     <h3>How IITC-CE Applications Work</h3>
                     <p>IITC-CE applications are specialized browsers that:</p>
@@ -153,7 +176,7 @@
                     <p>Since we do not collect any personal data, there is no personal data for you to access, modify, or delete from our systems. For any data collected by intel.ingress.com, please contact Niantic directly.</p>
 
                     <div class="card-panel">
-                        <strong>Summary:</strong> IITC-CE applications are enhanced browsers that display intel.ingress.com with improved functionality. We don't collect any user data - all data collection is handled by intel.ingress.com according to Niantic's Privacy Policy.
+                        <strong>Summary:</strong> IITC-CE applications are enhanced browsers that display intel.ingress.com with improved functionality. We don't collect any personal user data. Anonymous crash reports may be sent via Sentry to help us improve app stability. All other data collection is handled by intel.ingress.com according to Niantic's Privacy Policy.
                     </div>
 
                 </div>
