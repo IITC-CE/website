@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260326.083229
+// @version        0.42.2.20260331.095315
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-03-26-083229';
+plugin_info.dateTimeVersion = '2026-03-31-095315';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-03-26-083229';
+window.iitcBuildDate = '2026-03-31-095315';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4302,7 +4302,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-03-26-083229');
+  log.log('loading done, booting. Built: ' + '2026-03-31-095315');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -33187,11 +33187,11 @@ const escapeHtml = function (str, allowedTags = []) {
     return str.replace(/[&<>"']/g, (char) => escapeMap[char]);
   }
 
-  // Create pattern for allowed tags (self-closing and paired)
-  const allowedTagsPattern = new RegExp(`(<\\/?(?:${allowedTags.join('|')})>)`, 'g');
+  // Create pattern for allowed tags (opening with optional class attribute, closing, and self-closing)
+  const allowedTagsPattern = new RegExp(`^<\\/?(?:${allowedTags.join('|')})(?:\\s+class="[^"]*")?>$`);
 
-  // Split text by allowed tags to preserve them
-  const parts = str.split(allowedTagsPattern);
+  // Split text by all HTML tags to process each part individually
+  const parts = str.split(/(<[^>]*>)/g);
 
   return parts
     .map((part) => {
@@ -33276,7 +33276,7 @@ const textToTable = function (text) {
   for (const row of rows) {
     let rowHtml = '<tr>';
     for (let k = 0; k < row.length; k++) {
-      const cell = IITC.utils.escapeHtml(row[k], ['hr', 'br', 'b', 'i', 'strong', 'em']);
+      const cell = IITC.utils.escapeHtml(row[k], ['hr', 'br', 'b', 'i', 'strong', 'em', 'span', 'mark']);
       const colspan = k === 0 && row.length < columnCount ? ` colspan="${columnCount - row.length + 1}"` : '';
       rowHtml += `<td${colspan}>${cell}</td>`;
     }

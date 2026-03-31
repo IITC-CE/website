@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player level guess
 // @category       Info
-// @version        0.5.12.20260326.083229
+// @version        0.5.12.20260331.095315
 // @description    Try to determine player levels from the data available in the current view.
 // @id             player-level-guess
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-03-26-083229';
+plugin_info.dateTimeVersion = '2026-03-31-095315';
 plugin_info.pluginId = 'player-level-guess';
 //END PLUGIN AUTHORS NOTE
 
@@ -477,7 +477,7 @@ window.plugin.guessPlayerLevels.guess = function () {
   });
 
   var s = 'Players have at least the following level:\n\n';
-  s += 'Resistance:\t&nbsp;&nbsp;&nbsp;\tEnlightened:\t\n';
+  s += 'Resistance:\t\u00A0\u00A0\u00A0\tEnlightened:\t\n';
 
   var namesR = window.plugin.guessPlayerLevels.sort(playersRes);
   var namesE = window.plugin.guessPlayerLevels.sort(playersEnl);
@@ -488,10 +488,10 @@ window.plugin.guessPlayerLevels.guess = function () {
   function makeRow(nick, lvl, team) {
     if (!nick) return '\t';
 
-    var color = window.COLORS[team];
-    if (nick === window.PLAYER.nickname) color = '#fd6'; // highlight the player's name in a unique colour (similar to @player mentions from others in the chat text itself)
+    var teamClass = team === window.TEAM_ENL ? 'enl' : 'res';
+    if (nick === window.PLAYER.nickname) teamClass = 'self';
 
-    return `<mark class="nickname" style="color:${color}">${nick}</mark>\t${lvl}`;
+    return `<mark class="nickname ${teamClass}">${nick}</mark>\t${lvl}`;
   }
 
   var nick, lvl, lineE, lineR;
@@ -551,6 +551,14 @@ window.plugin.guessPlayerLevels.sort = function (playerHash) {
 };
 
 var setup = function () {
+  var style = document.createElement('style');
+  style.textContent = `
+    .nickname.res { color: ${window.COLORS[window.TEAM_RES]}; }
+    .nickname.enl { color: ${window.COLORS[window.TEAM_ENL]}; }
+    .nickname.self { color: #fd6; }
+  `;
+  document.head.appendChild(style);
+
   window.plugin.guessPlayerLevels.setupCallback();
   window.plugin.guessPlayerLevels.setupChatNickHelper();
 };
