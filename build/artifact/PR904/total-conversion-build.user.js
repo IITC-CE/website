@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260423.120705
+// @version        0.42.2.20260423.173245
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-04-23-120705';
+plugin_info.dateTimeVersion = '2026-04-23-173245';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-04-23-120705';
+window.iitcBuildDate = '2026-04-23-173245';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4302,7 +4302,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-04-23-120705');
+  log.log('loading done, booting. Built: ' + '2026-04-23-173245');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -24785,33 +24785,7 @@ window.setupMap = function () {
 
     // Start map refresh (after Map location is set)
     window.mapDataRequest.start();
-
   });
-
-  /* !!This block is commented out as it's unlikely that we still need this workaround in leaflet 1+
-  // on zoomend, check to see the zoom level is an int, and reset the view if not
-  // (there's a bug on mobile where zoom levels sometimes end up as fractional levels. this causes the base map to be invisible)
-  map.on('zoomend', function() {
-    var z = map.getZoom();
-    if (z != parseInt(z))
-    {
-      log.warn('Non-integer zoom level at zoomend: '+z+' - trying to fix...');
-      map.setZoom(parseInt(z), {animate:false});
-    }
-  });
-  */
-
-  /* !!This block is commented out as it's unlikely that we still need this workaround in leaflet 1+
-  // Fix Leaflet: handle touchcancel events in Draggable
-  L.Draggable.prototype._onDownOrig = L.Draggable.prototype._onDown;
-  L.Draggable.prototype._onDown = function(e) {
-    L.Draggable.prototype._onDownOrig.apply(this, arguments);
-
-    if(e.type === "touchstart") {
-      L.DomEvent.on(document, "touchcancel", this._onUp, this);
-    }
-  };
-  */
 };
 
 
