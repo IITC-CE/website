@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260426.182003
+// @version        0.42.2.20260426.182857
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-04-26-182003';
+plugin_info.dateTimeVersion = '2026-04-26-182857';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-04-26-182003';
+window.iitcBuildDate = '2026-04-26-182857';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4288,7 +4288,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-04-26-182003');
+  log.log('loading done, booting. Built: ' + '2026-04-26-182857');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27206,71 +27206,67 @@ window.selectPortalByLatLng = function (lat, lng) {
   }
 
   // not currently visible
-  const ll = new L.LatLng(lat, lng)
+  const ll = new L.LatLng(lat, lng);
   window.selectPortalWhenLoadedByLatLng(ll);
   window.map.setView(ll, window.DEFAULT_ZOOM);
 };
 
-
-
 let urlPortalLL;
 /**
-   * Select a portal when it appears on the map
-   *
-   * @function
-   * @name selectPortalWhenLoadedByLatLng
-   * @param {L.LatLng} latLng - the location of the portal
-   */
-window.selectPortalWhenLoadedByLatLng = (latLng) =>{
+ * Select a portal when it appears on the map
+ *
+ * @function
+ * @name selectPortalWhenLoadedByLatLng
+ * @param {L.LatLng} latLng - the location of the portal
+ */
+window.selectPortalWhenLoadedByLatLng = (latLng) => {
   if (urlPortalLL === undefined) {
-    window.addHook("portalAdded", testPortalLagLng);
+    window.addHook('portalAdded', testPortalLagLng);
   }
 
   urlPortalLL = latLng;
   window.urlPortalLL = latLng;
-}
+};
 
 const testPortalLagLng = (data) => {
   if (data.portal.getLatLng().equals(urlPortalLL)) {
     log.log(`urlPortalLL ${urlPortalLL.toString()} matches portal GUID ${data.portal.options.guid}`);
     window.selectedPortal = data.portal.options.guid;
-    console.assert(window.portals[window.selectedPortal], "no portal data");
+    console.assert(window.portals[window.selectedPortal], 'no portal data');
     window.renderPortalDetails(window.selectedPortal, true);
     urlPortalLL = undefined;
   }
 
-  if (!urlPortalLL) window.removeHook("portalAdded", testPortalLagLng);
-}
-
+  if (!urlPortalLL) window.removeHook('portalAdded', testPortalLagLng);
+};
 
 let urlPortal;
 /**
-   * Select a portal when it appears on the map
-   *
-   * @function
-   * @name selectPortalWhenLoadedByGuid
-   * @param {string} guid - the guid of the portal
-   */
+ * Select a portal when it appears on the map
+ *
+ * @function
+ * @name selectPortalWhenLoadedByGuid
+ * @param {string} guid - the guid of the portal
+ */
 window.selectPortalWhenLoadedByGuid = (guid) => {
   if (urlPortal === undefined) {
-    window.addHook("portalAdded", testPortalGuid);
+    window.addHook('portalAdded', testPortalGuid);
   }
 
   urlPortal = guid;
-}
+};
 
 const testPortalGuid = (data) => {
   if (data.portal.options.guid === urlPortal) {
     log.log(`urlPortal GUID ${window.urlPortal} found - selecting...`);
     window.selectedPortal = urlPortal;
-    console.assert(window.portals[urlPortal], "no portal data");
+    console.assert(window.portals[urlPortal], 'no portal data');
     window.renderPortalDetails(window.selectedPortal, true);
-    urlPortal = undefined
+    urlPortal = undefined;
   }
 
-  if (!urlPortal) window.removeHook("portalAdded", testPortalGuid);
-}
-
+  if (!urlPortal) window.removeHook('portalAdded', testPortalGuid);
+};
 
 (function () {
   var cache = {};
