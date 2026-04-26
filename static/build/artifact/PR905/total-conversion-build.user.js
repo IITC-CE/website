@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260424.103752
+// @version        0.42.2.20260426.182338
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-04-24-103752';
+plugin_info.dateTimeVersion = '2026-04-26-182338';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-04-24-103752';
+window.iitcBuildDate = '2026-04-26-182338';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2628,7 +2628,7 @@ window.ZOOM_LEVEL_ADJ = 5;
  * @type {number}
  * @memberof config_options
  */
-window.ON_MOVE_REFRESH = 2.5;
+window.ON_MOVE_REFRESH = 0.4;
 
 /**
  * Limit on refresh time since previous refresh, limiting repeated move refresh rate, in seconds, default 10
@@ -4302,7 +4302,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-04-24-103752');
+  log.log('loading done, booting. Built: ' + '2026-04-26-182338');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -24748,7 +24748,6 @@ window.setupMap = function () {
 
   // create the map data requester
   window.mapDataRequest = new window.MapDataRequest();
-  window.mapDataRequest.start();
 
   // start the refresh process with a small timeout, so the first data request happens quickly
   // (the code originally called the request function directly, and triggered a normal delay for the next refresh.
@@ -24783,32 +24782,10 @@ window.setupMap = function () {
     map.on('baselayerchange', function () {
       map.setZoom(map.getZoom());
     });
+
+    // Start map refresh (after Map location is set)
+    window.mapDataRequest.start();
   });
-
-  /* !!This block is commented out as it's unlikely that we still need this workaround in leaflet 1+
-  // on zoomend, check to see the zoom level is an int, and reset the view if not
-  // (there's a bug on mobile where zoom levels sometimes end up as fractional levels. this causes the base map to be invisible)
-  map.on('zoomend', function() {
-    var z = map.getZoom();
-    if (z != parseInt(z))
-    {
-      log.warn('Non-integer zoom level at zoomend: '+z+' - trying to fix...');
-      map.setZoom(parseInt(z), {animate:false});
-    }
-  });
-  */
-
-  /* !!This block is commented out as it's unlikely that we still need this workaround in leaflet 1+
-  // Fix Leaflet: handle touchcancel events in Draggable
-  L.Draggable.prototype._onDownOrig = L.Draggable.prototype._onDown;
-  L.Draggable.prototype._onDown = function(e) {
-    L.Draggable.prototype._onDownOrig.apply(this, arguments);
-
-    if(e.type === "touchstart") {
-      L.DomEvent.on(document, "touchcancel", this._onUp, this);
-    }
-  };
-  */
 };
 
 
@@ -25833,8 +25810,8 @@ window.MapDataRequest = function () {
   this.MAX_TILE_RETRIES = 5;
 
   // refresh timers
-  this.MOVE_REFRESH = 3; // time, after a map move (pan/zoom) before starting the refresh processing
-  this.STARTUP_REFRESH = 3; // refresh time used on first load of IITC
+  this.MOVE_REFRESH = 0.4; // time, after a map move (pan/zoom) before starting the refresh processing
+  this.STARTUP_REFRESH = 0.1; // refresh time used on first load of IITC
   this.IDLE_RESUME_REFRESH = 5; // refresh time used after resuming from idle
 
   // after one of the above, there's an additional delay between preparing the refresh (clearing out of bounds,
@@ -27413,8 +27390,8 @@ var handleResponseSuccess = function (deferred, guid, data, prefetch) {
 
   // prefetch portal image
   if (prefetch && portal.options.data.image) {
-      (new Image()).src = portal.options.data.image;
-  }  
+    new Image().src = portal.options.data.image;
+  }
 };
 
 var handleResponseFailure = function (deferred, guid, data) {
@@ -28898,7 +28875,7 @@ function handler_portal_contextmenu(e) {
 
 function handler_portal_mouse_enter(e) {
   window.clearTimeout(e.target.options.prefetchTimer);
-  e.target.options.prefetchTimer = window.setTimeout(()=>do_prefetch(e), PREFETCH_TIME);
+  e.target.options.prefetchTimer = window.setTimeout(() => do_prefetch(e), PREFETCH_TIME);
 }
 
 function handler_portal_mouse_leave(e) {
@@ -28910,7 +28887,7 @@ function do_prefetch(e) {
   if (guid && !window.portalDetail.isFresh(guid)) {
     log.debug(`prefetch portal details ${guid}`);
     window.portalDetail.request(guid, true);
-  }  
+  }
 }
 
 L.PortalMarker = L.CircleMarker.extend({
@@ -28944,7 +28921,7 @@ L.PortalMarker = L.CircleMarker.extend({
     this.on('dblclick', handler_portal_dblclick);
     this.on('contextmenu', handler_portal_contextmenu);
     this.on('mouseover', handler_portal_mouse_enter);
-    this.on('mouseout', handler_portal_mouse_leave);    
+    this.on('mouseout', handler_portal_mouse_leave);
   },
 
   willUpdate: function (details) {
