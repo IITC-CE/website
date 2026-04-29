@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.5.20260426.183520
+// @version        1.4.5.20260429.064950
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

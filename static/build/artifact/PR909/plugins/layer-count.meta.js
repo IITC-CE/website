@@ -2,7 +2,7 @@
 // @author         fkloft
 // @name           IITC plugin: Layer count
 // @category       Info
-// @version        0.2.5.20260426.183520
+// @version        0.2.5.20260429.064950
 // @description    Allow users to count nested fields
 // @id             layer-count
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

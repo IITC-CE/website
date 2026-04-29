@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260426.183520
+// @version        0.42.2.20260429.064950
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-04-26-183520';
+plugin_info.dateTimeVersion = '2026-04-29-064950';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-04-26-183520';
+window.iitcBuildDate = '2026-04-29-064950';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -3382,6 +3382,22 @@ Object.defineProperty(window, 'CHAT_SHRINKED', {
   configurable: true,
 });
 
+/**
+ * Portal GUID if the original URL had it.
+ * @type {string|null}
+ * @memberof storage_variables
+ * @deprecated use window.selectPortalWhenLoadedByLatLng(latLng: L.LatLng);
+ */
+window.urlPortal = null;
+
+/**
+ * Portal lng/lat if the orignial URL had it.
+ * @type {object|null}
+ * @memberof storage_variables
+ * @deprecated use window.selectPortalWhenLoadedByGuid(guid: PortalGUID);
+ */
+window.urlPortalLL = null;
+
 
 })();
 
@@ -4288,7 +4304,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-04-26-183520');
+  log.log('loading done, booting. Built: ' + '2026-04-29-064950');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27219,23 +27235,23 @@ let urlPortalLL;
  */
 window.selectPortalWhenLoadedByLatLng = (latLng) => {
   if (urlPortalLL === undefined) {
-    window.addHook('portalAdded', testPortalLagLng);
+    window.addHook('portalAdded', testPortalLatLng);
   }
 
   urlPortalLL = latLng;
-  window.urlPortalLL = latLng;
+  window.urlPortalLL = latLng; // @deprecated
 };
 
-const testPortalLagLng = (data) => {
+const testPortalLatLng = (data) => {
   if (data.portal.getLatLng().equals(urlPortalLL)) {
-    log.log(`urlPortalLL ${urlPortalLL.toString()} matches portal GUID ${data.portal.options.guid}`);
     window.selectedPortal = data.portal.options.guid;
     console.assert(window.portals[window.selectedPortal], 'no portal data');
     window.renderPortalDetails(window.selectedPortal, true);
     urlPortalLL = undefined;
+    window.urlPortalLL = undefined; // @deprecated
   }
 
-  if (!urlPortalLL) window.removeHook('portalAdded', testPortalLagLng);
+  if (!urlPortalLL) window.removeHook('portalAdded', testPortalLatLng);
 };
 
 let urlPortal;
@@ -27252,6 +27268,7 @@ window.selectPortalWhenLoadedByGuid = (guid) => {
   }
 
   urlPortal = guid;
+  window.urlPortal = guid; // @deprecated
 };
 
 const testPortalGuid = (data) => {
@@ -27261,6 +27278,7 @@ const testPortalGuid = (data) => {
     console.assert(window.portals[urlPortal], 'no portal data');
     window.renderPortalDetails(window.selectedPortal, true);
     urlPortal = undefined;
+    window.urlPortal = undefined; // @deprecated
   }
 
   if (!urlPortal) window.removeHook('portalAdded', testPortalGuid);
