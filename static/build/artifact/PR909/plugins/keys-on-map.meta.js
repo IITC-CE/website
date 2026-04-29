@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys on map
 // @category       Layer
-// @version        0.3.5.20260429.071812
+// @version        0.3.5.20260429.072608
 // @description    Show the manually entered key counts from the 'keys' plugin on the map.
 // @id             keys-on-map
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
