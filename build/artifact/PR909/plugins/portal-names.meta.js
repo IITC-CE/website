@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Portal Names
 // @category       Layer
-// @version        0.2.5.20260426.183520
+// @version        0.2.5.20260429.064950
 // @description    Show portal names on the map.
 // @id             portal-names
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
