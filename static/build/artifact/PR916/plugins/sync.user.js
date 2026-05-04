@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.5.4.20260504.114244
+// @version        0.6.0.20260504.114541
 // @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-114244';
+plugin_info.dateTimeVersion = '2026-05-04-114541';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 
@@ -30,7 +30,7 @@ plugin_info.pluginId = 'sync';
 
 var changelog = [
   {
-    version: '0.5.4',
+    version: '0.6.0',
     changes: ['Add sign-out button and display logged-in account email'],
   },
   {
@@ -791,6 +791,7 @@ window.plugin.sync.signOut = function () {
   window.gapi.auth2
     .getAuthInstance()
     .signOut().then(function () {
+
       window.plugin.sync.authorizer.authorized = false;
       window.plugin.sync.authorizer.authorizing = false;
 
@@ -805,6 +806,7 @@ window.plugin.sync.signOut = function () {
 
       window.plugin.sync.logger.log('all', 'Signed out');
       window.plugin.sync.updateLog(window.plugin.sync.logger.getLogs());
+
   });
 };
 
