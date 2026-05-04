@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.5.4.20260504.112538
+// @version        0.5.4.20260504.113326
 // @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-112538';
+plugin_info.dateTimeVersion = '2026-05-04-113326';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 
@@ -777,9 +777,12 @@ window.plugin.sync.updateAccountInfo = function () {
 
   if (window.plugin.sync.authorizer.isAuthed()) {
     try {
-      var profile = window.gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+      var profile = window.gapi.auth2
+        .getAuthInstance()
+        .currentUser.get()
+        .getBasicProfile();
       accountDiv.text('Signed in as: ' + profile.getEmail());
-    } catch (e) {
+    } catch {
       accountDiv.text('Signed in');
     }
   } else {
@@ -788,7 +791,10 @@ window.plugin.sync.updateAccountInfo = function () {
 };
 
 window.plugin.sync.signOut = function () {
-  window.gapi.auth2.getAuthInstance().signOut().then(function () {
+  window.gapi.auth2
+    .getAuthInstance()
+    .signOut()
+    .then(function () {
     window.plugin.sync.authorizer.authorized = false;
     window.plugin.sync.authorizer.authorizing = false;
 
