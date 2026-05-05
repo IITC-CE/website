@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.5.20260505.071640
+// @version        0.1.5.20260505.072607
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

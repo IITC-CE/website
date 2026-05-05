@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260505.071640
+// @version        0.42.2.20260505.072607
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-05-071640';
+plugin_info.dateTimeVersion = '2026-05-05-072607';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-05-05-071640';
+window.iitcBuildDate = '2026-05-05-072607';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4304,7 +4304,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-05-05-071640');
+  log.log('loading done, booting. Built: ' + '2026-05-05-072607');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -28903,7 +28903,7 @@ var log = ulog('portal_marker');
  * @module portal_marker
  */
 
-const PREFETCH_TIME = 300; // if the mouse stays these miliseconds on the marker prefetch portal details
+const PREFETCH_TIME = 200; // if the mouse stays these miliseconds on the marker prefetch portal details
 
 // portal hooks
 function handler_portal_click(e) {
