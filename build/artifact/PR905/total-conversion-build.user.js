@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260426.182338
+// @version        0.42.2.20260505.071640
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-04-26-182338';
+plugin_info.dateTimeVersion = '2026-05-05-071640';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-04-26-182338';
+window.iitcBuildDate = '2026-05-05-071640';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -3050,20 +3050,6 @@ window.TEAM_CODE_MAC = window.TEAM_CODES[window.TEAM_MAC];
 window.refreshTimeout = undefined;
 
 /**
- * Portal GUID if the original URL had it.
- * @type {string|null}
- * @memberof storage_variables
- */
-window.urlPortal = null;
-
-/**
- * Portal lng/lat if the orignial URL had it.
- * @type {object|null}
- * @memberof storage_variables
- */
-window.urlPortalLL = null;
-
-/**
  * Stores the GUID of the selected portal, or is `null` if there is none.
  * @type {string|null}
  * @memberof storage_variables
@@ -3395,6 +3381,22 @@ Object.defineProperty(window, 'CHAT_SHRINKED', {
   },
   configurable: true,
 });
+
+/**
+ * Portal GUID if the original URL had it.
+ * @type {string|null}
+ * @memberof storage_variables
+ * @deprecated use window.selectPortalWhenLoadedByLatLng(latLng: L.LatLng);
+ */
+window.urlPortal = null;
+
+/**
+ * Portal lng/lat if the orignial URL had it.
+ * @type {object|null}
+ * @memberof storage_variables
+ * @deprecated use window.selectPortalWhenLoadedByGuid(guid: PortalGUID);
+ */
+window.urlPortalLL = null;
 
 
 })();
@@ -4302,7 +4304,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-04-26-182338');
+  log.log('loading done, booting. Built: ' + '2026-05-05-071640');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -24768,14 +24770,7 @@ window.setupMap = function () {
     }
     map.setView(pos.center, pos.zoom, { reset: true });
 
-    // read here ONCE, so the URL is only evaluated one time after the
-    // necessary data has been loaded.
-    var pll = window.getURLParam('pll');
-    if (pll) {
-      pll = pll.split(',');
-      window.urlPortalLL = normLL(pll[0], pll[1]).center;
-    }
-    window.urlPortal = window.getURLParam('pguid');
+    parseURLParameters();
 
     // todo check
     // leaflet no longer ensures the base layer zoom is suitable for the map (a bug? feature change?), so do so here
@@ -24786,6 +24781,23 @@ window.setupMap = function () {
     // Start map refresh (after Map location is set)
     window.mapDataRequest.start();
   });
+};
+
+const parseURLParameters = () => {
+  // read here ONCE, so the URL is only evaluated one time after the
+  // necessary data has been loaded.
+  var pll = window.getURLParam('pll');
+  if (pll) {
+    pll = pll.split(',');
+    const center = normLL(pll[0], pll[1]).center;
+    const latLng = new L.LatLng(center[0], center[1]);
+    window.selectPortalWhenLoadedByLatLng(latLng);
+  }
+
+  const urlPGuid = window.getURLParam('pguid');
+  if (urlPGuid) {
+    window.selectPortalWhenLoadedByGuid(urlPGuid);
+  }
 };
 
 
@@ -25536,21 +25548,6 @@ window.Render.prototype.createPortalEntity = function (ent, details) {
 
   window.pushPortalGuidPositionCache(data.guid, data.latE6, data.lngE6);
 
-  // check for URL links to portal, and select it if this is the one
-  if (window.urlPortalLL && window.urlPortalLL[0] === latlng.lat && window.urlPortalLL[1] === latlng.lng) {
-    // URL-passed portal found via pll parameter - set the guid-based parameter
-    log.log('urlPortalLL ' + window.urlPortalLL[0] + ',' + window.urlPortalLL[1] + ' matches portal GUID ' + data.guid);
-
-    window.urlPortal = data.guid;
-    window.urlPortalLL = undefined; // clear the URL parameter so it's not matched again
-  }
-  if (window.urlPortal === data.guid) {
-    // URL-passed portal found via guid parameter - set it as the selected portal
-    log.log('urlPortal GUID ' + window.urlPortal + ' found - selecting...');
-    window.selectedPortal = data.guid;
-    window.urlPortal = undefined; // clear the URL parameter so it's not matched again
-  }
-
   let marker = undefined;
   if (oldPortal) {
     // update marker style/highlight and layer
@@ -25584,7 +25581,6 @@ window.Render.prototype.createPortalEntity = function (ent, details) {
 
     window.portals[data.guid] = marker;
   }
-
 
   window.ornaments.addPortal(marker);
 
@@ -27107,7 +27103,7 @@ window.isSystemPlayer = function (name) {
 // *** module: portal_data.js ***
 (function () {
 var log = ulog('portal_data');
-/* global L -- eslint */
+/* global L, log -- eslint */
 
 /**
  * @file Contain misc functions to get portal info
@@ -27196,7 +27192,7 @@ window.zoomToAndShowPortal = function (guid, latlng) {
   // if the data is available, render it immediately. Otherwise defer
   // until it becomes available.
   if (window.portals[guid]) window.renderPortalDetails(guid);
-  else window.urlPortal = guid;
+  else window.selectPortalWhenLoadedByGuid(guid);
 };
 
 /**
@@ -27224,8 +27220,67 @@ window.selectPortalByLatLng = function (lat, lng) {
   }
 
   // not currently visible
-  window.urlPortalLL = [lat, lng];
-  window.map.setView(window.urlPortalLL, window.DEFAULT_ZOOM);
+  const ll = new L.LatLng(lat, lng);
+  window.selectPortalWhenLoadedByLatLng(ll);
+  window.map.setView(ll, window.DEFAULT_ZOOM);
+};
+
+let urlPortalLL;
+/**
+ * Select a portal when it appears on the map
+ *
+ * @function
+ * @name selectPortalWhenLoadedByLatLng
+ * @param {L.LatLng} latLng - the location of the portal
+ */
+window.selectPortalWhenLoadedByLatLng = (latLng) => {
+  if (urlPortalLL === undefined) {
+    window.addHook('portalAdded', testPortalLatLng);
+  }
+
+  urlPortalLL = latLng;
+  window.urlPortalLL = latLng; // @deprecated
+};
+
+const testPortalLatLng = (data) => {
+  if (data.portal.getLatLng().equals(urlPortalLL)) {
+    log.log(`urlPortalLL ${urlPortalLL.toString()} matches portal GUID ${data.portal.options.guid}`);
+    window.selectedPortal = data.portal.options.guid;
+    window.renderPortalDetails(window.selectedPortal, true);
+    urlPortalLL = undefined;
+    window.urlPortalLL = undefined; // @deprecated
+  }
+
+  if (!urlPortalLL) window.removeHook('portalAdded', testPortalLatLng);
+};
+
+let urlPortal;
+/**
+ * Select a portal when it appears on the map
+ *
+ * @function
+ * @name selectPortalWhenLoadedByGuid
+ * @param {string} guid - the guid of the portal
+ */
+window.selectPortalWhenLoadedByGuid = (guid) => {
+  if (urlPortal === undefined) {
+    window.addHook('portalAdded', testPortalGuid);
+  }
+
+  urlPortal = guid;
+  window.urlPortal = guid; // @deprecated
+};
+
+const testPortalGuid = (data) => {
+  if (data.portal.options.guid === urlPortal) {
+    log.log(`urlPortal GUID ${window.urlPortal} found - selecting...`);
+    window.selectedPortal = urlPortal;
+    window.renderPortalDetails(window.selectedPortal, true);
+    urlPortal = undefined;
+    window.urlPortal = undefined; // @deprecated
+  }
+
+  if (!urlPortal) window.removeHook('portalAdded', testPortalGuid);
 };
 
 (function () {
@@ -27349,11 +27404,10 @@ window.portalDetail.get = function (guid) {
  * @function window.portalDetail.store
  * @param {string} guid - The Global Unique Identifier of the portal.
  * @param {object} dict - The portal detail data.
- * @param {number} freshtime - Optional freshness time for cache.
  * @returns Result of cache storage operation.
  */
-window.portalDetail.store = function (guid, dict, freshtime) {
-  return cache.store(guid, dict, freshtime);
+window.portalDetail.store = function (guid, dict) {
+  return cache.store(guid, dict);
 };
 
 /**
@@ -27534,7 +27588,7 @@ window.renderPortalDetails = function (guid, forceSelect) {
   }
 
   if (!guid || !window.portals[guid]) {
-    window.urlPortal = guid;
+    window.selectPortalWhenLoadedByGuid(guid);
     $('#portaldetails').html('');
     IITC.statusbar.portal.update();
     if (window.isSmartphone()) {
@@ -28849,7 +28903,7 @@ var log = ulog('portal_marker');
  * @module portal_marker
  */
 
-const PREFETCH_TIME = 200; // if the mouse stays these miliseconds on the marker prefetch portal details
+const PREFETCH_TIME = 300; // if the mouse stays these miliseconds on the marker prefetch portal details
 
 // portal hooks
 function handler_portal_click(e) {
@@ -30490,7 +30544,8 @@ window.addHook('search', (query) => {
             return;
           }
         }
-        window.urlPortalLL = [result.position.lat, result.position.lng];
+
+        window.selectPortalWhenLoadedByLatLng(result.position);
       },
     });
   };
