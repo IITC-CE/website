@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Gaode (高德地图) / AutoNavi map
 // @category       Map Tiles
-// @version        0.1.5.20260426.194715
+// @version        0.1.5.20260506.083324
 // @description    Map layers from AutoNavi / Gaode (高德地图)
 // @id             basemap-gaode
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
