@@ -2,7 +2,7 @@
 // @author         3ch01c
 // @name           IITC plugin: Uniques
 // @category       Misc
-// @version        0.2.7.20260506.084436
+// @version        0.2.7.20260507.061243
 // @description    Allow manual entry of portals visited/captured. Use the 'highlighter-uniques' plugin to show the uniques on the map, and 'sync' to share between multiple browsers or desktop/mobile. It will try and guess which portals you have captured from COMM/portal details, but this will not catch every case.
 // @id             uniques
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-06-084436';
+plugin_info.dateTimeVersion = '2026-05-07-061243';
 plugin_info.pluginId = 'uniques';
 //END PLUGIN AUTHORS NOTE
 
@@ -638,7 +638,7 @@ var setup = function () {
   window.addPortalHighlighter('Uniques', window.plugin.uniques.highlighter);
   window.addHook('portalDetailsUpdated', window.plugin.uniques.onPortalDetailsUpdated);
   window.addHook('publicChatDataAvailable', window.plugin.uniques.onPublicChatDataAvailable);
-  window.addHook('publicChatDataAvailable', storeGUID);
+  window.addHook('portalAdded', storeGUID);
   window.plugin.uniques.registerFieldForSyncing();
 
   // to mark mission portals as visited
@@ -680,7 +680,7 @@ const pushPortalGuidPositionCache = function (guid, latE6, lngE6) {
       .sort(function (a, b) {
         return b[1] - a[1];
       }) // sort them
-      .slice(GC_KEEP) // drop the MRU
+      .slice(GC_KEEP) // drop the least recently added
       .forEach(function (item) {
         delete cache[item[0]];
       }); // delete the rest
