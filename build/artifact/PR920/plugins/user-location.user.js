@@ -2,7 +2,7 @@
 // @author         cradle
 // @name           IITC plugin: User Location
 // @category       Tweaks
-// @version        0.3.1.20260518.075635
+// @version        0.3.1.20260518.113109
 // @description    Show user location marker on map
 // @id             user-location
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-18-075635';
+plugin_info.dateTimeVersion = '2026-05-18-113109';
 plugin_info.pluginId = 'user-location';
 //END PLUGIN AUTHORS NOTE
 
