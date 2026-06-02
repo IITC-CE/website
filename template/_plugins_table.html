@@ -1,3 +1,21 @@
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="plugin-search-wrapper">
+                <span class="material-symbols-outlined plugin-search-icon">search</span>
+                <input type="text" id="plugin-search" class="plugin-search-input" placeholder="Search plugins..." autocomplete="off">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container plugin-search-empty" id="plugin-search-empty" style="display:none">
+    <div class="row">
+        <div class="col s12">
+            <p>No plugins found for your query.</p>
+        </div>
+    </div>
+</div>
+
 {% for name, category in categories.items() %}
     {% if category.plugins %}
 
