@@ -34,14 +34,16 @@
 
 a.sidenav-trigger.top-nav {
     position: absolute;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 48px;
     width: 48px;
     top: 18px;
     float: none;
     margin-left: 1.5rem;
     color: #FFFFFF;
-    font-size: 36px;
+    font-size: 32px;
     z-index: 2;
 }
 
@@ -80,5 +82,20 @@ a.sidenav-trigger.top-nav i {
 @media only screen and (max-width: 992px) {
     .sidenav li > a {
         border-radius: 0;
+    }
+
+    a.sidenav-trigger.top-nav {
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        margin-left: 0;
+        background: var(--nav-trigger-bg);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--nav-trigger-border);
+        border-radius: 0.63rem;
+        color: var(--nav-trigger-color);
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 }

@@ -6,6 +6,9 @@
     --secondary-higher: #444444;
     --accent-main: #26A69A;
     --important: #FFF3CD;
+    --nav-trigger-bg: rgba(255, 255, 255, 0.15);
+    --nav-trigger-border: rgba(0, 0, 0, 0.5);
+    --nav-trigger-color: rgba(0, 0, 0, 0.5);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,6 +19,9 @@
         --secondary-main: #FFFFFF;
         --secondary-higher: #BBBBBB;
         --important: #423922;
+        --nav-trigger-bg: rgba(0, 0, 0, 0.15);
+        --nav-trigger-border: rgba(255, 255, 255, 0.5);
+        --nav-trigger-color: rgba(255, 255, 255, 0.5);
     }
 }
 
