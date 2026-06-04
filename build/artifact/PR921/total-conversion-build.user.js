@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260604.130912
+// @version        0.42.2.20260604.131155
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-06-04-130912';
+plugin_info.dateTimeVersion = '2026-06-04-131155';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-06-04-130912';
+window.iitcBuildDate = '2026-06-04-131155';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4317,7 +4317,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-06-04-130912');
+  log.log('loading done, booting. Built: ' + '2026-06-04-131155');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27584,7 +27584,7 @@ window.renderPortalToSideBar = function (portal) {
     var portalLevel = window.getPortalLevel(details); // resonator-based fractional level
     levelDetails = portalLevel;
     if (levelInt !== 8) {
-      const req_reso_levels = 8 * (levelInt + 1- portalLevel);
+      const req_reso_levels = 8 * (levelInt + 1 - portalLevel);
       levelDetails += '\n' + req_reso_levels + ' resonator level(s) needed for next portal level';
     } else {
       levelDetails += '\nfully upgraded';
