@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260601.105448
+// @version        0.42.2.20260604.130912
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-06-01-105448';
+plugin_info.dateTimeVersion = '2026-06-04-130912';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-06-01-105448';
+window.iitcBuildDate = '2026-06-04-130912';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4317,7 +4317,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-06-01-105448');
+  log.log('loading done, booting. Built: ' + '2026-06-04-130912');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27375,42 +27375,48 @@ window.portalDetail.remove = function (guid) {
   return cache.remove(guid);
 };
 
-var handleResponse = function (deferred, guid, data, success) {
+var handleResponseSuccess = function (deferred, guid, data, prefetch) {
   if (!data || data.error || !data.result) {
-    success = false;
+    handleResponseFailure(deferred, guid, data);
+    return;
   }
 
-  if (success) {
-    // Parse portal details
-    var dict = window.decodeArray.portal(data.result, 'detailed');
-    cache.store(guid, dict);
+  // Parse portal details
+  var dict = window.decodeArray.portal(data.result, 'detailed');
+  cache.store(guid, dict);
 
-    // entity format, as used in map data
-    var ent = [guid, data.result[13], data.result];
-    var portal = window.mapDataRequest.render.createPortalEntity(ent, 'detailed');
+  // entity format, as used in map data
+  var ent = [guid, data.result[13], data.result];
+  var portal = window.mapDataRequest.render.createPortalEntity(ent, 'detailed');
 
-    deferred.resolve(portal.options.data);
-    window.runHooks('portalDetailLoaded', { guid: guid, success: success, details: portal.options.data, ent: ent, portal: portal });
-  } else {
-    if (data && data.error === 'RETRY') {
-      // server asked us to try again
-      doRequest(deferred, guid);
-    } else {
-      deferred.reject();
-      window.runHooks('portalDetailLoaded', { guid: guid, success: success });
-    }
+  deferred.resolve(portal.options.data);
+  window.runHooks('portalDetailLoaded', { guid: guid, success: true, details: portal.options.data, ent: ent, portal: portal });
+
+  // prefetch portal image
+  if (prefetch && portal.options.data.image) {
+    new Image().src = portal.options.data.image;
   }
 };
 
-var doRequest = function (deferred, guid) {
+var handleResponseFailure = function (deferred, guid, data) {
+  if (data && data.error === 'RETRY') {
+    // server asked us to try again
+    doRequest(deferred, guid);
+  } else {
+    deferred.reject();
+    window.runHooks('portalDetailLoaded', { guid: guid, success: false });
+  }
+};
+
+var doRequest = function (deferred, guid, prefetch) {
   window.postAjax(
     'getPortalDetails',
     { guid: guid },
     function (data) {
-      handleResponse(deferred, guid, data, true);
+      handleResponseSuccess(deferred, guid, data, prefetch);
     },
     function () {
-      handleResponse(deferred, guid, undefined, false);
+      handleResponseFailure(deferred, guid);
     }
   );
 };
@@ -27423,7 +27429,7 @@ var doRequest = function (deferred, guid) {
  * @param {string} guid - The Global Unique Identifier of the portal.
  * @returns {Promise} A promise that resolves with the portal details upon successful retrieval or rejection on failure.
  */
-window.portalDetail.request = function (guid) {
+window.portalDetail.request = function (guid, prefetch = false) {
   if (!requestQueue[guid]) {
     var deferred = $.Deferred();
     requestQueue[guid] = deferred.promise();
@@ -27431,7 +27437,7 @@ window.portalDetail.request = function (guid) {
       delete requestQueue[guid];
     });
 
-    doRequest(deferred, guid);
+    doRequest(deferred, guid, prefetch);
   }
 
   return requestQueue[guid];
@@ -27578,9 +27584,8 @@ window.renderPortalToSideBar = function (portal) {
     var portalLevel = window.getPortalLevel(details); // resonator-based fractional level
     levelDetails = portalLevel;
     if (levelInt !== 8) {
-      // resonator levels still needed to reach the next displayed portal level
-      var needed = Math.round(8 * (levelInt + 1) - 8 * portalLevel);
-      levelDetails += '\n' + needed + ' resonator level(s) needed for next portal level';
+      const req_reso_levels = 8 * (levelInt + 1- portalLevel);
+      levelDetails += '\n' + req_reso_levels + ' resonator level(s) needed for next portal level';
     } else {
       levelDetails += '\nfully upgraded';
     }
@@ -28393,23 +28398,16 @@ var log = ulog('portal_info');
  */
 
 /**
- * Calculates the resonator-based level of a portal as a fractional value (sum of resonator levels / 8).
- * Returns 0 for a portal with no resonators. Note this is not clamped to the minimum displayed level of 1;
- * callers that need the in-game minimum (e.g. link range) must apply it themselves.
+ * Calculates the resonator-based level of a portal.
+ * This includes a decimal part and is not clamped to the minimum level of 1
  *
  * @function getPortalLevel
  * @param {Object} d - The portal detail object containing resonator information.
  * @returns {number} The calculated portal level.
  */
 window.getPortalLevel = function (d) {
-  var lvl = 0;
-  var hasReso = false;
-  $.each(d.resonators, function (ind, reso) {
-    if (!reso) return true;
-    lvl += parseInt(reso.level);
-    hasReso = true;
-  });
-  return hasReso ? lvl / 8 : 0;
+  if (!d.resonators) return 0;
+  return d.resonators.reduce((sum, reso) => sum + reso.level, 0) / 8;
 };
 
 /**
@@ -28477,7 +28475,7 @@ window.getPortalRange = function (d) {
   // formula by the great gals and guys at
   // http://decodeingress.me/2012/11/18/ingress-portal-levels-and-link-range/
   var range = {
-    base: window.teamStringToId(d.team) === window.TEAM_MAC ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(Math.max(1, window.getPortalLevel(d)), 4),
+    base: window.teamStringToId(d.team) === window.TEAM_MAC ? window.LINK_RANGE_MAC[d.level + 1] : 160 * Math.pow(window.getPortalLevel(d), 4),
     boost: window.getLinkAmpRangeBoost(d),
   };
 
@@ -28739,8 +28737,8 @@ window.getPortalHackDetails = function (d) {
   // first mod of type is fully effective, the others are only 50% effective
   var effectivenessReduction = [1, 0.5, 0.5, 0.5];
 
-  var isFriendly = window.teamStringToId(d.team) === window.teamStringToId(window.PLAYER.team); 
-  var cooldownTime = isFriendly ? FACTION_HACK_COOLDOWN : window.BASE_HACK_COOLDOWN; 
+  var isFriendly = window.teamStringToId(d.team) === window.teamStringToId(window.PLAYER.team);
+  var cooldownTime = isFriendly ? FACTION_HACK_COOLDOWN : window.BASE_HACK_COOLDOWN;
 
   $.each(heatsinks, function (index, mod) {
     var hackSpeed = parseInt(mod.stats.HACK_SPEED) / 1000000;
@@ -28850,6 +28848,8 @@ var log = ulog('portal_marker');
  * @module portal_marker
  */
 
+const PREFETCH_TIME = 200; // if the mouse stays these miliseconds on the marker prefetch portal details
+
 // portal hooks
 function handler_portal_click(e) {
   window.selectPortal(e.target.options.guid, e.type);
@@ -28869,6 +28869,23 @@ function handler_portal_contextmenu(e) {
     window.show('info');
   } else if (!$('#scrollwrapper').is(':visible')) {
     $('#sidebartoggle').click();
+  }
+}
+
+function handler_portal_mouse_enter(e) {
+  window.clearTimeout(e.target.options.prefetchTimer);
+  e.target.options.prefetchTimer = window.setTimeout(() => do_prefetch(e), PREFETCH_TIME);
+}
+
+function handler_portal_mouse_leave(e) {
+  window.clearTimeout(e.target.options.prefetchTimer);
+}
+
+function do_prefetch(e) {
+  const guid = e.target.options.guid;
+  if (guid && !window.portalDetail.isFresh(guid)) {
+    log.debug(`prefetch portal details ${guid}`);
+    window.portalDetail.request(guid, true);
   }
 }
 
@@ -28902,6 +28919,8 @@ L.PortalMarker = L.CircleMarker.extend({
     this.on('click', handler_portal_click);
     this.on('dblclick', handler_portal_dblclick);
     this.on('contextmenu', handler_portal_contextmenu);
+    this.on('mouseover', handler_portal_mouse_enter);
+    this.on('mouseout', handler_portal_mouse_leave);
   },
 
   willUpdate: function (details) {
