@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260625.001154
+// @version        0.42.2.20260701.184500
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-06-25-001154';
+plugin_info.dateTimeVersion = '2026-07-01-184500';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-06-25-001154';
+window.iitcBuildDate = '2026-07-01-184500';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4314,7 +4314,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-06-25-001154');
+  log.log('loading done, booting. Built: ' + '2026-07-01-184500');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -22216,7 +22216,7 @@ window.DIALOG_ID = 0;
  *                                                Text is auto-converted to HTML.
  * @param {string} [options.title] - The dialog's title.
  * @param {boolean} [options.modal=false] - Whether to open a modal dialog. Implies draggable=false;
- *                                          dialogClass='ui-dialog-modal'. Note that modal dialogs hijack
+ *                                          class set to 'ui-dialog-modal'. Note that modal dialogs hijack
  *                                          the entire screen and should only be used in specific cases.
  *                                          If IITC is running on mobile, modal will always be true.
  * @param {string} [options.id] - A unique ID for this dialog. If a dialog with this ID is already open,
@@ -22233,7 +22233,11 @@ window.DIALOG_ID = 0;
  *
  * @see {@link http://docs.jquery.com/UI/API/1.8/Dialog} for a list of all jQuery UI Dialog options.
  * If you previously applied a class to your dialog after creating it with alert(),
- * dialogClass may be particularly useful.
+ * classes may be particularly useful.
+ *
+ * NOTE:
+ *  options.dialogClass is deprecated!
+ *  use options.classes['ui-dialog'] = "myclass"
  */
 window.dialog = function (options) {
   // Override for smartphones. Preserve default behavior and create a modal dialog.
@@ -22254,9 +22258,12 @@ window.dialog = function (options) {
     html = window.convertTextToTableMagic('');
   }
 
+  // Backwards compatibility. dialogClass is deprecated.
+  options.classes = Object.assign({ 'ui-dialog': options.dialogClass }, options.classes);
+
   // Modal dialogs should not be draggable
   if (options.modal) {
-    options.dialogClass = (options.dialogClass ? options.dialogClass + ' ' : '') + 'ui-dialog-modal';
+    options.classes['ui-dialog'] = (options.classes['ui-dialog'] ? options.classes['ui-dialog'] + ' ' : '') + 'ui-dialog-modal';
     options.draggable = false;
   }
 
@@ -22437,8 +22444,10 @@ window.dialog = function (options) {
     // ui-modal includes overrides for modal dialogs
     dialog.parent().addClass('ui-modal');
   } else {
-    // Enable snapping
-    dialog.dialog().parents('.ui-dialog').draggable('option', 'snap', true);
+    const $wrapper = dialog.dialog('widget');
+    $wrapper.draggable('option', 'snap', true); // Enable snapping
+    $wrapper.draggable('option', 'scroll', false); // Disable map scroll while dragging
+    $wrapper.draggable('option', 'containment', 'window'); // prevent dragging outside of the window
   }
 
   // Run it
