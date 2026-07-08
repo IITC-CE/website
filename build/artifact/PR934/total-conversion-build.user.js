@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260705.004418
+// @version        0.42.2.20260708.223142
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-07-05-004418';
+plugin_info.dateTimeVersion = '2026-07-08-223142';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-07-05-004418';
+window.iitcBuildDate = '2026-07-08-223142';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2549,9 +2549,20 @@ svg.icon-button {\
 }\
 ' +
   '</style>' +
+  '<style>' +
+  '  :root {' +
+  '    --mat-fill: 0;' +
+  '  }' +
+  '  .mat-fill {' +
+  '    --mat-fill: 1;' +
+  '  }' +
+  '  .mat-resolved {' +
+  '    font-variation-settings: "FILL" var(--mat-fill);' +
+  '    text-transform: capitalize;' +
+  '  }' +
+  '</style>' +
   // note: smartphone.css injection moved into code/smartphone.js
   '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"/>' +
-  '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>' +
   '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>';
 
 
@@ -4317,6 +4328,33 @@ function updateControlBarZIndex() {
   });
 }
 
+function setupWebComponents() {
+
+  class MaterialSymbolIcon extends HTMLElement {
+    // This could be used to implement a fallback if necessary.
+    static #ready = false;
+
+    connectedCallback() {
+      console.log('ready', this.constructor.#ready);
+      this.classList.add('material-symbols-outlined', 'mat-resolved');
+    }
+
+    static {
+      document.fonts.ready.then((fontSet) => {
+        fontSet.forEach((font) => {
+          if (font.family === '"Material Symbols Outlined"') {
+            font.loaded.then(() => {
+              MaterialSymbolIcon.#ready = true;
+            });
+          }
+        });
+      });
+    }
+
+  }
+
+  customElements.define('mat-icon', MaterialSymbolIcon);
+}
 
 /**
  * The main boot function that initializes IITC. It is responsible for setting up the map,
@@ -4324,7 +4362,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-07-05-004418');
+  log.log('loading done, booting. Built: ' + '2026-07-08-223142');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -4334,6 +4372,7 @@ function boot() {
   var loadPlugins = prepPluginsToLoad();
   loadPlugins('boot');
 
+  setupWebComponents();
   window.setupDialogs();
   checkingIntelURL();
   setupIngressMarkers();
@@ -27644,10 +27683,11 @@ window.renderPortalToSideBar = function (portal) {
       $('<h3>', { class: 'title' })
         .text(title)
         .prepend(
-          $('<svg><use xlink:href="#ic_place_24px"/></svg>')
+          $('<mat-icon>')
+            .text('place')
             .attr({
-              class: 'material-icons0 icon-button',
-              style: 'float: left',
+              class: 'mat-fill icon-button',
+              style: 'float: left;',
               title: 'Click to move to portal',
             })
             .click(function () {
@@ -27655,61 +27695,15 @@ window.renderPortalToSideBar = function (portal) {
               if (window.isSmartphone()) {
                 window.show('map');
               }
-            }),
-          $('<span>')
-            .text('place')
-            .attr({
-              class: 'material-icons icon-button',
-              style: 'float: left',
-              title: 'old style material icon',
-            }),
-          $('<span>')
-            .text('location_on')
-            .attr({
-              class: 'material-symbols-outlined icon-button',
-              style: 'float: left; font-variation-settings: "FILL" 1;',
-              title: 'new style material symbol (filled)',
-            }),
-          $('<span>')
-            .text('location_on')
-            .attr({
-              class: 'material-symbols-outlined icon-button',
-              style: 'float: left; font-variation-settings: "FILL" 0;',
-              title: 'new style material symbol (open)',
-            }),
+            })
         ),
 
       $('<span>')
         .append(
-          $('<span>')
-            .text('close_small')
-            .attr({
-              class: 'material-symbols-outlined',
-              style: 'font-size: revert;',
-              title: 'new style material symbol (small)',
-            }),
-          $('<span>')
+          $('<mat-icon>')
             .text('close')
             .attr({
-              class: 'material-symbols-outlined',
               style: 'font-size: revert;',
-              title: 'new style material symbol',
-            }),
-          $('<span>')
-            .text('close')
-            .attr({
-              class: 'material-icons',
-              style: 'font-size: revert;',
-              title: 'old style material icon',
-            }),
-          $('<span>')
-            .text('x')
-            .attr({
-              title: 'small x',
-            }),
-          $('<span>')
-            .text('X')
-            .attr({
               title: 'Close [w]',
               accesskey: 'w',
             })
@@ -31451,7 +31445,6 @@ var log = ulog('sidebar');
  */
 window.setupSidebar = function () {
   window.setupStyles();
-  setupIcons();
   window.setupPlayerStat();
   setupSidebarToggle();
   setupLargeImagePreview();
@@ -31479,27 +31472,6 @@ window.setupStyles = function () {
       '</style>'
   );
 };
-
-/**
- * Sets up custom icons by appending SVG definitions to the DOM.
- *
- * @function setupIcons
- */
-function setupIcons() {
-  // TODO: Delete this function as this icon would no longer be needed.
-  $(
-    [
-      '<svg>',
-      // Material Icons
-
-      // portal_detail_display.js
-      '<symbol id="ic_place_24px" viewBox="0 0 24 24">',
-      '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>',
-      '</symbol>',
-      '</svg>',
-    ].join('\\n')
-  ).appendTo('body');
-}
 
 /**
  * Renders player details into the website. Since the player info is
