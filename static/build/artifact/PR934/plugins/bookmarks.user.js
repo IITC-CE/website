@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.7.20260705.004418
+// @version        0.4.7.20260708.223142
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-07-05-004418';
+plugin_info.dateTimeVersion = '2026-07-08-223142';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -1286,7 +1286,11 @@ window.plugin.bookmarks.setupPortalsList = function () {
       $(cell).addClass('portal-list-bookmark').attr('data-list-bookmark', guid);
 
       // for some reason, jQuery removes event listeners when the list is sorted. Therefore we use DOM's addEventListener
-      $('<span>')
+      $('<mat-icon>')
+        .text('star')
+        .attr({
+          class: 'mat-fill',
+        })
         .appendTo(cell)[0]
         .addEventListener(
           'click',
@@ -1338,12 +1342,8 @@ window.plugin.bookmarks.setupContent = function () {
 
   window.plugin.bookmarks.htmlDisabledMessage = '<div title="Your browser do not support localStorage">Plugin Bookmarks disabled*.</div>';
   window.plugin.bookmarks.htmlStar =
-    '<a class="bkmrksStar" accesskey="b" onclick="window.plugin.bookmarks.switchStarPortal();return false;" title="Save this portal in your bookmarks [b]"><span></span>' +
-    '<foo id="bmrksStarWip">' +
-    '<bar class="material-icons" style="float: left">star</bar>' +
-    '<bar class="material-symbols-outlined" style="float: left; font-variation-settings: \'FILL\' 1;">star</bar>' +
-    '<bar class="material-symbols-outlined" style="float: left; font-variation-settings: \'FILL\' 1;">bookmark_star</bar>' +
-    '</foo>' +
+    '<a class="bkmrksStar" accesskey="b" onclick="window.plugin.bookmarks.switchStarPortal();return false;" title="Save this portal in your bookmarks [b]">' +
+    '<mat-icon class="mat-fill" style="float: left;">star</bar>' +
     '</a>';
   window.plugin.bookmarks.htmlMoveBtn =
     '<a id="bookmarksMove" class="btn" onclick="window.plugin.bookmarks.moveMode();return false;">Show/Hide "Move" button</a>';
@@ -1773,38 +1773,22 @@ window.plugin.bookmarks.setupCSS = function () {
 #bkmrksTrigger:hover{\
 	margin-top:0;\
 }\
-.portal-list-bookmark span {\
-	display:inline-block;\
-	margin: -3px;\
-	width:16px;\
-	height:15px;\
-	overflow:hidden;\
-	background-repeat:no-repeat;\
-	cursor:pointer;\
-}\
-#bkmrksTrigger, .bkmrksStar span, .portal-list-bookmark span {\
-	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAABPCAMAAABMDWzEAAAANlBMVEX/////zgD/zgD///////8Aru7/zgAAru4TtPAAAADA7PtAwvLk9/6b3/n///8Aru510/b/zgDZKp6YAAAACnRSTlOAxo5FtDw9mPoA9GJiegAAAklJREFUeF6dle26ozAIhFO1NkK+vP+b3WbBJRwM7dn5lad9BweoaThI63Z42hfmLn4rLv84d8WvpWxe+fNcFL+VUtzy57kLv67lrbDOqu/nW8tfQ1i3MmjbfrKPc9BjCYfiy2qjjNoDZRfcaBnxnl8Mm8KN4bFzv6q6lVT/P369+DBZFmsZ+LAmWbHllz7XB/OBwDDhF1rVIvwFhHt+vw4dqbViKdC0wHySSsE3e/FxpHPpAo+vUehUSCk7PBuYTpCUw/JsAIoipzlfUTHimPGNMujQ7LA86sSqm2x4BFXbOjTPSWJFxtgpbRTFd+VITdPGQG3b8hArCbm7n9vVefqZxT8I0G2Y+Yi4XFNy+Jqpn695WlP6ksdWSJB9PmJrkMqolADyjIdyrzSrD1Pc8lND8vrNFvfnkw3u8NYAn+ev+M/7iorPH3n8Jd9+mT+b8fg8EBZb+o4n+n0gx4yPMp5MZ3LkW77XJAaZZkdmPtv7JGG9EfLLrnkS3DjiRWseej6OrnXd0ub/hQbftIPHCnfzjDz6sXjy3seKoBqXG97yqiCgmFv198uNYy7XptHlr8aHcbk8NW5veMtrg+A1Ojy3oCeLDs9zgfEHEi2vu03INu4Y/fk3OVOo6N2f8u5IqDs+NvMaYOJQaHj5rut1vGIda/zk5dmdfh7H8XypUJpP0luNne56xnEdildRRPyIfMMDSnGWhEJQvEQZittQwoONYkP946OOMnsERuZNFKMXOYiXkXsO4U0UL1QwffqPCH4Us4xgovih/gBs1LqNE0afwAAAAABJRU5ErkJggg==);\
-}\
-.bkmrksStar span{\
-	display:inline-block;\
-	float:left;\
-	margin:3px 1px 0 4px;\
-	width:16px;\
-	height:15px;\
-	overflow:hidden;\
-	background-repeat:no-repeat;\
-}\
-#bmrksStarWip {\
+\
+.bkmrksStar {\
     color: #fff;\
 }\
-#bmrksStarWip.favorite {\
+.bkmrksStar.favorite, .portal-list-bookmark.favorite > * {\
     color: #ffce00;\
 }\
-.bkmrksStar span, .bkmrksStar.favorite:focus span{\
-	background-position:left top;\
+\
+.portal-list-bookmark > * {\
+        font-size: larger;\
+	overflow:hidden;\
+	cursor:pointer;\
 }\
-.bkmrksStar:focus span, .bkmrksStar.favorite span, .portal-list-bookmark.favorite span{\
-	background-position:right top;\
+\
+#bkmrksTrigger {\
+	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAABPCAMAAABMDWzEAAAANlBMVEX/////zgD/zgD///////8Aru7/zgAAru4TtPAAAADA7PtAwvLk9/6b3/n///8Aru510/b/zgDZKp6YAAAACnRSTlOAxo5FtDw9mPoA9GJiegAAAklJREFUeF6dle26ozAIhFO1NkK+vP+b3WbBJRwM7dn5lad9BweoaThI63Z42hfmLn4rLv84d8WvpWxe+fNcFL+VUtzy57kLv67lrbDOqu/nW8tfQ1i3MmjbfrKPc9BjCYfiy2qjjNoDZRfcaBnxnl8Mm8KN4bFzv6q6lVT/P369+DBZFmsZ+LAmWbHllz7XB/OBwDDhF1rVIvwFhHt+vw4dqbViKdC0wHySSsE3e/FxpHPpAo+vUehUSCk7PBuYTpCUw/JsAIoipzlfUTHimPGNMujQ7LA86sSqm2x4BFXbOjTPSWJFxtgpbRTFd+VITdPGQG3b8hArCbm7n9vVefqZxT8I0G2Y+Yi4XFNy+Jqpn695WlP6ksdWSJB9PmJrkMqolADyjIdyrzSrD1Pc8lND8vrNFvfnkw3u8NYAn+ev+M/7iorPH3n8Jd9+mT+b8fg8EBZb+o4n+n0gx4yPMp5MZ3LkW77XJAaZZkdmPtv7JGG9EfLLrnkS3DjiRWseej6OrnXd0ub/hQbftIPHCnfzjDz6sXjy3seKoBqXG97yqiCgmFv198uNYy7XptHlr8aHcbk8NW5veMtrg+A1Ojy3oCeLDs9zgfEHEi2vu03INu4Y/fk3OVOo6N2f8u5IqDs+NvMaYOJQaHj5rut1vGIda/zk5dmdfh7H8XypUJpP0luNne56xnEdildRRPyIfMMDSnGWhEJQvEQZittQwoONYkP946OOMnsERuZNFKMXOYiXkXsO4U0UL1QwffqPCH4Us4xgovih/gBs1LqNE0afwAAAAABJRU5ErkJggg==);\
 }\
 #bookmarksBox .bookmarkList .bookmarkFolder{\
 	overflow:hidden;\
@@ -2067,12 +2051,6 @@ window.plugin.bookmarks.setupCSS = function () {
 #bookmarksBox.mobile .bookmarkList li.bookmarkFolder ul{\
 	display:none !important;\
 	min-height:37px !important;\
-}\
-#updatestatus .bkmrksStar{\
-	float:left;\
-	margin:-19px 0 0 -5px;\
-	padding:0 3px 1px 4px;\
-	background:#262c32;\
 }\
 #bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,\
 #bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel > span,\
