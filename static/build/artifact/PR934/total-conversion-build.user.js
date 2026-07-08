@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260708.224626
+// @version        0.42.2.20260708.231916
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-07-08-224626';
+plugin_info.dateTimeVersion = '2026-07-08-231916';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-07-08-224626';
+window.iitcBuildDate = '2026-07-08-231916';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -1022,12 +1022,6 @@ body {\
   margin: 0;\
 }\
 \
-/* Material Icons */\
-.material-icons0 {\
-  width: 24px;\
-  height: 24px;\
-}\
-\
 .icon-button {\
   cursor: pointer;\
 }\
@@ -1706,7 +1700,7 @@ input[type="search"], input[type="url"] {\
 \
 /* portal title and image */\
 h3.title {\
-  padding-right: 40px; /* to not overlap with close button */\
+  padding-right: 17px; /* to not overlap with close button */\
   margin: 2px 0;\
   line-height: 24px;\
   overflow: hidden;\
@@ -4362,7 +4356,7 @@ function setupWebComponents() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-07-08-224626');
+  log.log('loading done, booting. Built: ' + '2026-07-08-231916');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
