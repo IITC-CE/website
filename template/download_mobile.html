@@ -5,88 +5,83 @@
     <div class="container">
         <div class="row">
             <div class="col s12">
+
                 <div class="section">
-                    <h2 class="hover">IITC Mobile</h2>
-                    <p>IITC Mobile works as a simple web browser, with the IITC browser add-on embedded within it.</p>
-
-                    <div class="row">
-                        <div class="col s12 m6 p-0">
-                            <div class="card-panel">
-                                <h4 class="top_zero center">Android</h4>
-                                <div class="hr"></div>
-                                <p>Requires Android 5.0 (Lollipop) at a minimum.</p>
-                                <p><strong>Note:</strong> Different sources use different signature keys:</p>
-                                <ul class="browser-default">
-                                    <li>Google Play</li>
-                                    <li>official F-Droid repo</li>
-                                    <li>IITC F-Droid repo and our .apk</li>
-                                </ul>
+                    <div class="card-panel fdroid-repo" id="iitc-fdroid-repo">
+                        <div class="row" style="margin-bottom: 0;">
+                            <div class="col s12 m8">
+                                <h4 class="top_zero">IITC F-Droid repo</h4>
+                                <p>F-Droid is an installable catalogue of FOSS apps for Android. Unlike the official F-Droid repository, the IITC F-Droid repo also provides beta builds and delivers updates instantly. It hosts both IITC Mobile and IITC Prime.</p>
+                                <p>To add this repository to your F-Droid client, scan the QR code (click it to enlarge) or use this URL:</p>
+                                <p><a href="https://static.iitc.app/fdroid/repo?fingerprint=B7899FB661896B374D1003A31BA1C54139A9EFDC6B9D53A70F5180768EF197B9" target="_blank">https://static.iitc.app/fdroid/repo</a></p>
                                 <p>
-                                    So installing the update over the application from another source is not possible. You must first uninstall the previous version.<br>
-                                    Use <a href="community_plugins.html#backup-restore-alldata-by-DanielOnDiordna">plugin for backup/restore</a> to migrate your data.
+                                    If you would like to manually verify the fingerprint (SHA-256) of the repository signing key, here it is:
+                                    <br>
+                                    <blockcode class="fingerprint">
+                                        B7 89 9F B6 61 89 6B 37 4D 10 03 A3 1B A1 C5 41 39 A9 EF DC 6B 9D 53 A7 0F 51 80 76 8E F1 97 B9
+                                    </blockcode>
                                 </p>
-                                <div class="hr"></div>
-
-                                <h5>Available on <a href="https://play.google.com/store/apps/details?id=org.exarhteam.iitc_mobile" target="_blank">Google Play</a></h5>
-
-                                <h5>— or —</h5>
-
-                                <h5>Get it on <a href="https://f-droid.org/packages/org.exarhteam.iitc_mobile/" target="_blank">official F-Droid repo</a> or <a class="modal-trigger" href="#modal_iitc_fdroid_repo">IITC F-Droid repo</a></h5>
-                                <p>F-Droid is an installable catalogue of FOSS (Free and Open Source Software) applications for the Android platform.
-                                    The client makes it easy to browse, install, and keep track of updates on your device.</p>
-                                <p>Unlike the official F-Droid repository, the IITC F-Droid repository also provides beta versions of the mobile app and allows you to receive updates instantly.</p>
-
-                                <h5>— or —</h5>
-
-                                <h5>Download <i>.apk</i></h5>
-                                <a href="/build/release/IITC_Mobile-release.apk">IITC Mobile</a> (v{{ release_iitc_version }})<br>
-                                <a href="/build/beta/IITC_Mobile-beta.apk">IITC Mobile Beta</a> (v{{ beta_iitc_version }})<br>
-                                Archive of previous builds:
-                                <a href="/build/release_archive/">release</a>,
-                                <a href="/build/beta_archive/">beta</a>
-                                <p>You need to enable applications installed from unknown sources in your phone settings. Once done, download and install from the link above.</p>
                             </div>
-                        </div>
-                        <div class="col s12 m6 p-0">
-                            <div class="card-panel">
-                                <h4 class="top_zero center">iOS</h4>
-                                <div class="hr"></div>
-                                <p>Requires iOS 14.0 or later. Compatible with iPhone, iPad, and iPod touch.</p>
-                                IITC Mobile by Hubert Zhang (<a href="https://github.com/HubertZhang/IITC-Mobile" target="_blank">GitHub repo</a>)
-                                <div class="hr"></div>
-                                <h5>Get it on <a href="https://apps.apple.com/app/iitc-mobile/id1032695947" target="_blank">Apple Store</a></h5>
+                            <div class="col m4 qr hide-on-small-only">
+                                <a href="https://static.iitc.app/fdroid/repo/index.png" title="QR: IITC F-Droid repo">
+                                    <img class="qr-code" alt="QR: IITC F-Droid repo" src="https://static.iitc.app/fdroid/repo/index.png">
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div id="modal_iitc_fdroid_repo" class="modal">
-        <div class="modal-content">
-            <h4>IITC F-Droid repo</h4>
-            <div class="row">
-                <div class="col s12 m6">
-                    <p>To add this repository to your F-Droid client, scan the QR code (click it to enlarge) or use this URL:</p>
-                    <p><a href="https://static.iitc.app/fdroid/repo?fingerprint=B7899FB661896B374D1003A31BA1C54139A9EFDC6B9D53A70F5180768EF197B9" target="_blank">https://static.iitc.app/fdroid/repo</a></p>
-                    <p>
-                        If you would like to manually verify the fingerprint (SHA-256) of the repository signing key, here it is:
-                        <br>
-                        <blockcode class="fingerprint">
-                            B7 89 9F B6 61 89 6B 37 4D 10 03 A3 1B A1 C5 41 39 A9 EF DC 6B 9D 53 A7 0F 51 80 76 8E F1 97 B9
-                        </blockcode>
-                    </p>
+                <div class="section">
+                    <h2 class="top_zero">IITC Mobile</h2>
+                    <div class="badges">
+                        <span class="badge">android</span>
+                        <span class="badge official">official</span>
+                    </div>
+                    <ul class="browser-default">
+                        <li><strong>Android (5.0+):</strong> <a href="https://play.google.com/store/apps/details?id=org.exarhteam.iitc_mobile" target="_blank">Google Play</a> (release &amp; beta), <a href="https://f-droid.org/packages/org.exarhteam.iitc_mobile/" target="_blank">official F-Droid repo</a> (release) or the <a href="#iitc-fdroid-repo">IITC F-Droid repo</a> (release &amp; beta)</li>
+                        <li><strong>Direct <i>.apk</i>:</strong>
+                            <a href="/build/release/IITC_Mobile-release.apk">release</a> (v{{ release_iitc_version }}),
+                            <a href="/build/beta/IITC_Mobile-beta.apk">beta</a> (v{{ beta_iitc_version }})
+                            — archives: <a href="/build/release_archive/">release</a>, <a href="/build/beta_archive/">beta</a>
+                        </li>
+                    </ul>
+                    <p>Google Play, the official F-Droid repo, and the IITC F-Droid repo / <i>.apk</i> are each signed with a different key, so you can't update across sources. To switch, uninstall the current version first, then install the new one — use the <a href="community_plugins.html#backup-restore-alldata-by-DanielOnDiordna">backup/restore plugin</a> to migrate your data.<br>
+                        Source code: <a href="https://github.com/IITC-CE/ingress-intel-total-conversion/" target="_blank">github.com/IITC-CE/ingress-intel-total-conversion</a></p>
                 </div>
-                <div class="col s12 m6 center">
-                    <a href="https://static.iitc.app/fdroid/repo/index.png" title="QR: IITC F-Droid repo">
-                        <img class="qr-code" alt="QR: IITC F-Droid repo" src="https://static.iitc.app/fdroid/repo/index.png">
-                    </a>
+
+                <div class="hr"></div>
+
+                <div class="section">
+                    <h2 class="top_zero">IITC Prime</h2>
+                    <div class="badges">
+                        <span class="badge">android</span>
+                        <span class="badge">iOS</span>
+                        <span class="badge official">official</span>
+                    </div>
+                    <ul class="browser-default">
+                        <li><strong>Android (7.0+):</strong> <a href="https://play.google.com/store/apps/details?id=org.exarhteam.iitcprime" target="_blank">Google Play</a> (release &amp; beta) or the <a href="#iitc-fdroid-repo">IITC F-Droid repo</a> (release &amp; beta)</li>
+                        <li><strong>iOS (13+):</strong> <a href="https://testflight.apple.com/join/KAfZ63P2" target="_blank">TestFlight</a> (beta)</li>
+                    </ul>
+                    <p>Android builds share the same signing key on Google Play and the IITC F-Droid repo, so updates install over each other.<br>
+                        Source code: <a href="https://github.com/IITC-CE/IITC-Prime/" target="_blank">github.com/IITC-CE/IITC-Prime</a></p>
                 </div>
+
+                <div class="hr"></div>
+
+                <div class="section">
+                    <h2 class="top_zero">IITC Mobile for iOS</h2>
+                    <div class="badges">
+                        <span class="badge">iOS</span>
+                        <span class="badge unofficial">unofficial</span>
+                    </div>
+                    <ul class="browser-default">
+                        <li><strong>iOS (14+):</strong> <a href="https://apps.apple.com/app/iitc-mobile/id1032695947" target="_blank">App Store</a></li>
+                    </ul>
+                    <p>By Hubert Zhang.<br>
+                        Source code: <a href="https://github.com/HubertZhang/IITC-Mobile" target="_blank">github.com/HubertZhang/IITC-Mobile</a></p>
+                </div>
+
             </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect btn-flat">Close</a>
         </div>
     </div>
 
