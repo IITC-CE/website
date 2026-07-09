@@ -158,16 +158,23 @@ table.striped > tbody > tr:nth-child(2n+1) {
     background-color: var(--primary-lower);
 }
 
-#modal_iitc_fdroid_repo {
-    max-width: 700px;
+.fdroid-repo {
+    margin-top: 2rem;
 }
 
-#modal_iitc_fdroid_repo .qr-code {
+.fdroid-repo .qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fdroid-repo .qr-code {
     width: 100%;
+    max-width: 260px;
     border: 1px solid #eee;
 }
 
-#modal_iitc_fdroid_repo .fingerprint {
+.fdroid-repo .fingerprint {
     color: #000000;
     font-weight: bold;
     font-size: 13px;

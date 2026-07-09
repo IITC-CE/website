@@ -22,3 +22,13 @@ a.badge {
     color: #FFFFFF;
     background-color: var(--accent-main);
 }
+
+span.badge.official {
+    color: #FFFFFF;
+    background-color: var(--accent-main);
+}
+
+span.badge.unofficial {
+    color: var(--secondary-main);
+    background-color: var(--important);
+}
