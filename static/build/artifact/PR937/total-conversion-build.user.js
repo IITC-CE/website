@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260709.023603
+// @version        0.42.2.20260711.170013
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-07-09-023603';
+plugin_info.dateTimeVersion = '2026-07-11-170013';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,7 +166,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-07-09-023603';
+window.iitcBuildDate = '2026-07-11-170013';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -1718,7 +1718,6 @@ input[type="search"], input[type="url"] {\
 \
 #portaltitle .close {\
   margin-right: 2px;\
-  margin-top: -2px;\
   cursor: pointer;\
   color: #FFCE00;\
   font-weight: normal;\
@@ -4322,7 +4321,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-07-09-023603');
+  log.log('loading done, booting. Built: ' + '2026-07-11-170013');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -31537,7 +31536,7 @@ function setupSidebarToggle() {
  * @function setupLargeImagePreview
  */
 function setupLargeImagePreview() {
-  $('#portaldetails').on('click', '.imgpreview', function (e) {
+  $('#portaldetails').on('click', '.imgpreview', function () {
     var img = this.querySelector('img');
     // dialogs have 12px padding around the content
     var dlgWidth = Math.max(img.naturalWidth + 24, 500);
@@ -31550,7 +31549,7 @@ function setupLargeImagePreview() {
     var preview = new Image(img.width, img.height);
     preview.src = img.src;
     preview.style = 'margin: auto; display: block';
-    var title = e.delegateTarget.querySelector('.title').innerText;
+    const title = document.querySelector('#portaltitle .value')?.innerText || '';
     window.dialog({
       html: preview,
       title: title,
