@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260719.095829
+// @version        0.42.2.20260719.100254
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-07-19-095829';
+plugin_info.dateTimeVersion = '2026-07-19-100254';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-07-19-095829';
+window.iitcBuildDate = '2026-07-19-100254';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4349,7 +4349,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-07-19-095829');
+  log.log('loading done, booting. Built: ' + '2026-07-19-100254');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -25649,6 +25649,7 @@ window.Render.prototype.createPortalEntity = function (ent, details) {
 
     // in case of incomplete data while having fresh details in cache, update the portal with those details
     if (IITC.portal.details.isFresh(guid)) {
+      // eslint-disable-next-line no-redeclare
       var oldDetails = IITC.portal.details.get(guid);
       if (data.timestamp > oldDetails.timestamp) {
         // data is more recent than the cached details so we remove them from the cache
