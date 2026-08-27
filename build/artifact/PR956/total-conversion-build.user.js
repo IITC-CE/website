@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260827.164835
+// @version        0.42.2.20260827.165812
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-08-27-164835';
+plugin_info.dateTimeVersion = '2026-08-27-165812';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-08-27-164835';
+window.iitcBuildDate = '2026-08-27-165812';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4367,7 +4367,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-08-27-164835');
+  log.log('loading done, booting. Built: ' + '2026-08-27-165812');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -25612,7 +25612,8 @@ function createDefaultBaseMapLayers() {
   // cartodb has some nice tiles too - both dark and light subtle maps - http://cartodb.com/basemaps/
   // (not available over https though - not on the right domain name anyway)
   const cartoAttr = IITC.map.osmAttributionTemplate;
-  const cartoUrl = 'https://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png?key=cb1_2d98_1_8c4c1ddaeb0a769373718043';
+  const cartoAPIKey = 'cb1_2d98_1_8c4c1ddaeb0a769373718043';
+  const cartoUrl = `https://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png?key=${cartoAPIKey}`;
   baseLayers['CartoDB Dark Matter'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'dark_all', isDark: true });
   baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'light_all', isDark: false });
 
