@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.2.1.20260827.160440
+// @version        0.2.1.20260828.101001
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-08-27-160440';
+plugin_info.dateTimeVersion = '2026-08-28-101001';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -135,15 +135,12 @@ debugTab.renderLine = function (errorType, args) {
 
   // Insert a new row in the debug table
   var table = debugContainer.querySelector('table');
-  var firstRender = !table.rows.length;
   var row = table.insertRow();
   row.insertCell().append(time);
   row.insertCell().append(type);
   row.insertCell().append(pre);
 
-  // pass 0 for the first line: a fresh container reports a scrollBottom of 1, which
-  // keepScrollPosition would read as "scrolled up" and never follow the output again
-  IITC.chat.keepScrollPosition(debugContainer, firstRender ? 0 : scrollBefore, false);
+  IITC.chat.keepScrollPosition(debugContainer, scrollBefore, false);
 };
 
 debugTab.console = {};
