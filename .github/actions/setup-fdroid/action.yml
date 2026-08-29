@@ -29,7 +29,7 @@ runs:
       run: |
         echo "${{ inputs.keystore_p12 }}" | base64 -d - > ./website/static/fdroid/keystore.p12
         echo "${{ inputs.config_yml }}" | base64 -d - > ./website/static/fdroid/config.yml
-        
+
         # Create rclone config for Cloudflare R2
         mkdir -p ./website/static/fdroid/.config/rclone
         cat > ./website/static/fdroid/.config/rclone/rclone.conf << EOF
@@ -52,9 +52,18 @@ runs:
             apt-get -y install python3-pip curl unzip
 
         # Install rclone for cloud storage support
-        RUN curl https://rclone.org/install.sh | bash
+        ARG RCLONE_VERSION=v1.75.0
+        RUN set -eux; \
+            arch="$(dpkg --print-architecture)"; \
+            curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
+                -o /tmp/rclone.zip \
+                "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/rclone-${RCLONE_VERSION}-linux-${arch}.zip"; \
+            unzip -q /tmp/rclone.zip -d /tmp; \
+            install -m 755 "/tmp/rclone-${RCLONE_VERSION}-linux-${arch}/rclone" /usr/local/bin/rclone; \
+            rm -rf /tmp/rclone.zip "/tmp/rclone-${RCLONE_VERSION}-linux-${arch}"; \
+            rclone version
         EOF
-        
+
         docker build -t fdroid-server-patched -f Dockerfile.fdroid-patched .
 
     - name: Download existing APKs from R2
