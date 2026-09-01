@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.3.0.20260831.093133
+// @version        0.3.0.20260901.163724
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-08-31-093133';
+plugin_info.dateTimeVersion = '2026-09-01-163724';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -427,8 +427,11 @@ function setup() {
     color: #FF424D\
 }\
 \
+/* the global .warning class reaches this button too */\
 .debug-filters button.warning {\
-    color: #FFDE42\
+    color: #FFDE42;\
+    font-weight: normal;\
+    text-shadow: none;\
 }\
 \
 .debug-filters button.info {\
