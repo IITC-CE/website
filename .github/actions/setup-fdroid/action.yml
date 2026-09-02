@@ -52,15 +52,15 @@ runs:
             apt-get -y install python3-pip curl unzip
 
         # Install rclone for cloud storage support
-        ARG RCLONE_VERSION=v1.75.0
         RUN set -eux; \
+            version=v1.75.0; \
             arch="$(dpkg --print-architecture)"; \
             curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 \
                 -o /tmp/rclone.zip \
-                "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/rclone-${RCLONE_VERSION}-linux-${arch}.zip"; \
+                "https://github.com/rclone/rclone/releases/download/${version}/rclone-${version}-linux-${arch}.zip"; \
             unzip -q /tmp/rclone.zip -d /tmp; \
-            install -m 755 "/tmp/rclone-${RCLONE_VERSION}-linux-${arch}/rclone" /usr/local/bin/rclone; \
-            rm -rf /tmp/rclone.zip "/tmp/rclone-${RCLONE_VERSION}-linux-${arch}"; \
+            install -m 755 "/tmp/rclone-${version}-linux-${arch}/rclone" /usr/local/bin/rclone; \
+            rm -rf /tmp/rclone.zip "/tmp/rclone-${version}-linux-${arch}"; \
             rclone version
         EOF
 
