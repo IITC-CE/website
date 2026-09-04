@@ -1,2 +1,0 @@
-versionName=0.42.2-test-2026.09.02-19:27
-versionCode=1788377227
