@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.14.1.20260504.125408
+// @version        0.14.1.20260904.154147
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -158,11 +158,11 @@ window.plugin.playerTracker.zoomListener = function () {
     window.plugin.playerTracker.drawnTracesRes.clearLayers();
     ctrl.addClass('disabled').attr('title', 'Zoom in to show those.');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
-    window.chat.backgroundChannelData('plugin.playerTracker', 'all', false); // disable this plugin's interest in 'all' COMM
+    IITC.chat.backgroundChannelData('plugin.playerTracker', 'all', false); // disable this plugin's interest in 'all' COMM
   } else {
     ctrl.removeClass('disabled').attr('title', '');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
-    window.chat.backgroundChannelData('plugin.playerTracker', 'all', true); // enable this plugin's interest in 'all' COMM
+    IITC.chat.backgroundChannelData('plugin.playerTracker', 'all', true); // enable this plugin's interest in 'all' COMM
   }
 };
 
@@ -453,19 +453,19 @@ window.plugin.playerTracker.getPortalLink = function (data) {
   return $('<a>')
     .addClass('text-overflow-ellipsis')
     .css('max-width', '15em')
-    .text(window.chat.getChatPortalName(data))
+    .text(IITC.comm.getChatPortalName(data))
     .prop({
-      title: window.chat.getChatPortalName(data),
-      href: window.makePermalink(position),
+      title: IITC.comm.getChatPortalName(data),
+      href: IITC.portal.display.makePermalink(position),
     })
     .click(function (event) {
-      window.selectPortalByLatLng(position);
+      IITC.portal.selectByLatLng(position);
       event.preventDefault();
       return false;
     })
     .dblclick(function (event) {
       window.map.setView(position, window.DEFAULT_ZOOM);
-      window.selectPortalByLatLng(position);
+      IITC.portal.selectByLatLng(position);
       event.preventDefault();
       return false;
     });
@@ -502,7 +502,7 @@ window.plugin.playerTracker.centerMapOnUser = function (nick) {
   var last = data.events[data.events.length - 1];
   var position = window.plugin.playerTracker.getLatLngFromEvent(last);
 
-  if (window.isSmartphone()) window.show('map');
+  if (IITC.utils.isSmartphone()) window.show('map');
   window.map.setView(position, window.map.getZoom());
 
   if (data.marker) {
@@ -521,7 +521,7 @@ window.plugin.playerTracker.onNicknameClicked = function (info) {
 window.plugin.playerTracker.onSearchResultSelected = function (result, event) {
   event.stopPropagation(); // prevent chat from handling the click
 
-  if (window.isSmartphone()) window.show('map');
+  if (IITC.utils.isSmartphone()) window.show('map');
 
   // if the user moved since the search was started, check if we have a new set of data
   if (false === window.plugin.playerTracker.centerMapOnUser(result.nickname)) window.map.setView(result.position);

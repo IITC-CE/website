@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.2.5.20260504.125408
+// @version        0.2.5.20260904.154147
 // @description    Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'basemap-stamen';
 //END PLUGIN AUTHORS NOTE
 
@@ -70,14 +70,14 @@ mapStamen.setup = function () {
     },
   });
 
-  function addLayer(name, options) {
-    window.layerChooser.addBaseLayer(new L_StamenTileLayer(name, options), 'Stamen ' + name);
+  function addLayer(name, options, isDark) {
+    window.layerChooser.addBaseLayer(new L_StamenTileLayer(name, options), 'Stamen ' + name, { isDark: isDark });
   }
 
   var options = { minZoom: 0, maxNativeZoom: 20 };
-  addLayer('Toner', options);
-  addLayer('Toner Background', options);
-  addLayer('Toner Lite', options);
+  addLayer('Toner', options, false);
+  addLayer('Toner Background', options, false);
+  addLayer('Toner Lite', options, false);
   // transparent layers. could be useful over satellite imagery or similar
   // addLayer('Toner Hybrid',options);
   // addLayer('Toner Labels',options);
@@ -101,7 +101,7 @@ mapStamen.setup = function () {
       'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
     ].join(''),
   };
-  addLayer('Watercolor', options);
+  addLayer('Watercolor', options, false);
 };
 
 function setup() {

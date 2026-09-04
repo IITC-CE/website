@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Privacy view on Intel
 // @category       Misc
-// @version        1.2.2.20260504.125408
+// @version        1.2.2.20260904.154147
 // @description    Hide info from intel which shouldn't leak to players of the other faction.
 // @id             privacy-view
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'privacy-view';
 //END PLUGIN AUTHORS NOTE
 
@@ -60,7 +60,7 @@ privacyView.text = {
 privacyView.toggle = () => {
   privacyView.is_active = !privacyView.is_active;
   document.body.classList.toggle('privacy_active', privacyView.is_active);
-  if (window.isSmartphone()) {
+  if (IITC.utils.isSmartphone()) {
     IITC.toolbox.updateButton('privacytoggle', { label: privacyView.text[privacyView.is_active] });
   } else {
     $('#privacytoggle').text(privacyView.is_active ? 'Privacy active' : 'Privacy inactive');
@@ -83,7 +83,7 @@ function setup() {
     )
     .appendTo('head');
 
-  if (window.isSmartphone()) {
+  if (IITC.utils.isSmartphone()) {
     IITC.toolbox.addButton({
       id: 'privacytoggle',
       label: 'Permalink',

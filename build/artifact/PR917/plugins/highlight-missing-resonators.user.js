@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals missing resonators
 // @category       Highlighter
-// @version        0.2.4.20260504.125408
+// @version        0.2.4.20260904.154147
 // @description    Use the portal fill color to denote if the portal is missing resonators.
 // @id             highlight-missing-resonators
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,12 +21,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'highlight-missing-resonators';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
   {
@@ -70,7 +70,7 @@ function missingResonators(data) {
 }
 
 function setup() {
-  window.addPortalHighlighter('Portals Missing Resonators', missingResonators);
+  IITC.portal.highlighter.add('Portals Missing Resonators', missingResonators);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

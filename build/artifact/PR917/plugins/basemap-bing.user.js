@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Bing maps
 // @category       Map Tiles
-// @version        0.3.4.20260504.125408
+// @version        0.3.4.20260904.154147
 // @description    Add the bing.com map layers.
 // @id             basemap-bing
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'basemap-bing';
 //END PLUGIN AUTHORS NOTE
 
@@ -49,15 +49,19 @@ var mapBing = {};
 mapBing.sets = {
   Road: {
     imagerySet: 'RoadOnDemand',
+    isDark: false,
   },
   Dark: {
     imagerySet: 'CanvasDark',
+    isDark: true,
   },
   Aerial: {
     imagerySet: 'Aerial',
+    isDark: true,
   },
   Hybrid: {
     imagerySet: 'AerialWithLabelsOnDemand',
+    isDark: true,
   },
 };
 
@@ -71,7 +75,7 @@ function setup() {
 
   for (var name in mapBing.sets) {
     var options = L.extend({}, mapBing.options, mapBing.sets[name]);
-    window.layerChooser.addBaseLayer(L.bingLayer(options), 'Bing ' + name);
+    window.layerChooser.addBaseLayer(L.bingLayer(options), 'Bing ' + name, { isDark: options.isDark });
   }
 }
 

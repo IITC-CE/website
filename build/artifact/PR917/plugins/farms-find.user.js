@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.5.20260504.125408
+// @version        1.4.5.20260904.154147
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 
@@ -290,8 +290,8 @@ window.plugin.farmFind.setupCSS = function () {
       '' +
         '#farm_level_select {' +
         ' position: absolute;' +
-        ' top: 5px;' +
-        ' left:180px;' +
+        ' top: calc(var(--safe-area-inset-top) + 5px);' +
+        ' left: calc(var(--safe-area-inset-left) + 180px);' +
         ' z-index: 2500;' +
         ' font-size:11px;' +
         ' font-family: "coda",arial,helvetica,sans-serif;' +
@@ -305,7 +305,19 @@ window.plugin.farmFind.setupCSS = function () {
 window.plugin.farmFind.setupSmartCSS = function () {
   $('<style>')
     .prop('type', 'text/css')
-    .html('#farm_level_select { top: 0px !important; right: 0px; left: auto !important; margin-right: 0; }\n')
+    .html(
+      '' +
+        '#farm_level_select {' +
+        ' top: var(--safe-area-inset-top) !important;' +
+        ' right: var(--safe-area-inset-right);' +
+        ' left: auto !important;' +
+        ' margin-right: 0;' +
+        '}\n' +
+        'body.show-controls #farm_level_select {' +
+        ' top: calc(var(--safe-area-inset-top) + var(--top-controls-height) + 10px) !important;' +
+        ' right: calc(var(--safe-area-inset-right) + 60px);' +
+        '}\n'
+    )
     .appendTo('head');
 };
 
@@ -324,7 +336,7 @@ var setup = function () {
   window.plugin.farmFind.minLevel = 7;
   window.plugin.farmFind.minNearby = 5;
   window.plugin.farmFind.setupCSS();
-  if (window.isSmartphone()) {
+  if (IITC.utils.isSmartphone()) {
     window.plugin.farmFind.setupSmartCSS();
   }
   window.plugin.farmFind.Radius = 500;

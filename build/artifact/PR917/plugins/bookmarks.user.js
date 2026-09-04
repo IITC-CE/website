@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.7.20260504.125408
+// @version        0.4.7.20260904.154147
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -305,7 +305,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
       // If it's a portal
       else if (typeList === 'portals') {
         var guid = bkmrk['guid'];
-        const bookmarks_onclick = `$('a.bookmarksLink.selected').removeClass('selected');${returnToMap}window.zoomToAndShowPortal('${guid}', [${latlng}]);return false;`;
+        const bookmarks_onclick = `$('a.bookmarksLink.selected').removeClass('selected');${returnToMap}IITC.portal.zoomToAndShow('${guid}', [${latlng}]);return false;`;
         btn_link = `<a class="bookmarksLink" onclick="${bookmarks_onclick}">${label}</a>`;
       }
       // Create the bookmark
@@ -649,9 +649,9 @@ window.plugin.bookmarks.onSearchResultSelected = function (result, event) {
   if (result.guid) {
     // portal
     var guid = result.guid;
-    if (event.type === 'dblclick') window.zoomToAndShowPortal(guid, result.position);
-    else if (window.portals[guid]) window.renderPortalDetails(guid);
-    else window.selectPortalByLatLng(result.position);
+    if (event.type === 'dblclick') IITC.portal.zoomToAndShow(guid, result.position);
+    else if (window.portals[guid]) IITC.portal.display.renderDetails(guid);
+    else IITC.portal.selectByLatLng(result.position);
   } else if (result.zoom) {
     // map
     window.map.setView(result.position, result.zoom);
@@ -1180,7 +1180,7 @@ window.plugin.bookmarks.highlightRefresh = function (data) {
       (data.target === 'all' && data.action === 'reset') ||
       (data.target === 'all' && data.action === 'MPEswitch')
     ) {
-      window.changePortalHighlights('Bookmarked Portals');
+      IITC.portal.highlighter.change('Bookmarked Portals');
     }
   }
 };
@@ -1222,7 +1222,7 @@ window.plugin.bookmarks.addStar = function (guid, latlng, lbl) {
   });
   window.registerMarkerForOMS(star);
   star.on('spiderfiedclick', function () {
-    window.renderPortalDetails(guid);
+    IITC.portal.display.renderDetails(guid);
   });
 
   window.plugin.bookmarks.starLayers[guid] = star;
@@ -1402,7 +1402,7 @@ window.plugin.bookmarks.initMPE = function () {
 /** ************************************************************************************************************************************************************/
 
 var setup = function () {
-  window.plugin.bookmarks.isSmart = window.isSmartphone();
+  window.plugin.bookmarks.isSmart = IITC.utils.isSmartphone();
 
   // HOOKS:
   // - pluginBkmrksEdit:    fired when a bookmarks/folder is removed, added or sorted,
@@ -1473,7 +1473,7 @@ var setup = function () {
   // Highlighter - bookmarked portals
   window.addHook('pluginBkmrksEdit', window.plugin.bookmarks.highlightRefresh);
   window.addHook('pluginBkmrksSyncEnd', window.plugin.bookmarks.highlightRefresh);
-  window.addPortalHighlighter('Bookmarked Portals', window.plugin.bookmarks.highlight);
+  IITC.portal.highlighter.add('Bookmarked Portals', window.plugin.bookmarks.highlight);
 
   // Layer - Bookmarked portals
   window.plugin.bookmarks.starLayerGroup = new L.LayerGroup();

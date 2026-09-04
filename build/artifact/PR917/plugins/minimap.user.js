@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.4.5.20260504.125408
+// @version        0.4.5.20260904.154147
 // @description    Show a mini map on the corner of the map.
 // @id             minimap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,12 +21,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'minimap';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
   { version: '0.4.5', changes: ['Refactoring: update Leaflet API usage'] },
@@ -153,7 +153,7 @@ function setup() {
 
   // mobile mode  - bottom-right (default)
   // desktop mode - bottom-left, so it doesn't clash with the sidebar
-  if (!window.isSmartphone()) {
+  if (!IITC.utils.isSmartphone()) {
     miniMap.options.position = miniMap.options.position || 'bottomleft';
   }
 

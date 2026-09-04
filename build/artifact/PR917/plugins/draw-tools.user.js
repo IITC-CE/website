@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.13.0.20260504.125408
+// @version        0.13.0.20260904.154147
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -505,7 +505,7 @@ window.plugin.drawTools.optCopy = function () {
       }
     });
     var stockUrl =
-      window.makePermalink(null, {
+      IITC.portal.display.makePermalink(null, {
         includeMapView: true,
         fullURL: true,
       }) +
@@ -713,13 +713,13 @@ window.plugin.drawTools.optReset = function () {
 };
 
 window.plugin.drawTools.snapToPortals = function () {
-  if (!window.getDataZoomTileParameters().hasPortals) {
+  if (!IITC.map.tiles.getDataZoomParameters().hasPortals) {
     if (!confirm('Not all portals are visible on the map. Snap to portals may move valid points to the wrong place. Continue?')) {
       return;
     }
   }
 
-  if (window.mapDataRequest.status.short !== 'done') {
+  if (IITC.map.request.status.short !== 'done') {
     if (!confirm('Map data has not completely loaded, so some portals may be missing. Do you want to continue?')) {
       return;
     }
