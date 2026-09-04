@@ -2,7 +2,7 @@
 // @author         Hollow011
 // @name           IITC plugin: Available AP statistics
 // @category       Info
-// @version        0.4.6.20260504.125408
+// @version        0.4.6.20260904.154147
 // @description    Displays the per-team AP gains available in the current view.
 // @id             ap-stats
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,10 +21,11 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'ap-stats';
 //END PLUGIN AUTHORS NOTE
 
+/* global IITC -- eslint */
 /* exported setup, changelog --eslint */
 
 var changelog = [
@@ -86,7 +87,7 @@ window.plugin.compAPStats.updateNoPortals = function () {
 };
 
 window.plugin.compAPStats.update = function (hasFinished) {
-  if (!window.getDataZoomTileParameters().hasPortals) {
+  if (!IITC.map.tiles.getDataZoomParameters().hasPortals) {
     window.plugin.compAPStats.updateNoPortals(hasFinished);
     return;
   }

@@ -2,7 +2,7 @@
 // @author         Johtaja
 // @name           IITC plugin: Highlight portals based on history
 // @category       Highlighter
-// @version        0.3.3.20260504.125408
+// @version        0.3.3.20260904.154147
 // @description    Use the portal fill color to denote the portal has been visited, captured, scout controlled
 // @id             highlight-portal-history
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,12 +21,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'highlight-portal-history';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
   {
@@ -134,10 +134,10 @@ function setup() {
   inherit('marked', ['captured', 'visitTarget', 'scoutControlled', 'scoutControllTarget']);
   inherit('commonOther', ['otherVC', 'otherNotVC', 'otherScout', 'otherNotScout']);
 
-  window.addPortalHighlighter('History: visited/captured', highlightPortalsHistoryVisited);
-  window.addPortalHighlighter('History: not visited/captured', highlightPortalsHistoryNotVisited);
-  window.addPortalHighlighter('History: scout controlled', highlightPortalsHistoryScoutControlled);
-  window.addPortalHighlighter('History: not scout controlled', highlightPortalsHistoryNotScoutControlled);
+  IITC.portal.highlighter.add('History: visited/captured', highlightPortalsHistoryVisited);
+  IITC.portal.highlighter.add('History: not visited/captured', highlightPortalsHistoryNotVisited);
+  IITC.portal.highlighter.add('History: scout controlled', highlightPortalsHistoryScoutControlled);
+  IITC.portal.highlighter.add('History: not scout controlled', highlightPortalsHistoryNotScoutControlled);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

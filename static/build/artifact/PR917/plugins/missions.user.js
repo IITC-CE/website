@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Missions
 // @category       Info
-// @version        0.3.6.20260504.125408
+// @version        0.3.6.20260904.154147
 // @description    View missions. Marking progress on waypoints/missions basis. Showing mission paths on the map.
 // @id             missions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'missions';
 //END PLUGIN AUTHORS NOTE
 
@@ -254,7 +254,7 @@ window.plugin.missions = {
       tabs.tabs('refresh');
       tabs.find('.ui-tabs-nav').sortable('refresh');
       tabs.tabs('option', 'active', -1);
-      if (window.isSmartphone()) {
+      if (IITC.utils.isSmartphone()) {
         window.show('plugin-missions');
       }
     } else {
@@ -737,16 +737,16 @@ window.plugin.missions = {
 
       var lat = waypoint.portal.latE6 / 1e6;
       var lng = waypoint.portal.lngE6 / 1e6;
-      var perma = window.makePermalink([lat, lng]);
+      var perma = IITC.portal.display.makePermalink([lat, lng]);
 
       title.href = perma;
       title.addEventListener(
         'click',
         function (ev) {
-          if (window.isSmartphone()) {
+          if (IITC.utils.isSmartphone()) {
             window.show('map');
           }
-          window.selectPortalByLatLng(lat, lng);
+          IITC.portal.selectByLatLng(lat, lng);
           ev.preventDefault();
           return false;
         },
@@ -755,10 +755,10 @@ window.plugin.missions = {
       title.addEventListener(
         'dblclick',
         function (ev) {
-          if (window.isSmartphone()) {
+          if (IITC.utils.isSmartphone()) {
             window.show('map');
           }
-          window.zoomToAndShowPortal(waypoint.portal.guid, [lat, lng]);
+          IITC.portal.zoomToAndShow(waypoint.portal.guid, [lat, lng]);
           ev.preventDefault();
           return false;
         },

@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.6.20260504.125408
+// @version        0.1.6.20260904.154147
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'basemap-openstreetmap';
 //END PLUGIN AUTHORS NOTE
 
@@ -84,7 +84,7 @@ function setup() {
 
   for (var entry of mapOpenStreetMap.LAYERS) {
     var layer = new L.TileLayer(entry.url, entry.options);
-    window.layerChooser.addBaseLayer(layer, entry.name);
+    window.layerChooser.addBaseLayer(layer, entry.name, { isDark: false });
   }
 }
 

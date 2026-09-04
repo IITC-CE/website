@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.9.3.20260504.125408
+// @version        0.9.3.20260904.154147
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -86,7 +86,7 @@ machinaTools.findParent = function (portalGuid) {
   var parent = undefined;
 
   if (portalGuid !== 'undefined') {
-    var linkGuids = window.getPortalLinks(portalGuid);
+    var linkGuids = IITC.portal.getLinks(portalGuid);
     $.each(linkGuids.in, function (i, lguid) {
       var l = window.links[lguid];
       var ld = l.options.data;
@@ -111,7 +111,7 @@ machinaTools.goToParent = function (portalGuid) {
   parent = machinaTools.findParent(portalGuid);
 
   if (parent !== undefined) {
-    window.zoomToAndShowPortal(parent.guid, [parent.lat, parent.lng]);
+    IITC.portal.zoomToAndShow(parent.guid, [parent.lat, parent.lng]);
   } else {
     window.dialog({
       html: $('<div id="no-machina-parent">No Parent found.</div>'),
@@ -156,7 +156,7 @@ machinaTools.goToSeed = function (portalGuid) {
   seed = machinaTools.findSeed(portalGuid);
 
   if (seed !== undefined) {
-    window.zoomToAndShowPortal(seed.guid, [seed.lat, seed.lng]);
+    IITC.portal.zoomToAndShow(seed.guid, [seed.lat, seed.lng]);
   }
 };
 
@@ -185,8 +185,8 @@ machinaTools.gatherMachinaPortalDetail = function (portalGuid, depth) {
       latlng: toLatLng(portal.options.data.latE6, portal.options.data.lngE6),
       level: Math.max(portal.options.level, ...(portal.options.data.resonators || []).map((r) => r.level)),
       name: portal.options.data.title,
-      children: window
-        .getPortalLinks(portalGuid)
+      children: IITC.portal
+        .getLinks(portalGuid)
         .out.map((lGuid) => {
           var l = window.links[lGuid];
           return {
@@ -254,7 +254,7 @@ function appendPortalLine(rc, portal) {
     title: portalName,
     html: portalName,
     click: (e) => {
-      window.renderPortalDetails(portal.guid);
+      IITC.portal.display.renderDetails(portal.guid);
       e.stopPropagation();
     },
   });
@@ -272,7 +272,7 @@ function createChildListItem(parent, childData, childPortal) {
     title: childName,
     html: childName,
     click: (e) => {
-      window.renderPortalDetails(childData.childGuid);
+      IITC.portal.display.renderDetails(childData.childGuid);
       e.stopPropagation();
     },
   });
@@ -406,7 +406,7 @@ machinaTools.onPortalDetailsUpdated = function (data) {
  * does not factor in other tools that adjust display capabilities.
  */
 machinaTools.zoomLevelHasPortals = function () {
-  return window.getDataZoomTileParameters().hasPortals;
+  return IITC.map.tiles.getDataZoomParameters().hasPortals;
 };
 
 machinaTools.updateConflictArea = function () {
@@ -766,7 +766,7 @@ machinaTools.refreshLinkLengths = function () {
       $('<div>', { class: 'warning', title: 'Data incomplete - some origin portals not loaded' }).text('🔴').appendTo(html);
     }
 
-    if (window.isSmartphone()) {
+    if (IITC.utils.isSmartphone()) {
       html.addClass('mobile');
       var LinksView = L.Control.extend({
         options: { position: 'topright' },

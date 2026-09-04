@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player level guess
 // @category       Info
-// @version        0.5.12.20260504.125408
+// @version        0.5.12.20260904.154147
 // @description    Try to determine player levels from the data available in the current view.
 // @id             player-level-guess
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'player-level-guess';
 //END PLUGIN AUTHORS NOTE
 
@@ -449,13 +449,13 @@ window.plugin.guessPlayerLevels.guess = function () {
   var playersRes = {};
   var playersEnl = {};
   $.each(window.portals, function (guid) {
-    var details = window.portalDetail.get(guid);
+    var details = IITC.portal.details.get(guid);
     if (details) {
       var r = details.resonators;
       $.each(r, function (ind, reso) {
         if (!reso) return true;
         var nick = reso.owner;
-        if (window.isSystemPlayer(nick)) return true;
+        if (IITC.utils.isSystemPlayer(nick)) return true;
 
         var lvl = window.plugin.guessPlayerLevels.fetchLevelDetailsByPlayer(nick).min;
         if (!lvl) return true;
@@ -466,7 +466,7 @@ window.plugin.guessPlayerLevels.guess = function () {
 
       if (details.captured) {
         var nick = details.owner;
-        if (window.isSystemPlayer(nick)) return true;
+        if (IITC.utils.isSystemPlayer(nick)) return true;
         var lvl = window.plugin.guessPlayerLevels.fetchLevelDetailsByPlayer(nick).min;
         if (!lvl) return true;
 
@@ -529,7 +529,7 @@ window.plugin.guessPlayerLevels.guess = function () {
         window.plugin.guessPlayerLevels._nameToLevelCache = {};
         // now force all portals through the callback manually
         $.each(window.portals, function (guid) {
-          var details = window.portalDetail.get(guid);
+          var details = IITC.portal.details.get(guid);
           if (details) window.plugin.guessPlayerLevels.extractPortalData({ details: details, success: true });
         });
         // and re-open the dialog (on a minimal timeout - so it's not closed while processing this callback)

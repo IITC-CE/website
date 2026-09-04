@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Debug: Raw portal JSON data
 // @category       Portal Info
-// @version        0.2.7.20260504.125408
+// @version        0.2.7.20260904.154147
 // @description    Developer debugging aid: Add a link to the portal details to show the raw data of a portal.
 // @id             debug-raw-portal-data
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,11 +21,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-05-04-125408';
+plugin_info.dateTimeVersion = '2026-09-04-154147';
 plugin_info.pluginId = 'debug-raw-portal-data';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
+/* global IITC -- eslint */
 
 var changelog = [
   {
@@ -70,14 +71,14 @@ window.plugin.rawdata.showPortalData = function (guid) {
               <b>Entity timestamp</b>: <code>${ts}</code> - ${window.unixTimeToDateTimeString(ts, true)}<br />
               <b>Portal map data</b>: <pre>${JSON.stringify(data, null, 2)}</pre>`;
 
-  var details = window.portalDetail.get(guid);
+  var details = IITC.portal.details.get(guid);
   if (details) {
     body += '<b>Portal details:</b><pre>' + JSON.stringify(details, null, 2) + '</pre>';
   }
 
   body += '<p><b>Links referencing this portal</b></p>';
   var haslinks = false;
-  var linkGuids = window.getPortalLinks(guid);
+  var linkGuids = IITC.portal.getLinks(guid);
   $.each(linkGuids.in.concat(linkGuids.out), function (i, lguid) {
     var l = window.links[lguid];
     var ld = l.options.data;
@@ -91,7 +92,7 @@ window.plugin.rawdata.showPortalData = function (guid) {
 
   body += '<p><b>Fields referencing this portal</b></p>';
   var hasfields = false;
-  var fieldGuids = window.getPortalFields(guid);
+  var fieldGuids = IITC.portal.getFields(guid);
   $.each(fieldGuids, function (i, fguid) {
     var f = window.fields[fguid];
     var fd = f.options.data;
