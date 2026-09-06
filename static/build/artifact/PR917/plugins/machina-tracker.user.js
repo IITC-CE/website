@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.1.2.20260904.154147
+// @version        1.1.2.20260906.133830
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-04-154147';
+plugin_info.dateTimeVersion = '2026-09-06-133830';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -218,12 +218,12 @@ machinaTracker.createPortalLink = function (portal) {
       title: portal.name,
       href: IITC.portal.display.makePermalink(portal.latLng),
     })
-    .click((event) => {
+    .on('click', (event) => {
       IITC.portal.selectByLatLng(portal.latLng);
       event.preventDefault();
       return false;
     })
-    .dblclick((event) => {
+    .on('dblclick', (event) => {
       window.map.setView(portal.latLng, window.DEFAULT_ZOOM);
       IITC.portal.selectByLatLng(portal.latLng);
       event.preventDefault();

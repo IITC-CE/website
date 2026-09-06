@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.5.20260904.154147
+// @version        0.4.5.20260906.133830
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-04-154147';
+plugin_info.dateTimeVersion = '2026-09-06-133830';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -368,7 +368,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
     cell.className = 'name ' + filterName;
     cell.textContent = label + ':';
     cell.title = `Show only ${label} portals`;
-    $(cell).click(function () {
+    $(cell).on('click', function () {
       if (this.classList.contains('active')) {
         $('#portalslist')
           .empty()
@@ -391,7 +391,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
       cell.textContent = length;
     } else {
       cell.title = `Hide ${label} portals `;
-      $(cell).click(function () {
+      $(cell).on('click', function () {
         if (this.classList.contains('active')) {
           $('#portalslist')
             .empty()
@@ -436,7 +436,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
         cell.classList.add('sorted');
       }
 
-      $(cell).click(function () {
+      $(cell).on('click', function () {
         var order;
         if (i === sortBy) {
           order = -sortOrder;

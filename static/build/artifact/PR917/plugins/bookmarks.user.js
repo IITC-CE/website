@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.7.20260904.154147
+// @version        0.4.8.20260906.133830
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-04-154147';
+plugin_info.dateTimeVersion = '2026-09-06-133830';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,7 @@ plugin_info.pluginId = 'bookmarks';
 /* global IITC, L -- eslint */
 
 var changelog = [
+  { version: '0.4.8', changes: ['Register with the Sync plugin regardless of plugin load order'] },
   { version: '0.4.7', changes: ['Fix data reset issue'] },
   {
     version: '0.4.6',
@@ -1085,9 +1086,12 @@ window.plugin.bookmarks.syncNow = function () {
   window.plugin.sync.updateMap('bookmarks', window.plugin.bookmarks.KEY.field, Object.keys(window.plugin.bookmarks.updatingQueue));
 };
 
-// Call after IITC and all plugin loaded
-window.plugin.bookmarks.registerFieldForSyncing = function () {
-  if (!window.plugin.sync) return;
+window.plugin.bookmarks.registerFieldForSyncing = () => {
+  // sync may not be loaded yet, and fires this hook once it is
+  if (!window.plugin.sync) {
+    window.addHook('pluginSyncReady', window.plugin.bookmarks.registerFieldForSyncing);
+    return;
+  }
   window.plugin.sync.registerMapForSync(
     'bookmarks',
     window.plugin.bookmarks.KEY.field,
