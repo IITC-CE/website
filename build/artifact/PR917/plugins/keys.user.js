@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.3.20260904.154147
+// @version        0.4.4.20260906.133830
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,14 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-04-154147';
+plugin_info.dateTimeVersion = '2026-09-06-133830';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  { version: '0.4.4', changes: ['Register with the Sync plugin regardless of plugin load order'] },
   {
     version: '0.4.3',
     changes: ['Refactoring: fix eslint'],
@@ -122,9 +123,12 @@ window.plugin.keys.syncNow = function () {
   window.plugin.sync.updateMap('keys', 'keys', Object.keys(window.plugin.keys.updatingQueue));
 };
 
-// Call after IITC and all plugin loaded
-window.plugin.keys.registerFieldForSyncing = function () {
-  if (!window.plugin.sync) return;
+window.plugin.keys.registerFieldForSyncing = () => {
+  // sync may not be loaded yet, and fires this hook once it is
+  if (!window.plugin.sync) {
+    window.addHook('pluginSyncReady', window.plugin.keys.registerFieldForSyncing);
+    return;
+  }
   window.plugin.sync.registerMapForSync('keys', 'keys', window.plugin.keys.syncCallback, window.plugin.keys.syncInitialed);
 };
 
