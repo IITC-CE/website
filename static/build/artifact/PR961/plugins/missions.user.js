@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Missions
 // @category       Info
-// @version        0.3.6.20260904.140744
+// @version        0.3.6.20260907.084359
 // @description    View missions. Marking progress on waypoints/missions basis. Showing mission paths on the map.
 // @id             missions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-04-140744';
+plugin_info.dateTimeVersion = '2026-09-07-084359';
 plugin_info.pluginId = 'missions';
 //END PLUGIN AUTHORS NOTE
 
@@ -166,9 +166,7 @@ window.plugin.missions = {
     if (!data.portalDetails.mission && !data.portalDetails.mission50plus) {
       return;
     }
-    var missionHtml = $('<a>')
-      .click(this.openPortalMissions.bind(this))
-      .text('Missions');
+    var missionHtml = $('<a>').on('click', this.openPortalMissions.bind(this)).text('Missions');
     $('.linkdetails').append($('<aside>').append(missionHtml));
   },
 
@@ -296,7 +294,7 @@ window.plugin.missions = {
         let dia = $(openDialog).closest('.ui-dialog');
         let button = dia.find('.ui-dialog-titlebar-button-collapse');
         if (button) {
-          $(button).click();
+          $(button).trigger('click');
         }
       }
     } else {

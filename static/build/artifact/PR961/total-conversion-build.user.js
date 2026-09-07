@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260904.140744
+// @version        0.42.2.20260907.084359
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-04-140744';
+plugin_info.dateTimeVersion = '2026-09-07-084359';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-09-04-140744';
+window.iitcBuildDate = '2026-09-07-084359';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -3627,7 +3627,7 @@ window.runOnAppBeforeBoot = function () {
 
       var shareLink = $('<a>')
         .text('Share portal')
-        .click(function () {
+        .on('click', function () {
           window.app.intentPosLink(lat, lng, window.map.getZoom(), title, true, guid);
         });
       $('.linkdetails').append($('<aside>').append(shareLink));
@@ -3641,7 +3641,7 @@ window.runOnAppAfterBoot = function () {
   }
 
   if (window.app.intentPosLink) {
-    $('#permalink').click(function (e) {
+    $('#permalink').on('click', function (e) {
       e.preventDefault();
       var center = window.map.getCenter();
       window.app.intentPosLink(center.lat, center.lng, window.map.getZoom(), 'Selected map view', false);
@@ -4370,7 +4370,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-09-04-140744');
+  log.log('loading done, booting. Built: ' + '2026-09-07-084359');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -23395,7 +23395,7 @@ window.dialog = function (options) {
           // then dialog's bottom may go beyond screen (e.g. 'Auto draw' with a bunch of bookmarks in folder).
           // So this is just a nasty workaround for such issue.
           // todo: watch height changes and adapt automatically
-          titlebar.dblclick(sizeFix);
+          titlebar.on('dblclick', sizeFix);
 
           if (!$(this).dialog('option', 'modal')) {
             // Start out with a cloned version of the close button
@@ -23403,8 +23403,9 @@ window.dialog = function (options) {
 
             // Change it into a collapse button and set the click handler
             collapse.addClass('ui-dialog-titlebar-button-collapse ui-dialog-titlebar-button-collapse-expanded');
-            collapse.click(
-              $.proxy(function () {
+            collapse.on(
+              'click',
+              function () {
                 var collapsed = $(this).data('collapsed') === true;
 
                 // Toggle collapsed state
@@ -23412,12 +23413,12 @@ window.dialog = function (options) {
 
                 // Run callbacks if we have them
                 if ($(this).data('collapseExpandCallback')) {
-                  $.proxy($(this).data('collapseExpandCallback'), this)(!collapsed);
+                  $(this).data('collapseExpandCallback').bind(this)(!collapsed);
                 } else {
                   if (!collapsed && $(this).data('collapseCallback')) {
-                    $.proxy($(this).data('collapseCallback'), this)();
+                    $(this).data('collapseCallback').bind(this)();
                   } else if (collapsed && $(this).data('expandCallback')) {
-                    $.proxy($(this).data('expandCallback'), this)();
+                    $(this).data('expandCallback').bind(this)();
                   }
                 }
 
@@ -23446,7 +23447,7 @@ window.dialog = function (options) {
                   $(button).removeClass('ui-dialog-titlebar-button-collapse-expanded');
                   $(button).addClass('ui-dialog-titlebar-button-collapse-collapsed');
                 }
-              }, this)
+              }.bind(this)
             );
 
             // Put it into the titlebar
@@ -23462,7 +23463,7 @@ window.dialog = function (options) {
         close: function () {
           // Run the close callback if we have one
           if ($(this).data('closeCallback')) {
-            $.proxy($(this).data('closeCallback'), this)();
+            $(this).data('closeCallback').bind(this)();
           }
 
           // Make sure that we don't keep a dead dialog in focus
@@ -23481,18 +23482,18 @@ window.dialog = function (options) {
         },
         focus: function () {
           if ($(this).data('focusCallback')) {
-            $.proxy($(this).data('focusCallback'), this)();
+            $(this).data('focusCallback').bind(this)();
           }
 
           // Blur the window currently in focus unless we're gaining focus
           if (window.DIALOG_FOCUS && $(window.DIALOG_FOCUS).data('id') !== $(this).data('id')) {
-            $.proxy(function () {
+            (function () {
               if ($(this).data('blurCallback')) {
-                $.proxy($(this).data('blurCallback'), this)();
+                $(this).data('blurCallback').bind(this)();
               }
 
               $(this).closest('.ui-dialog').find('.ui-dialog-title').removeClass('ui-dialog-title-active').addClass('ui-dialog-title-inactive');
-            }, window.DIALOG_FOCUS)();
+            }).bind(window.DIALOG_FOCUS)();
           }
 
           // This dialog is now in focus
@@ -24913,8 +24914,8 @@ var idleMouseMove = function (e) {
  * @function setupIdle
  */
 window.setupIdle = function () {
-  $('body').keypress(window.idleReset);
-  $('body').mousemove(idleMouseMove);
+  $('body').on('keypress', window.idleReset);
+  $('body').on('mousemove', idleMouseMove);
 
   // a hidden page goes idle within REFRESH seconds, so resume as soon as it is visible again
   document.addEventListener('visibilitychange', function () {
@@ -31171,8 +31172,8 @@ window.formatPasscodeShort = function (data) {
  * @function setupRedeem
  */
 window.setupRedeem = function () {
-  $('#redeem').keypress(function (e) {
-    if ((e.keyCode ? e.keyCode : e.which) !== 13) return;
+  $('#redeem').on('keypress', function (e) {
+    if (e.which !== 13) return;
 
     var passcode = $(this).val();
     passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); // removes non-printable characters
@@ -33343,7 +33344,7 @@ window.smartphone = function () {};
 /**
  * Creates one of the pane buttons shown in the chat controls.
  *
- * Bound through jQuery, not addEventListener: plugins switch panes by calling `.click()` on the
+ * Bound through jQuery, not addEventListener: plugins switch panes by trigger `click` on the
  * jQuery object `window.smartphone` publishes, and that runs jQuery-registered handlers only.
  *
  * @function createPaneButton
