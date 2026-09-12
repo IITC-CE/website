@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260911.091448
+// @version        0.42.2.20260912.141439
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-11-091448';
+plugin_info.dateTimeVersion = '2026-09-12-141439';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-09-11-091448';
+window.iitcBuildDate = '2026-09-12-141439';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4370,7 +4370,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-09-11-091448');
+  log.log('loading done, booting. Built: ' + '2026-09-12-141439');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26663,7 +26663,7 @@ IITC.map.Renderer.prototype.createPlaceholderPortalEntity = function (guid, latE
     ],
   ];
 
-  this.createPortalEntity(ent, 'core'); // placeholder
+  this.createPortalEntity(ent, 'core',0); // placeholder
 };
 
 /**
@@ -26675,14 +26675,13 @@ IITC.map.Renderer.prototype.createPlaceholderPortalEntity = function (guid, latE
  * @param {Array} ent - An array representing the game entity.
  * @param {string} details - Detail level expected in {@link window.decodeArray.portal} (e.g., 'core', 'summary').
  */
-IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_delta = 0) {
+IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_delta) {
   this.seenPortalsGuid[ent[0]] = true; // flag we've seen it
 
   let previousData = undefined;
 
   const data = window.decodeArray.portal(ent[2], details);
   const guid = ent[0];
-  data.lngE6 += lngE6_delta;
 
   // add missing fields
   data.guid = guid;
@@ -26715,6 +26714,12 @@ IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_d
     previousData = structuredClone(p.getDetails());
   }
 
+  // Wrap portal
+  if (lngE6_delta === undefined) {
+    const centerLng = window.map.getCenter().lng;
+    lngE6_delta = Math.round((centerLng*1e6 - data.lngE6) / (360*1e6)) * 360*1e6;
+  }
+  data.lngE6 += lngE6_delta;
   const latlng = new L.LatLng(data.latE6 / 1e6, data.lngE6 / 1e6);
 
   let marker = undefined;
