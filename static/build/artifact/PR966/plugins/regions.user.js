@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.3.4.20260911.091448
+// @version        0.3.4.20260912.141439
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-11-091448';
+plugin_info.dateTimeVersion = '2026-09-12-141439';
 plugin_info.pluginId = 'regions';
 //END PLUGIN AUTHORS NOTE
 
@@ -560,9 +560,31 @@ window.plugin.regions.getSearchResult = function (match) {
   return result;
 };
 
+const getCellCorners = (cell) => {
+  const centerLng = window.map.getCenter().lng;
+  const corners = cell.getCornerLatLngs();
+  corners.forEach( ll => {
+      ll.lng += Math.round((centerLng - ll.lng) / 360) * 360;
+  })
+  return corners;
+}
+
+const getCellCenter = (cell) => {
+  const centerLng = window.map.getCenter().lng;
+  const center = cell.getLatLng();
+  center.lng += Math.round((centerLng - center.lng) / 360) * 360;
+  return center;
+}
+
 window.plugin.regions.update = function () {
   window.plugin.regions.regionLayer.clearLayers();
 
+  drawAllCells();
+  drawAllFaces();
+};
+
+
+const drawAllCells = ()=> {
   var bounds = window.map.getBounds();
 
   var seenCells = {};
@@ -575,12 +597,12 @@ window.plugin.regions.update = function () {
       seenCells[cellStr] = true;
 
       // is it on the screen?
-      var corners = cell.getCornerLatLngs();
-      var cellBounds = new L.LatLngBounds(corners);
+      const corners = getCellCorners(cell);
+      const cellBounds = new L.LatLngBounds(corners);
 
       if (cellBounds.intersects(bounds)) {
         // on screen - draw it
-        window.plugin.regions.drawCell(cell);
+        window.plugin.regions.drawCell(cell, corners);
 
         // and recurse to our neighbors
         var neighbors = cell.getNeighbors();
@@ -599,57 +621,37 @@ window.plugin.regions.update = function () {
 
     drawCellAndNeighbors(cell);
   }
+};
 
-  // the six cube side boundaries. we cheat by hard-coding the coords as it's simple enough
-  var latLngs = [
-    [45, -180],
-    [35.264389682754654, -135],
-    [35.264389682754654, -45],
-    [35.264389682754654, 45],
-    [35.264389682754654, 135],
-    [45, 180],
-  ];
+const drawAllFaces = ()=> {
 
-  var globalCellOptions = { color: 'red', weight: 7, opacity: 0.5, interactive: false };
+  // the six cube side boundaries
+  // longitude is fixed, latitude is at (45° + x*90°) 
+  const lat = 35.264389682754654;
+  const lng_step = 90;
+  const globalCellOptions = { color: 'red', weight: 7, opacity: 0.5, interactive: false };
 
-  for (let i = 0; i < latLngs.length - 1; i++) {
-    // the geodesic line code can't handle a line/polyline spanning more than (or close to?) 180 degrees, so we draw
-    // each segment as a separate line
-    var poly1 = L.geodesicPolyline([latLngs[i], latLngs[i + 1]], globalCellOptions);
-    window.plugin.regions.regionLayer.addLayer(poly1);
+  const bounds = window.map.getBounds();
+  let lng_start = Math.floor((bounds.getWest()+45) / lng_step);
+  let lng_end = Math.floor((bounds.getEast()+45) / lng_step);
 
-    // southern mirror of the above
-    var poly2 = L.geodesicPolyline(
-      [
-        [-latLngs[i][0], latLngs[i][1]],
-        [-latLngs[i + 1][0], latLngs[i + 1][1]],
+  for (let f = lng_start; f <= lng_end; f++) {
+    const lng = f * lng_step - 45;
+    const poly = L.geodesicPolyline([
+      new L.LatLng(lat, lng),
+      new L.LatLng(lat, lng + lng_step), // North
+      new L.LatLng(-lat, lng + lng_step), // to south
+      new L.LatLng(-lat, lng) // south
       ],
-      globalCellOptions
-    );
-    window.plugin.regions.regionLayer.addLayer(poly2);
-  }
-
-  // and the north-south lines. no need for geodesic here
-  for (let i = -135; i <= 135; i += 90) {
-    var poly = L.polyline(
-      [
-        [35.264389682754654, i],
-        [-35.264389682754654, i],
-      ],
-      globalCellOptions
-    );
+      globalCellOptions);
     window.plugin.regions.regionLayer.addLayer(poly);
   }
 };
 
-window.plugin.regions.drawCell = function (cell) {
-  // TODO: move to function - then call for all cells on screen
-
-  // corner points
-  var corners = cell.getCornerLatLngs();
+window.plugin.regions.drawCell = function (cell, corners) {
 
   // center point
-  var center = cell.getLatLng();
+  let center = getCellCenter(cell);
 
   // name
   var name = window.plugin.regions.regionName(cell);
