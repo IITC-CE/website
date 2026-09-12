@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260912.141439
+// @version        0.42.2.20260912.180706
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-12-141439';
+plugin_info.dateTimeVersion = '2026-09-12-180706';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-09-12-141439';
+window.iitcBuildDate = '2026-09-12-180706';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4370,7 +4370,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-09-12-141439');
+  log.log('loading done, booting. Built: ' + '2026-09-12-180706');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27821,10 +27821,11 @@ const tileDeltaE6 = (tileID) => {
   const tileParams = IITC.map.tiles.getMapZoomParameters(dataZoom);
 
   const { x } = IITC.map.tiles.tileIdToPoint(tileParams, tileID);
-  const lng = IITC.map.tiles.tileToLng(x, tileParams);
+  const lng_west = IITC.map.tiles.tileToLng(x, tileParams);
+  const lng_east = IITC.map.tiles.tileToLng(x+1, tileParams);
 
-  if (lng < bounds.getWest()) return +360 * 1e6;
-  if (lng > bounds.getEast()) return -360 * 1e6;
+  if (lng_east < bounds.getWest()) return +360 * 1e6;
+  if (lng_west > bounds.getEast()) return -360 * 1e6;
   return 0;
 };
 
