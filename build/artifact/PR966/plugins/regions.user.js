@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.3.4.20260912.180706
+// @version        0.3.4.20260913.083544
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-12-180706';
+plugin_info.dateTimeVersion = '2026-09-13-083544';
 plugin_info.pluginId = 'regions';
 //END PLUGIN AUTHORS NOTE
 
@@ -563,18 +563,18 @@ window.plugin.regions.getSearchResult = function (match) {
 const getCellCorners = (cell) => {
   const centerLng = window.map.getCenter().lng;
   const corners = cell.getCornerLatLngs();
-  corners.forEach( ll => {
-      ll.lng += Math.round((centerLng - ll.lng) / 360) * 360;
-  })
+  corners.forEach((ll) => {
+    ll.lng += Math.round((centerLng - ll.lng) / 360) * 360;
+  });
   return corners;
-}
+};
 
 const getCellCenter = (cell) => {
   const centerLng = window.map.getCenter().lng;
   const center = cell.getLatLng();
   center.lng += Math.round((centerLng - center.lng) / 360) * 360;
   return center;
-}
+};
 
 window.plugin.regions.update = function () {
   window.plugin.regions.regionLayer.clearLayers();
@@ -583,8 +583,7 @@ window.plugin.regions.update = function () {
   drawAllFaces();
 };
 
-
-const drawAllCells = ()=> {
+const drawAllCells = () => {
   var bounds = window.map.getBounds();
 
   var seenCells = {};
@@ -623,33 +622,33 @@ const drawAllCells = ()=> {
   }
 };
 
-const drawAllFaces = ()=> {
-
+const drawAllFaces = () => {
   // the six cube side boundaries
-  // longitude is fixed, latitude is at (45° + x*90°) 
+  // longitude is fixed, latitude is at (45° + x*90°)
   const lat = 35.264389682754654;
   const lng_step = 90;
   const globalCellOptions = { color: 'red', weight: 7, opacity: 0.5, interactive: false };
 
   const bounds = window.map.getBounds();
-  let lng_start = Math.floor((bounds.getWest()+45) / lng_step);
-  let lng_end = Math.floor((bounds.getEast()+45) / lng_step);
+  let lng_start = Math.floor((bounds.getWest() + 45) / lng_step);
+  let lng_end = Math.floor((bounds.getEast() + 45) / lng_step);
 
   for (let f = lng_start; f <= lng_end; f++) {
     const lng = f * lng_step - 45;
-    const poly = L.geodesicPolyline([
-      new L.LatLng(lat, lng),
-      new L.LatLng(lat, lng + lng_step), // North
-      new L.LatLng(-lat, lng + lng_step), // to south
-      new L.LatLng(-lat, lng) // south
+    const poly = L.geodesicPolyline(
+      [
+        new L.LatLng(lat, lng),
+        new L.LatLng(lat, lng + lng_step), // North
+        new L.LatLng(-lat, lng + lng_step), // to south
+        new L.LatLng(-lat, lng), // south
       ],
-      globalCellOptions);
+      globalCellOptions
+    );
     window.plugin.regions.regionLayer.addLayer(poly);
   }
 };
 
 window.plugin.regions.drawCell = function (cell, corners) {
-
   // center point
   let center = getCellCenter(cell);
 
