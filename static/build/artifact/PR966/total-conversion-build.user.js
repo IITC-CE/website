@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260914.065420
+// @version        0.42.2.20260916.093349
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-14-065420';
+plugin_info.dateTimeVersion = '2026-09-16-093349';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-09-14-065420';
+window.iitcBuildDate = '2026-09-16-093349';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4370,7 +4370,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-09-14-065420');
+  log.log('loading done, booting. Built: ' + '2026-09-16-093349');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -18622,16 +18622,6 @@ void 0)||"<a href='"+a+"'"+g+">"+a+"</a>";return""+b+c})}}).call(this);
       return [];
     }
 
-
-    // workaround: warpping lngitudes can cause issues with geodesic calculations.
-    // so if the first and last points are on opposite sides of the anti-meridian, 
-    // reverse the array so that the first point is always to the west of the last point
-    const last = latlngs.length-1;
-    if (latlngs[0].lng - latlngs[last].lng> 180) {
-      latlngs.reverse();
-    }
-
-
     // geodesic calculations have issues when crossing the anti-meridian. so offset the points
     // so this isn't an issue, then add back the offset afterwards
     // a center longitude would be ideal - but the start point longitude will be 'good enough'
@@ -26326,9 +26316,14 @@ IITC.map.Renderer = function () {
   this.lastMapCenterLng = window.map.getCenter().lng;
   window.map.on('move', () => {
     const centerLng = window.map.getCenter().lng;
-    const delta = Math.round((centerLng - this.lastMapCenterLng) / 360) * 360;
+    const shift = centerLng - this.lastMapCenterLng;
     this.lastMapCenterLng = centerLng;
-    if (delta !== 0) this.onAntiMeridianCrossed(delta);
+
+    // worldCopyJump wraps the map by one world width mid-drag, and only that wrap shifts the entities
+    if (!window.map.dragging || !window.map.dragging.moving()) return;
+    if (Math.abs(shift) <= 180) return;
+
+    this.onAntiMeridianCrossed(shift > 0 ? 360 : -360);
   });
 };
 
@@ -26481,6 +26476,7 @@ IITC.map.Renderer.prototype.processDeletedGameEntityGuids = function (deleted) {
  * @memberof IITC.map.Renderer
  * @param {Array} entities - Array of game entities.
  * @param {string} details - Details for the {@link window.decodeArray.portal} function.
+ * @param {number} [lngE6_delta] - Longitude offset in E6, a multiple of 360 degrees, selecting the world copy to draw on
  */
 IITC.map.Renderer.prototype.processGameEntities = function (entities, details, lngE6_delta) {
   // details expected in decodeArray.portal
@@ -26636,10 +26632,9 @@ IITC.map.Renderer.prototype.deleteFieldEntity = function (guid) {
  * @memberof IITC.map.Renderer
  * @param {string} guid - The globally unique identifier of the portal.
  * @param {number} latE6 - The latitude of the portal in E6 format.
- * @param {number} lngE6 - The longitude of the portal in E6 format.
+ * @param {number} lngE6 - The true (unshifted) longitude of the portal in E6 format.
  * @param {string} team - The team faction of the portal.
  * @param {number} [timestamp=0] - Timestamp of the portal data. Defaults to 0 to allow newer data sources to override
- * @param {number} [timestamp] - The timestamp of the portal data.
  */
 IITC.map.Renderer.prototype.createPlaceholderPortalEntity = function (guid, latE6, lngE6, team, timestamp) {
   // intel no longer returns portals at anything but the closest zoom
@@ -26663,17 +26658,37 @@ IITC.map.Renderer.prototype.createPlaceholderPortalEntity = function (guid, latE
     ],
   ];
 
-  this.createPortalEntity(ent, 'core', 0); // placeholder
+  this.createPortalEntity(ent, 'core'); // placeholder
+};
+
+// pull a longitude to the world copy nearest the anchor, so an entity crossing the antimeridian
+// spans the short way round instead of ~360 degrees
+const nearestWorldCopy = (lngE6, anchorE6) => lngE6 - Math.round((lngE6 - anchorE6) / (360 * 1e6)) * 360 * 1e6;
+
+// offset to the world copy nearest the map centre, for callers that have no tile offset to pass
+const worldOffsetAtCenter = (lngE6) => Math.round((window.map.getCenter().lng * 1e6 - lngE6) / (360 * 1e6)) * 360 * 1e6;
+
+// move a portal marker to the world copy shown by the current view - its data keeps the true longitude
+// the stored point is mutated in place, so layers sharing it (labels, ornaments) follow the marker
+const moveToWorldCopy = (portal, lng) => {
+  const pos = portal.getLatLng();
+  if (pos.lng === lng) return;
+  pos.lng = lng;
+  portal.setLatLng(pos);
 };
 
 /**
  * Creates a portal entity from the provided game entity data.
  * If the portal already exists and the new data is more recent, it replaces the existing data.
  *
+ * The entity data keeps the true longitude, `lngE6_delta` only shifts the marker position
+ *
  * @function
  * @memberof IITC.map.Renderer
  * @param {Array} ent - An array representing the game entity.
  * @param {string} details - Detail level expected in {@link window.decodeArray.portal} (e.g., 'core', 'summary').
+ * @param {number} [lngE6_delta] - Longitude offset in E6, a multiple of 360 degrees, selecting the world copy to draw on;
+ *   defaults to the copy nearest the map center
  */
 IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_delta) {
   this.seenPortalsGuid[ent[0]] = true; // flag we've seen it
@@ -26692,6 +26707,9 @@ IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_d
   // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
   data.ent = ent;
 
+  if (lngE6_delta === undefined) lngE6_delta = worldOffsetAtCenter(data.lngE6);
+  const latlng = new L.LatLng(data.latE6 / 1e6, (data.lngE6 + lngE6_delta) / 1e6);
+
   // check if entity already exists
   const oldPortal = guid in window.portals;
 
@@ -26701,6 +26719,8 @@ IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_d
 
     if (!p.willUpdate(data)) {
       // this data doesn't bring new detail - abort processing
+      // the world copy can still have changed even when the details have not
+      moveToWorldCopy(p, latlng.lng);
       // re-add the portal to the relevant layer (does nothing if already in the correct layer)
       // useful for portals outside the view
       this.addPortalToMapLayer(p);
@@ -26713,13 +26733,6 @@ IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_d
     // remember the old details, for the callback
     previousData = structuredClone(p.getDetails());
   }
-
-  // Wrap portal
-  if (lngE6_delta === undefined) {
-    const centerLng = window.map.getCenter().lng;
-    lngE6_delta = Math.round((centerLng * 1e6 - data.lngE6) / (360 * 1e6)) * 360 * 1e6;
-  }
-  const latlng = new L.LatLng(data.latE6 / 1e6, (data.lngE6 + lngE6_delta) / 1e6);
 
   let marker = undefined;
   if (oldPortal) {
@@ -26755,6 +26768,9 @@ IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_d
     window.portals[data.guid] = marker;
   }
 
+  // updateDetails places the marker on the true longitude, so the world copy is applied afterwards
+  moveToWorldCopy(marker, latlng.lng);
+
   window.ornaments.addPortal(marker);
 
   // TODO? postpone adding to the map layer
@@ -26766,9 +26782,13 @@ IITC.map.Renderer.prototype.createPortalEntity = function (ent, details, lngE6_d
 /**
  * Creates a field entity from the provided game entity data.
  *
+ * The entity data keeps the true longitudes of the corners, `lngE6_delta` only shifts the drawn polygon
+ *
  * @function
  * @memberof IITC.map.Renderer
  * @param {Array} ent - An array representing the game entity.
+ * @param {number} [lngE6_delta] - Longitude offset in E6, a multiple of 360 degrees, selecting the world copy to draw on;
+ *   defaults to the copy nearest the map center
  */
 IITC.map.Renderer.prototype.createFieldEntity = function (ent, lngE6_delta) {
   this.seenFieldsGuid[ent[0]] = true; // flag we've seen it
@@ -26785,7 +26805,7 @@ IITC.map.Renderer.prototype.createFieldEntity = function (ent, lngE6_delta) {
   // create placeholder portals for field corners. we already do links, but there are the odd case where this is useful
   for (let i = 0; i < 3; i++) {
     const p = data.points[i];
-    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6 + lngE6_delta, data.team, 0);
+    this.createPlaceholderPortalEntity(p.guid, p.latE6, p.lngE6, data.team, 0);
   }
 
   // check if entity already exists
@@ -26803,11 +26823,9 @@ IITC.map.Renderer.prototype.createFieldEntity = function (ent, lngE6_delta) {
   }
 
   const team = window.teamStringToId(ent[2][1]);
-  const latlngs = [
-    new L.LatLng(data.points[0].latE6 / 1e6, (data.points[0].lngE6 + lngE6_delta) / 1e6),
-    new L.LatLng(data.points[1].latE6 / 1e6, (data.points[1].lngE6 + lngE6_delta) / 1e6),
-    new L.LatLng(data.points[2].latE6 / 1e6, (data.points[2].lngE6 + lngE6_delta) / 1e6),
-  ];
+  if (lngE6_delta === undefined) lngE6_delta = worldOffsetAtCenter(data.points[0].lngE6);
+  const anchorLngE6 = data.points[0].lngE6 + lngE6_delta;
+  const latlngs = data.points.map((point) => new L.LatLng(point.latE6 / 1e6, nearestWorldCopy(point.lngE6 + lngE6_delta, anchorLngE6) / 1e6));
 
   const poly = L.geodesicPolygon(latlngs, {
     fillColor: window.COLORS[team],
@@ -26833,9 +26851,13 @@ IITC.map.Renderer.prototype.createFieldEntity = function (ent, lngE6_delta) {
 /**
  * Creates a link entity from the provided game entity data.
  *
+ * The entity data keeps the true longitudes of both ends, `lngE6_delta` only shifts the drawn line
+ *
  * @function
  * @memberof IITC.map.Renderer
  * @param {Array} ent - An array representing the game entity.
+ * @param {number} [lngE6_delta] - Longitude offset in E6, a multiple of 360 degrees, selecting the world copy to draw on;
+ *   defaults to the copy nearest the map center
  */
 IITC.map.Renderer.prototype.createLinkEntity = function (ent, lngE6_delta) {
   // Niantic have been faking link entities, based on data from fields
@@ -26859,8 +26881,8 @@ IITC.map.Renderer.prototype.createLinkEntity = function (ent, lngE6_delta) {
   };
 
   // create placeholder entities for link start and end points (before checking if the link itself already exists
-  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6 + lngE6_delta, data.team, data.timestamp);
-  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6 + lngE6_delta, data.team, data.timestamp);
+  this.createPlaceholderPortalEntity(data.oGuid, data.oLatE6, data.oLngE6, data.team, data.timestamp);
+  this.createPlaceholderPortalEntity(data.dGuid, data.dLatE6, data.dLngE6, data.team, data.timestamp);
 
   // check if entity already exists
   if (ent[0] in window.links) {
@@ -26874,7 +26896,9 @@ IITC.map.Renderer.prototype.createLinkEntity = function (ent, lngE6_delta) {
   }
 
   const team = window.teamStringToId(ent[2][1]);
-  const latlngs = [new L.LatLng(data.oLatE6 / 1e6, (data.oLngE6 + lngE6_delta) / 1e6), new L.LatLng(data.dLatE6 / 1e6, (data.dLngE6 + lngE6_delta) / 1e6)];
+  if (lngE6_delta === undefined) lngE6_delta = worldOffsetAtCenter(data.oLngE6);
+  const oLngE6 = data.oLngE6 + lngE6_delta;
+  const latlngs = [new L.LatLng(data.oLatE6 / 1e6, oLngE6 / 1e6), new L.LatLng(data.dLatE6 / 1e6, nearestWorldCopy(data.dLngE6 + lngE6_delta, oLngE6) / 1e6)];
   const poly = L.geodesicPolyline(latlngs, {
     color: window.COLORS[team],
     ...IITC.map.Renderer.LINK_STYLE,
@@ -26938,11 +26962,12 @@ IITC.map.Renderer.prototype.removePortalFromMapLayer = function (portal) {
 };
 
 /**
- * Removes a portal from the visible map layer.
+ * Moves every rendered entity to the world copy the map has just switched to.
+ * The entity data keeps the true longitudes, only the drawn geometry is shifted
  *
  * @function
  * @memberof IITC.map.Renderer
- * @param {Object} portal - The portal object to remove from the map layer.
+ * @param {number} offset - Longitude offset in degrees, a multiple of 360
  */
 IITC.map.Renderer.prototype.onAntiMeridianCrossed = function (offset) {
   for (const guid in window.portals) {
@@ -27104,7 +27129,11 @@ IITC.map.Request.prototype.mapMoveStart = function () {
  * @memberof IITC.map.Request
  */
 IITC.map.Request.prototype.mapMoveEnd = function () {
-  const bounds = window.clampLatLngBounds(window.map.getBounds());
+  // longitude is compared as fetched, past 180 included; latitude beyond the projection limit is
+  // outside every possible fetch, so it must not count against the area we have
+  const view = window.map.getBounds();
+  const maxLat = window.map.options.crs.projection.MAX_LATITUDE;
+  const bounds = new L.LatLngBounds([Math.max(view.getSouth(), -maxLat), view.getWest()], [Math.min(view.getNorth(), maxLat), view.getEast()]);
 
   if (this.fetchedDataParams) {
     // we have fetched (or are fetching) data...
@@ -27245,8 +27274,9 @@ IITC.map.Request.prototype.refresh = function () {
 
   const x1 = IITC.map.tiles.lngToTile(bounds.getWest(), tileParams);
   const x2 = IITC.map.tiles.lngToTile(bounds.getEast(), tileParams);
-  const y1 = IITC.map.tiles.latToTile(bounds.getNorth(), tileParams);
-  const y2 = IITC.map.tiles.latToTile(bounds.getSouth(), tileParams);
+  // the view can reach past the mercator limit, the tile grid cannot
+  const y1 = Math.max(IITC.map.tiles.latToTile(bounds.getNorth(), tileParams), 0);
+  const y2 = Math.min(IITC.map.tiles.latToTile(bounds.getSouth(), tileParams), tileParams.tilesPerEdge - 1);
 
   // calculate the full bounds for the data - including the part of the tiles off the screen edge
   const dataBounds = new L.LatLngBounds([
@@ -27281,7 +27311,9 @@ IITC.map.Request.prototype.refresh = function () {
   // y goes from left to right
   for (let y = y1; y <= y2; y++) {
     // x goes from bottom to top(?)
-    for (let x = x1; x <= x2; x++) {
+    // a wrapped tile id serves every world copy on screen, so one pass over a single copy covers them all
+    const xLast = Math.min(x2, x1 + tileParams.tilesPerEdge - 1);
+    for (let x = x1; x <= xLast; x++) {
       const tile_id = IITC.map.tiles.pointToTileId(tileParams, x, y);
       const latNorth = IITC.map.tiles.tileToLat(y, tileParams);
       const latSouth = IITC.map.tiles.tileToLat(y + 1, tileParams);
@@ -27766,7 +27798,7 @@ IITC.map.Request.prototype.processRenderQueue = function () {
     }
 
     if (drawEntityLimit > 0 && current.entities.length > 0) {
-      const delta = tileDeltaE6(current.id);
+      const delta = tileDeltaE6(current.id, this.fetchedDataParams.bounds);
       const drawThisPass = current.entities.splice(0, drawEntityLimit);
       drawEntityLimit -= drawThisPass.length;
       this.renderer.processGameEntities(drawThisPass, 'extended', delta);
@@ -27805,19 +27837,23 @@ IITC.map.Request.prototype.processRenderQueue = function () {
   }
 };
 
-const tileDeltaE6 = (tileID) => {
-  const bounds = window.map.getBounds();
-  const mapZoom = window.map.getZoom();
-  const dataZoom = IITC.map.tiles.getDataZoomForMapZoom(mapZoom);
+/**
+ * Longitude offset placing a tile's entities on the world copy nearest the fetched area.
+ * Tile ids are wrapped into a single world, so a tile beyond the antimeridian has to be shifted back
+ *
+ * @memberof IITC.map.Request
+ * @param {string} tileID - The tile id, carrying the data zoom it was requested at
+ * @param {L.LatLngBounds} bounds - Bounds the tile was requested for
+ * @returns {number} Offset in E6, a multiple of 360 degrees
+ */
+const tileDeltaE6 = (tileID, bounds) => {
+  const dataZoom = Number(tileID.split('_')[0]);
   const tileParams = IITC.map.tiles.getMapZoomParameters(dataZoom);
 
   const { x } = IITC.map.tiles.tileIdToPoint(tileParams, tileID);
-  const lng_west = IITC.map.tiles.tileToLng(x, tileParams);
-  const lng_east = IITC.map.tiles.tileToLng(x + 1, tileParams);
+  const tileCenterLng = IITC.map.tiles.tileToLng(x + 0.5, tileParams);
 
-  if (lng_east < bounds.getWest()) return +360 * 1e6;
-  if (lng_west > bounds.getEast()) return -360 * 1e6;
-  return 0;
+  return Math.round((bounds.getCenter().lng - tileCenterLng) / 360) * 360 * 1e6;
 };
 
 IITC.registerLegacyAliases(IITC.map, {
@@ -27996,8 +28032,8 @@ IITC.map.tiles.tileToLat = function (y, params) {
 };
 
 IITC.map.tiles.pointToTileId = function (params, x, y) {
-  // wrap x around the world
-  x = (x + params.tilesPerEdge) % params.tilesPerEdge;
+  // wrap x around the world, whichever copy it came from
+  x = ((x % params.tilesPerEdge) + params.tilesPerEdge) % params.tilesPerEdge;
 
   // as of 2014-05-06: zoom_x_y_minlvl_maxlvl_maxhealth
   return `${params.zoom}_${x}_${y}_${params.level}_8_100`;
