@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.5.20260917.095846
+// @version        0.1.5.20260917.102326
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-17-095846';
+plugin_info.dateTimeVersion = '2026-09-17-102326';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
@@ -218,8 +218,8 @@ window.plugin.mpe.getHTML.projectOptions = function (PJ) {
 window.plugin.mpe.getHTML.project = function (PJ) {
   var PROJ = window.plugin.mpe.obj.projects[PJ];
   var listElem = '';
-  var txtNew = '<ms-icon label="New" fallback="+">add</ms-icon>';
-  var txtDel = '<ms-icon label="Delete" fallback="X">delete</ms-icon>';
+  var txtNew = '<ms-icon fallback="+">add</ms-icon>';
+  var txtDel = '<ms-icon fallback="X">delete</ms-icon>';
 
   listElem += `<div class="mpe manager ${PJ} list-group-item" data-mpe="${PJ}">`;
   listElem += `<h4>${PROJ.title}</h4>`;

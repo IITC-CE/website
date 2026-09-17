@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.4.20260917.095846
+// @version        0.4.4.20260917.102326
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-17-095846';
+plugin_info.dateTimeVersion = '2026-09-17-102326';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
@@ -270,7 +270,7 @@ window.plugin.keys.setupContent = function () {
     '  <ms-icon label="Add" fallback="+">add</ms-icon>' +
     ' </div>' +
     ' <div id="keys-help" title="You MUST manually input your count of keys!\n' +
-    'This plugin CANNOT automatically get the keys from Ingress!"><ms-icon label="Help" fallback="?">help</ms-icon></div>' +
+    'This plugin CANNOT automatically get the keys from Ingress!"><ms-icon fallback="?">help</ms-icon></div>' +
     '</div>';
   window.plugin.keys.disabledMessage = '<div id="keys-content-outer" title="Your browser do not support localStorage">Plugin Keys disabled</div>';
 };
