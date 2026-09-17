@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260917.095846
+// @version        0.42.2.20260917.102326
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-17-095846';
+plugin_info.dateTimeVersion = '2026-09-17-102326';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-09-17-095846';
+window.iitcBuildDate = '2026-09-17-102326';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2714,9 +2714,9 @@ document.body.innerHTML =
   '    <div id="gamestat">&nbsp;loading global control stats</div>' +
   '    <div id="searchwrapper">' +
   '      <div id="searchbox">' +
-  '        <div id="searchicon"><ms-icon label="Search" fallback="🔍">search</ms-icon></div>' +
+  '        <div id="searchicon"><ms-icon fallback="🔍">search</ms-icon></div>' +
   '        <div id="searchcancel"><ms-icon filled label="Cancel search" fallback="✕">cancel</ms-icon></div>' +
-  '        <button title="Current location" id="buttongeolocation"><ms-icon label="Current location" fallback="⌖">my_location</ms-icon></button>' +
+  '        <button title="Current location" id="buttongeolocation"><ms-icon fallback="⌖">my_location</ms-icon></button>' +
   '        <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>' +
   '      </div>' +
   '    </div>' +
@@ -4512,7 +4512,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-09-17-095846');
+  log.log('loading done, booting. Built: ' + '2026-09-17-102326');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }

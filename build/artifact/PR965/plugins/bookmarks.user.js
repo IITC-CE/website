@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.8.20260917.095846
+// @version        0.4.8.20260917.102326
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-17-095846';
+plugin_info.dateTimeVersion = '2026-09-17-102326';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -266,7 +266,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
 
     // Create a label and a anchor for the sortable
     var folderDelete =
-      '<span class="folderLabel"><a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, \'folder\');return false;" title="Remove this folder"><ms-icon label="Remove" fallback="X">close</ms-icon></a>';
+      '<span class="folderLabel"><a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, \'folder\');return false;" title="Remove this folder"><ms-icon fallback="X">close</ms-icon></a>';
     var folderName =
       '<a class="bookmarksAnchor" onclick="window.plugin.bookmarks.openFolder(this);return false"><span></span>' + folders['label'] + '</a></span>'; // <span><span></span></span>';
     var folderLabel = folderDelete + folderName;
@@ -285,7 +285,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
     var fold = folders['bkmrk'];
     for (var idBkmrk in fold) {
       var btn_link;
-      var btn_remove = `<a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, '${typeList}');return false;" title="Remove from bookmarks"><ms-icon label="Remove" fallback="X">close</ms-icon></a>`;
+      var btn_remove = `<a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, '${typeList}');return false;" title="Remove from bookmarks"><ms-icon fallback="X">close</ms-icon></a>`;
 
       var btn_move = '';
       if (window.plugin.bookmarks.isSmart) {
