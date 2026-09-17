@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.5.20260911.090427
+// @version        0.1.5.20260917.095846
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-11-090427';
+plugin_info.dateTimeVersion = '2026-09-17-095846';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
@@ -218,8 +218,8 @@ window.plugin.mpe.getHTML.projectOptions = function (PJ) {
 window.plugin.mpe.getHTML.project = function (PJ) {
   var PROJ = window.plugin.mpe.obj.projects[PJ];
   var listElem = '';
-  var txtNew = '<i class="icon" aria-label="New" data-fallback="+">add</i>';
-  var txtDel = '<i class="icon" aria-label="Delete" data-fallback="X">delete</i>';
+  var txtNew = '<ms-icon label="New" fallback="+">add</ms-icon>';
+  var txtDel = '<ms-icon label="Delete" fallback="X">delete</ms-icon>';
 
   listElem += `<div class="mpe manager ${PJ} list-group-item" data-mpe="${PJ}">`;
   listElem += `<h4>${PROJ.title}</h4>`;
@@ -399,7 +399,7 @@ function getProjectIcon(PJ) {
 
   var icon = window.plugin.mpe.data.getIcon(PJ);
   if (icon.length !== 0) {
-    return '<i class="left icon" title="' + title + '">' + icon + '</i>';
+    return '<ms-icon class="left" title="' + title + '">' + icon + '</ms-icon>';
   }
 
   if (window.plugin.faIcon) {
@@ -547,7 +547,7 @@ window.plugin.mpe.setupCSS = function () {
         '.mpe .left{float:left;}' +
         '.mpe .right{float:right;}' +
         '.mpe .clear{clear:both;}' +
-        '.mpe .fa, .mpe .icon{line-height:19px;}' +
+        '.mpe .fa, .mpe ms-icon{line-height:19px;}' +
         '.ui-dialog .mpe{width:90%;margin:8px auto 8px;}' +
         '.mpe h4{margin:0 0 4px;font-size:15px;font-style:italic;}' +
         '.mpe select, .mpe a{border:1px solid #ffce00;padding:1px 4px 2px;background:rgba(8,48,78,.9);height:23px;color:#ffce00;}' +
@@ -560,7 +560,7 @@ window.plugin.mpe.setupCSS = function () {
         '#sidebar .mpeSidebar{}' +
         '#sidebar .mpeSidebar .mpe{width:100%;padding:3px 4px;}' +
         '#sidebar .mpeSidebar .mpe h4{display:none;}' +
-        '#sidebar .mpeSidebar .mpe > .fa, #sidebar .mpeSidebar .mpe > .icon{color:#ccc;width:8%;height:23px;margin-right:1%;line-height: 22px;}' +
+        '#sidebar .mpeSidebar .mpe > .fa, #sidebar .mpeSidebar .mpe > ms-icon{color:#ccc;width:8%;height:23px;margin-right:1%;line-height: 22px;}' +
         "#sidebar .mpeSidebar .mpe > .fa.nofa:before{content:'\0';}" +
         '#sidebar .mpeSidebar .mpe a{}' +
         '#sidebar .mpeSidebar .mpe select{width:63%;}'
