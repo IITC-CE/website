@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20260919.082644
+// @version        0.42.2.20260919.091636
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-19-082644';
+plugin_info.dateTimeVersion = '2026-09-19-091636';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-09-19-082644';
+window.iitcBuildDate = '2026-09-19-091636';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -4370,7 +4370,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-09-19-082644');
+  log.log('loading done, booting. Built: ' + '2026-09-19-091636');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -28617,6 +28617,18 @@ const findGuidByPositionE6 = function (latE6, lngE6) {
 };
 
 /**
+ * Returns the portal location as it comes from the intel data, with the longitude inside [-180, 180].
+ * The marker itself is drawn on the world copy nearest the map view, so its own position may be outside that range
+ *
+ * @memberof IITC.portal
+ * @param {L.PortalMarker} portal - The portal marker.
+ * @returns {L.LatLng} The portal location.
+ */
+const getLatLng = function (portal) {
+  return new L.LatLng(portal.options.data.latE6 / 1e6, portal.options.data.lngE6 / 1e6);
+};
+
+/**
  * Calculates the resonator-based level of a portal.
  * This includes a decimal part and is not clamped to the minimum level of 1
  *
@@ -29079,16 +29091,15 @@ const selectByLatLng = function (lat, lng) {
     lng = lat.lng;
     lat = lat.lat;
   }
+  const ll = new L.LatLng(lat, lng).wrap();
   for (const guid in window.portals) {
-    const latlng = window.portals[guid].getLatLng();
-    if (latlng.lat === lat && latlng.lng === lng) {
+    if (IITC.portal.getLatLng(window.portals[guid]).equals(ll)) {
       IITC.portal.display.renderDetails(guid);
       return;
     }
   }
 
   // not currently visible
-  const ll = new L.LatLng(lat, lng);
   IITC.portal.selectWhenLoadedByLatLng(ll);
   window.map.setView(ll, window.DEFAULT_ZOOM);
 };
@@ -29109,7 +29120,7 @@ const selectWhenLoadedByLatLng = (latLng) => {
 };
 
 const testPortalLatLng = (data) => {
-  if (data.portal.getLatLng().equals(urlPortalLL)) {
+  if (IITC.portal.getLatLng(data.portal).equals(urlPortalLL.wrap())) {
     log.debug(`urlPortalLL ${urlPortalLL.toString()} matches portal GUID ${data.portal.options.guid}`);
     window.selectedPortal = data.portal.options.guid;
     IITC.portal.display.renderDetails(window.selectedPortal, true);
@@ -29154,6 +29165,7 @@ IITC.portal = {
   getFields,
   getFieldsCount,
   findGuidByPositionE6,
+  getLatLng,
   // Detail computations
   getLevel,
   getTotalEnergy,
@@ -29930,16 +29942,23 @@ const makePermalink = function (latlng, options) {
   // ensures that lat,lng are with same precision as in stock intel permalinks
   const round = (l) => Math.floor(l * 1e6) / 1e6;
 
+  // the map center and portal markers may sit on a world copy past 180 degrees, a permalink always carries the wrapped longitude
+  // whole worlds are shifted on the E6 grid the intel data uses, so the result lands back on it exactly
+  const wrapLng = (lng) => {
+    const lngE6 = Math.round(lng * 1e6);
+    return (lngE6 - Math.round(lngE6 / 360e6) * 360e6) / 1e6;
+  };
+
   const args = [];
   if (!latlng || options.includeMapView) {
     const c = window.map.getCenter();
-    args.push('ll=' + [round(c.lat), round(c.lng)].join(','), 'z=' + window.map.getZoom());
+    args.push('ll=' + [round(c.lat), wrapLng(round(c.lng))].join(','), 'z=' + window.map.getZoom());
   }
   if (latlng) {
     if ('lat' in latlng) {
       latlng = [latlng.lat, latlng.lng];
     }
-    args.push('pll=' + latlng.join(','));
+    args.push('pll=' + [latlng[0], wrapLng(latlng[1])].join(','));
   }
   let url = '';
   if (options.fullURL) {
@@ -32314,7 +32333,7 @@ window.addHook('search', (query) => {
       position: new L.LatLng(lat, lng),
       onSelected: (result) => {
         for (const [guid, portal] of Object.entries(window.portals)) {
-          const { lat: pLat, lng: pLng } = portal.getLatLng();
+          const { lat: pLat, lng: pLng } = IITC.portal.getLatLng(portal);
           if (`${pLat.toFixed(6)},${pLng.toFixed(6)}` === latLngString) {
             IITC.portal.display.renderDetails(guid);
             return;
