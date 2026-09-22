@@ -2,7 +2,7 @@
 // @author         cradle
 // @name           IITC plugin: User Location
 // @category       Tweaks
-// @version        0.3.1.20260920.091121
+// @version        0.3.1.20260922.111240
 // @description    Show user location marker on map
 // @id             user-location
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

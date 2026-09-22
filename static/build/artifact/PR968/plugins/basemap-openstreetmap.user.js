@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.7.20260920.091121
+// @version        0.1.6.20260922.111240
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-20-091121';
+plugin_info.dateTimeVersion = '2026-09-22-111240';
 plugin_info.pluginId = 'basemap-openstreetmap';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,10 +33,6 @@ var mapOpenStreetMap = {};
 window.plugin.mapOpenStreetMap = mapOpenStreetMap;
 
 var changelog = [
-  {
-    version: '0.1.7',
-    changes: ['Remove the Humanitarian layer, which OpenStreetMap France no longer serves to IITC'],
-  },
   {
     version: '0.1.6',
     changes: ['Refactoring: fix eslint'],
@@ -68,6 +64,11 @@ mapOpenStreetMap.LAYERS = [
   {
     name: 'OpenStreetMap',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: Object.assign({}, osmOpt),
+  },
+  {
+    name: 'Humanitarian',
+    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
     options: Object.assign({}, osmOpt),
   },
   {
