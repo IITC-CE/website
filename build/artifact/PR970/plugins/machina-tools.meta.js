@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.9.3.20260922.155631
+// @version        0.9.3.20260923.075953
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
