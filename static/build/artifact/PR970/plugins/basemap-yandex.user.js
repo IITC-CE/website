@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Yandex maps
 // @category       Map Tiles
-// @version        0.3.4.20260922.155631
+// @version        0.3.4.20260923.075953
 // @description    Add Yandex.com (Russian/Русский) map layers
 // @id             basemap-yandex
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-22-155631';
+plugin_info.dateTimeVersion = '2026-09-23-075953';
 plugin_info.pluginId = 'basemap-yandex';
 //END PLUGIN AUTHORS NOTE
 
