@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.4.5.20260924.100738
+// @version        0.4.5.20261007.070926
 // @description    Show a mini map on the corner of the map.
 // @id             minimap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-24-100738';
+plugin_info.dateTimeVersion = '2026-10-07-070926';
 plugin_info.pluginId = 'minimap';
 //END PLUGIN AUTHORS NOTE
 
@@ -552,7 +552,7 @@ function loadLeafletMiniMap() {
 
 ;
     $('<style>').html('\
-.leaflet-control-minimap{border:4px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:3px;background:#f8f8f9;transition:all .6s}.leaflet-control-minimap a{background-color:#fff;background-repeat:no-repeat;z-index:99999;transition:all .6s}.leaflet-control-minimap a.minimized-bottomright{transform:rotate(180deg);border-radius:0}.leaflet-control-minimap a.minimized-topleft{transform:rotate(0deg);border-radius:0}.leaflet-control-minimap a.minimized-bottomleft{transform:rotate(270deg);border-radius:0}.leaflet-control-minimap a.minimized-topright{transform:rotate(90deg);border-radius:0}.leaflet-control-minimap-toggle-display{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMTgiIHdpZHRoPSIxOCI+PHBhdGggZD0iTTEzLjE4MSAxMy4xNDZ2LTUuODFsLTUuODEgNS44MWg1LjgxeiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNjQzIi8+PHBhdGggZD0iTTEyLjc2MiAxMi43MjdsLTYuNTEtNi41MDkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyLjQ4MiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+);background-size:cover;position:absolute;border-radius:3px 0 0 0}.leaflet-oldie .leaflet-control-minimap-toggle-display{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAH1JREFUOI3t0DEKAjEQheFP8ERWqfUCeg9rL+adbKxkYRFEY7ERhkUhCZb7wyuGYX5ewkIvK6z/ITpjxOHHPtWKrsh4fJEl3GpF29LoI9sHSS6pZjeTnTD0iOayjFevCI7hOKaJZHpObNIsih/b3WiDSzgaS+5lfrY0Wph4A4kFM89VzdVFAAAAAElFTkSuQmCC)}.leaflet-control-minimap-toggle-display-bottomright{bottom:0;right:0}.leaflet-control-minimap-toggle-display-topleft{top:0;left:0;transform:rotate(180deg)}.leaflet-control-minimap-toggle-display-bottomleft{bottom:0;left:0;transform:rotate(90deg)}.leaflet-control-minimap-toggle-display-topright{top:0;right:0;transform:rotate(270deg)}.leaflet-oldie .leaflet-control-minimap{border:1px solid #999}.leaflet-oldie .leaflet-control-minimap a{background-color:#fff}.leaflet-oldie .leaflet-control-minimap a.minimized{filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=2)}').appendTo('head');
+.leaflet-control-minimap{background:#f8f8f9;border:4px solid #fff;border-radius:3px;transition:all .6s;box-shadow:0 1px 5px #000000a6}.leaflet-control-minimap a{z-index:99999;background-color:#fff;background-repeat:no-repeat;transition:all .6s}.leaflet-control-minimap a.minimized-bottomright{border-radius:0;transform:rotate(180deg)}.leaflet-control-minimap a.minimized-topleft{border-radius:0;transform:rotate(0)}.leaflet-control-minimap a.minimized-bottomleft{border-radius:0;transform:rotate(270deg)}.leaflet-control-minimap a.minimized-topright{border-radius:0;transform:rotate(90deg)}.leaflet-control-minimap-toggle-display{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMTgiIHdpZHRoPSIxOCI+PHBhdGggZD0iTTEzLjE4MSAxMy4xNDZ2LTUuODFsLTUuODEgNS44MWg1LjgxeiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNjQzIi8+PHBhdGggZD0iTTEyLjc2MiAxMi43MjdsLTYuNTEtNi41MDkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyLjQ4MiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+);background-size:cover;border-radius:3px 0 0;position:absolute}.leaflet-oldie .leaflet-control-minimap-toggle-display{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAH1JREFUOI3t0DEKAjEQheFP8ERWqfUCeg9rL+adbKxkYRFEY7ERhkUhCZb7wyuGYX5ewkIvK6z/ITpjxOHHPtWKrsh4fJEl3GpF29LoI9sHSS6pZjeTnTD0iOayjFevCI7hOKaJZHpObNIsih/b3WiDSzgaS+5lfrY0Wph4A4kFM89VzdVFAAAAAElFTkSuQmCC)}.leaflet-control-minimap-toggle-display-bottomright{bottom:0;right:0}.leaflet-control-minimap-toggle-display-topleft{top:0;left:0;transform:rotate(180deg)}.leaflet-control-minimap-toggle-display-bottomleft{bottom:0;left:0;transform:rotate(90deg)}.leaflet-control-minimap-toggle-display-topright{top:0;right:0;transform:rotate(270deg)}.leaflet-oldie .leaflet-control-minimap{border:1px solid #999}.leaflet-oldie .leaflet-control-minimap a{background-color:#fff}.leaflet-oldie .leaflet-control-minimap a.minimized{filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=2)}').appendTo('head');
   } catch (e) {
     console.error('Control.MiniMap.js loading failed');
     throw e;

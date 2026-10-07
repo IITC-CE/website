@@ -2,8 +2,8 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.2.5.20260924.100738
-// @description    Add the 'Toner' and 'Watercolor' map layers from maps.stamen.com.
+// @version        0.3.0.20261007.070926
+// @description    Add the Stamen map layers, hosted by Stadia Maps.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR971/plugins/basemap-stamen.meta.js
