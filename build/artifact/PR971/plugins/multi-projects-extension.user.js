@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.5.20260924.100738
+// @version        0.1.5.20261007.070926
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-24-100738';
+plugin_info.dateTimeVersion = '2026-10-07-070926';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,6 +65,9 @@ window.plugin.mpe.action = {};
 
 window.plugin.mpe.obj.projects = {};
 window.plugin.mpe.obj.opt = { settings: { manager: [], sidebar: [] } };
+
+const pendingProjects = [];
+window.plugin.mpe.isReady = false;
 
 // ------------------------------------------------------
 // STORAGE
@@ -132,6 +135,20 @@ window.plugin.mpe.data.getProjects = function (PJ) {
   return window.plugin.mpe.obj.projects[PJ].pj;
 };
 
+// the default project is the absence of an entry, so old storages need no migration
+window.plugin.mpe.data.getSavedKeyPj = (PJ) => window.plugin.mpe.obj.opt.settings.current?.[PJ];
+window.plugin.mpe.data.saveKeyPj = (PJ, storageKey) => {
+  const { settings } = window.plugin.mpe.obj.opt;
+  settings.current ??= {};
+
+  if (storageKey === window.plugin.mpe.data.getPreKeyPj(PJ)) {
+    delete settings.current[PJ];
+  } else {
+    settings.current[PJ] = storageKey;
+  }
+  window.plugin.mpe.storage.saveStorage();
+};
+
 window.plugin.mpe.data.isInSidebar = function (PJ) {
   var arrSidebar = window.plugin.mpe.obj.opt['settings']['sidebar'];
   var index = arrSidebar.indexOf(PJ);
@@ -183,6 +200,10 @@ window.plugin.mpe.data.scanStorageForAll = function () {
 };
 window.plugin.mpe.data.scanStorageForOne = function (name) {
   var PROJ = window.plugin.mpe.obj.projects[name];
+  // not registered yet: setMultiProjects scans as soon as it is
+  if (!PROJ) {
+    return;
+  }
   PROJ.pj = [];
 
   //        if(window.localStorage[PROJ.defaultKey] !== undefined){
@@ -432,6 +453,7 @@ window.plugin.mpe.action.switchProject = function (PJ, storageKey) {
 
   // change in obj
   window.plugin.mpe.data.setKey(PJ, storageKey);
+  window.plugin.mpe.data.saveKeyPj(PJ, storageKey);
 
   pj.func_pre();
 
@@ -502,6 +524,12 @@ window.plugin.mpe.action.deleteProject = function (PJ, storage) {
 // ------------------------------------------------------
 
 window.plugin.mpe.setMultiProjects = function (settings) {
+  // setup may not have run yet: it replays whatever registered before it
+  if (!window.plugin.mpe.isReady) {
+    pendingProjects.push(settings);
+    return;
+  }
+
   window.plugin.mpe.storage.loadStorage();
   window.plugin.mpe.ui.appendContainerInSidebar();
 
@@ -516,7 +544,7 @@ window.plugin.mpe.setMultiProjects = function (settings) {
       settings.fa = '';
     }
     if (!settings.func_pre) {
-      settings.func_pre = '';
+      settings.func_pre = () => {};
     }
 
     var newMPE = {
@@ -535,7 +563,28 @@ window.plugin.mpe.setMultiProjects = function (settings) {
     window.plugin.mpe.obj.projects[settings.namespace] = newMPE;
     window.plugin.mpe.data.scanStorageForOne(settings.namespace);
     window.plugin.mpe.ui.toggleSidebar(settings.namespace);
+    window.plugin.mpe.action.restoreProject(settings.namespace);
   }
+};
+
+// plugins always register on their default key, so an earlier choice is re-applied here
+window.plugin.mpe.action.restoreProject = (PJ) => {
+  // the switch runs plugin code that expects every plugin to be set up
+  if (!window.iitcLoaded) {
+    window.addHook('iitcLoaded', () => window.plugin.mpe.action.restoreProject(PJ));
+    return;
+  }
+
+  const storageKey = window.plugin.mpe.data.getSavedKeyPj(PJ);
+  if (storageKey === undefined || storageKey === window.plugin.mpe.data.getCurrKeyPj(PJ)) return;
+
+  // the project may have been deleted in another tab
+  if (!window.plugin.mpe.data.getProjects(PJ).includes(storageKey)) {
+    window.plugin.mpe.data.saveKeyPj(PJ, window.plugin.mpe.data.getPreKeyPj(PJ));
+    return;
+  }
+
+  window.plugin.mpe.action.switchProject(PJ, storageKey);
 };
 
 window.plugin.mpe.setupCSS = function () {
@@ -573,9 +622,15 @@ var setup = function () {
   window.plugin.mpe.setupCSS();
   window.plugin.mpe.ui.addControl();
   window.plugin.mpe.ui.appendContainerInSidebar();
+
+  window.plugin.mpe.isReady = true;
+  pendingProjects.splice(0).forEach((settings) => window.plugin.mpe.setMultiProjects(settings));
+
+  // lets plugins that ran before MPE register their projects
+  window.runHooks('pluginMpeReady');
 };
 
-setup.priority = 'high';
+setup.priority = 'highest';
 
 setup.info = plugin_info; //add the script info data to the function as a property
 if (typeof changelog !== 'undefined') setup.info.changelog = changelog;

@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.8.20260924.100738
+// @version        0.4.8.20261007.070926
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-09-24-100738';
+plugin_info.dateTimeVersion = '2026-10-07-070926';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -65,14 +65,25 @@ window.plugin.bookmarks.SYNC_DELAY = 5000;
 
 window.plugin.bookmarks.KEY_OTHER_BKMRK = 'idOthers';
 window.plugin.bookmarks.KEY_STORAGE = 'plugin-bookmarks';
+// MPE points KEY_STORAGE at the selected project, so the default one is kept separately
+window.plugin.bookmarks.DEFAULT_KEY_STORAGE = 'plugin-bookmarks';
 window.plugin.bookmarks.KEY_STATUS_BOX = 'plugin-bookmarks-box';
 
-window.plugin.bookmarks.KEY = { key: window.plugin.bookmarks.KEY_STORAGE, field: 'bkmrksObj' };
-window.plugin.bookmarks.IsDefaultStorageKey = true; // as default on startup
 window.plugin.bookmarks.UPDATE_QUEUE = { key: 'plugin-bookmarks-queue', field: 'updateQueue' };
 window.plugin.bookmarks.UPDATING_QUEUE = { key: 'plugin-bookmarks-updating-queue', field: 'updatingQueue' };
 
+// bookmarks of the selected project, what the rest of the plugin reads
+window.plugin.bookmarks.currentProject = {};
+// every project's bookmarks, the map handed to sync: the name is also the Drive file name
+window.plugin.bookmarks.SYNC_FIELD = 'bkmrksObj';
+window.plugin.bookmarks.SYNC_KEY_DELIMITER = '|';
+// deletion leaves this mark, so a device that still has the project drops it instead of pushing it back
+window.plugin.bookmarks.DELETED_MARK = 'deleted';
+// how long a mark is kept: long enough for every device to have synced at least once
+window.plugin.bookmarks.DELETED_MARK_TTL = 30 * 24 * 60 * 60 * 1000;
 window.plugin.bookmarks.bkmrksObj = {};
+window.plugin.bookmarks.LIST_TYPES = ['portals', 'maps'];
+window.plugin.bookmarks.emptyList = () => ({ [window.plugin.bookmarks.KEY_OTHER_BKMRK]: { label: 'Others', state: 1, bkmrk: {} } });
 window.plugin.bookmarks.statusBox = {};
 window.plugin.bookmarks.updateQueue = {};
 window.plugin.bookmarks.updatingQueue = {};
@@ -123,12 +134,12 @@ window.plugin.bookmarks.escapeUnicode = function (str) {
 
 // Update the localStorage
 window.plugin.bookmarks.saveStorage = function () {
-  localStorage[window.plugin.bookmarks.KEY_STORAGE] = JSON.stringify(window.plugin.bookmarks.bkmrksObj);
+  localStorage[window.plugin.bookmarks.KEY_STORAGE] = JSON.stringify(window.plugin.bookmarks.currentProject);
 };
 
 // Load the localStorage
 window.plugin.bookmarks.loadStorage = function () {
-  window.plugin.bookmarks.bkmrksObj = JSON.parse(localStorage[window.plugin.bookmarks.KEY_STORAGE]);
+  window.plugin.bookmarks.currentProject = JSON.parse(localStorage[window.plugin.bookmarks.KEY_STORAGE]);
 };
 
 window.plugin.bookmarks.saveStorageBox = function () {
@@ -144,9 +155,9 @@ window.plugin.bookmarks.upgradeToNewStorage = function () {
     var oldStor_1 = JSON.parse(localStorage['plugin-bookmarks-maps-data']);
     var oldStor_2 = JSON.parse(localStorage['plugin-bookmarks-portals-data']);
 
-    window.plugin.bookmarks.bkmrksObj = {};
-    window.plugin.bookmarks.bkmrksObj.maps = oldStor_1.bkmrk_maps;
-    window.plugin.bookmarks.bkmrksObj.portals = oldStor_2.bkmrk_portals;
+    window.plugin.bookmarks.currentProject = {};
+    window.plugin.bookmarks.currentProject.maps = oldStor_1.bkmrk_maps;
+    window.plugin.bookmarks.currentProject.portals = oldStor_2.bkmrk_portals;
     window.plugin.bookmarks.saveStorage();
 
     localStorage.removeItem('plugin-bookmarks-maps-data');
@@ -157,9 +168,9 @@ window.plugin.bookmarks.upgradeToNewStorage = function () {
 
 window.plugin.bookmarks.createStorage = function () {
   if (!localStorage[window.plugin.bookmarks.KEY_STORAGE]) {
-    window.plugin.bookmarks.bkmrksObj = {};
-    window.plugin.bookmarks.bkmrksObj.maps = { idOthers: { label: 'Others', state: 1, bkmrk: {} } };
-    window.plugin.bookmarks.bkmrksObj.portals = { idOthers: { label: 'Others', state: 1, bkmrk: {} } };
+    window.plugin.bookmarks.currentProject = {};
+    window.plugin.bookmarks.currentProject.maps = { idOthers: { label: 'Others', state: 1, bkmrk: {} } };
+    window.plugin.bookmarks.currentProject.portals = { idOthers: { label: 'Others', state: 1, bkmrk: {} } };
     window.plugin.bookmarks.saveStorage();
   }
   if (!localStorage[window.plugin.bookmarks.KEY_STATUS_BOX]) {
@@ -234,14 +245,14 @@ window.plugin.bookmarks.openFolder = function (elem) {
   var ID = $(elem).parent().parent('li').attr('id');
 
   var newFlag;
-  var flag = window.plugin.bookmarks.bkmrksObj[typeList][ID]['state'];
+  var flag = window.plugin.bookmarks.currentProject[typeList][ID]['state'];
   if (flag) {
     newFlag = 0;
   } else if (!flag) {
     newFlag = 1;
   }
 
-  window.plugin.bookmarks.bkmrksObj[typeList][ID]['state'] = newFlag;
+  window.plugin.bookmarks.currentProject[typeList][ID]['state'] = newFlag;
   window.plugin.bookmarks.saveStorage();
   window.runHooks('pluginBkmrksEdit', { target: 'folder', action: newFlag ? 'open' : 'close', id: ID });
 };
@@ -258,7 +269,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
   }
 
   // For each folder
-  var list = window.plugin.bookmarks.bkmrksObj[typeList];
+  var list = window.plugin.bookmarks.currentProject[typeList];
 
   for (var idFolders in list) {
     var folders = list[idFolders];
@@ -331,7 +342,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
 /** *************************************************************************************************************************************************************/
 
 window.plugin.bookmarks.findByGuid = function (guid) {
-  var list = window.plugin.bookmarks.bkmrksObj['portals'];
+  var list = window.plugin.bookmarks.currentProject['portals'];
 
   for (var idFolders in list) {
     for (var idBkmrk in list[idFolders]['bkmrk']) {
@@ -399,7 +410,7 @@ window.plugin.bookmarks.switchStarPortal = function (guid) {
   // If portal is saved in bookmarks: Remove this bookmark
   var bkmrkData = window.plugin.bookmarks.findByGuid(guid);
   if (bkmrkData) {
-    var list = window.plugin.bookmarks.bkmrksObj['portals'];
+    var list = window.plugin.bookmarks.currentProject['portals'];
     delete list[bkmrkData['id_folder']]['bkmrk'][bkmrkData['id_bookmark']];
     $('.bkmrk#' + bkmrkData['id_bookmark'] + '').remove();
 
@@ -432,7 +443,7 @@ window.plugin.bookmarks.addPortalBookmarkByMarker = function (marker, doPostProc
   const latlng = `${ll.lat},${ll.lng}`;
   const ID = window.plugin.bookmarks.generateID();
 
-  window.plugin.bookmarks.bkmrksObj['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = {
+  window.plugin.bookmarks.currentProject['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = {
     guid: guid,
     latlng: latlng,
     label: label,
@@ -487,7 +498,7 @@ window.plugin.bookmarks.addPortalBookmark = function (guid, latlng, label) {
   var ID = window.plugin.bookmarks.generateID();
 
   // Add bookmark in the localStorage
-  window.plugin.bookmarks.bkmrksObj['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = { guid: guid, latlng: latlng, label: label };
+  window.plugin.bookmarks.currentProject['portals'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = { guid: guid, latlng: latlng, label: label };
 
   window.plugin.bookmarks.saveStorage();
   window.plugin.bookmarks.refreshBkmrks();
@@ -515,14 +526,14 @@ window.plugin.bookmarks.addElement = function (elem, type) {
     var latlng = lat + ',' + lng;
     var zoom = parseInt(window.map.getZoom());
     // Add bookmark in the localStorage
-    window.plugin.bookmarks.bkmrksObj['maps'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = { label: label, latlng: latlng, z: zoom };
+    window.plugin.bookmarks.currentProject['maps'][window.plugin.bookmarks.KEY_OTHER_BKMRK]['bkmrk'][ID] = { label: label, latlng: latlng, z: zoom };
   } else {
     if (label === '') {
       label = 'Folder';
     }
     var short_type = typeList.replace('bkmrk_', '');
     // Add new folder in the localStorage
-    window.plugin.bookmarks.bkmrksObj[short_type][ID] = { label: label, state: 1, bkmrk: {} };
+    window.plugin.bookmarks.currentProject[short_type][ID] = { label: label, state: 1, bkmrk: {} };
   }
   window.plugin.bookmarks.saveStorage();
   window.plugin.bookmarks.refreshBkmrks();
@@ -536,9 +547,9 @@ window.plugin.bookmarks.removeElement = function (elem, type) {
     const typeList = $(elem).parent().parent().parent().parent().parent('div').attr('id');
     const ID = $(elem).parent('li').attr('id');
     var IDfold = $(elem).parent().parent().parent('li').attr('id');
-    var guid = window.plugin.bookmarks.bkmrksObj[typeList.replace('bkmrk_', '')][IDfold]['bkmrk'][ID].guid;
+    var guid = window.plugin.bookmarks.currentProject[typeList.replace('bkmrk_', '')][IDfold]['bkmrk'][ID].guid;
 
-    delete window.plugin.bookmarks.bkmrksObj[typeList.replace('bkmrk_', '')][IDfold]['bkmrk'][ID];
+    delete window.plugin.bookmarks.currentProject[typeList.replace('bkmrk_', '')][IDfold]['bkmrk'][ID];
     $(elem).parent('li').remove();
 
     if (type === 'portals') {
@@ -556,7 +567,7 @@ window.plugin.bookmarks.removeElement = function (elem, type) {
     const typeList = $(elem).parent().parent().parent().parent('div').attr('id');
     const ID = $(elem).parent().parent('li').attr('id');
 
-    delete window.plugin.bookmarks.bkmrksObj[typeList.replace('bkmrk_', '')][ID];
+    delete window.plugin.bookmarks.currentProject[typeList.replace('bkmrk_', '')][ID];
     $(elem).parent().parent('li').remove();
     window.plugin.bookmarks.saveStorage();
     window.plugin.bookmarks.updateStarPortal();
@@ -599,11 +610,11 @@ window.plugin.bookmarks.mobileSort = function (elem) {
   var newFold = $(elem).data('id');
   var oldFold = window.plugin.bookmarks.mobileSortIDf;
 
-  var Bkmrk = window.plugin.bookmarks.bkmrksObj[type][oldFold].bkmrk[idBkmrk];
+  var Bkmrk = window.plugin.bookmarks.currentProject[type][oldFold].bkmrk[idBkmrk];
 
-  delete window.plugin.bookmarks.bkmrksObj[type][oldFold].bkmrk[idBkmrk];
+  delete window.plugin.bookmarks.currentProject[type][oldFold].bkmrk[idBkmrk];
 
-  window.plugin.bookmarks.bkmrksObj[type][newFold].bkmrk[idBkmrk] = Bkmrk;
+  window.plugin.bookmarks.currentProject[type][newFold].bkmrk[idBkmrk] = Bkmrk;
 
   window.plugin.bookmarks.saveStorage();
   window.plugin.bookmarks.refreshBkmrks();
@@ -615,7 +626,7 @@ window.plugin.bookmarks.mobileSort = function (elem) {
 window.plugin.bookmarks.onSearch = function (query) {
   var term = query.term.toLowerCase();
 
-  $.each(window.plugin.bookmarks.bkmrksObj.maps, function (id, folder) {
+  $.each(window.plugin.bookmarks.currentProject.maps, function (id, folder) {
     $.each(folder.bkmrk, function (id, bookmark) {
       if (bookmark.label.toLowerCase().indexOf(term) === -1) return;
 
@@ -630,7 +641,7 @@ window.plugin.bookmarks.onSearch = function (query) {
     });
   });
 
-  $.each(window.plugin.bookmarks.bkmrksObj.portals, function (id, folder) {
+  $.each(window.plugin.bookmarks.currentProject.portals, function (id, folder) {
     $.each(folder.bkmrk, function (id, bookmark) {
       if (bookmark.label.toLowerCase().indexOf(term) === -1) return;
 
@@ -669,9 +680,9 @@ window.plugin.bookmarks.sortFolder = function (typeList) {
   var newArr = {};
   $(`#${typeList} li.bookmarkFolder`).each(function () {
     var idFold = $(this).attr('id');
-    newArr[idFold] = window.plugin.bookmarks.bkmrksObj[keyType][idFold];
+    newArr[idFold] = window.plugin.bookmarks.currentProject[keyType][idFold];
   });
-  window.plugin.bookmarks.bkmrksObj[keyType] = newArr;
+  window.plugin.bookmarks.currentProject[keyType] = newArr;
   window.plugin.bookmarks.saveStorage();
 
   window.runHooks('pluginBkmrksEdit', { target: 'folder', action: 'sort' });
@@ -685,7 +696,7 @@ window.plugin.bookmarks.sortBookmark = function (typeList) {
 
   $(`#${typeList} li.bookmarkFolder`).each(function () {
     var idFold = $(this).attr('id');
-    newArr[idFold] = window.plugin.bookmarks.bkmrksObj[keyType][idFold];
+    newArr[idFold] = window.plugin.bookmarks.currentProject[keyType][idFold];
     newArr[idFold].bkmrk = {};
   });
 
@@ -695,16 +706,16 @@ window.plugin.bookmarks.sortBookmark = function (typeList) {
     var idFold = $(this).parent().parent('li').attr('id');
     var id = $(this).attr('id');
 
-    var list = window.plugin.bookmarks.bkmrksObj[keyType];
+    var list = window.plugin.bookmarks.currentProject[keyType];
     for (var idFoldersOrigin in list) {
       for (var idBkmrk in list[idFoldersOrigin]['bkmrk']) {
         if (idBkmrk === id) {
-          newArr[idFold].bkmrk[id] = window.plugin.bookmarks.bkmrksObj[keyType][idFoldersOrigin].bkmrk[id];
+          newArr[idFold].bkmrk[id] = window.plugin.bookmarks.currentProject[keyType][idFoldersOrigin].bkmrk[id];
         }
       }
     }
   });
-  window.plugin.bookmarks.bkmrksObj[keyType] = newArr;
+  window.plugin.bookmarks.currentProject[keyType] = newArr;
   window.plugin.bookmarks.saveStorage();
   window.runHooks('pluginBkmrksEdit', { target: 'bookmarks', action: 'sort' });
   console.log('BOOKMARKS: sorted bookmark (portal/map)');
@@ -888,7 +899,7 @@ window.plugin.bookmarks.renameFolder = function (elem) {
     try {
       var newName = window.plugin.bookmarks.escapeHtml(promptAction);
 
-      window.plugin.bookmarks.bkmrksObj[type][idFold].label = newName;
+      window.plugin.bookmarks.currentProject[type][idFold].label = newName;
       $('#bookmarksDialogRenameF #' + idFold).text(newName);
       window.plugin.bookmarks.saveStorage();
       window.plugin.bookmarks.refreshBkmrks();
@@ -1067,7 +1078,7 @@ window.plugin.bookmarks.dialogLoadList = function () {
 /** ************************************************************************************************************************************************************/
 // Delay the syncing to group a few updates in a single request
 window.plugin.bookmarks.delaySync = function () {
-  if (!window.plugin.bookmarks.enableSync || !window.plugin.bookmarks.IsDefaultStorageKey) return;
+  if (!window.plugin.bookmarks.enableSync) return;
   clearTimeout(window.plugin.bookmarks.delaySync.timer);
   window.plugin.bookmarks.delaySync.timer = setTimeout(function () {
     window.plugin.bookmarks.delaySync.timer = null;
@@ -1077,13 +1088,97 @@ window.plugin.bookmarks.delaySync = function () {
 
 // Store the updateQueue in updatingQueue and upload
 window.plugin.bookmarks.syncNow = function () {
-  if (!window.plugin.bookmarks.enableSync || !window.plugin.bookmarks.IsDefaultStorageKey) return;
+  if (!window.plugin.bookmarks.enableSync) return;
   $.extend(window.plugin.bookmarks.updatingQueue, window.plugin.bookmarks.updateQueue);
   window.plugin.bookmarks.updateQueue = {};
   window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.UPDATING_QUEUE);
   window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.UPDATE_QUEUE);
 
-  window.plugin.sync.updateMap('bookmarks', window.plugin.bookmarks.KEY.field, Object.keys(window.plugin.bookmarks.updatingQueue));
+  window.plugin.sync.updateMap('bookmarks', window.plugin.bookmarks.SYNC_FIELD, Object.keys(window.plugin.bookmarks.updatingQueue));
+};
+
+// localStorage keys holding bookmarks: the default project plus any MPE projects
+window.plugin.bookmarks.getAllProjectKeys = () => {
+  const keys = [window.plugin.bookmarks.DEFAULT_KEY_STORAGE];
+  keys.push(...(window.plugin.mpe?.obj?.projects?.bookmarks?.pj ?? []));
+  return keys;
+};
+
+// the default project keeps the plain 'portals' and 'maps' keys, the only ones an older client reads
+window.plugin.bookmarks.makeSyncKey = (storageKey, list) =>
+  storageKey === window.plugin.bookmarks.DEFAULT_KEY_STORAGE ? list : storageKey + window.plugin.bookmarks.SYNC_KEY_DELIMITER + list;
+
+window.plugin.bookmarks.parseSyncKey = (syncKey) => {
+  const idx = syncKey.lastIndexOf(window.plugin.bookmarks.SYNC_KEY_DELIMITER);
+  if (idx === -1) return { storageKey: window.plugin.bookmarks.DEFAULT_KEY_STORAGE, list: syncKey };
+  return { storageKey: syncKey.slice(0, idx), list: syncKey.slice(idx + window.plugin.bookmarks.SYNC_KEY_DELIMITER.length) };
+};
+
+window.plugin.bookmarks.seedProject = (storageKey) => {
+  let data = {};
+  const raw = localStorage[storageKey];
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      console.warn(`bookmarks: failed to parse localStorage[${storageKey}] while seeding sync`);
+    }
+  }
+
+  window.plugin.bookmarks.LIST_TYPES.forEach((list) => {
+    window.plugin.bookmarks.bkmrksObj[window.plugin.bookmarks.makeSyncKey(storageKey, list)] = data[list] ?? window.plugin.bookmarks.emptyList();
+  });
+};
+
+window.plugin.bookmarks.seedSyncMap = () => {
+  window.plugin.bookmarks.bkmrksObj = {};
+  window.plugin.bookmarks.getAllProjectKeys().forEach(window.plugin.bookmarks.seedProject);
+};
+
+// a queued key with nothing behind it tells sync to drop it
+window.plugin.bookmarks.queueProject = (storageKey) => {
+  window.plugin.bookmarks.LIST_TYPES.forEach((list) => {
+    window.plugin.bookmarks.updateQueue[window.plugin.bookmarks.makeSyncKey(storageKey, list)] = true;
+  });
+};
+
+window.plugin.bookmarks.reconcileAfterMpeChange = (data) => {
+  if (data?.data?.namespace !== 'bookmarks') return;
+
+  const valid = new Set(window.plugin.bookmarks.getAllProjectKeys());
+  const gone = new Set();
+  const dropped = Object.keys(window.plugin.bookmarks.bkmrksObj).filter((syncKey) => {
+    const { storageKey, list } = window.plugin.bookmarks.parseSyncKey(syncKey);
+    // a mark outlives the project it belongs to
+    if (list === window.plugin.bookmarks.DELETED_MARK || valid.has(storageKey)) return false;
+    gone.add(storageKey);
+    return true;
+  });
+  dropped.forEach((syncKey) => {
+    delete window.plugin.bookmarks.bkmrksObj[syncKey];
+    window.plugin.bookmarks.updateQueue[syncKey] = true;
+  });
+  gone.forEach((deletedKey) => {
+    const mark = window.plugin.bookmarks.makeSyncKey(deletedKey, window.plugin.bookmarks.DELETED_MARK);
+    window.plugin.bookmarks.bkmrksObj[mark] = Date.now();
+    window.plugin.bookmarks.updateQueue[mark] = true;
+  });
+
+  // a project created a moment ago has no entry yet
+  const storageKey = window.plugin.bookmarks.KEY_STORAGE;
+  const isNew = !(window.plugin.bookmarks.makeSyncKey(storageKey, 'portals') in window.plugin.bookmarks.bkmrksObj);
+  if (isNew) {
+    window.plugin.bookmarks.seedProject(storageKey);
+    window.plugin.bookmarks.queueProject(storageKey);
+    // the project is back, so its mark goes
+    const mark = window.plugin.bookmarks.makeSyncKey(storageKey, window.plugin.bookmarks.DELETED_MARK);
+    delete window.plugin.bookmarks.bkmrksObj[mark];
+    window.plugin.bookmarks.updateQueue[mark] = true;
+  }
+
+  if (dropped.length === 0 && !isNew) return;
+  window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.UPDATE_QUEUE);
+  window.plugin.bookmarks.delaySync();
 };
 
 window.plugin.bookmarks.registerFieldForSyncing = () => {
@@ -1092,51 +1187,89 @@ window.plugin.bookmarks.registerFieldForSyncing = () => {
     window.addHook('pluginSyncReady', window.plugin.bookmarks.registerFieldForSyncing);
     return;
   }
+  window.plugin.bookmarks.seedSyncMap();
+  window.addHook('mpe', window.plugin.bookmarks.reconcileAfterMpeChange);
+  // MPE can register its projects after the seeding above, leaving them out of the map
+  window.addHook('pluginMpeReady', window.plugin.bookmarks.seedSyncMap);
   window.plugin.sync.registerMapForSync(
     'bookmarks',
-    window.plugin.bookmarks.KEY.field,
+    window.plugin.bookmarks.SYNC_FIELD,
     window.plugin.bookmarks.syncCallback,
     window.plugin.bookmarks.syncInitialized
   );
 };
 
-// Call after local or remote change uploaded
-window.plugin.bookmarks.syncCallback = function (pluginName, fieldName, e, fullUpdated) {
-  if (fieldName === window.plugin.bookmarks.KEY.field) {
-    window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.KEY);
-    // All data is replaced if other client update the data during this client offline,
-    if (fullUpdated) {
-      window.plugin.bookmarks.refreshBkmrks();
-      window.plugin.bookmarks.resetAllStars();
-      window.runHooks('pluginBkmrksSyncEnd', { target: 'all', action: 'sync' });
-      console.log('BOOKMARKS: synchronized all from drive after offline');
+// fullUpdated is set whenever the file was last written by another client, meaning sync has
+// just replaced the map wholesale, so every project's localStorage is rebuilt from it
+window.plugin.bookmarks.syncCallback = (pluginName, fieldName, e, fullUpdated) => {
+  if (fieldName !== window.plugin.bookmarks.SYNC_FIELD || !fullUpdated) return;
+
+  const byProject = {};
+  const marked = new Map();
+  Object.entries(window.plugin.bookmarks.bkmrksObj).forEach(([syncKey, folders]) => {
+    const { storageKey, list } = window.plugin.bookmarks.parseSyncKey(syncKey);
+    if (list === window.plugin.bookmarks.DELETED_MARK) {
+      marked.set(storageKey, folders);
       return;
     }
+    // a key some other client keeps in the same file
+    if (!window.plugin.bookmarks.LIST_TYPES.includes(list)) return;
+    (byProject[storageKey] ??= {})[list] = folders;
+  });
+  Object.entries(byProject).forEach(([storageKey, data]) => {
+    window.plugin.bookmarks.LIST_TYPES.forEach((list) => (data[list] ??= window.plugin.bookmarks.emptyList()));
+    localStorage[storageKey] = JSON.stringify(data);
+  });
 
-    if (!e) return;
-    if (e.isLocal) {
-      // Update pushed successfully, remove it from updatingQueue
-      delete window.plugin.bookmarks.updatingQueue[e.property];
-      console.log('BOOKMARKS: synchronized to drive');
-    } else {
-      // Remote update
-      delete window.plugin.bookmarks.updateQueue[e.property];
-      window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.UPDATE_QUEUE);
-      window.plugin.bookmarks.refreshBkmrks();
-      window.plugin.bookmarks.resetAllStars();
-      window.runHooks('pluginBkmrksSyncEnd', { target: 'all', action: 'sync' });
-      console.log('BOOKMARKS: synchronized all from remote');
+  let dropMark = false;
+  marked.forEach((markedAt, storageKey) => {
+    // the default project is never deleted, whatever the file says
+    if (storageKey === window.plugin.bookmarks.DEFAULT_KEY_STORAGE) return;
+
+    const recreated = storageKey in byProject;
+    if (!recreated) delete localStorage[storageKey];
+
+    // a mark is dropped once the project is back, or once it has outlived its purpose
+    const age = Date.now() - (Number.isFinite(markedAt) ? markedAt : Date.now());
+    if (recreated || age > window.plugin.bookmarks.DELETED_MARK_TTL) {
+      const mark = window.plugin.bookmarks.makeSyncKey(storageKey, window.plugin.bookmarks.DELETED_MARK);
+      delete window.plugin.bookmarks.bkmrksObj[mark];
+      window.plugin.bookmarks.updateQueue[mark] = true;
+      dropMark = true;
     }
+  });
+
+  // the project open right now may be one of those just deleted
+  if (marked.has(window.plugin.bookmarks.KEY_STORAGE) && !(window.plugin.bookmarks.KEY_STORAGE in byProject)) {
+    window.plugin.mpe?.action?.switchProject?.('bookmarks', window.plugin.bookmarks.DEFAULT_KEY_STORAGE);
   }
+
+  // so MPE learns about projects that arrived or went away on another device
+  window.plugin.mpe?.data?.scanStorageForOne?.('bookmarks');
+
+  // an older client writes the file without these keys, so the local copy is kept and pushed back
+  const missing = window.plugin.bookmarks.getAllProjectKeys().filter((storageKey) => !(storageKey in byProject));
+  missing.forEach((storageKey) => {
+    window.plugin.bookmarks.seedProject(storageKey);
+    window.plugin.bookmarks.queueProject(storageKey);
+  });
+  if (missing.length > 0 || dropMark) {
+    window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.UPDATE_QUEUE);
+    window.plugin.bookmarks.delaySync();
+  }
+
+  window.plugin.bookmarks.refreshBkmrks();
+  window.plugin.bookmarks.resetAllStars();
+  window.runHooks('pluginBkmrksSyncEnd', { target: 'all', action: 'sync' });
+  console.log('BOOKMARKS: rebuilt from remote sync');
 };
 
 // syncing of the field is initialized, upload all queued update
-window.plugin.bookmarks.syncInitialized = function (pluginName, fieldName) {
-  if (fieldName === window.plugin.bookmarks.KEY.field) {
-    window.plugin.bookmarks.enableSync = true;
-    if (Object.keys(window.plugin.bookmarks.updateQueue).length > 0) {
-      window.plugin.bookmarks.delaySync();
-    }
+window.plugin.bookmarks.syncInitialized = (pluginName, fieldName) => {
+  if (fieldName !== window.plugin.bookmarks.SYNC_FIELD) return;
+  window.plugin.bookmarks.enableSync = true;
+  if (Object.keys(window.plugin.bookmarks.updateQueue).length > 0) {
+    window.plugin.bookmarks.delaySync();
   }
 };
 
@@ -1148,20 +1281,12 @@ window.plugin.bookmarks.storeLocal = function (mapping) {
   }
 };
 
-window.plugin.bookmarks.loadLocal = function (mapping) {
-  var objectJSON = localStorage[mapping.key];
-  if (!objectJSON) return;
-  window.plugin.bookmarks[mapping.field] = mapping.convertFunc ? mapping.convertFunc(JSON.parse(objectJSON)) : JSON.parse(objectJSON);
-};
-
 window.plugin.bookmarks.syncBkmrks = function () {
-  window.plugin.bookmarks.loadLocal(window.plugin.bookmarks.KEY);
-
-  window.plugin.bookmarks.updateQueue = window.plugin.bookmarks.bkmrksObj;
+  const storageKey = window.plugin.bookmarks.KEY_STORAGE;
+  window.plugin.bookmarks.seedProject(storageKey);
+  window.plugin.bookmarks.queueProject(storageKey);
   window.plugin.bookmarks.storeLocal(window.plugin.bookmarks.UPDATE_QUEUE);
-
   window.plugin.bookmarks.delaySync();
-  window.plugin.bookmarks.loadLocal(window.plugin.bookmarks.KEY); // switch back to active storage related to KEY
 };
 
 /** ************************************************************************************************************************************************************/
@@ -1193,7 +1318,7 @@ window.plugin.bookmarks.highlightRefresh = function (data) {
 /** BOOKMARKED PORTALS LAYER ***********************************************************************************************************************************/
 /** ************************************************************************************************************************************************************/
 window.plugin.bookmarks.addAllStars = function () {
-  var list = window.plugin.bookmarks.bkmrksObj.portals;
+  var list = window.plugin.bookmarks.currentProject.portals;
 
   for (var idFolders in list) {
     for (var idBkmrks in list[idFolders]['bkmrk']) {
@@ -1362,19 +1487,20 @@ window.plugin.bookmarks.setupContent = function () {
 
 /** ************************************************************************************************************************************************************/
 window.plugin.bookmarks.initMPE = function () {
+  // MPE may not be loaded yet, and fires this hook once it is
+  if (!window.plugin.mpe) {
+    window.addHook('pluginMpeReady', window.plugin.bookmarks.initMPE);
+    return;
+  }
+
   window.plugin.mpe.setMultiProjects({
     namespace: 'bookmarks',
     title: 'Bookmarks for Maps and Portals',
     icon: 'bookmark',
     fa: 'fa-bookmark',
-    defaultKey: 'plugin-bookmarks',
+    defaultKey: window.plugin.bookmarks.DEFAULT_KEY_STORAGE,
     func_setKey: function (newKey) {
       window.plugin.bookmarks.KEY_STORAGE = newKey;
-      window.plugin.bookmarks.KEY.key = newKey;
-    },
-    func_pre: function () {
-      // disable sync
-      window.plugin.bookmarks.IsDefaultStorageKey = false;
     },
     func_post: function () {
       // Delete all Markers (stared portals)
@@ -1397,9 +1523,6 @@ window.plugin.bookmarks.initMPE = function () {
 
       // Refresh Highlighter
       window.plugin.bookmarks.highlightRefresh({ target: 'all', action: 'MPEswitch' });
-
-      // enable sync if default storage
-      window.plugin.bookmarks.IsDefaultStorageKey = this.defaultKey === this.currKey;
     },
   });
 };
@@ -1471,6 +1594,9 @@ var setup = function () {
   window.addHook('portalDetailsUpdated', window.plugin.bookmarks.onPortalSelected);
   window.addHook('search', window.plugin.bookmarks.onSearch);
 
+  // MPE has to know the projects before syncing seeds them
+  window.plugin.bookmarks.initMPE();
+
   // Sync
   window.addHook('pluginBkmrksEdit', window.plugin.bookmarks.syncBkmrks);
   window.plugin.bookmarks.registerFieldForSyncing();
@@ -1490,15 +1616,11 @@ var setup = function () {
   if (window.plugin.portalslist) {
     window.plugin.bookmarks.setupPortalsList();
   }
-  // Initilaize MPE-Support only if MPE-Module is available
-  if (window.plugin.mpe !== undefined) {
-    window.plugin.bookmarks.initMPE();
-  }
 };
 // moved setupCSS to the end to improve readability of built script
 window.plugin.bookmarks.setupCSS = function () {
   $('<style>').prop('type', 'text/css').html('\
-@media print{#bkmrksTrigger{display:none!important}}#bookmarksBox :not(iitc-icon){display:block;padding:0;margin:0;width:auto;height:auto;font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:20px;text-indent:0;-webkit-text-decoration:none;text-decoration:none;box-sizing:border-box}#bookmarksBox{display:block;position:absolute!important;z-index:4001;top:100px;left:100px;width:231px;height:auto;overflow:hidden}#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox h5{height:28px;overflow:hidden;color:#fff;font-size:14px}#bookmarksBox #topBar{height:15px!important}#bookmarksBox #topBar *{height:14px!important;float:left!important}#bookmarksBox .handle{width:80%;text-align:center;color:#fff;line-height:6px;cursor:move}#bookmarksBox #topBar .btn{display:block;width:10%;cursor:pointer;color:#20a8b1;font-weight:700;text-align:center;line-height:13px;font-size:18px}#bookmarksBox #topBar #bookmarksDel{overflow:hidden;text-indent:-999px;background:#b42e2e}#bookmarksBox #topBar #bookmarksMin:hover{color:#ffce00}#bookmarksBox #bookmarksTypeBar{clear:both}#bookmarksBox h5{padding:4px 0 23px;width:50%;height:93px!important;text-align:center;color:#788}#bookmarksBox h5.current{cursor:default;background:0;color:#fff!important}#bookmarksBox h5:hover{color:#ffce00;background:transparent}#bookmarksBox #bookmarksTypeBar,#bookmarksBox #topBar,#bookmarksBox .addForm,#bookmarksBox .bookmarkList li.bkmrk a,#bookmarksBox .bookmarkList li.bkmrk:hover,#bookmarksBox .bookmarkList li.bookmarksEmpty{background-color:rgba(8,48,78,.85)}#bookmarksBox .addForm *,#bookmarksBox .bookmarkList li.bkmrk:hover .bookmarksLink,#bookmarksBox h5{background:rgba(0,0,0,.3)}#bookmarksBox .addForm *{display:block;float:left;height:28px!important}#bookmarksBox .addForm a{cursor:pointer;color:#20a8b1;font-size:12px;width:35%;text-align:center;line-height:20px;padding:4px 0 23px}#bookmarksBox .addForm a:hover{background:#ffce00;color:#000;-webkit-text-decoration:none;text-decoration:none}#bookmarksBox .addForm input{font-size:11px!important;color:#ffce00;height:28px;padding:0 8px 1px;line-height:12px;font-size:12px}#bookmarksBox #bkmrk_portals .addForm input{width:65%}#bookmarksBox #bkmrk_maps .addForm input{width:42%}#bookmarksBox #bkmrk_maps .addForm a{width:29%}#bookmarksBox .addForm input:focus,#bookmarksBox .addForm input:hover{outline:0;background:rgba(0,0,0,.6)}#bookmarksBox .bookmarkList>ul{clear:both;list-style-type:none;color:#fff;overflow:hidden;overflow-y:auto;max-height:580px}#bookmarksBox .sortable-placeholder{background:rgba(8,48,78,.55);box-shadow:inset 1px 0 0 #20a8b1}#bookmarksBox .ui-sortable-helper{border-top-width:1px}#bookmarksBox .bookmarkList{display:none}#bookmarksBox .bookmarkList.current{display:block}#bookmarksBox .addForm *,#bookmarksBox h5,#bookmarksBox ul li.bkmrk,#bookmarksBox ul li.bkmrk a{height:22px}#bookmarksBox h5,#bookmarksBox ul li.bkmrk a{overflow:hidden;cursor:pointer;float:left}#bookmarksBox ul .bookmarksEmpty{text-indent:27px;color:#eee}#bookmarksBox ul .bookmarksRemoveFrom{width:10%;text-align:center;color:#fff}#bookmarksBox .bookmarksRemoveFrom iitc-icon{line-height:18px}#bookmarksBox ul .bookmarksLink{width:90%;padding:0 10px 0 8px;color:#ffce00}#bookmarksBox ul .bookmarksLink.selected{color:#03fe03}#bookmarksBox ul .othersBookmarks .bookmarksLink{width:90%}#bookmarksBox ul .bookmarksLink:hover{color:#03fe03}#bookmarksBox ul .bookmarksRemoveFrom:hover{color:#fff;background:#e22!important}#bookmarksBox,#bookmarksBox *{border-color:#20a8b1;border-style:solid;border-width:0}#bookmarksBox #topBar,#bookmarksBox ul .bookmarkFolder{border-top-width:1px}#bookmarksBox #bookmarksTypeBar,#bookmarksBox #topBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarkFolder .folderLabel,#bookmarksBox ul li.bkmrk a{border-bottom-width:1px}#bookmarksBox ul .bookmarkFolder{border-right-width:1px;border-left-width:1px}#bookmarksBox #bookmarksTypeBar *,#bookmarksBox #topBar *,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk{border-left-width:1px}#bookmarksBox #bookmarksTypeBar,#bookmarksBox #topBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarksRemoveFrom{border-right-width:1px}#bookmarksBox ul .bookmarkFolder .folderLabel .bookmarksRemoveFrom,#bookmarksBox ul .bookmarkFolder.othersBookmarks li.bkmrk{border-left-width:0}#bkmrksTrigger{display:block;position:absolute;overflow:hidden;top:0;left:277px;width:47px;margin-top:-36px;height:64px;height:0;cursor:pointer;z-index:2999;background-position:bottom;background-repeat:no-repeat;transition:margin-top .1s ease-in-out;text-indent:-100%;-webkit-text-decoration:none;text-decoration:none;text-align:center}#bkmrksTrigger:hover{margin-top:0}.portal-list-bookmark iitc-icon{margin:-3px;cursor:pointer}#bkmrksTrigger{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAABPCAMAAABMDWzEAAAANlBMVEX/////zgD/zgD///////8Aru7/zgAAru4TtPAAAADA7PtAwvLk9/6b3/n///8Aru510/b/zgDZKp6YAAAACnRSTlOAxo5FtDw9mPoA9GJiegAAAklJREFUeF6dle26ozAIhFO1NkK+vP+b3WbBJRwM7dn5lad9BweoaThI63Z42hfmLn4rLv84d8WvpWxe+fNcFL+VUtzy57kLv67lrbDOqu/nW8tfQ1i3MmjbfrKPc9BjCYfiy2qjjNoDZRfcaBnxnl8Mm8KN4bFzv6q6lVT/P369+DBZFmsZ+LAmWbHllz7XB/OBwDDhF1rVIvwFhHt+vw4dqbViKdC0wHySSsE3e/FxpHPpAo+vUehUSCk7PBuYTpCUw/JsAIoipzlfUTHimPGNMujQ7LA86sSqm2x4BFXbOjTPSWJFxtgpbRTFd+VITdPGQG3b8hArCbm7n9vVefqZxT8I0G2Y+Yi4XFNy+Jqpn695WlP6ksdWSJB9PmJrkMqolADyjIdyrzSrD1Pc8lND8vrNFvfnkw3u8NYAn+ev+M/7iorPH3n8Jd9+mT+b8fg8EBZb+o4n+n0gx4yPMp5MZ3LkW77XJAaZZkdmPtv7JGG9EfLLrnkS3DjiRWseej6OrnXd0ub/hQbftIPHCnfzjDz6sXjy3seKoBqXG97yqiCgmFv198uNYy7XptHlr8aHcbk8NW5veMtrg+A1Ojy3oCeLDs9zgfEHEi2vu03INu4Y/fk3OVOo6N2f8u5IqDs+NvMaYOJQaHj5rut1vGIda/zk5dmdfh7H8XypUJpP0luNne56xnEdildRRPyIfMMDSnGWhEJQvEQZittQwoONYkP946OOMnsERuZNFKMXOYiXkXsO4U0UL1QwffqPCH4Us4xgovih/gBs1LqNE0afwAAAAABJRU5ErkJggg==)}.bkmrksStar iitc-icon{float:left;margin:0 0 0 2px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-width:var(--icon-target-size,24px);min-height:24px;min-height:var(--icon-target-size,24px)}.bkmrksStar iitc-icon,.portal-list-bookmark iitc-icon{font-size:16px}.bkmrksStar iitc-icon,.bkmrksStar.favorite:focus iitc-icon{font-variation-settings:"FILL" 0}.bkmrksStar.favorite iitc-icon,.bkmrksStar:focus iitc-icon,.portal-list-bookmark.favorite iitc-icon{font-variation-settings:"FILL" 1}body.icons-unavailable .bkmrksStar iitc-icon:before,body.icons-unavailable .portal-list-bookmark iitc-icon:before{content:"\\2606"}body.icons-unavailable .bkmrksStar.favorite iitc-icon:before,body.icons-unavailable .portal-list-bookmark.favorite iitc-icon:before{content:"\\2605"}#bookmarksBox .bookmarkList .bookmarkFolder{overflow:hidden;margin-top:-1px;height:auto;background:rgba(8,58,78,.7)}#bookmarksBox .bookmarkList ul li.sortable-placeholder{box-shadow:inset -1px 0 0 #20a8b1,inset 1px 0 0 #20a8b1,0 -1px 0 #20a8b1;background:rgba(8,58,78,.9)}#bookmarksBox .bookmarkList .bkmrk.ui-sortable-helper{border-right-width:1px;border-left-width:1px!important}#bookmarksBox .bookmarkList ul li ul li.sortable-placeholder{height:23px;box-shadow:inset 0 -1px 0 #20a8b1,inset 1px 0 0 #20a8b1}#bookmarksBox .bookmarkList ul li.bookmarkFolder.ui-sortable-helper,#bookmarksBox .bookmarkList ul li.othersBookmarks ul li.sortable-placeholder{box-shadow:inset 0 -1px 0 #20a8b1}#bookmarksBox #topBar #bookmarksDel,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksRemoveFrom{border-bottom-width:1px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox .bookmarkList .triangle{width:0;height:0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel{overflow:visible;height:25px;cursor:pointer;background:#069;text-indent:0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>*{height:25px;float:left}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor{line-height:25px;color:#fff;width:90%}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left;border-width:5px 0 5px 7px;border-color:transparent transparent transparent #fff;margin:7px 7px 0 6px}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{margin:9px 5px 0;border-width:7px 5px 0;border-color:#fff transparent transparent}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{display:none;border-width:0 12px 10px 0;border-color:transparent #20a8b1 transparent transparent;margin:-20px 0 0;position:relative;top:21px;left:219px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{top:18px;left:0;border-width:0 10px 9px 0;border-color:transparent #069 transparent transparent}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:block;display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel:hover>span>span{border-color:transparent #036 transparent transparent}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{background:#036}#bookmarksBox .bookmarkList .bookmarkFolder ul{display:none;margin-left:10%}#bookmarksBox .bookmarkList .bookmarkFolder.open ul{display:block;min-height:22px}#bookmarksBox .bookmarkFolder.othersBookmarks ul{margin-left:0}#bookmarksBox .bookmarksRemoveFrom{display:none!important}#bookmarksBox.deleteMode .bookmarksRemoveFrom{display:block!important}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox ul .bookmarksLink,#bookmarksBox ul .othersBookmarks .bookmarksLink{width:100%!important}#bookmarksBox.deleteMode .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox.deleteMode ul .bookmarksLink,#bookmarksBox.deleteMode ul .othersBookmarks .bookmarksLink{width:90%!important}#bookmarksBox.mobile{position:absolute!important;width:100%!important;height:100%!important;top:0!important;left:0!important;margin:0!important;border:0!important;background:transparent!important;overflow:auto!important;box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder.open ul,#bookmarksBox.mobile .bookmarkList ul,#bookmarksBox.mobile .bookmarkList ul li,#bookmarksBox.mobile .bookmarkList.current{width:100%!important;display:block!important}#bookmarksBox.mobile *{box-shadow:none!important;border-width:0!important}#bookmarksBox.mobile #topBar #bookmarksMin,#bookmarksBox.mobile #topBar .handle{display:none!important}#bookmarksBox.mobile #bookmarksTypeBar h5{cursor:pointer;text-align:center;float:left;width:50%;height:auto!important;padding:7px 0}#bookmarksBox.mobile #bookmarksTypeBar h5.current{cursor:default;color:#fff}#bookmarksBox.mobile #bookmarksTypeBar,#bookmarksBox.mobile .bookmarkList .addForm{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel,#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk{height:36px!important;clear:both}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel a,#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a{background:none;padding:7px 0;height:auto;box-shadow:inset 0 1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksRemoveFrom,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksRemoveFrom{box-shadow:inset 0 1px 0 #20a8b1,inset -1px 0 0 #20a8b1!important;width:10%;background:none!important}#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksLink,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksAnchor{text-indent:10px;height:36px;line-height:24px;overflow:hidden}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{margin-left:0!important}#bookmarksBox.mobile .bookmarkList>ul{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.othersBookmarks ul{border-top:5px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bkmrk,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder{box-shadow:inset 0 1px 0 #20a8b1,1px 0 0 #20a8b1,-1px 1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList>ul{max-height:none}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{box-shadow:0 1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{width:90%!important;margin-left:10%!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder.othersBookmarks ul{width:100%!important;margin-left:0!important}#bookmarksBox.mobile{margin-bottom:5px!important}#bookmarksBox.mobile #bookmarksTypeBar{height:auto}#bookmarksBox.mobile .addForm,#bookmarksBox.mobile .addForm *{height:35px!important;padding:0}#bookmarksBox.mobile .addForm a{line-height:37px}#bookmarksBox.mobile .addForm input{text-indent:10px}#bookmarksBox.mobile #bookmarksTypeBar h5,#bookmarksBox.mobile .bookmarkList .addForm a{box-shadow:-1px 0 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder ul{display:none!important;min-height:37px!important}#updatestatus .bkmrksStar{float:left;margin:-25px 0 0 -5px;padding:0 3px 1px 4px;background:#262c32}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox.mobile .bookmarkList .triangle{width:0!important;height:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left!important;border-width:5px 0 5px 7px!important;border-color:transparent transparent transparent #fff!important;margin:7px 3px 0 13px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{margin:9px 1px 0 12px!important;border-width:7px 5px 0!important;border-color:#fff transparent transparent!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{display:none!important;border-width:0 12px 10px 0!important;border-color:transparent #20a8b1 transparent transparent!important;margin:-20px 0 0 100%!important;position:relative!important;top:21px!important;left:-10px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{top:18px!important;left:0!important;border-width:0 10px 9px 0!important;border-color:transparent #069 transparent transparent!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:block!important}#bkmrksAutoDrawer,#bkmrksAutoDrawer a,#bkmrksAutoDrawer p{display:block;padding:0;margin:0}#bkmrksAutoDrawer .bookmarkFolder{margin-bottom:4px;border:1px solid #20a8b1}#bkmrksAutoDrawer .folderLabel{background:#069;padding:4px 0;color:#fff}#bkmrksAutoDrawer .bookmarkFolder div{border-top:1px solid #20a8b1;padding:6px 0;background:rgba(0,0,0,.3)}#bkmrksAutoDrawer .bookmarkFolder#idOthers .folderLabel{display:none}#bkmrksAutoDrawer .bookmarkFolder#idOthers div{display:block;border-top:none}#bkmrksAutoDrawer a{text-indent:10px;padding:2px 0}#bkmrksAutoDrawer .longdistance{color:#fc0;font-weight:700;border-bottom:1px dashed}#bkmrksAutoDrawer .bookmarkFolder div{display:none}#bkmrksAutoDrawer a.bkmrk.selected{color:#03dc03}#bkmrksSetbox a{display:block;color:#ffce00;border:1px solid #ffce00;padding:3px 0;margin:10px auto;width:80%;text-align:center;background:rgba(8,48,78,.9)}#bkmrksSetbox a.disabled,#bkmrksSetbox a.disabled:hover{color:#666;border-color:#666;-webkit-text-decoration:none;text-decoration:none}.ui-dialog-bkmrksSet-copy textarea{width:96%;height:120px;resize:vertical}#bookmarksBox.mobile a.bookmarksMoveIn{display:none!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a.bookmarksMoveIn{background:none!important;text-align:center;color:#fff;box-shadow:inset 0 1px 0 #20a8b1,inset -1px 0 0 #20a8b1!important;width:10%}#bookmarksBox.mobile.moveMode a.bookmarksMoveIn{display:block!important}#bookmarksBox.moveMode ul .bookmarksLink,#bookmarksBox.moveMode ul .othersBookmarks .bookmarksLink{width:90%!important}.bookmarksDialog h3{text-transform:capitalize;margin-top:10px}.bookmarksDialog .bookmarkFolder{margin-bottom:4px;border:1px solid #20a8b1;background:#069;padding:4px 10px;color:#fff;cursor:pointer}.bookmarksDialog .bookmarkFolder:hover{-webkit-text-decoration:underline;text-decoration:underline}#bookmarksBox.mobile #topBar .btn{width:100%;height:45px!important;font-size:13px;color:#fff;font-weight:400;padding-top:17px;text-indent:0!important}#bookmarksBox.mobile .btn{width:50%!important;background:#222}#bookmarksBox.mobile .btn.left{border-right:1px solid #20a8b1!important}#bookmarksBox.mobile .btn#bookmarksMove{background:#b42e2e}#bkmrksSetbox{text-align:center}').appendTo('head');
+@media print{#bkmrksTrigger{display:none!important}}#bookmarksBox :not(iitc-icon){text-indent:0;box-sizing:border-box;width:auto;height:auto;margin:0;padding:0;font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:20px;text-decoration:none;display:block}#bookmarksBox{z-index:4001;width:231px;height:auto;display:block;top:100px;left:100px;overflow:hidden;position:absolute!important}#bookmarksBox .addForm,#bookmarksBox #bookmarksTypeBar,#bookmarksBox h5{color:#fff;height:28px;font-size:14px;overflow:hidden}#bookmarksBox #topBar{height:15px!important}#bookmarksBox #topBar *{float:left!important;height:14px!important}#bookmarksBox .handle{text-align:center;color:#fff;cursor:move;width:80%;line-height:6px}#bookmarksBox #topBar .btn{cursor:pointer;color:#20a8b1;text-align:center;width:10%;font-size:18px;font-weight:700;line-height:13px;display:block}#bookmarksBox #topBar #bookmarksDel{text-indent:-999px;background:#b42e2e;overflow:hidden}#bookmarksBox #topBar #bookmarksMin:hover{color:#ffce00}#bookmarksBox #bookmarksTypeBar{clear:both}#bookmarksBox h5{text-align:center;color:#788;width:50%;padding:4px 0 23px;height:93px!important}#bookmarksBox h5.current{cursor:default;background:0;color:#fff!important}#bookmarksBox h5:hover{color:#ffce00;background:0 0}#bookmarksBox #topBar,#bookmarksBox .addForm,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .bookmarkList li.bookmarksEmpty,#bookmarksBox .bookmarkList li.bkmrk a,#bookmarksBox .bookmarkList li.bkmrk:hover{background-color:#08304ed9}#bookmarksBox h5,#bookmarksBox .bookmarkList li.bkmrk:hover .bookmarksLink,#bookmarksBox .addForm *{background:#0000004d}#bookmarksBox .addForm *{float:left;display:block;height:28px!important}#bookmarksBox .addForm a{cursor:pointer;color:#20a8b1;text-align:center;width:35%;padding:4px 0 23px;font-size:12px;line-height:20px}#bookmarksBox .addForm a:hover{color:#000;background:#ffce00;text-decoration:none}#bookmarksBox .addForm input{color:#ffce00;height:28px;padding:0 8px 1px;font-size:12px;line-height:12px;font-size:11px!important}#bookmarksBox #bkmrk_portals .addForm input{width:65%}#bookmarksBox #bkmrk_maps .addForm input{width:42%}#bookmarksBox #bkmrk_maps .addForm a{width:29%}#bookmarksBox .addForm input:hover,#bookmarksBox .addForm input:focus{background:#0009;outline:0}#bookmarksBox .bookmarkList>ul{clear:both;color:#fff;max-height:580px;list-style-type:none;overflow:hidden auto}#bookmarksBox .sortable-placeholder{background:#08304e8c;box-shadow:inset 1px 0 #20a8b1}#bookmarksBox .ui-sortable-helper{border-top-width:1px}#bookmarksBox .bookmarkList{display:none}#bookmarksBox .bookmarkList.current{display:block}#bookmarksBox h5,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk,#bookmarksBox ul li.bkmrk a{height:22px}#bookmarksBox h5,#bookmarksBox ul li.bkmrk a{cursor:pointer;float:left;overflow:hidden}#bookmarksBox ul .bookmarksEmpty{text-indent:27px;color:#eee}#bookmarksBox ul .bookmarksRemoveFrom{text-align:center;color:#fff;width:10%}#bookmarksBox .bookmarksRemoveFrom iitc-icon{line-height:18px}#bookmarksBox ul .bookmarksLink{color:#ffce00;width:90%;padding:0 10px 0 8px}#bookmarksBox ul .bookmarksLink.selected{color:#03fe03}#bookmarksBox ul .othersBookmarks .bookmarksLink{width:90%}#bookmarksBox ul .bookmarksLink:hover{color:#03fe03}#bookmarksBox ul .bookmarksRemoveFrom:hover{color:#fff;background:#e22!important}#bookmarksBox,#bookmarksBox *{border:0 solid #20a8b1}#bookmarksBox #topBar,#bookmarksBox ul .bookmarkFolder{border-top-width:1px}#bookmarksBox #topBar,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarkFolder .folderLabel,#bookmarksBox ul li.bkmrk a{border-bottom-width:1px}#bookmarksBox ul .bookmarkFolder{border-left-width:1px;border-right-width:1px}#bookmarksBox #topBar *,#bookmarksBox #bookmarksTypeBar *,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk{border-left-width:1px}#bookmarksBox #topBar,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarksRemoveFrom{border-right-width:1px}#bookmarksBox ul .bookmarkFolder.othersBookmarks li.bkmrk,#bookmarksBox ul .bookmarkFolder .folderLabel .bookmarksRemoveFrom{border-left-width:0}#bkmrksTrigger{cursor:pointer;z-index:2999;text-indent:-100%;text-align:center;background-position:bottom;background-repeat:no-repeat;width:47px;height:0;margin-top:-36px;text-decoration:none;transition:margin-top .1s ease-in-out;display:block;position:absolute;top:0;left:277px;overflow:hidden}#bkmrksTrigger:hover{margin-top:0}.portal-list-bookmark iitc-icon{cursor:pointer;margin:-3px}#bkmrksTrigger{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAABPCAMAAABMDWzEAAAANlBMVEX/////zgD/zgD///////8Aru7/zgAAru4TtPAAAADA7PtAwvLk9/6b3/n///8Aru510/b/zgDZKp6YAAAACnRSTlOAxo5FtDw9mPoA9GJiegAAAklJREFUeF6dle26ozAIhFO1NkK+vP+b3WbBJRwM7dn5lad9BweoaThI63Z42hfmLn4rLv84d8WvpWxe+fNcFL+VUtzy57kLv67lrbDOqu/nW8tfQ1i3MmjbfrKPc9BjCYfiy2qjjNoDZRfcaBnxnl8Mm8KN4bFzv6q6lVT/P369+DBZFmsZ+LAmWbHllz7XB/OBwDDhF1rVIvwFhHt+vw4dqbViKdC0wHySSsE3e/FxpHPpAo+vUehUSCk7PBuYTpCUw/JsAIoipzlfUTHimPGNMujQ7LA86sSqm2x4BFXbOjTPSWJFxtgpbRTFd+VITdPGQG3b8hArCbm7n9vVefqZxT8I0G2Y+Yi4XFNy+Jqpn695WlP6ksdWSJB9PmJrkMqolADyjIdyrzSrD1Pc8lND8vrNFvfnkw3u8NYAn+ev+M/7iorPH3n8Jd9+mT+b8fg8EBZb+o4n+n0gx4yPMp5MZ3LkW77XJAaZZkdmPtv7JGG9EfLLrnkS3DjiRWseej6OrnXd0ub/hQbftIPHCnfzjDz6sXjy3seKoBqXG97yqiCgmFv198uNYy7XptHlr8aHcbk8NW5veMtrg+A1Ojy3oCeLDs9zgfEHEi2vu03INu4Y/fk3OVOo6N2f8u5IqDs+NvMaYOJQaHj5rut1vGIda/zk5dmdfh7H8XypUJpP0luNne56xnEdildRRPyIfMMDSnGWhEJQvEQZittQwoONYkP946OOMnsERuZNFKMXOYiXkXsO4U0UL1QwffqPCH4Us4xgovih/gBs1LqNE0afwAAAAABJRU5ErkJggg==)}.bkmrksStar iitc-icon{float:left;min-width:var(--icon-target-size,24px);min-height:var(--icon-target-size,24px);justify-content:center;align-items:center;margin:0 0 0 2px;display:inline-flex}.bkmrksStar iitc-icon,.portal-list-bookmark iitc-icon{font-size:16px}.bkmrksStar iitc-icon,.bkmrksStar.favorite:focus iitc-icon{font-variation-settings:"FILL" 0}.bkmrksStar:focus iitc-icon,.bkmrksStar.favorite iitc-icon,.portal-list-bookmark.favorite iitc-icon{font-variation-settings:"FILL" 1}body.icons-unavailable .bkmrksStar iitc-icon:before,body.icons-unavailable .portal-list-bookmark iitc-icon:before{content:"☆"}body.icons-unavailable .bkmrksStar.favorite iitc-icon:before,body.icons-unavailable .portal-list-bookmark.favorite iitc-icon:before{content:"★"}#bookmarksBox .bookmarkList .bookmarkFolder{background:#083a4eb3;height:auto;margin-top:-1px;overflow:hidden}#bookmarksBox .bookmarkList ul li.sortable-placeholder{background:#083a4ee6;box-shadow:inset -1px 0 #20a8b1,inset 1px 0 #20a8b1,0 -1px #20a8b1}#bookmarksBox .bookmarkList .bkmrk.ui-sortable-helper{border-right-width:1px;border-left-width:1px!important}#bookmarksBox .bookmarkList ul li ul li.sortable-placeholder{height:23px;box-shadow:inset 0 -1px #20a8b1,inset 1px 0 #20a8b1}#bookmarksBox .bookmarkList ul li.bookmarkFolder.ui-sortable-helper,#bookmarksBox .bookmarkList ul li.othersBookmarks ul li.sortable-placeholder{box-shadow:inset 0 -1px #20a8b1}#bookmarksBox #topBar #bookmarksDel,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksRemoveFrom,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{border-bottom-width:1px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox .bookmarkList .triangle{width:0;height:0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel{cursor:pointer;text-indent:0;background:#069;height:25px;overflow:visible}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>*{float:left;height:25px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor{color:#fff;width:90%;line-height:25px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left;border-width:5px 0 5px 7px;border-color:#0000 #0000 #0000 #fff;margin:7px 7px 0 6px}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{border-width:7px 5px 0;border-color:#fff #0000 #0000;margin:9px 5px 0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 12px 10px 0;border-color:#0000 #20a8b1 #0000 #0000;margin:-20px 0 0;display:none;position:relative;top:21px;left:219px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 10px 9px 0;border-color:#0000 #069 #0000 #0000;top:18px;left:0}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel:hover>span>span{border-color:#0000 #036 #0000 #0000}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{background:#036}#bookmarksBox .bookmarkList .bookmarkFolder ul{margin-left:10%;display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open ul{min-height:22px;display:block}#bookmarksBox .bookmarkFolder.othersBookmarks ul{margin-left:0}#bookmarksBox .bookmarksRemoveFrom{display:none!important}#bookmarksBox.deleteMode .bookmarksRemoveFrom{display:block!important}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox ul .bookmarksLink,#bookmarksBox ul .othersBookmarks .bookmarksLink{width:100%!important}#bookmarksBox.deleteMode .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox.deleteMode ul .bookmarksLink,#bookmarksBox.deleteMode ul .othersBookmarks .bookmarksLink{width:90%!important}#bookmarksBox.mobile{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:0 0!important;border:0!important;width:100%!important;height:100%!important;margin:0!important;position:absolute!important;top:0!important;left:0!important;overflow:auto!important}#bookmarksBox.mobile .bookmarkList ul,#bookmarksBox.mobile .bookmarkList ul li,#bookmarksBox.mobile .bookmarkList.current,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder.open ul{width:100%!important;display:block!important}#bookmarksBox.mobile *{box-shadow:none!important;border-width:0!important}#bookmarksBox.mobile #topBar #bookmarksMin,#bookmarksBox.mobile #topBar .handle{display:none!important}#bookmarksBox.mobile #bookmarksTypeBar h5{cursor:pointer;text-align:center;float:left;width:50%;padding:7px 0;height:auto!important}#bookmarksBox.mobile #bookmarksTypeBar h5.current{cursor:default;color:#fff}#bookmarksBox.mobile #bookmarksTypeBar,#bookmarksBox.mobile .bookmarkList .addForm{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{clear:both;height:36px!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel a,#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a{background:0 0;height:auto;padding:7px 0;box-shadow:inset 0 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksRemoveFrom,#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksRemoveFrom{width:10%;background:0 0!important;box-shadow:inset 0 1px #20a8b1,inset -1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksAnchor,#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksLink{text-indent:10px;height:36px;line-height:24px;overflow:hidden}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{margin-left:0!important}#bookmarksBox.mobile .bookmarkList>ul{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.othersBookmarks ul{border-top:5px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder,#bookmarksBox.mobile .bookmarkList li.bkmrk{box-shadow:inset 0 1px #20a8b1,1px 0 #20a8b1,-1px 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList>ul{max-height:none}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{box-shadow:0 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{width:90%!important;margin-left:10%!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder.othersBookmarks ul{width:100%!important;margin-left:0%!important}#bookmarksBox.mobile{margin-bottom:5px!important}#bookmarksBox.mobile #bookmarksTypeBar{height:auto}#bookmarksBox.mobile .addForm,#bookmarksBox.mobile .addForm *{padding:0;height:35px!important}#bookmarksBox.mobile .addForm a{line-height:37px}#bookmarksBox.mobile .addForm input{text-indent:10px}#bookmarksBox.mobile #bookmarksTypeBar h5,#bookmarksBox.mobile .bookmarkList .addForm a{box-shadow:-1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder ul{min-height:37px!important;display:none!important}#updatestatus .bkmrksStar{float:left;background:#262c32;margin:-25px 0 0 -5px;padding:0 3px 1px 4px}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox.mobile .bookmarkList .triangle{width:0!important;height:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left!important;border-width:5px 0 5px 7px!important;border-color:#0000 #0000 #0000 #fff!important;margin:7px 3px 0 13px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{border-width:7px 5px 0!important;border-color:#fff #0000 #0000!important;margin:9px 1px 0 12px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 12px 10px 0!important;border-color:#0000 #20a8b1 #0000 #0000!important;margin:-20px 0 0 100%!important;display:none!important;position:relative!important;top:21px!important;left:-10px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 10px 9px 0!important;border-color:#0000 #069 #0000 #0000!important;top:18px!important;left:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:block!important}#bkmrksAutoDrawer,#bkmrksAutoDrawer p,#bkmrksAutoDrawer a{margin:0;padding:0;display:block}#bkmrksAutoDrawer .bookmarkFolder{border:1px solid #20a8b1;margin-bottom:4px}#bkmrksAutoDrawer .folderLabel{color:#fff;background:#069;padding:4px 0}#bkmrksAutoDrawer .bookmarkFolder div{background:#0000004d;border-top:1px solid #20a8b1;padding:6px 0}#bkmrksAutoDrawer .bookmarkFolder#idOthers .folderLabel{display:none}#bkmrksAutoDrawer .bookmarkFolder#idOthers div{border-top:none;display:block}#bkmrksAutoDrawer a{text-indent:10px;padding:2px 0}#bkmrksAutoDrawer .longdistance{color:#fc0;border-bottom:1px dashed;font-weight:700}#bkmrksAutoDrawer .bookmarkFolder div{display:none}#bkmrksAutoDrawer a.bkmrk.selected{color:#03dc03}#bkmrksSetbox a{color:#ffce00;text-align:center;background:#08304ee6;border:1px solid #ffce00;width:80%;margin:10px auto;padding:3px 0;display:block}#bkmrksSetbox a.disabled,#bkmrksSetbox a.disabled:hover{color:#666;border-color:#666;text-decoration:none}.ui-dialog-bkmrksSet-copy textarea{resize:vertical;width:96%;height:120px}#bookmarksBox.mobile a.bookmarksMoveIn{display:none!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a.bookmarksMoveIn{text-align:center;color:#fff;width:10%;background:0 0!important;box-shadow:inset 0 1px #20a8b1,inset -1px 0 #20a8b1!important}#bookmarksBox.mobile.moveMode a.bookmarksMoveIn{display:block!important}#bookmarksBox.moveMode ul .bookmarksLink,#bookmarksBox.moveMode ul .othersBookmarks .bookmarksLink{width:90%!important}.bookmarksDialog h3{text-transform:capitalize;margin-top:10px}.bookmarksDialog .bookmarkFolder{color:#fff;cursor:pointer;background:#069;border:1px solid #20a8b1;margin-bottom:4px;padding:4px 10px}.bookmarksDialog .bookmarkFolder:hover{text-decoration:underline}#bookmarksBox.mobile #topBar .btn{color:#fff;width:100%;padding-top:17px;font-size:13px;font-weight:400;text-indent:0!important;height:45px!important}#bookmarksBox.mobile .btn{background:#222;width:50%!important}#bookmarksBox.mobile .btn.left{border-right:1px solid #20a8b1!important}#bookmarksBox.mobile .btn#bookmarksMove{background:#b42e2e}#bkmrksSetbox{text-align:center}').appendTo('head');
 };
 
 setup.info = plugin_info; //add the script info data to the function as a property
