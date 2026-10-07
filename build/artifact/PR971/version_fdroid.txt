@@ -1,2 +1,2 @@
-versionName=0.42.2-test-2026.10.07-07:09
-versionCode=1791356940
+versionName=0.42.2-test-2026.10.07-07:50
+versionCode=1791359390
