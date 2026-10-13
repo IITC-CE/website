@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-05-18-134158';
+plugin_info.dateTimeVersion = '2026-10-13-142744';
 plugin_info.pluginId = 'highlight-needs-recharge';
 //END PLUGIN AUTHORS NOTE
 

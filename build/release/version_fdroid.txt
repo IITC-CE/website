@@ -1,2 +1,2 @@
-versionName=0.42.3
-versionCode=1779111473
+versionName=0.42.4
+versionCode=1791900248
