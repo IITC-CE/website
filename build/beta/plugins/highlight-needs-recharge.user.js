@@ -2,7 +2,7 @@
 // @author         vita10gy
 // @name           IITC plugin: Highlight portals that need recharging
 // @category       Highlighter
-// @version        0.2.3.20261009.172702
+// @version        0.2.3.20261013.135855
 // @description    Use the portal fill color to denote if the portal needs recharging and how much. Yellow: above 85%. Orange: above 70%. Red: above 15%. Magenta: below 15%.
 // @id             highlight-needs-recharge
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-09-172702';
+plugin_info.dateTimeVersion = '2026-10-13-135855';
 plugin_info.pluginId = 'highlight-needs-recharge';
 //END PLUGIN AUTHORS NOTE
 
