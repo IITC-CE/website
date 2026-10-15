@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Cache viewed portals on map
 // @category       Cache
-// @version        0.1.3.20261013.135855
+// @version        0.1.3.20261015.154210
 // @description    Cache the details of recently viewed portals and use this to populate the map when possible
 // @id             cache-portals-on-map
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-13-135855';
+plugin_info.dateTimeVersion = '2026-10-15-154210';
 plugin_info.pluginId = 'cache-portals-on-map';
 //END PLUGIN AUTHORS NOTE
 

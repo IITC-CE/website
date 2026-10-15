@@ -2,7 +2,7 @@
 // @author         modos189
 // @name           IITC plugin: Double-tap drag zoom
 // @category       Controls
-// @version        1.0.0.20261013.135855
+// @version        1.0.0.20261015.154210
 // @description    Enable double-tap-and-drag gesture to zoom the map on touch devices
 // @id             double-tap-drag-zoom
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-13-135855';
+plugin_info.dateTimeVersion = '2026-10-15-154210';
 plugin_info.pluginId = 'double-tap-drag-zoom';
 //END PLUGIN AUTHORS NOTE
 
