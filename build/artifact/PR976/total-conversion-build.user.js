@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20261009.183917
+// @version        0.42.2.20261024.152143
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-09-183917';
+plugin_info.dateTimeVersion = '2026-10-24-152143';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-10-09-183917';
+window.iitcBuildDate = '2026-10-24-152143';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2100,7 +2100,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-10-09-183917');
+  log.log('loading done, booting. Built: ' + '2026-10-24-152143');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -27335,7 +27335,7 @@ const renderUrl = function (lat, lng, title, guid) {
   appendAside(permaLink);
 
   const scannerLink = document.createElement('a');
-  scannerLink.setAttribute('href', IITC.portal.display.makePrimeLink(guid, lat, lng));
+  scannerLink.setAttribute('href', IITC.portal.display.makePrimeLink(guid));
   scannerLink.setAttribute('title', 'Copy link to this portal for Ingress Prime');
   scannerLink.textContent = 'Copy scanner link';
   scannerLink.addEventListener('click', function (event) {
@@ -27685,36 +27685,12 @@ const rangeLinkClick = function () {
 /**
  * Creates a link to open a specific portal in Ingress Prime.
  *
- * It is using Firebase's Dynamic Links feature.
- * https://firebase.google.com/docs/dynamic-links/create-manually
- *
  * @memberof IITC.portal.display
  * @param {string} guid - The globally unique identifier of the portal.
- * @param {number} lat - The latitude of the portal.
- * @param {number} lng - The longitude of the portal.
  * @returns {string} The Ingress Prime link for the portal
  */
-const makePrimeLink = function (guid, lat, lng) {
-  const base = 'https://link.ingress.com/';
-  const link = {
-    link: `https://intel.ingress.com/portal/${guid}`,
-  };
-  const android = {
-    apn: 'com.nianticproject.ingress',
-  };
-  const ios = {
-    isi: '576505181',
-    ibi: 'com.google.ingress',
-    ifl: 'https://apps.apple.com/app/ingress/id576505181',
-  };
-  const other = {
-    ofl: `https://intel.ingress.com/intel?pll=${lat},${lng}`,
-  };
-  const url = new URL(base);
-  for (const [key, value] of Object.entries({ ...link, ...android, ...ios, ...other })) {
-    url.searchParams.set(key, value);
-  }
-  return url.toString();
+const makePrimeLink = function (guid) {
+  return `https://link.ingress.com/portal/${guid}`;
 };
 
 /**
