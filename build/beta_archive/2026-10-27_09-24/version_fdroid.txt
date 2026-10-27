@@ -1,0 +1,2 @@
+versionName=0.42.2-beta-2026.10.27-09:24
+versionCode=1793093043
