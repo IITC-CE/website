@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20261025.092015
+// @version        0.42.2.20261027.090213
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-25-092015';
+plugin_info.dateTimeVersion = '2026-10-27-090213';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -196,7 +196,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-10-25-092015';
+window.iitcBuildDate = '2026-10-27-090213';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2100,7 +2100,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-10-25-092015');
+  log.log('loading done, booting. Built: ' + '2026-10-27-090213');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -2135,8 +2135,7 @@ function boot() {
   IITC.smartphone._runAfterBoot();
   window.runOnAppAfterBoot();
 
-  // workaround for #129. Not sure why this is required.
-  // setTimeout('window.map.invalidateSize(false);', 500);
+  IITC.map.initialize();
 
   window.iitcLoaded = true;
   window.runHooks('iitcLoaded');
@@ -23305,6 +23304,12 @@ var log = ulog('map');
 IITC.map = {};
 
 /**
+ * Default map layer
+ *  used when no or an invalid base layer is stored in settings
+ */
+const DEFAULT_MAP = 'CartoDB Dark Matter';
+
+/**
  * Warning shown in the portal details panel when some standard layers are turned off
  * @type {String}
  * @memberof IITC.map
@@ -23434,7 +23439,7 @@ function createDefaultBaseMapLayers() {
   const cartoAttr = IITC.map.osmAttributionTemplate;
   const cartoAPIKey = 'cb1_2d98_1_8c4c1ddaeb0a769373718043';
   const cartoUrl = `https://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png?key=${cartoAPIKey}`;
-  baseLayers['CartoDB Dark Matter'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'dark_all', isDark: true });
+  baseLayers[DEFAULT_MAP /* 'CartoDB Dark Matter' */] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'dark_all', isDark: true });
   baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'light_all', isDark: false });
 
   // Google Maps - including ingress default (using the stock-intel API-key)
@@ -23461,6 +23466,7 @@ function createDefaultBaseMapLayers() {
   baseLayers['Google Hybrid'] = new L.GridLayer.GoogleMutant({ type: 'hybrid', isDark: true });
   baseLayers['Google Terrain'] = new L.GridLayer.GoogleMutant({ type: 'terrain', isDark: false });
 
+  console.assert(baseLayers[DEFAULT_MAP] !== undefined, `Default map layer "${DEFAULT_MAP}" not found in baseLayers`);
   return baseLayers;
 }
 
@@ -23605,7 +23611,7 @@ IITC.map.setup = function () {
   const baseLayers = createDefaultBaseMapLayers();
   const overlays = createDefaultOverlays();
 
-  const layerChooser = (window.layerChooser = new window.LayerChooser(baseLayers, overlays, { map: map }).addTo(map));
+  window.layerChooser = new window.LayerChooser(baseLayers, overlays, { map: map }).addTo(map);
 
   // as users often become confused if they accidentally switch a standard layer off, display a warning in this case
   const someStandardLayerOff = Object.values(overlays).some((layer) => !map.hasLayer(layer));
@@ -23652,13 +23658,6 @@ IITC.map.setup = function () {
 
   window.map = map;
 
-  map.on('moveend', function () {
-    const center = this.getCenter().wrap();
-    window.writeCookie('ingress.intelmap.lat', center.lat);
-    window.writeCookie('ingress.intelmap.lng', center.lng);
-    window.writeCookie('ingress.intelmap.zoom', this.getZoom());
-  });
-
   // map update status handling & update map hooks
   // ensures order of calls
   map.on('movestart', function () {
@@ -23684,35 +23683,45 @@ IITC.map.setup = function () {
   // (the code originally called the request function directly, and triggered a normal delay for the next refresh.
   //  however, the moveend/zoomend gets triggered on map load, causing a duplicate refresh. this helps prevent that
   window.startRefreshTimeout(window.ON_MOVE_REFRESH * 1000);
+};
 
-  // adds a base layer to the map. done separately from the above,
-  // so that plugins that add base layers can be the default
-  window.addHook('iitcLoaded', function () {
-    const stored = layerChooser.getLayer(layerChooser.lastBaseLayerName);
-    map.addLayer(stored || baseLayers['CartoDB Dark Matter']);
+IITC.map.initialize = function () {
+  const map = window.map;
+  const layerChooser = window.layerChooser;
 
-    // (setting an initial position, before a base layer is added, causes issues with leaflet) // todo check
-    let pos = getPosition();
-    if (!pos) {
-      pos = { center: [0, 0], zoom: 1 };
-      map.locate({ setView: true });
-    }
-    map.setView(pos.center, pos.zoom, { reset: true });
+  // set base layer
+  const stored = layerChooser.getLayer(layerChooser.lastBaseLayerName);
+  map.addLayer(stored || layerChooser.getLayer(DEFAULT_MAP));
 
-    parseURLParameters();
+  // (setting an initial position, before a base layer is added, causes issues with leaflet) // todo check
+  let pos = getPosition();
+  if (!pos) {
+    pos = { center: [0, 0], zoom: 1 };
+    map.locate({ setView: true });
+  }
+  map.setView(pos.center, pos.zoom, { reset: true });
 
-    // todo check
-    // leaflet no longer ensures the base layer zoom is suitable for the map (a bug? feature change?), so do so here
-    map.on('baselayerchange', function () {
-      map.setZoom(map.getZoom());
-      layerChooser.notifyBaseLayerChange();
-    });
+  parseURLParameters();
 
-    // also fire for the initial base layer
+  // todo check
+  // leaflet no longer ensures the base layer zoom is suitable for the map (a bug? feature change?), so do so here
+  map.on('baselayerchange', function () {
+    map.setZoom(map.getZoom());
     layerChooser.notifyBaseLayerChange();
+  });
 
-    // Start map refresh (after Map location is set)
-    IITC.map.request.start();
+  // also fire for the initial base layer
+  layerChooser.notifyBaseLayerChange();
+
+  // Start map refresh (after Map location is set)
+  IITC.map.request.start();
+
+  // Store the map position in cookies on moveend
+  map.on('moveend', function () {
+    const center = this.getCenter().wrap();
+    window.writeCookie('ingress.intelmap.lat', center.lat);
+    window.writeCookie('ingress.intelmap.lng', center.lng);
+    window.writeCookie('ingress.intelmap.zoom', this.getZoom());
   });
 };
 
