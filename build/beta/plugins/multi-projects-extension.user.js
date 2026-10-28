@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.5.20261027.092432
+// @version        0.2.0.20261028.090843
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-27-092432';
+plugin_info.dateTimeVersion = '2026-10-28-090843';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,15 @@ plugin_info.pluginId = 'multi-projects-extension';
 /* global IITC -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.0',
+    changes: [
+      'Register projects regardless of plugin load order',
+      'Keep the selected project across reloads',
+      'Ignore a scan for a project that is not registered',
+      'Draw icons from the bundled font',
+    ],
+  },
   {
     version: '0.1.5',
     changes: ['Refactoring: fix eslint'],

@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.6.20261027.092432
+// @version        0.1.7.20261028.090843
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-27-092432';
+plugin_info.dateTimeVersion = '2026-10-28-090843';
 plugin_info.pluginId = 'basemap-openstreetmap';
 //END PLUGIN AUTHORS NOTE
 
@@ -33,6 +33,10 @@ var mapOpenStreetMap = {};
 window.plugin.mapOpenStreetMap = mapOpenStreetMap;
 
 var changelog = [
+  {
+    version: '0.1.7',
+    changes: ['Report the layer as light or dark for theme switching'],
+  },
   {
     version: '0.1.6',
     changes: ['Refactoring: fix eslint'],

@@ -2,7 +2,7 @@
 // @author         fstopienski
 // @name           IITC plugin: Linked portals
 // @category       Portal Info
-// @version        0.4.4.20261027.092432
+// @version        0.4.5.20261028.090843
 // @description    Try to show the linked portals (image, name and link direction) in portal detail view and jump to linked portal on click.  Some details may not be available if the linked portal is not in the current view.
 // @id             linked-portals-show
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-27-092432';
+plugin_info.dateTimeVersion = '2026-10-28-090843';
 plugin_info.pluginId = 'linked-portals-show';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'linked-portals-show';
 /* global IITC, L -- eslint */
 
 var changelog = [
+  {
+    version: '0.4.5',
+    changes: ['Refactoring: use IITC.portal and IITC.utils APIs instead of legacy globals'],
+  },
   { version: '0.4.4', changes: ['Refactoring: update Leaflet API usage'] },
   {
     version: '0.4.3',

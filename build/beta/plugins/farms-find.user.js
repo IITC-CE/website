@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.4.5.20261027.092432
+// @version        1.5.0.20261028.090843
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-27-092432';
+plugin_info.dateTimeVersion = '2026-10-28-090843';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'farms-find';
 /* global IITC, L -- eslint */
 
 var changelog = [
+  {
+    version: '1.5.0',
+    changes: ['Respect safe-area insets and the mobile top controls bar', 'Refactoring: use IITC.utils API instead of legacy globals'],
+  },
   {
     version: '1.4.5',
     changes: ['Refactoring: fix eslint'],

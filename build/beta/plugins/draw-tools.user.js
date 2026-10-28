@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.13.0.20261027.092432
+// @version        0.13.0.20261028.090843
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-27-092432';
+plugin_info.dateTimeVersion = '2026-10-28-090843';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -35,6 +35,7 @@ var changelog = [
       'Sync drawn items across devices via the Sync plugin (Multi-Projects-Extension aware)',
       'Register with the Sync plugin regardless of plugin load order',
       'Fix drawn area used by Tidy Links and Fly Links being misplaced after zooming',
+      'Re-sync drawn items when Multi Projects Extension loads late',
     ],
   },
   { version: '0.12.1', changes: ['Refactoring: update Leaflet API usage'] },

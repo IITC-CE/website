@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.42.2.20261027.092432
+// @version        0.43.0.20261028.090843
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-27-092432';
+plugin_info.dateTimeVersion = '2026-10-28-090843';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -67,6 +67,27 @@ IITC.registerLegacyAliases = function (namespace, mappings) {
 
 window.script_info = plugin_info;
 window.script_info.changelog = [
+  {
+    version: '0.43.0',
+    changes: [
+      'Add antimeridian support: tiles load for the whole view, entities appear on the nearest world copy, portal selection and permalinks use the true longitude',
+      'Draw interface icons from a bundled Material Symbols font (<iitc-icon>)',
+      'Add the baseLayerChanged hook reporting the active basemap and its light or dark theme',
+      'Update jQuery to 4.0 and jQuery UI to 1.14.2, with jquery-migrate for compatibility',
+      'Move chat, comm, map and portal code into the IITC.chat, IITC.comm, IITC.map and IITC.portal namespaces; the old window.* functions remain as aliases',
+      'Prefetch portal details when the mouse rests on a portal',
+      'Detect that the user was logged out and show a dialog',
+      'Add safe-area support for the desktop layout',
+      'Keep dialogs inside the main window and fix the dialog title width on mobile',
+      'Fix incorrect "resonator levels needed for next portal level"',
+      'Fix the chat not following new messages and the channel container missing in some cases',
+      'Fix leaving idle mode when the page becomes visible again',
+      'Fix escapeHtml dropping the class attribute on allowed tags',
+      'Add API key to the CartoDB tile layer URL',
+      'Shorten the portal deep link used by the scanner',
+      'Remove the portal GUID position cache',
+    ],
+  },
   {
     version: '0.42.2',
     changes: ['Fix LatLng instantiation in artifacts'],
@@ -196,7 +217,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-10-27-092432';
+window.iitcBuildDate = '2026-10-28-090843';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2100,7 +2121,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-10-27-092432');
+  log.log('loading done, booting. Built: ' + '2026-10-28-090843');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
