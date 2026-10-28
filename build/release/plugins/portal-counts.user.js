@@ -2,7 +2,7 @@
 // @author         yenky
 // @name           IITC plugin: Portal count
 // @category       Info
-// @version        0.2.6
+// @version        0.2.7
 // @description    Display a list of all localized portals by level and faction.
 // @id             portal-counts
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'portal-counts';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'portal-counts';
 /* global IITC -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.7',
+    changes: ['Use a Material Symbols icon for the mobile pane'],
+  },
   {
     version: '0.2.6',
     changes: ['Refactoring: fix eslint'],
@@ -229,7 +233,7 @@ window.plugin.portalcounts.getPortals = function () {
     counts += '<p>No Portals in range!</p>';
   }
 
-  if (!window.getDataZoomTileParameters().hasPortals) {
+  if (!IITC.map.tiles.getDataZoomParameters().hasPortals) {
     counts += '<p class="help"><b>Warning</b>: Portal counts is inaccurate when zoomed to link-level</p>';
   }
 
@@ -253,7 +257,7 @@ window.plugin.portalcounts.getPortals = function () {
   if (window.plugin.portalcounts.nozeroes) {
     $('#portalcounts').addClass('nozeroes');
   }
-  $('#portalcounts svg').click(function () {
+  $('#portalcounts svg').on('click', function () {
     $('#portalcounts').toggleClass('nozeroes');
   });
 };
@@ -395,7 +399,7 @@ window.plugin.portalcounts.onPaneChanged = function (pane) {
 
 var setup = function () {
   if (window.useAppPanes()) {
-    window.app.addPane('plugin-portalcounts', 'Portal counts', 'ic_action_data_usage');
+    window.app.addPane('plugin-portalcounts', 'Portal counts', 'data_usage');
     window.addHook('paneChanged', window.plugin.portalcounts.onPaneChanged);
   } else {
     IITC.toolbox.addButton({

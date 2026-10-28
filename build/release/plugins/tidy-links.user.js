@@ -2,7 +2,7 @@
 // @author         boombuler
 // @name           IITC plugin: Tidy Links
 // @category       Draw
-// @version        0.6.4
+// @version        0.6.5
 // @description    Calculate how to link the portals to create a reasonably tidy set of links/fields. Enable from the layer chooser. (former `Max Links`)
 // @id             tidy-links
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'tidy-links';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'tidy-links';
 /* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.6.5',
+    changes: ['Refactoring: remove an unused constant'],
+  },
   { version: '0.6.4', changes: ['Fix missing library object reference'] },
   {
     version: '0.6.3',
@@ -49,9 +53,6 @@ var tidyLinks = {};
 window.plugin.tidyLinks = tidyLinks;
 
 tidyLinks.MAX_PORTALS_TO_LINK = 200; // N.B.: this limit is not about performance
-
-// zoom level used for projecting points between latLng and pixel coordinates. may affect precision of triangulation
-tidyLinks.PROJECT_ZOOM = 16;
 
 // https://leafletjs.com/reference-1.4.0.html#polyline-stroke
 tidyLinks.STROKE_STYLE = {

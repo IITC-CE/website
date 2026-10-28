@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Scale bar
 // @category       Controls
-// @version        0.1.4
+// @version        0.1.5
 // @description    Show scale bar on the map.
 // @id             scale-bar
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'scale-bar';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
+  {
+    version: '0.1.5',
+    changes: ['Refactoring: use IITC.utils API instead of legacy globals'],
+  },
   {
     version: '0.1.4',
     changes: ['Refactoring: fix eslint'],
@@ -59,7 +63,7 @@ function setup() {
   var options = L.extend(
     {},
     {
-      maxWidth: window.isSmartphone() ? 100 : 200,
+      maxWidth: IITC.utils.isSmartphone() ? 100 : 200,
     },
     scaleBar.options
   );

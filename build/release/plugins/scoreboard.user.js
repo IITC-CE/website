@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         Costaspap
 // @name           IITC plugin: Localized scoreboard
-// @version        0.4.1
+// @version        0.4.2
 // @category       Info
 // @description    Display a scoreboard about all visible portals with statistics about both teams,like average portal level,link & field counts etc.
 // @id             scoreboard
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'scoreboard';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'scoreboard';
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.4.2',
+    changes: ['Use a Material Symbols icon for the mobile pane'],
+  },
   {
     version: '0.4.1',
     changes: ['Refactoring: fix eslint'],
@@ -191,7 +195,7 @@ function displayScoreboard() {
 
 function setup() {
   if (window.useAppPanes()) {
-    window.app.addPane('plugin-Scoreboard', 'Scoreboard', 'ic_action_view_as_list_compact');
+    window.app.addPane('plugin-Scoreboard', 'Scoreboard', 'scoreboard');
     window.addHook('paneChanged', function (pane) {
       if (pane === 'plugin-Scoreboard') {
         displayScoreboard();

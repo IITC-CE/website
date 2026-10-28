@@ -2,7 +2,7 @@
 // @author         jacob1123
 // @name           IITC plugin: Gray Google map
 // @category       Map Tiles
-// @version        0.1.8
+// @version        0.1.9
 // @description    Add a simplified gray Version of Google map tiles as an optional layer.
 // @id             basemap-google-gray
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'basemap-google-gray';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'basemap-google-gray';
 /* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.1.9',
+    changes: ['Report the layer as light or dark for theme switching'],
+  },
   { version: '0.1.8', changes: ['Refactoring: update Leaflet API usage'] },
   {
     version: '0.1.7',
@@ -66,7 +70,7 @@ grayGMaps.addLayer = function () {
 
   var grayGMaps = new L.GridLayer.GoogleMutant(grayGMapsOptions);
 
-  window.layerChooser.addBaseLayer(grayGMaps, 'Google Gray');
+  window.layerChooser.addBaseLayer(grayGMaps, 'Google Gray', { isDark: false });
 };
 
 function setup() {

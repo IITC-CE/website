@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Mini map
 // @category       Controls
-// @version        0.4.5
+// @version        0.4.6
 // @description    Show a mini map on the corner of the map.
 // @id             minimap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'minimap';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
+  {
+    version: '0.4.6',
+    changes: ['Refactoring: use IITC.utils API instead of legacy globals'],
+  },
   { version: '0.4.5', changes: ['Refactoring: update Leaflet API usage'] },
   {
     version: '0.4.4',
@@ -153,7 +157,7 @@ function setup() {
 
   // mobile mode  - bottom-right (default)
   // desktop mode - bottom-left, so it doesn't clash with the sidebar
-  if (!window.isSmartphone()) {
+  if (!IITC.utils.isSmartphone()) {
     miniMap.options.position = miniMap.options.position || 'bottomleft';
   }
 
@@ -552,95 +556,7 @@ function loadLeafletMiniMap() {
 
 ;
     $('<style>').html('\
-.leaflet-control-minimap {\
-	border:solid rgba(255, 255, 255, 1.0) 4px;\
-	box-shadow: 0 1px 5px rgba(0,0,0,0.65);\
-	border-radius: 3px;\
-	background: #f8f8f9;\
-	transition: all .6s;\
-}\
-\
-.leaflet-control-minimap a {\
-	background-color: rgba(255, 255, 255, 1.0);\
-	background-repeat: no-repeat;\
-	z-index: 99999;\
-	transition: all .6s;\
-}\
-\
-.leaflet-control-minimap a.minimized-bottomright {\
-	-webkit-transform: rotate(180deg);\
-	transform: rotate(180deg);\
-	border-radius: 0px;\
-}\
-\
-.leaflet-control-minimap a.minimized-topleft {\
-	-webkit-transform: rotate(0deg);\
-	transform: rotate(0deg);\
-	border-radius: 0px;\
-}\
-\
-.leaflet-control-minimap a.minimized-bottomleft {\
-	-webkit-transform: rotate(270deg);\
-	transform: rotate(270deg);\
-	border-radius: 0px;\
-}\
-\
-.leaflet-control-minimap a.minimized-topright {\
-	-webkit-transform: rotate(90deg);\
-	transform: rotate(90deg);\
-	border-radius: 0px;\
-}\
-\
-.leaflet-control-minimap-toggle-display{\
-	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMTgiIHdpZHRoPSIxOCI+PHBhdGggZD0iTTEzLjE4MSAxMy4xNDZ2LTUuODFsLTUuODEgNS44MWg1LjgxeiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNjQzIi8+PHBhdGggZD0iTTEyLjc2MiAxMi43MjdsLTYuNTEtNi41MDkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyLjQ4MiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+);\
-	background-size: cover;\
-	position: absolute;\
-	border-radius: 3px 0px 0px 0px;\
-}\
-\
-.leaflet-oldie .leaflet-control-minimap-toggle-display{\
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAH1JREFUOI3t0DEKAjEQheFP8ERWqfUCeg9rL+adbKxkYRFEY7ERhkUhCZb7wyuGYX5ewkIvK6z/ITpjxOHHPtWKrsh4fJEl3GpF29LoI9sHSS6pZjeTnTD0iOayjFevCI7hOKaJZHpObNIsih/b3WiDSzgaS+5lfrY0Wph4A4kFM89VzdVFAAAAAElFTkSuQmCC);\
-}\
-\
-.leaflet-control-minimap-toggle-display-bottomright {\
-	bottom: 0;\
-	right: 0;\
-}\
-\
-.leaflet-control-minimap-toggle-display-topleft{\
-	top: 0;\
-	left: 0;\
-	-webkit-transform: rotate(180deg);\
-	transform: rotate(180deg);\
-}\
-\
-.leaflet-control-minimap-toggle-display-bottomleft{\
-	bottom: 0;\
-	left: 0;\
-	-webkit-transform: rotate(90deg);\
-	transform: rotate(90deg);\
-}\
-\
-.leaflet-control-minimap-toggle-display-topright{\
-	top: 0;\
-	right: 0;\
-	-webkit-transform: rotate(270deg);\
-	transform: rotate(270deg);\
-}\
-\
-/* Old IE */\
-.leaflet-oldie .leaflet-control-minimap {\
-	border: 1px solid #999;\
-}\
-\
-.leaflet-oldie .leaflet-control-minimap a {\
-	background-color: #fff;\
-}\
-\
-.leaflet-oldie .leaflet-control-minimap a.minimized {\
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);\
-}\
-').appendTo('head');
+.leaflet-control-minimap{background:#f8f8f9;border:4px solid #fff;border-radius:3px;transition:all .6s;box-shadow:0 1px 5px #000000a6}.leaflet-control-minimap a{z-index:99999;background-color:#fff;background-repeat:no-repeat;transition:all .6s}.leaflet-control-minimap a.minimized-bottomright{border-radius:0;transform:rotate(180deg)}.leaflet-control-minimap a.minimized-topleft{border-radius:0;transform:rotate(0)}.leaflet-control-minimap a.minimized-bottomleft{border-radius:0;transform:rotate(270deg)}.leaflet-control-minimap a.minimized-topright{border-radius:0;transform:rotate(90deg)}.leaflet-control-minimap-toggle-display{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMTgiIHdpZHRoPSIxOCI+PHBhdGggZD0iTTEzLjE4MSAxMy4xNDZ2LTUuODFsLTUuODEgNS44MWg1LjgxeiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNjQzIi8+PHBhdGggZD0iTTEyLjc2MiAxMi43MjdsLTYuNTEtNi41MDkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyLjQ4MiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+);background-size:cover;border-radius:3px 0 0;position:absolute}.leaflet-oldie .leaflet-control-minimap-toggle-display{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAH1JREFUOI3t0DEKAjEQheFP8ERWqfUCeg9rL+adbKxkYRFEY7ERhkUhCZb7wyuGYX5ewkIvK6z/ITpjxOHHPtWKrsh4fJEl3GpF29LoI9sHSS6pZjeTnTD0iOayjFevCI7hOKaJZHpObNIsih/b3WiDSzgaS+5lfrY0Wph4A4kFM89VzdVFAAAAAElFTkSuQmCC)}.leaflet-control-minimap-toggle-display-bottomright{bottom:0;right:0}.leaflet-control-minimap-toggle-display-topleft{top:0;left:0;transform:rotate(180deg)}.leaflet-control-minimap-toggle-display-bottomleft{bottom:0;left:0;transform:rotate(90deg)}.leaflet-control-minimap-toggle-display-topright{top:0;right:0;transform:rotate(270deg)}.leaflet-oldie .leaflet-control-minimap{border:1px solid #999}.leaflet-oldie .leaflet-control-minimap a{background-color:#fff}.leaflet-oldie .leaflet-control-minimap a.minimized{filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=2)}').appendTo('head');
   } catch (e) {
     console.error('Control.MiniMap.js loading failed');
     throw e;

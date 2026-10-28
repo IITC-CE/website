@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Highlight high level portals
 // @category       Highlighter
-// @version        0.2.3
+// @version        0.2.4
 // @description    Use the portal fill color to denote high level portals: Purple L8, Red L7, Orange L6
 // @id             highlight-high-level
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,14 +21,18 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'highlight-high-level';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.4',
+    changes: ['Refactoring: use IITC.portal API instead of legacy globals'],
+  },
   {
     version: '0.2.3',
     changes: ['Refactoring: fix eslint'],
@@ -73,7 +77,7 @@ function highlightHighLevel(data) {
 }
 
 function setup() {
-  window.addPortalHighlighter('Higher Level Portals', highlightHighLevel);
+  IITC.portal.highlighter.add('Higher Level Portals', highlightHighLevel);
 }
 
 setup.info = plugin_info; //add the script info data to the function as a property

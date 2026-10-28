@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.5
+// @version        0.4.6
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'portals-list';
 /* global IITC -- eslint */
 
 var changelog = [
+  {
+    version: '0.4.6',
+    changes: ['Use a Material Symbols icon for the mobile pane'],
+  },
   {
     version: '0.4.5',
     changes: ['Refactoring: fix eslint'],
@@ -140,7 +144,7 @@ window.plugin.portalslist.fields = [
   {
     title: 'Links',
     value: function (portal) {
-      return window.getPortalLinks(portal.options.guid);
+      return IITC.portal.getLinks(portal.options.guid);
     },
     sortValue: function (value) {
       return value.in.length + value.out.length;
@@ -157,7 +161,7 @@ window.plugin.portalslist.fields = [
   {
     title: 'Fields',
     value: function (portal) {
-      return window.getPortalFieldsCount(portal.options.guid);
+      return IITC.portal.getFieldsCount(portal.options.guid);
     },
     format: function (cell, portal, value) {
       $(cell).addClass('alignR').text(value);
@@ -167,8 +171,8 @@ window.plugin.portalslist.fields = [
   {
     title: 'AP',
     value: function (portal) {
-      var links = window.getPortalLinks(portal.options.guid);
-      var fields = window.getPortalFieldsCount(portal.options.guid);
+      var links = IITC.portal.getLinks(portal.options.guid);
+      var fields = IITC.portal.getFieldsCount(portal.options.guid);
       return window.plugin.portalslist.portalApGainMaths(portal.options.data.resCount, links.in.length + links.out.length, fields);
     },
     sortValue: function (value) {
@@ -368,7 +372,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
     cell.className = 'name ' + filterName;
     cell.textContent = label + ':';
     cell.title = `Show only ${label} portals`;
-    $(cell).click(function () {
+    $(cell).on('click', function () {
       if (this.classList.contains('active')) {
         $('#portalslist')
           .empty()
@@ -391,7 +395,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
       cell.textContent = length;
     } else {
       cell.title = `Hide ${label} portals `;
-      $(cell).click(function () {
+      $(cell).on('click', function () {
         if (this.classList.contains('active')) {
           $('#portalslist')
             .empty()
@@ -436,7 +440,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
         cell.classList.add('sorted');
       }
 
-      $(cell).click(function () {
+      $(cell).on('click', function () {
         var order;
         if (i === sortBy) {
           order = -sortOrder;
@@ -474,7 +478,7 @@ Click on <b>${window.plugin.portalslist.HISTORY_FILTERS.join(', ')}</b> to only 
 // code from getPortalLink function by xelio from iitc: AP List - https://raw.github.com/breunigs/ingress-intel-total-conversion/gh-pages/plugins/ap-list.user.js
 window.plugin.portalslist.getPortalLink = function (portal) {
   var coord = portal.getLatLng();
-  var perma = window.makePermalink(coord);
+  var perma = IITC.portal.display.makePermalink(coord);
 
   // jQuery's event handlers seem to be removed when the nodes are remove from the DOM
   var link = document.createElement('a');
@@ -483,14 +487,14 @@ window.plugin.portalslist.getPortalLink = function (portal) {
   link.addEventListener(
     'click',
     function (ev) {
-      window.renderPortalDetails(portal.options.guid);
+      IITC.portal.display.renderDetails(portal.options.guid);
       ev.preventDefault();
       return false;
     },
     false
   );
   link.addEventListener('dblclick', function (ev) {
-    window.zoomToAndShowPortal(portal.options.guid, [coord.lat, coord.lng]);
+    IITC.portal.zoomToAndShow(portal.options.guid, [coord.lat, coord.lng]);
     ev.preventDefault();
     return false;
   });
@@ -516,7 +520,7 @@ var setup = function () {
   window.plugin.portalslist.filter = 0;
 
   if (window.useAppPanes()) {
-    window.app.addPane('plugin-portalslist', 'Portals list', 'ic_action_paste');
+    window.app.addPane('plugin-portalslist', 'Portals list', 'list');
     window.addHook('paneChanged', window.plugin.portalslist.onPaneChanged);
   } else {
     IITC.toolbox.addButton({

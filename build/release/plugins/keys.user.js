@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.3
+// @version        0.4.4
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,13 +21,17 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '0.4.4',
+    changes: ['Register with the Sync plugin regardless of plugin load order', 'Draw icons from the bundled font'],
+  },
   {
     version: '0.4.3',
     changes: ['Refactoring: fix eslint'],
@@ -122,9 +126,12 @@ window.plugin.keys.syncNow = function () {
   window.plugin.sync.updateMap('keys', 'keys', Object.keys(window.plugin.keys.updatingQueue));
 };
 
-// Call after IITC and all plugin loaded
-window.plugin.keys.registerFieldForSyncing = function () {
-  if (!window.plugin.sync) return;
+window.plugin.keys.registerFieldForSyncing = () => {
+  // sync may not be loaded yet, and fires this hook once it is
+  if (!window.plugin.sync) {
+    window.addHook('pluginSyncReady', window.plugin.keys.registerFieldForSyncing);
+    return;
+  }
   window.plugin.sync.registerMapForSync('keys', 'keys', window.plugin.keys.syncCallback, window.plugin.keys.syncInitialed);
 };
 
@@ -191,16 +198,13 @@ window.plugin.keys.loadKeys = function () {
 window.plugin.keys.setupCSS = function () {
   $('<style>').prop('type', 'text/css').html('\
 #keys-content-outer {\
-  display: table;\
+  display: flex;\
+  align-items: center;\
+  justify-content: center;\
+  gap: 6px;\
   width: 100%;\
-  height: 26px;\
-  text-align: center;\
-}\
-\
-#keys-content-outer > div{\
-  display: inline-block;\
-  vertical-align: middle;\
-  margin: 6px 3px 1px 3px;\
+  min-height: 26px;\
+  margin-top: 3px;\
 }\
 \
 #keys-label {\
@@ -208,52 +212,32 @@ window.plugin.keys.setupCSS = function () {
   cursor: help;\
 }\
 \
-#keys-add {\
-}\
-\
 #keys-count {\
+  display: flex;\
+  align-items: center;\
+  justify-content: center;\
   width: 26px;\
-  height: 18px !important;\
+  min-height: 18px;\
   border: 1px solid;\
-  text-align: center;\
   cursor: help;\
 }\
 \
-#keys-subtract {\
-}\
-\
 .keys-button {\
-  position:relative;\
-  width: 16px;\
-  height: 16px !important;\
+  display: flex;\
+  align-items: center;\
+  justify-content: center;\
+  min-width: var(--icon-target-size, 24px);\
+  min-height: var(--icon-target-size, 24px);\
 }\
 \
-.keys-button > div {\
-  background-color: rgb(32, 168, 177);\
-  position: absolute;\
-}\
-\
-.keys-button-minus {\
-  width: 100%;\
-  height: 4px;\
-  top: 6px;\
-}\
-\
-.keys-button-plus-h {\
-  width: 100%;\
-  height: 4px;\
-  top: 6px;\
-}\
-\
-.keys-button-plus-v {\
-  width: 4px;\
-  height: 100%;\
-  left: 6px;\
+.keys-button iitc-icon {\
+  color: rgb(32, 168, 177);\
+  font-size: 16px;\
+  cursor: pointer;\
 }\
 \
 #keys-help {\
-  font-weight: 900;\
-  margin: 6px 3px 1px 20px !important;\
+  margin-left: 14px;\
   cursor: help;\
 }\
 \
@@ -275,7 +259,6 @@ window.plugin.keys.setupCSS = function () {
   margin-left: 0.3em;\
   margin-right: -1px;\
 }\
-\
 ').appendTo('head');
 };
 
@@ -283,16 +266,15 @@ window.plugin.keys.setupContent = function () {
   window.plugin.keys.contentHTML =
     '<div id="keys-content-outer">' +
     ' <div id="keys-label" title="Problem? Point to the question mark!">Key(s):</div>' +
-    ' <div id="keys-add" class="keys-button" onclick="window.plugin.keys.addKey(-1);">' +
-    '  <div class="keys-button-minus"></div>' +
+    ' <div id="keys-subtract" class="keys-button" onclick="window.plugin.keys.addKey(-1);">' +
+    '  <iitc-icon label="Remove" fallback="−">remove</iitc-icon>' +
     ' </div>' +
     ' <div id="keys-count" title="Problem? Point to the question mark!"></div>' +
-    ' <div id="keys-subtract" class="keys-button" onclick="window.plugin.keys.addKey(1);">' +
-    '  <div class="keys-button-plus-v"></div>' +
-    '  <div class="keys-button-plus-h"></div>' +
+    ' <div id="keys-add" class="keys-button" onclick="window.plugin.keys.addKey(1);">' +
+    '  <iitc-icon label="Add" fallback="+">add</iitc-icon>' +
     ' </div>' +
     ' <div id="keys-help" title="You MUST manually input your count of keys!\n' +
-    'This plugin CANNOT automatically get the keys from Ingress!">?</div>' +
+    'This plugin CANNOT automatically get the keys from Ingress!"><iitc-icon fallback="?">help</iitc-icon></div>' +
     '</div>';
   window.plugin.keys.disabledMessage = '<div id="keys-content-outer" title="Your browser do not support localStorage">Plugin Keys disabled</div>';
 };

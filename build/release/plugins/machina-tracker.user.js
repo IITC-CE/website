@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.1.2
+// @version        1.1.3
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'machina-tracker';
 /* global IITC, L */
 
 var changelog = [
+  {
+    version: '1.1.3',
+    changes: ['Refactoring: use IITC.portal and IITC.chat APIs instead of legacy globals'],
+  },
   { version: '1.1.2', changes: ['Refactoring: update Leaflet API usage'] },
   {
     version: '1.1.1',
@@ -132,11 +136,11 @@ machinaTracker.zoomListener = function () {
     machinaTracker.drawnTraces.clearLayers();
     ctrl.addClass('disabled').attr('title', 'Zoom in to show those.');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
-    window.chat.backgroundChannelData('plugin.machinaTracker', 'all', false); // disable this plugin's interest in 'all' COMM
+    IITC.chat.backgroundChannelData('plugin.machinaTracker', 'all', false); // disable this plugin's interest in 'all' COMM
   } else {
     ctrl.removeClass('disabled').attr('title', '');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
-    window.chat.backgroundChannelData('plugin.machinaTracker', 'all', true); // enable this plugin's interest in 'all' COMM
+    IITC.chat.backgroundChannelData('plugin.machinaTracker', 'all', true); // enable this plugin's interest in 'all' COMM
   }
 };
 
@@ -216,16 +220,16 @@ machinaTracker.createPortalLink = function (portal) {
     .text(portal.name)
     .prop({
       title: portal.name,
-      href: window.makePermalink(portal.latLng),
+      href: IITC.portal.display.makePermalink(portal.latLng),
     })
-    .click((event) => {
-      window.selectPortalByLatLng(portal.latLng);
+    .on('click', (event) => {
+      IITC.portal.selectByLatLng(portal.latLng);
       event.preventDefault();
       return false;
     })
-    .dblclick((event) => {
+    .on('dblclick', (event) => {
       window.map.setView(portal.latLng, window.DEFAULT_ZOOM);
-      window.selectPortalByLatLng(portal.latLng);
+      IITC.portal.selectByLatLng(portal.latLng);
       event.preventDefault();
       return false;
     });

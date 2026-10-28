@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Yandex maps
 // @category       Map Tiles
-// @version        0.3.4
+// @version        0.3.5
 // @description    Add Yandex.com (Russian/Русский) map layers
 // @id             basemap-yandex
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'release';
-plugin_info.dateTimeVersion = '2026-10-13-145139';
+plugin_info.dateTimeVersion = '2026-10-28-094847';
 plugin_info.pluginId = 'basemap-yandex';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'basemap-yandex';
 /* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.3.5',
+    changes: ['Report the layer as light or dark for theme switching'],
+  },
   {
     version: '0.3.4',
     changes: ['Refactoring: fix eslint'],
@@ -49,12 +53,15 @@ var mapYandex = {};
 mapYandex.types = {
   map: {
     type: 'map',
+    isDark: false,
   },
   satellite: {
     type: 'satellite',
+    isDark: true,
   },
   hybrid: {
     type: 'hybrid',
+    isDark: true,
   },
 };
 
@@ -68,7 +75,7 @@ function setup() {
 
   for (var name in mapYandex.types) {
     var options = L.extend({}, mapYandex.options, mapYandex.types[name]);
-    window.layerChooser.addBaseLayer(L.yandex(options), 'Yandex ' + name);
+    window.layerChooser.addBaseLayer(L.yandex(options), 'Yandex ' + name, { isDark: options.isDark });
   }
 }
 
