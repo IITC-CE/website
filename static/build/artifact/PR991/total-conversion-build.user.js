@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.0.20261028.130317
+// @version        0.43.1.20261028.130740
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-28-130317';
+plugin_info.dateTimeVersion = '2026-10-28-130740';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -68,6 +68,10 @@ IITC.registerLegacyAliases = function (namespace, mappings) {
 window.script_info = plugin_info;
 window.script_info.changelog = [
   {
+    version: '0.43.1',
+    changes: ['Fix Enlightened color missing in the mobile portal info'],
+  },
+  {
     version: '0.43.0',
     changes: [
       'Add antimeridian support: tiles load for the whole view, entities appear on the nearest world copy, portal selection and permalinks use the true longitude',
@@ -83,10 +87,13 @@ window.script_info.changelog = [
       'Fix the chat not following new messages and the channel container missing in some cases',
       'Fix leaving idle mode when the page becomes visible again',
       'Fix escapeHtml dropping the class attribute on allowed tags',
-      'Add API key to the CartoDB tile layer URL',
       'Shorten the portal deep link used by the scanner',
       'Remove the portal GUID position cache',
     ],
+  },
+  {
+    version: '0.42.4',
+    changes: ['Fix CartoDB base maps not loading'],
   },
   {
     version: '0.42.2',
@@ -217,7 +224,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-10-28-130317';
+window.iitcBuildDate = '2026-10-28-130740';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2121,7 +2128,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-10-28-130317');
+  log.log('loading done, booting. Built: ' + '2026-10-28-130740');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
