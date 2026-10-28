@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.0.20261028.090843
+// @version        0.43.1.20261028.131017
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-10-28-090843';
+plugin_info.dateTimeVersion = '2026-10-28-131017';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -68,6 +68,10 @@ IITC.registerLegacyAliases = function (namespace, mappings) {
 window.script_info = plugin_info;
 window.script_info.changelog = [
   {
+    version: '0.43.1',
+    changes: ['Fix Enlightened color missing in the mobile portal info'],
+  },
+  {
     version: '0.43.0',
     changes: [
       'Add antimeridian support: tiles load for the whole view, entities appear on the nearest world copy, portal selection and permalinks use the true longitude',
@@ -83,10 +87,13 @@ window.script_info.changelog = [
       'Fix the chat not following new messages and the channel container missing in some cases',
       'Fix leaving idle mode when the page becomes visible again',
       'Fix escapeHtml dropping the class attribute on allowed tags',
-      'Add API key to the CartoDB tile layer URL',
       'Shorten the portal deep link used by the scanner',
       'Remove the portal GUID position cache',
     ],
+  },
+  {
+    version: '0.42.4',
+    changes: ['Fix CartoDB base maps not loading'],
   },
   {
     version: '0.42.2',
@@ -217,7 +224,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-10-28-090843';
+window.iitcBuildDate = '2026-10-28-131017';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2121,7 +2128,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-10-28-090843');
+  log.log('loading done, booting. Built: ' + '2026-10-28-131017');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -31252,7 +31259,7 @@ const _runBeforeBoot = function () {
   // add smartphone stylesheet
   const style = document.createElement('style');
   style.textContent = '\
-body{color:#fff}#updatestatus{color:#d4d5d6;width:100%;padding:0;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:#262c32;border:0;right:0}#updatestatus .map{margin-left:4px}#innerstatus{float:right;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px;overflow:hidden}#loadlevel{color:#fff;background:0 0;border-width:0}#mobileinfo{float:left;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px 0;transition:opacity .2s;position:relative;overflow:hidden}#mobileinfo.loading{opacity:.6}#mobileinfo .portallevel{color:#fff;padding:0 .25em}#mobileinfo .resonator{border-top:3px solid var(--resonator-color,#ccc);box-sizing:border-box;width:12%;height:100%;position:absolute;top:0}#mobileinfo .resonator[data-slot="0"]{left:0%}#mobileinfo .resonator[data-slot="1"]{left:12.5%}#mobileinfo .resonator[data-slot="2"]{left:25%}#mobileinfo .resonator[data-slot="3"]{left:37.5%}#mobileinfo .resonator[data-slot="4"]{left:50%}#mobileinfo .resonator[data-slot="5"]{left:62.5%}#mobileinfo .resonator[data-slot="6"]{left:75%}#mobileinfo .resonator[data-slot="7"]{left:87.5%}#mobileinfo .resonator.empty{border-top-color:#0000}#mobileinfo .resonator.north:before{content:"";background-color:var(--resonator-color,red);z-index:1;border-radius:100%;width:6px;height:6px;margin-left:-3px;display:block;position:absolute;top:-3px;left:50%}#mobileinfo .filllevel{height:3px;position:absolute;bottom:0}#mobileinfo .enl .filllevel{background-color:var(--color_enl)!important}#mobileinfo .res .filllevel{background-color:var(--color-res)!important}#mobileinfo .mac .filllevel{background-color:var(--color-mac)!important}#playerstat{height:initial}#playerstat h2{flex-wrap:wrap;justify-content:space-between;padding:5px;display:flex}#playerstat h2 #name{align-items:center;display:flex}#playerstat h2 #name .playername,#playerstat h2 #name:hover .playername{max-width:60vw}#playerstat h2 #stats{white-space:nowrap;overflow:initial}#name #signout{position:initial;margin-left:4px;display:inline-block}#searchwrapper .ui-accordion-header{padding:.3em 0}#searchwrapper li{line-height:1.3em}#chatcontrols{width:100%;height:38px;left:0;display:none!important}#chatcontrols a:first-child{display:none}#chatcontrols a{vertical-align:middle;box-sizing:border-box;width:50px;height:36px;line-height:36px;text-decoration:none;overflow:hidden}#chat{width:auto;height:auto;margin-top:var(--safe-area-inset-top);margin-bottom:var(--safe-area-inset-bottom);padding-right:var(--safe-area-inset-right);bottom:30px;left:0;right:0;top:1px!important}#chatinput{width:100%;height:calc(var(--safe-area-inset-bottom) + 30px);padding-right:var(--safe-area-inset-right)}#chat td:nth-child(2),#chatinput td:nth-child(2){width:77px}#chatcontrols a.active{border-color:var(--color-primary);border-bottom-width:0;font-weight:700}#chatcontrols a.active+a{border-left-color:var(--color-primary)}#sidebartoggle{display:none!important}#scrollwrapper{box-sizing:border-box;bottom:0;left:0;right:0;width:100%!important;max-height:none!important}#sidebar{border:0;min-height:100%;width:100%!important}#sidebar>*{width:100%}#portaldetails{min-height:0}.fullimg{width:100%}.leaflet-popup-content{color:#000}.linkdetails aside,#toolbox>a,#toolbox_component>a{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#portaldetails .close{border:1px outset var(--color-bg-border);font-size:22px}#scrollwrapper{inset:0}.safe-area-insets,#scrollwrapper{padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}body.sidebar-open .leaflet-right{margin-right:var(--safe-area-inset-right)}.leaflet-bottom{bottom:5px}:root{--top-controls-height:38px}body.show-controls #chatcontrols{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);width:calc(100% - 1px);height:calc(var(--top-controls-height) + var(--safe-area-inset-top));top:0;overflow-x:auto;display:flex!important}body.show-controls #chatcontrols a{flex:1;min-width:fit-content;padding:0 5px}body.show-controls #map{height:calc(100vh - var(--top-controls-height) - 25px);margin-top:var(--top-controls-height)}body.show-controls #scrollwrapper{margin-top:var(--top-controls-height)}body.show-controls #chat{top:var(--top-controls-height)!important}';
+body{color:#fff}#updatestatus{color:#d4d5d6;width:100%;padding:0;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:#262c32;border:0;right:0}#updatestatus .map{margin-left:4px}#innerstatus{float:right;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px;overflow:hidden}#loadlevel{color:#fff;background:0 0;border-width:0}#mobileinfo{float:left;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px 0;transition:opacity .2s;position:relative;overflow:hidden}#mobileinfo.loading{opacity:.6}#mobileinfo .portallevel{color:#fff;padding:0 .25em}#mobileinfo .resonator{border-top:3px solid var(--resonator-color,#ccc);box-sizing:border-box;width:12%;height:100%;position:absolute;top:0}#mobileinfo .resonator[data-slot="0"]{left:0%}#mobileinfo .resonator[data-slot="1"]{left:12.5%}#mobileinfo .resonator[data-slot="2"]{left:25%}#mobileinfo .resonator[data-slot="3"]{left:37.5%}#mobileinfo .resonator[data-slot="4"]{left:50%}#mobileinfo .resonator[data-slot="5"]{left:62.5%}#mobileinfo .resonator[data-slot="6"]{left:75%}#mobileinfo .resonator[data-slot="7"]{left:87.5%}#mobileinfo .resonator.empty{border-top-color:#0000}#mobileinfo .resonator.north:before{content:"";background-color:var(--resonator-color,red);z-index:1;border-radius:100%;width:6px;height:6px;margin-left:-3px;display:block;position:absolute;top:-3px;left:50%}#mobileinfo .filllevel{height:3px;position:absolute;bottom:0}#mobileinfo .enl .filllevel{background-color:var(--color-enl)!important}#mobileinfo .res .filllevel{background-color:var(--color-res)!important}#mobileinfo .mac .filllevel{background-color:var(--color-mac)!important}#playerstat{height:initial}#playerstat h2{flex-wrap:wrap;justify-content:space-between;padding:5px;display:flex}#playerstat h2 #name{align-items:center;display:flex}#playerstat h2 #name .playername,#playerstat h2 #name:hover .playername{max-width:60vw}#playerstat h2 #stats{white-space:nowrap;overflow:initial}#name #signout{position:initial;margin-left:4px;display:inline-block}#searchwrapper .ui-accordion-header{padding:.3em 0}#searchwrapper li{line-height:1.3em}#chatcontrols{width:100%;height:38px;left:0;display:none!important}#chatcontrols a:first-child{display:none}#chatcontrols a{vertical-align:middle;box-sizing:border-box;width:50px;height:36px;line-height:36px;text-decoration:none;overflow:hidden}#chat{width:auto;height:auto;margin-top:var(--safe-area-inset-top);margin-bottom:var(--safe-area-inset-bottom);padding-right:var(--safe-area-inset-right);bottom:30px;left:0;right:0;top:1px!important}#chatinput{width:100%;height:calc(var(--safe-area-inset-bottom) + 30px);padding-right:var(--safe-area-inset-right)}#chat td:nth-child(2),#chatinput td:nth-child(2){width:77px}#chatcontrols a.active{border-color:var(--color-primary);border-bottom-width:0;font-weight:700}#chatcontrols a.active+a{border-left-color:var(--color-primary)}#sidebartoggle{display:none!important}#scrollwrapper{box-sizing:border-box;bottom:0;left:0;right:0;width:100%!important;max-height:none!important}#sidebar{border:0;min-height:100%;width:100%!important}#sidebar>*{width:100%}#portaldetails{min-height:0}.fullimg{width:100%}.leaflet-popup-content{color:#000}.linkdetails aside,#toolbox>a,#toolbox_component>a{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#portaldetails .close{border:1px outset var(--color-bg-border);font-size:22px}#scrollwrapper{inset:0}.safe-area-insets,#scrollwrapper{padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}body.sidebar-open .leaflet-right{margin-right:var(--safe-area-inset-right)}.leaflet-bottom{bottom:5px}:root{--top-controls-height:38px}body.show-controls #chatcontrols{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);width:calc(100% - 1px);height:calc(var(--top-controls-height) + var(--safe-area-inset-top));top:0;overflow-x:auto;display:flex!important}body.show-controls #chatcontrols a{flex:1;min-width:fit-content;padding:0 5px}body.show-controls #map{height:calc(100vh - var(--top-controls-height) - 25px);margin-top:var(--top-controls-height)}body.show-controls #scrollwrapper{margin-top:var(--top-controls-height)}body.show-controls #chat{top:var(--top-controls-height)!important}';
   document.head.append(style);
 
   window.smartphone.mapButton = createPaneButton('map');
