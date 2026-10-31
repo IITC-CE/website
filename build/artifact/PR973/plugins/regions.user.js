@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Ingress scoring regions
 // @category       Layer
-// @version        0.3.4.20261024.132626
+// @version        0.3.5.20261031.134136
 // @description    Show the regional scoring cells grid on the map
 // @id             regions
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-132626';
+plugin_info.dateTimeVersion = '2026-10-31-134136';
 plugin_info.pluginId = 'regions';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'regions';
 /* global L -- eslint */
 
 var changelog = [
+  {
+    version: '0.3.5',
+    changes: ['Fix region cells near the antimeridian'],
+  },
   { version: '0.3.4', changes: ['Refactoring: update Leaflet API usage'] },
   {
     version: '0.3.3',
@@ -484,16 +488,25 @@ window.plugin.regions.regionName = function (cell) {
   return name;
 };
 
-window.plugin.regions.getCellFromName = function (name) {
-  var regexp = new RegExp(
-    '^(' + window.plugin.regions.FACE_NAMES.join('|') + ')(1[0-6]|0[1-9])-(' + window.plugin.regions.CODE_WORDS.join('|') + ')-(1[0-5]|0[0-9])$',
-    'i'
-  );
-  var match = name.replace(/\s+/g, '').match(regexp);
-  if (!match) return;
+// Parses a region name by REGEXP; omitted face and number are taken from the region at the map center
+window.plugin.regions.parseName = (name) => {
+  const match = name.replace(/\s+/g, '').match(window.plugin.regions.REGEXP);
+  if (!match) return null;
 
+  if (!match[1] || !match[2]) {
+    const currentCell = window.plugin.regions.getNameFromLatLng(window.map.getCenter());
+    if (!match[1]) match[1] = currentCell.slice(0, 2);
+    if (!match[2]) match[2] = currentCell.slice(2, 4);
+  }
   match[1] = match[1].toUpperCase();
   match[3] = match[3].toUpperCase();
+  return match;
+};
+
+window.plugin.regions.getCellFromName = function (name) {
+  const match = window.plugin.regions.parseName(name);
+  // without the last number the name is a group of 16 scoring regions; its center would pick one of them arbitrarily
+  if (!match || match[4] === undefined) return;
   return window.plugin.regions.getCellFromMatch(match);
 };
 
@@ -522,10 +535,8 @@ window.plugin.regions.getNameFromLatLng = function (latLng) {
 };
 
 window.plugin.regions.search = function (query) {
-  var terms = query.term.replace(/\s+/g, '').split(/[,;]/);
-  var matches = terms.map(function (string) {
-    return string.match(window.plugin.regions.REGEXP);
-  });
+  var terms = query.term.split(/[,;]/);
+  var matches = terms.map(window.plugin.regions.parseName);
   if (
     !matches.every(function (match) {
       return match !== null;
@@ -533,16 +544,7 @@ window.plugin.regions.search = function (query) {
   )
     return;
 
-  var currentCell = window.plugin.regions.regionName(window.S2.S2Cell.FromLatLng(window.map.getCenter(), 6));
-
   matches.forEach(function (match) {
-    if (!match[1]) match[1] = currentCell.slice(0, 2);
-    else match[1] = match[1].toUpperCase();
-
-    if (!match[2]) match[2] = currentCell.slice(2, 4);
-
-    match[3] = match[3].toUpperCase();
-
     var result = window.plugin.regions.getSearchResult(match);
     if (result) query.addResult(result);
   });
