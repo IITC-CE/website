@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Privacy view on Intel
 // @category       Misc
-// @version        1.2.3.20261105.090520
+// @version        1.2.4.20261105.105442
 // @description    Hide info from intel which shouldn't leak to players of the other faction.
 // @id             privacy-view
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-05-090520';
+plugin_info.dateTimeVersion = '2026-11-05-105442';
 plugin_info.pluginId = 'privacy-view';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'privacy-view';
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '1.2.4',
+    changes: ['Fix the chat not showing new messages after privacy is turned off', 'Keep the chat available in mobile view while privacy is active'],
+  },
   {
     version: '1.2.3',
     changes: ['Refactoring: use IITC.utils API instead of legacy globals'],
