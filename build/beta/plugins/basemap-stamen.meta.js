@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.3.0.20261103.214925
+// @version        0.3.0.20261105.090520
 // @description    Add the Stamen map layers, hosted by Stadia Maps.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
