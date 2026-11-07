@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261107.144821
+// @version        0.43.2.20261107.151130
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-11-07-144821';
+plugin_info.dateTimeVersion = '2026-11-07-151130';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-07-144821';
+window.iitcBuildDate = '2026-11-07-151130';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -1980,7 +1980,8 @@ function setupIngressMarkers() {
  * @function checkingIntelURL
  */
 function checkingIntelURL() {
-  if (window.location.hostname !== 'intel.ingress.com' && IITC.options.get('iitc.intelUrlWarning')) {
+  // on until the warning is dismissed; declared on no options page, so it stays in this browser
+  if (window.location.hostname !== 'intel.ingress.com' && IITC.options.get('iitc.intelUrlWarning', true)) {
     window.dialog({
       title: 'IITC Warning',
       html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
@@ -2145,7 +2146,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-07-144821');
+  log.log('loading done, booting. Built: ' + '2026-11-07-151130');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26636,14 +26637,6 @@ IITC.options.register('iitc', {
     },
     {
       type: 'boolean',
-      key: 'intelUrlWarning',
-      title: 'Warn when Intel is opened on a non-standard domain',
-      default: true,
-      // the domain warning concerns this browser, not the user's other devices
-      sync: false,
-    },
-    {
-      type: 'boolean',
       key: 'syncOptions',
       title: 'Sync IITC options',
       default: true,
@@ -26685,8 +26678,8 @@ IITC.options.register('iitc', {
   ],
 });
 
-// options of older builds, kept as plain strings under keys of their own; each moves once, as a value the
-// declaration accepts, and its key goes, so a value set back to the default later is not moved again
+// options of older builds, kept as plain strings under keys of their own; each moves once, converted, and
+// its key goes, so a value set back to the default later is not moved again
 const LEGACY = [
   ['iitc-passcode-format', 'iitc.passcodeFormat', (format) => format],
   // 'true' records that the warning was dismissed for good
@@ -27615,11 +27608,24 @@ const pageIds = () => {
 
 const titleOf = (pageId) => String(IITC.options._pages[pageId]?.title ?? pageId);
 
-// texts of the blocks, the ones inside a repeat too
-const blockTexts = (blocks) =>
+// a block the page does not show; inside a repeat, `visible` as a function of the item counts as shown
+const hidden = (block, inRepeat) => {
+  if (typeof block?.visible !== 'function') return block?.visible === false;
+  if (inRepeat) return false;
+  try {
+    return block.visible() === false;
+  } catch {
+    // drawing the page reports the error
+    return false;
+  }
+};
+
+// texts of the blocks shown, the ones inside a repeat too
+const blockTexts = (blocks, inRepeat = false) =>
   (blocks ?? []).flatMap((block) => {
+    if (hidden(block, inRepeat)) return [];
     const own = SEARCHED.filter((name) => typeof block?.[name] === 'string').map((name) => block[name]);
-    return block?.type === 'repeat' ? [...own, ...blockTexts(block.blocks)] : own;
+    return block?.type === 'repeat' ? [...own, ...blockTexts(block.blocks, true)] : own;
   });
 
 /**
