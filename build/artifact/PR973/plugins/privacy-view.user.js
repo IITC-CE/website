@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Privacy view on Intel
 // @category       Misc
-// @version        1.2.3.20261031.134136
+// @version        1.2.4.20261107.095533
 // @description    Hide info from intel which shouldn't leak to players of the other faction.
 // @id             privacy-view
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-31-134136';
+plugin_info.dateTimeVersion = '2026-11-07-095533';
 plugin_info.pluginId = 'privacy-view';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,10 @@ plugin_info.pluginId = 'privacy-view';
 /* exported setup, changelog --eslint */
 
 var changelog = [
+  {
+    version: '1.2.4',
+    changes: ['Fix the chat not showing new messages after privacy is turned off', 'Keep the chat available in mobile view while privacy is active'],
+  },
   {
     version: '1.2.3',
     changes: ['Refactoring: use IITC.utils API instead of legacy globals'],
@@ -69,23 +73,26 @@ privacyView.toggle = () => {
   } else {
     $('#privacytoggle').text(privacyView.is_active ? 'Privacy active' : 'Privacy inactive');
     if (!privacyView.is_active) {
-      // refresh chat
+      // messages that arrived while the chat was hidden are not rendered yet
+      const tab = IITC.chat.getActive();
+      if (tab) IITC.chat.chooseTab(tab);
       window.startRefreshTimeout(0.1 * 1000);
     }
   }
 };
 
 function setup() {
-  $('<style>')
-    .html(
-      '.privacy_active #playerstat,' +
-        '.privacy_active #chatinput,' +
-        '.privacy_active #chatcontrols > a:not(#privacytoggle),' +
-        '.privacy_active #chat { display: none; }' +
-        '.privacy_active #chatcontrols { bottom: 0; top: auto }' +
-        '.privacy_active .leaflet-left .leaflet-control {margin-left: 10px}'
-    )
-    .appendTo('head');
+  let css = '.privacy_active #playerstat { display: none; }';
+  // on mobile the chat stays out of sight in its own pane until it is opened
+  if (!IITC.utils.isSmartphone()) {
+    css +=
+      '.privacy_active #chatinput,' +
+      '.privacy_active #chatcontrols > a:not(#privacytoggle),' +
+      '.privacy_active #chat { display: none; }' +
+      '.privacy_active #chatcontrols { bottom: 0; top: auto }' +
+      '.privacy_active .leaflet-left .leaflet-control {margin-left: 10px}';
+  }
+  $('<style>').html(css).appendTo('head');
 
   if (IITC.utils.isSmartphone()) {
     IITC.toolbox.addButton({
