@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Stamen.com map layers
 // @category       Map Tiles
-// @version        0.3.0.20261024.092022
+// @version        0.3.0.20261107.142628
 // @description    Add the Stamen map layers, hosted by Stadia Maps.
 // @id             basemap-stamen
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-092022';
+plugin_info.dateTimeVersion = '2026-11-07-142628';
 plugin_info.pluginId = 'basemap-stamen';
 //END PLUGIN AUTHORS NOTE
 
@@ -37,6 +37,7 @@ const changelog = [
       'Add the Terrain and Toner Dark layers',
       'Request high density tiles on retina displays',
       'Fix the Watercolor zoom limit',
+      'Report the layers as light or dark for theme switching',
     ],
   },
   {

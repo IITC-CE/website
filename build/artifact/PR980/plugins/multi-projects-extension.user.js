@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.1.5.20261024.092022
+// @version        0.2.0.20261107.142628
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-092022';
+plugin_info.dateTimeVersion = '2026-11-07-142628';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,6 +29,15 @@ plugin_info.pluginId = 'multi-projects-extension';
 /* global IITC -- eslint */
 
 var changelog = [
+  {
+    version: '0.2.0',
+    changes: [
+      'Register projects regardless of plugin load order',
+      'Keep the selected project across reloads',
+      'Ignore a scan for a project that is not registered',
+      'Draw icons from the bundled font',
+    ],
+  },
   {
     version: '0.1.5',
     changes: ['Refactoring: fix eslint'],
@@ -78,7 +87,7 @@ window.plugin.mpe.storage.saveStorage = function () {
 };
 window.plugin.mpe.storage.loadStorage = function () {
   window.plugin.mpe.obj.opt = JSON.parse(window.localStorage[window.plugin.mpe.storage.NAME]);
-  // the projects hidden in the manager dialog, which the settings page replaces
+  // the projects hidden in the manager dialog, which the options page replaces
   delete window.plugin.mpe.obj.opt.settings.manager;
 };
 window.plugin.mpe.storage.checkStorage = function () {
@@ -151,13 +160,13 @@ window.plugin.mpe.data.saveKeyPj = (PJ, storageKey) => {
   window.plugin.mpe.storage.saveStorage();
 };
 
-window.plugin.mpe.data.isInSidebar = (PJ) => IITC.settings.get(`mpe.sidebar_${PJ}`) === true;
+window.plugin.mpe.data.isInSidebar = (PJ) => IITC.options.get(`mpe.sidebar_${PJ}`) === true;
 
-// the sidebar flags were kept in plugin-mpe: each moves to its setting once its plugin registers
+// the sidebar flags were kept in plugin-mpe: each moves to its option once its plugin registers
 window.plugin.mpe.data.migrateSidebar = (PJ) => {
   const { sidebar } = window.plugin.mpe.obj.opt.settings;
   if (!sidebar?.includes(PJ)) return;
-  IITC.settings.set(`mpe.sidebar_${PJ}`, true);
+  IITC.options.set(`mpe.sidebar_${PJ}`, true);
   sidebar.splice(sidebar.indexOf(PJ), 1);
   window.plugin.mpe.storage.saveStorage();
 };
@@ -209,7 +218,7 @@ window.plugin.mpe.data.scanStorageForOne = function (name) {
     }
   }
   //        }
-  IITC.settings.refresh(window.plugin.mpe.PAGE_ID);
+  IITC.options.refresh(window.plugin.mpe.PAGE_ID);
 };
 
 // ------------------------------------------------------
@@ -342,7 +351,7 @@ window.plugin.mpe.action.switchProject = function (PJ, storageKey) {
   pj.func_post();
 
   window.plugin.mpe.ui.redrawHTMLOptions(PJ);
-  IITC.settings.refresh(window.plugin.mpe.PAGE_ID);
+  IITC.options.refresh(window.plugin.mpe.PAGE_ID);
 
   const data = {
     event: 'switch',
@@ -425,7 +434,7 @@ window.plugin.mpe.action.deleteProject = function (PJ, storage) {
 window.plugin.mpe.action.reportDelete = (PJ, storageKey) => {
   const pj = window.plugin.mpe.obj.projects[PJ];
   window.plugin.mpe.ui.redrawHTMLOptions(PJ);
-  IITC.settings.refresh(window.plugin.mpe.PAGE_ID);
+  IITC.options.refresh(window.plugin.mpe.PAGE_ID);
   window.runHooks('mpe', {
     event: 'delete',
     data: {
@@ -479,7 +488,7 @@ window.plugin.mpe.setMultiProjects = function (settings) {
     };
 
     window.plugin.mpe.obj.projects[settings.namespace] = newMPE;
-    window.plugin.mpe.registerSettings();
+    window.plugin.mpe.registerOptions();
     window.plugin.mpe.data.migrateSidebar(settings.namespace);
     window.plugin.mpe.data.scanStorageForOne(settings.namespace);
     window.plugin.mpe.ui.toggleSidebar(settings.namespace);
@@ -508,7 +517,7 @@ window.plugin.mpe.action.restoreProject = (PJ) => {
 };
 
 // ------------------------------------------------------
-// SETTINGS
+// OPTIONS
 // ------------------------------------------------------
 window.plugin.mpe.PAGE_ID = 'multi-projects-extension';
 
@@ -520,9 +529,9 @@ window.plugin.mpe.projectChoices = (PJ) => [
 // a section for every plugin registered so far, in the order they registered, so the blocks already drawn
 // keep their place; the page is declared again as each plugin registers. The project in use stays in
 // plugin-mpe, on this device only
-window.plugin.mpe.registerSettings = () => {
+window.plugin.mpe.registerOptions = () => {
   const projects = Object.keys(window.plugin.mpe.obj.projects);
-  IITC.settings.register(window.plugin.mpe.PAGE_ID, {
+  IITC.options.register(window.plugin.mpe.PAGE_ID, {
     title: 'Multi Projects',
     namespace: 'mpe',
     shortcut: { label: 'MultiProjects', icon: 'folder_copy' },
@@ -608,7 +617,7 @@ window.plugin.mpe.setupCSS = function () {
 var setup = function () {
   window.plugin.mpe.storage.checkStorage();
   window.plugin.mpe.setupCSS();
-  window.plugin.mpe.registerSettings();
+  window.plugin.mpe.registerOptions();
   window.plugin.mpe.ui.appendContainerInSidebar();
 
   window.plugin.mpe.isReady = true;

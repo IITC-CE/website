@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.4.8.20261024.092022
+// @version        0.5.0.20261107.142628
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-092022';
+plugin_info.dateTimeVersion = '2026-11-07-142628';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -29,7 +29,15 @@ plugin_info.pluginId = 'bookmarks';
 /* global IITC, L -- eslint */
 
 var changelog = [
-  { version: '0.4.8', changes: ['Register with the Sync plugin regardless of plugin load order'] },
+  {
+    version: '0.5.0',
+    changes: [
+      'Register with the Sync plugin regardless of plugin load order',
+      'Sync every Multi Projects Extension project, not just the default one',
+      'Let deleted projects propagate through sync',
+      'Draw icons from the bundled font',
+    ],
+  },
   { version: '0.4.7', changes: ['Fix data reset issue'] },
   {
     version: '0.4.6',
@@ -145,8 +153,8 @@ window.plugin.bookmarks.escapeUnicode = function (str) {
 // Update the localStorage
 window.plugin.bookmarks.saveStorage = function () {
   localStorage[window.plugin.bookmarks.KEY_STORAGE] = JSON.stringify(window.plugin.bookmarks.currentProject);
-  // the settings page lists the folders
-  IITC.settings.refresh('bookmarks');
+  // the options page lists the folders
+  IITC.options.refresh('bookmarks');
 };
 
 // Load the localStorage
@@ -203,8 +211,8 @@ window.plugin.bookmarks.refreshBkmrks = function () {
 
   window.plugin.bookmarks.updateStarPortal();
   window.plugin.bookmarks.jquerySortableScript();
-  // the settings page lists the folders
-  IITC.settings.refresh('bookmarks');
+  // the options page lists the folders
+  IITC.options.refresh('bookmarks');
 };
 
 /** *************************************************************************************************************************************************************/
@@ -766,11 +774,11 @@ window.plugin.bookmarks.jquerySortableScript = function () {
 /** OPTIONS ****************************************************************************************************************************************************/
 /** ************************************************************************************************************************************************************/
 /**
- * Opens the plugin's page of the settings window, which replaces the options dialog
+ * Opens the plugin's page of the options window, which replaces the options dialog
  *
- * @deprecated use `IITC.settings.open('bookmarks')` instead
+ * @deprecated use `IITC.options.open('bookmarks')` instead
  */
-window.plugin.bookmarks.manualOpt = () => IITC.settings.open('bookmarks');
+window.plugin.bookmarks.manualOpt = () => IITC.options.open('bookmarks');
 
 // the stored bookmarks, with characters beyond ASCII escaped, for an export
 window.plugin.bookmarks.exportData = () => window.plugin.bookmarks.escapeUnicode(localStorage.getItem(window.plugin.bookmarks.KEY_STORAGE));
@@ -914,8 +922,8 @@ window.plugin.bookmarks.renameFolder = async (type, idFold) => {
   return 'Renamed';
 };
 
-window.plugin.bookmarks.registerSettings = () => {
-  IITC.settings.register('bookmarks', {
+window.plugin.bookmarks.registerOptions = () => {
+  IITC.options.register('bookmarks', {
     title: 'Bookmarks',
     shortcut: { label: 'Bookmarks Opt' },
     blocks: [
@@ -1567,7 +1575,7 @@ window.plugin.bookmarks.initMPE = function () {
 
 var setup = function () {
   window.plugin.bookmarks.isSmart = IITC.utils.isSmartphone();
-  window.plugin.bookmarks.registerSettings();
+  window.plugin.bookmarks.registerOptions();
 
   // HOOKS:
   // - pluginBkmrksEdit:    fired when a bookmarks/folder is removed, added or sorted,
