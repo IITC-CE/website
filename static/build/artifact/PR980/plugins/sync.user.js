@@ -2,8 +2,8 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.6.1.20261024.092022
-// @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques, Draw Tools) and IITC settings. Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
+// @version        0.6.1.20261107.142628
+// @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques, Draw Tools) and IITC options. Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/artifact/PR980/plugins/sync.meta.js
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-092022';
+plugin_info.dateTimeVersion = '2026-11-07-142628';
 plugin_info.pluginId = 'sync';
 //END PLUGIN AUTHORS NOTE
 
@@ -790,9 +790,9 @@ window.plugin.sync.loadUUID = function () {
   }
 };
 
-// draws the Sync page of the settings window again, if it is open, and updates its toolbox shortcut
+// draws the Sync page of the options window again, if it is open, and updates its toolbox shortcut
 window.plugin.sync.refreshPage = () => {
-  IITC.settings.refresh('sync');
+  IITC.options.refresh('sync');
 };
 
 // who is signed in, as the Sync page says it
@@ -869,8 +869,8 @@ window.plugin.sync.stopAllIntervals = function () {
   fields.anyFail = false;
 };
 
-window.plugin.sync.registerSettings = () => {
-  IITC.settings.register('sync', {
+window.plugin.sync.registerOptions = () => {
+  IITC.options.register('sync', {
     title: 'Sync',
     // red while signed out or after a failure
     shortcut: () => ({
@@ -920,7 +920,7 @@ var setup = function () {
   window.plugin.sync.authorizer = new window.plugin.sync.Authorizer({
     authCallback: [window.plugin.sync.refreshPage],
   });
-  window.plugin.sync.registerSettings();
+  window.plugin.sync.registerOptions();
   window.plugin.sync.registeredPluginsFields = new window.plugin.sync.RegisteredPluginsFields({
     authorizer: window.plugin.sync.authorizer,
   });

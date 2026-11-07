@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: Direction of links on map
 // @category       Tweaks
-// @version        0.2.4.20261024.092022
+// @version        0.2.4.20261107.142628
 // @description    Show the direction of links on the map by adding short dashes to the line at the origin portal.
 // @id             link-show-direction
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-092022';
+plugin_info.dateTimeVersion = '2026-11-07-142628';
 plugin_info.pluginId = 'link-show-direction';
 //END PLUGIN AUTHORS NOTE
 
@@ -66,10 +66,10 @@ window.plugin.linkShowDirection.dashArray = null;
 window.plugin.linkShowDirection.frame = 0;
 window.plugin.linkShowDirection.moving = false;
 window.plugin.linkShowDirection.drawtools = false;
-// a setting changed while the map moved; animateLinks skips frames then, so moveend restyles
+// an option changed while the map moved; animateLinks skips frames then, so moveend restyles
 window.plugin.linkShowDirection.restylePending = false;
 
-// applies a changed setting now, or once the map stops moving
+// applies a changed option now, or once the map stops moving
 window.plugin.linkShowDirection.restyle = () => {
   if (window.plugin.linkShowDirection.moving) {
     window.plugin.linkShowDirection.restylePending = true;
@@ -137,8 +137,8 @@ window.plugin.linkShowDirection.removeDrawToolsStyle = function () {
   });
 };
 
-window.plugin.linkShowDirection.registerSettings = () => {
-  IITC.settings.register('link-show-direction', {
+window.plugin.linkShowDirection.registerOptions = () => {
+  IITC.options.register('link-show-direction', {
     title: 'Link direction',
     shortcut: { label: 'LinkDirection Opt' },
     blocks: [
@@ -148,7 +148,7 @@ window.plugin.linkShowDirection.registerSettings = () => {
         title: 'Link direction style',
         description:
           "Static *: six segments show each link's direction, two long ones on the origin's side followed by four short ones on the destination's side",
-        options: () => Object.keys(window.plugin.linkShowDirection.styles),
+        choices: () => Object.keys(window.plugin.linkShowDirection.styles),
         default: 'Static near origin',
         onChange: (mode) => {
           window.plugin.linkShowDirection.mode = mode;
@@ -170,9 +170,9 @@ window.plugin.linkShowDirection.registerSettings = () => {
   });
 };
 
-// the settings of older builds, kept as plain strings under keys of their own; each moves once, as a value the
+// the options of older builds, kept as plain strings under keys of their own; each moves once, as a value the
 // declaration accepts, and its key goes, so a value set back to the default later is not moved again
-window.plugin.linkShowDirection.migrateSettings = () => {
+window.plugin.linkShowDirection.migrateOptions = () => {
   const legacy = [
     ['plugin-linkshowdirection-mode', 'link-show-direction.mode', (mode) => mode],
     ['plugin-linkshowdirection-drawtools', 'link-show-direction.drawtools', (apply) => apply === 'true'],
@@ -180,21 +180,21 @@ window.plugin.linkShowDirection.migrateSettings = () => {
   for (const [legacyKey, key, convert] of legacy) {
     const stored = localStorage.getItem(legacyKey);
     if (stored === null) continue;
-    IITC.settings.set(key, convert(stored), { source: 'legacy' });
+    IITC.options.set(key, convert(stored), { source: 'legacy' });
     localStorage.removeItem(legacyKey);
   }
 };
 
 window.plugin.linkShowDirection.setup = function () {
-  window.plugin.linkShowDirection.registerSettings();
-  window.plugin.linkShowDirection.migrateSettings();
+  window.plugin.linkShowDirection.registerOptions();
+  window.plugin.linkShowDirection.migrateOptions();
 
   window.addHook('linkAdded', function (data) {
     window.plugin.linkShowDirection.addLinkStyle(data.link);
   });
 
-  window.plugin.linkShowDirection.mode = IITC.settings.get('link-show-direction.mode');
-  window.plugin.linkShowDirection.drawtools = IITC.settings.get('link-show-direction.drawtools');
+  window.plugin.linkShowDirection.mode = IITC.options.get('link-show-direction.mode');
+  window.plugin.linkShowDirection.drawtools = IITC.options.get('link-show-direction.drawtools');
   window.plugin.linkShowDirection.animateLinks();
 
   // set up move start/end handlers to pause animations while moving

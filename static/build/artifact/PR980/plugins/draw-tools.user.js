@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Draw tools
 // @category       Draw
-// @version        0.13.0.20261024.092022
+// @version        0.13.0.20261107.142628
 // @description    Allow drawing things onto the current map so you may plan your next move. Supports Multi-Project-Extension.
 // @id             draw-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'test';
-plugin_info.dateTimeVersion = '2026-10-24-092022';
+plugin_info.dateTimeVersion = '2026-11-07-142628';
 plugin_info.pluginId = 'draw-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -35,6 +35,7 @@ var changelog = [
       'Sync drawn items across devices via the Sync plugin (Multi-Projects-Extension aware)',
       'Register with the Sync plugin regardless of plugin load order',
       'Fix drawn area used by Tidy Links and Fly Links being misplaced after zooming',
+      'Re-sync drawn items when Multi Projects Extension loads late',
     ],
   },
   { version: '0.12.1', changes: ['Refactoring: update Leaflet API usage'] },
@@ -84,9 +85,9 @@ window.plugin.drawTools.KEY_DELIMITER = '::';
 
 window.plugin.drawTools.merge = {};
 window.plugin.drawTools.merge.status = true;
-// reset: the new value of the setting; without it the setting flips (merge.status is its opposite)
+// reset: the new value of the option; without it the option flips (merge.status is its opposite)
 window.plugin.drawTools.merge.toggle = (reset = window.plugin.drawTools.merge.status) => {
-  IITC.settings.set('draw-tools.resetBeforeImport', reset);
+  IITC.options.set('draw-tools.resetBeforeImport', reset);
 };
 
 // set between Leaflet.draw's edit or delete start and stop
@@ -94,8 +95,8 @@ window.plugin.drawTools.editing = false;
 // a redraw was needed while editing (fill changed or a layer was added); done when editing stops
 window.plugin.drawTools.fillPending = false;
 
-window.plugin.drawTools.registerSettings = () => {
-  IITC.settings.register('draw-tools', {
+window.plugin.drawTools.registerOptions = () => {
+  IITC.options.register('draw-tools', {
     title: 'Draw Tools',
     accesskey: 'x',
     shortcut: { label: 'DrawTools Opt' },
@@ -445,8 +446,8 @@ window.plugin.drawTools.save = function () {
   }
 
   console.log('draw-tools: saved to localStorage');
-  // the export warnings on the settings page depend on the drawn items
-  IITC.settings.refresh('draw-tools');
+  // the export warnings on the options page depend on the drawn items
+  IITC.options.refresh('draw-tools');
 };
 
 window.plugin.drawTools.load = function () {
@@ -459,8 +460,8 @@ window.plugin.drawTools.load = function () {
   } catch (e) {
     console.warn('draw-tools: failed to load data from localStorage: ' + e);
   } finally {
-    // drawn items loaded again, such as from sync, change the export warnings on the settings page
-    IITC.settings.refresh('draw-tools');
+    // drawn items loaded again, such as from sync, change the export warnings on the options page
+    IITC.options.refresh('draw-tools');
   }
 };
 
@@ -505,7 +506,7 @@ window.plugin.drawTools.isEmpty = () => {
   return !data || data.length <= 2;
 };
 
-// nothing to export is an error the settings page shows
+// nothing to export is an error the options page shows
 const requireDrawn = () => {
   if (window.plugin.drawTools.isEmpty()) throw new Error('Nothing is drawn yet');
 };
@@ -826,10 +827,10 @@ window.plugin.drawTools.snapToPortals = function () {
 };
 
 window.plugin.drawTools.boot = function () {
-  window.plugin.drawTools.registerSettings();
-  window.plugin.drawTools.currentColor = IITC.settings.get('draw-tools.color');
-  window.plugin.drawTools.merge.status = !IITC.settings.get('draw-tools.resetBeforeImport');
-  window.plugin.drawTools.EDFstatus = !IITC.settings.get('draw-tools.fill');
+  window.plugin.drawTools.registerOptions();
+  window.plugin.drawTools.currentColor = IITC.options.get('draw-tools.color');
+  window.plugin.drawTools.merge.status = !IITC.options.get('draw-tools.resetBeforeImport');
+  window.plugin.drawTools.EDFstatus = !IITC.options.get('draw-tools.fill');
 
   window.plugin.drawTools.currentMarker = window.plugin.drawTools.getMarkerIcon(window.plugin.drawTools.currentColor);
 
@@ -944,7 +945,7 @@ window.plugin.drawTools.onEditStop = () => {
   window.plugin.drawTools.editing = false;
   if (!window.plugin.drawTools.fillPending) return;
   window.plugin.drawTools.fillPending = false;
-  window.plugin.drawTools.EDFstatus = !IITC.settings.get('draw-tools.fill');
+  window.plugin.drawTools.EDFstatus = !IITC.options.get('draw-tools.fill');
   window.plugin.drawTools.toggleOpacityOpt();
   window.plugin.drawTools.clearAndDraw();
 };
@@ -960,14 +961,14 @@ window.plugin.drawTools.onDeleteStart = () => {
 window.plugin.drawTools.onDeleteStop = () => {
   window.plugin.drawTools.editing = false;
   window.plugin.drawTools.fillPending = false;
-  window.plugin.drawTools.EDFstatus = !IITC.settings.get('draw-tools.fill');
+  window.plugin.drawTools.EDFstatus = !IITC.options.get('draw-tools.fill');
   window.plugin.drawTools.toggleOpacityOpt();
   window.plugin.drawTools.clearAndDraw();
 };
 
-// fill: the new value of the setting; without it the setting flips. onChange redraws the polygons
-window.plugin.drawTools.toggleEDF = (fill = !IITC.settings.get('draw-tools.fill')) => {
-  IITC.settings.set('draw-tools.fill', fill);
+// fill: the new value of the option; without it the option flips. onChange redraws the polygons
+window.plugin.drawTools.toggleEDF = (fill = !IITC.options.get('draw-tools.fill')) => {
+  IITC.options.set('draw-tools.fill', fill);
 };
 
 window.plugin.drawTools.toggleOpacityOpt = function () {
