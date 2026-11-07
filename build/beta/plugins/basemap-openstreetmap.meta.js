@@ -2,7 +2,7 @@
 // @author         jonatkins
 // @name           IITC plugin: OpenStreetMap.org map
 // @category       Map Tiles
-// @version        0.1.7.20261105.105442
+// @version        0.1.7.20261107.100239
 // @description    Add the native OpenStreetMap.org map tiles as an optional layer.
 // @id             basemap-openstreetmap
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

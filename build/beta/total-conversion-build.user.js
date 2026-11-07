@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261105.105442
+// @version        0.43.2.20261107.100239
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-05-105442';
+plugin_info.dateTimeVersion = '2026-11-07-100239';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-05-105442';
+window.iitcBuildDate = '2026-11-07-100239';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -305,7 +305,7 @@ document.head.innerHTML =
   '</style>' +
   '<style>' +
   '\
-@media print{.leaflet-control-container,#chatcontrols,#chat,#chatinput,#sidebartoggle,#sidebar,#updatestatus,#portal_highlight_select{display:none!important}}.leaflet-control{-webkit-user-select:none;user-select:none}.leaflet-control-container .leaflet-top.leaflet-left{flex-flow:column wrap;align-content:flex-start;align-items:flex-start;width:700px;height:calc(100% - 126px);max-height:90%;display:flex}.leaflet-control-layers-overlays label.disabled{cursor:help;text-decoration:line-through}.leaflet-control-layers-base{float:left;max-height:600px;overflow-y:auto}.leaflet-control-layers-overlays{float:left;border-left:1px solid #ddd;max-height:600px;margin-left:8px;padding-left:8px;overflow-y:auto}.leaflet-control-layers-separator{display:none}.leaflet-left .leaflet-control.chat-expand{margin-left:720px}.leaflet-left,.leaflet-right{grid-gap:10px;justify-items:baseline;display:grid}.leaflet-right{justify-items:end}.leaflet-left .leaflet-control,.leaflet-right .leaflet-control{margin:0}.leaflet-top{margin-top:var(--safe-area-inset-top);top:10px}.leaflet-right{margin-right:var(--safe-area-inset-right);right:10px}.leaflet-bottom{margin-bottom:calc(22px + var(--safe-area-inset-bottom));bottom:10px}.leaflet-left{margin-left:var(--safe-area-inset-left);left:10px}.leaflet-control-scale{order:-90}.leaflet-bar{box-shadow:none;border:2px solid #0003}.leaflet-bar a{text-decoration:none}.leaflet-control-zoom-in,.leaflet-control-zoom-out{background-size:18px;font-size:0!important}.leaflet-control-zoom-in{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}.leaflet-control-zoom-out{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}#map .leaflet-popup{pointer-events:none}#map .leaflet-popup-content-wrapper{border:1px solid var(--color-bg-border);pointer-events:auto;background:#0e3d4e;border-radius:0}#map .leaflet-popup-content{color:var(--color-primary);margin:5px 8px}#map .leaflet-popup-close-button{pointer-events:auto;width:10px;height:10px;padding:2px 1px 0 0;font-size:12px;line-height:8px}#map .leaflet-popup-tip{background:var(--color-bg-border);width:1px;height:20px;margin:0 0 0 20px;padding:0;transform:none}body:not(.icons-unavailable) .leaflet-control-layers-toggle,body:not(.icons-unavailable) .leaflet-retina .leaflet-control-layers-toggle{background-image:none}.leaflet-control-layers-toggle{justify-content:center;align-items:center;display:flex}.leaflet-control-layers-toggle:before{content:"layers";color:#454545;font-family:IITC Material Symbols;font-size:28px}#chatcontrols{color:var(--color-primary);background:var(--color-bg-trans);bottom:calc(var(--chat-shrinked) + var(--safe-area-inset-bottom) + 22px);left:var(--safe-area-inset-left);z-index:3000;height:26px;padding-left:1px;position:absolute}#chatcontrols .toggle{font-size:20px;line-height:24px}#chatcontrols .toggle:before{content:"expand_less"}#chatcontrols.expand{top:var(--safe-area-inset-top);bottom:auto}#chatcontrols.expand .toggle:before{content:"expand_more"}#chatcontrols a{text-align:center;border:1px solid var(--color-bg-border);vertical-align:top;width:94px;height:24px;margin-left:-1px;line-height:24px;display:inline-block}#chatcontrols a:first-child{letter-spacing:-1px;text-decoration:none}#chatcontrols a.active{border-color:var(--color-primary);background:var(--color-bg);border-bottom-width:0;font-weight:700}#chatcontrols .loading{background-color:color-mix(RED 33%, transparent);animation:1.2s linear infinite chatloading}#chatcontrols a.active+a{border-left-color:var(--color-primary)}@keyframes chatloading{0%{background-color:color-mix(RED 40%, transparent)}50%{background-color:color-mix(RED 10%, transparent)}to{background-color:color-mix(RED 40%, transparent)}}#chat{width:708px;max-width:100vw;height:var(--chat-shrinked);bottom:calc(var(--safe-area-inset-bottom) + 23px);padding-left:var(--safe-area-inset-left);z-index:3000;background:var(--color-bg-trans);color:var(--color-secondary);border:1px solid var(--color-bg-border);box-sizing:border-box;border-bottom:0;line-height:15px;position:absolute;left:0}#chat.expand{height:auto;top:calc(var(--safe-area-inset-top) + 25px)}#chat .divider{color:#bbb}#chat .divider td:nth-child(2){text-align:center}em{color:red;font-style:normal}#chat>div{box-sizing:border-box;height:100%;padding:2px;position:relative;overflow:hidden scroll}#chat table,#chatinput table{table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;min-height:100%;margin-bottom:1px}#chat table tr:last-child,#chatinput table{height:100%}#chatinput.public mark,#chatinput.public input{color:#f66}#chatinput.alerts mark{color:#bbb}#chat td,#chatinput td{vertical-align:top;padding-bottom:3px;font-size:13px}#chat td:first-child,#chatinput td:first-child{color:#bbb;white-space:nowrap;width:44px;padding-left:2px;overflow:hidden}#chat time{cursor:help}#chat td:nth-child(2),#chatinput td:nth-child(2){white-space:nowrap;width:91px;padding-left:2px;overflow:hidden}#chat td.system_narrowcast{color:#f66}#chatall tr.faction td:nth-child(3):before,#chatalerts tr.faction td:nth-child(3):before{content:"[faction]";color:#f88;background-color:#500;margin-right:.2rem}#chatall tr.public td:nth-child(3):before,#chatalerts tr.public td:nth-child(3):before{content:"[public]";color:#ff6;background-color:#550;margin-right:.2rem}mark{background:0 0}.invisep{color:#0000;width:1px;height:1px;display:inline-block;overflow:hidden}#chatinput{background:var(--color-bg-trans);width:708px;max-width:100vw;height:calc(var(--safe-area-inset-bottom) + 23px);border:1px solid var(--color-bg-border);z-index:3001;box-sizing:border-box;padding:0 2px;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);position:absolute;bottom:0;left:0}#chatinput td{vertical-align:middle;padding-bottom:1px}#chatinput input{color:var(--color-secondary);background:0 0;width:100%;height:100%;padding:3px 4px 1px}.bidi-isolate{unicode-bidi:isolate}.pl_nudge_date{color:#ffd652;background-color:#724510;border-top:1px solid #ffd652;border-bottom:1px solid #ffd652;border-left:1px solid #ffd652;width:36px;height:18px;padding-left:2px;display:block;position:relative;left:-2px}.pl_nudge_date:after{content:"";background:url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png) no-repeat;width:5px;height:20px;position:absolute;top:-1px;right:-5px}.pl_nudge_player{cursor:pointer}.pl_nudge_me{color:#ffd652}#searchwrapper,#searchbox{position:relative}#search{width:100%;height:2em;min-height:var(--icon-target-size);padding-left:max(2em, var(--icon-target-size));padding-right:max(4em, calc(2 * var(--icon-target-size)))}#search::-webkit-search-cancel-button{-webkit-appearance:none}#searchicon,#searchcancel,#buttongeolocation{color:#bbb;min-width:var(--icon-target-size);min-height:var(--icon-target-size);background-color:#0000;border:0 #0000;justify-content:center;align-items:center;margin:auto 0;padding:0 .1em;font-size:20px;display:flex;position:absolute;top:0;bottom:0}#searchicon iitc-icon,#buttongeolocation iitc-icon{font-size:1em}#searchcancel iitc-icon{font-size:.9em}#searchicon{left:0}#searchcancel{cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;right:24px}#searchcancel.visible{opacity:1;pointer-events:auto}#buttongeolocation{cursor:pointer;right:0}#buttongeolocation:focus{outline:1px dotted var(--color-primary)}.searchquery{max-height:25em;overflow-y:auto}#searchwrapper h3{cursor:pointer;height:auto;padding:0 0 0 23px;font-size:1em;position:relative}#searchwrapper h3:before{content:"expand_less";margin-right:2px;font-family:IITC Material Symbols;font-size:14px;font-weight:400;transition:transform .3s;position:absolute;left:4px}#searchwrapper .searchquery.collapsed h3:before{transform:rotate(180deg)}#searchwrapper ul{max-height:100%;padding-left:16px;overflow:hidden}#searchwrapper li{cursor:pointer}#searchwrapper .searchquery.collapsed ul{max-height:0}#searchwrapper li a{background-position:1px;background-repeat:no-repeat;background-size:12px 12px;margin-left:-14px;padding-left:14px}#searchwrapper li:focus a,#searchwrapper li:hover a{text-decoration:underline}#searchwrapper li em{color:#ccc;font-size:.9em}#scrollwrapper{right:calc(-2 * var(--hidden-scrollbar-width) + 2px + var(--safe-area-inset-right));top:var(--safe-area-inset-top);width:calc(var(--sidebar-width) + 2 * var(--hidden-scrollbar-width));bottom:calc(var(--safe-area-inset-bottom) + 45px);z-index:3001;pointer-events:none;position:fixed;overflow:hidden auto}#sidebar{background-color:var(--color-bg-trans);border-left:1px solid var(--color-bg-border);color:#888;width:calc(var(--sidebar-width) + var(--hidden-scrollbar-width) + 1px);pointer-events:auto;max-height:100%;position:relative;top:0;left:0;overflow:hidden scroll}#sidebartoggle{width:20px;top:calc(var(--safe-area-inset-top) + 103px);z-index:3002;background-color:var(--color-bg-trans);color:var(--color-primary);border:1px solid var(--color-bg-border);right:var(--safe-area-inset-right);border-right:none;border-radius:5px 0 0 5px;margin-top:-31px;padding:20px 0;line-height:10px;text-decoration:none;display:block;position:absolute}#sidebartoggle .toggle{font-size:20px}#sidebartoggle .open:before{content:"chevron_left"}#sidebartoggle .close:before{content:"chevron_right"}body.sidebar-open .leaflet-right{margin-right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}body.sidebar-open #sidebartoggle{right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}#sidebar>*{box-sizing:border-box;width:calc(var(--sidebar-width) + 1px);border-bottom:1px solid #20a8b1}#playerstat{height:30px}h2{color:var(--color-primary);cursor:help;box-sizing:border-box;width:100%;margin:0;padding:0 4px;font-size:21px}h2 #name{vertical-align:top;white-space:nowrap;font-weight:300;display:inline}h2 #name .playername{text-overflow:ellipsis;max-width:70%;display:inline-block;overflow:hidden}h2 #name:hover .playername{max-width:50%}h2 #name:hover #signout{display:inline-block}h2 #stats{float:right;height:100%;overflow:hidden}h2 sup{margin-bottom:-2px;font-size:11px;display:block}h2 sub{margin-bottom:-2px;font-size:11px;display:block}#signout{background-color:var(--color-bg-trans-50);vertical-align:text-top;padding:0 4px;font-size:12px;font-weight:400;display:none}#gamestat span{cursor:help;box-sizing:border-box;padding:0 3px;font-weight:700;display:inline-block}#gamestat span.res{background:color-mix(var(--color-res) 60%, black)}#gamestat span.enl{background:color-mix(var(--color-enl) 60%, black)}input:not([type]),.input{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=text]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=password]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=number]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=email]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=search]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=url]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}.leaflet-control-layers input{height:auto;padding:0}#portaltitle{white-space:nowrap;margin:2px 0;line-height:24px;display:flex}#portaltitle .value{text-overflow:ellipsis;flex:1;overflow:hidden}#portaltitle iitc-icon{font-size:24px}#portaltitle .close{cursor:pointer;color:var(--color-primary);margin-right:2px;font-weight:400}.imgpreview{cursor:help;background:50%/contain no-repeat;height:190px;position:relative;overflow:hidden}.imgpreview img.hide,.imgpreview .portalDetails{display:none}#level{text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000,0 0 5px #fff;text-align:right;float:right;margin-right:15px;font-size:40px;display:block}.mods{text-align:center;width:296px;height:67px;margin:3px auto 1px}.mods span{float:left;text-align:center;cursor:help;background-color:#0000004d;border:1px solid #666;width:63px;height:63px;margin:0 2px;padding:2px;display:block;overflow:hidden}.mods span:not([title]){cursor:auto}.res .mods span,.res .meter{border:1px solid #0076b6}.enl .mods span,.enl .meter{border:1px solid #017f01}#randdetails,#resodetails{box-sizing:border-box;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;padding:0 4px}#randdetails td,#resodetails td{text-overflow:ellipsis;vertical-align:top;white-space:nowrap;width:50%;overflow:hidden}#randdetails th,#resodetails th{text-align:right;width:62px;padding:0 4px;font-weight:400}#randdetails th+th,#resodetails th+th{text-align:left;padding-left:4px;padding-right:4px}#randdetails td:first-child,#resodetails td:first-child{text-align:right;padding-left:2px}#randdetails td:last-child,#resodetails td:last-child{text-align:left;padding-right:2px}#randdetails{margin-top:4px;margin-bottom:5px}#randdetails tt{cursor:help;font-family:inherit}#artifact_target,#artifact_fragments{margin:4px 8px}#resodetails{margin-bottom:0}.meter{cursor:help;box-sizing:border-box;background:#000;width:100%;height:18px;padding:1px;display:inline-block;position:relative;top:0;left:0}.meter.north{overflow:hidden}.meter.north:before{content:"";background-color:red;border:1px solid #000;border-radius:100%;width:6px;height:6px;margin-left:-4px;display:block;position:absolute;top:-3px;left:50%}.meter span{height:14px;display:block}.meter-level{text-shadow:0 0 .3em gray;text-align:center;word-spacing:4px;position:absolute;top:-2px;left:0;right:0}.linkdetails{text-align:center;margin-bottom:0}.linkdetails aside{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox{display:none!important}#toolbox,#toolbox_component{text-align:left}#toolbox>a,#toolbox_component>a{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox_component>a>iitc-icon{margin-top:-2px;margin-right:2px;font-size:1em}#portaldetails{min-height:63px}#historydetails{text-align:center;color:var(--color-primary)}#historydetails span{color:#ff4a4a}#historydetails span.completed{color:#03fe03}#updatestatus{width:var(--sidebar-width);background-color:var(--color-bg-trans);border-bottom:0;border-top:1px solid var(--color-bg-border);border-left:1px solid var(--color-bg-border);color:var(--color-primary);padding:4px;padding-bottom:var(--safe-area-inset-bottom);bottom:0;right:var(--safe-area-inset-right);z-index:3002;box-sizing:border-box;font-size:13px;position:fixed}#updatestatus .map{margin-left:8px}#updatestatus.ghost{pointer-events:none;background:0 0;border:0}#updatestatus.ghost>*{pointer-events:auto}#loadlevel{color:#000;background:#fff;border:0 solid #20a8b1;border-width:0 1px;min-width:1.8em;margin:-4px 0;padding:4px .2em;display:inline-block}#innerstatus .failed-request{color:#f66}.redeemReward{padding:0;font-family:Inconsolata,Consolas,Menlo,Courier New,monospace;font-size:14px;list-style-type:none}.redeemReward .itemlevel{text-shadow:0 0 1px #000;font-weight:700}table.artifact tr>*{background:var(--color-bg-trans)}table.artifact td.info{min-width:110px}table.artifact .portal{min-width:200px}.cellscore .ui-accordion-header{border:1px solid var(--color-bg-border);margin-top:-1px;display:block}.cellscore .ui-accordion-content{border:1px solid var(--color-bg-border);margin-top:-1px;display:block}.cellscore .ui-accordion-header{color:var(--color-primary);outline:none}.cellscore .ui-accordion-header:before{content:"⊞";margin-right:2px;font-size:18px}.cellscore .ui-accordion-header-active:before{content:"⊟"}.cellscore table{width:90%;max-width:360px}.cellscore .historychart>div{overflow:auto}.cellscore .logscale{vertical-align:middle;margin-top:0}.cellscore #overview{width:100%}.cellscore #overview td{white-space:nowrap;text-align:right;width:1%}.cellscore #overview th{white-space:nowrap;text-align:left;width:1%;padding-left:4px}@-moz-document url-prefix(){.cellscore .logscale{transform:scale(.8)}.cellscore>.historychart{overflow-y:hidden!important}}g.checkpoint:hover circle{fill-opacity:1;stroke-width:2px}.cellscore th,.cellscore td{text-align:left;padding-left:5px}.checkpoint_table{border-collapse:collapse}.checkpoint_table th{text-align:right}.checkpoint_table td{text-align:right}.checkpointtooltip{min-width:180px}.checkpoint_timers table{width:100%;padding-top:4px}.ui-dialog-aboutIITC .plugin-is-standard{color:#a9a9a9}.ui-dialog-aboutIITC .plugin-error{text-decoration:line-through}.ui-tooltip,.ui-dialog{z-index:9500;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);color:var(--color-secondary);padding:2px 4px;font-size:13px;line-height:15px;position:absolute}.ui-tooltip{max-width:300px}.ui-widget-overlay{z-index:10000;opacity:.6;background:#444;width:100%;height:100%;position:fixed;top:0;left:0}.ui-modal{z-index:10001!important}.ui-tooltip{z-index:10002!important}.ui-tooltip,.ui-dialog a{color:var(--color-primary)}.ui-dialog{border-radius:2px;max-width:calc(100vw - 1rem);padding:0}.ui-dialog-modal .ui-dialog-titlebar-close{display:none}.ui-dialog-titlebar{text-align:center;background-color:#083c4ee6;padding:4px;font-size:13px;line-height:15px}.ui-dialog-title,.text-overflow-ellipsis.ui-dialog-title{width:calc(100% - 45px);margin-left:8px;margin-right:45px;font-weight:700}.ui-dialog-title-active{color:var(--color-primary)}.ui-dialog-title-inactive{color:#fff}.ui-dialog-titlebar-button{vertical-align:middle;text-align:center;cursor:pointer;border:1px solid var(--color-bg-border);background-color:#0000;width:17px;height:17px;padding:0;display:table-cell;position:absolute;top:3px}.ui-dialog-titlebar-button:active{background-color:#20a8b1}.ui-dialog-titlebar-button-close{right:4px}.ui-dialog-titlebar-button-collapse{right:25px}.ui-dialog-titlebar-button-collapse-collapsed{background-color:var(--color-bg-border)}.ui-dialog-titlebar-button-collapse:after,.ui-dialog-titlebar-button-close:after,.ui-dialog-titlebar-button-close:before{content:"";border-top:2px solid var(--color-bg-border);width:11px;height:0;margin-left:-6px;position:absolute;top:3px;left:50%}.ui-dialog-titlebar-button-close:after{transform:translateY(3.5px)rotate(45deg)}.ui-dialog-titlebar-button-close:before{transform:translateY(3.5px)rotate(-45deg)}.ui-dialog-titlebar-button.ui-state-active:after,.ui-dialog-titlebar-button.ui-state-active:before,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:after,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:before,.ui-dialog-titlebar-button:active:after,.ui-dialog-titlebar-button:active:before{border-top-color:#083c4ee6}.ui-dialog-content{padding:12px;position:relative;overflow:auto;max-height:calc(100vh - 83px)!important}.ui-dialog-content-hidden{display:none!important}.ui-dialog-buttonpane{border-top:1px solid #20a8b1;padding:6px}.ui-dialog-buttonset{text-align:right}.ui-dialog-buttonset button,.ui-dialog-content button{min-width:40px;color:var(--color-primary);border:1px solid var(--color-primary);background-color:var(--color-bg-trans);padding:2px}.ui-dialog-buttonset button:hover{text-decoration:underline}body.icons-unavailable #searchwrapper h3:before{content:"▲"}body.icons-unavailable #chatcontrols .toggle:before{content:"▲"}body.icons-unavailable #chatcontrols.expand .toggle:before{content:"▼"}body.icons-unavailable .ui-tabs-nav .ui-icon-close:before{content:"×"}body.icons-unavailable #sidebartoggle .open:before{content:"◀"}body.icons-unavailable #sidebartoggle .close:before{content:"▶"}body.icons-unavailable .leaflet-control-layers-toggle:before{content:""}:root{--safe-area-inset-top:env(safe-area-inset-top);--safe-area-inset-bottom:env(safe-area-inset-bottom);--safe-area-inset-left:env(safe-area-inset-left);--safe-area-inset-right:env(safe-area-inset-right);--sidebar-width:300px;--hidden-scrollbar-width:20px;--chat-shrinked:60px;--icon-target-size:24px;--color-enl:#03fe03;--color-res:#00c5ff;--color-mac:#ff2020;--color-none:#fff;--color-primary:#ffce00;--color-secondary:#eee;--color-bg:#08304e;--color-bg-trans:color-mix(var(--color-bg) 90%, transparent);--color-bg-trans-50:color-mix(var(--color-bg) 50%, transparent);--color-bg-border:#20a8b1}.text-overflow-ellipsis{white-space:nowrap;text-overflow:ellipsis;vertical-align:text-bottom;width:100%;display:inline-block;overflow:hidden}html,body{background:#0e3d4e;width:100%;height:100%;overflow:hidden}#map{width:100%;height:100%;overflow:visible}body{margin:0;font-family:Roboto,Helvetica Neue,Helvetica,sans-serif;font-size:14px}.icon-button{cursor:pointer;min-width:var(--icon-target-size);min-height:var(--icon-target-size);justify-content:center;align-items:center;display:inline-flex}i.tiny{font-size:1rem}i.small{font-size:2rem}i.medium{font-size:4rem}i.large{font-size:6rem}.enl{color:var(--color-enl)}.res{color:var(--color-res)}.mac{color:var(--color-mac)}.none{color:var(--color-none)}.nickname{cursor:pointer}a{color:var(--color-primary);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}.help{cursor:help}.toggle{font-family:IITC Material Symbols;line-height:1;display:block}td{vertical-align:top;padding:0}td+td{padding-left:4px}#qrcode>canvas{border:8px solid #fff}.RESISTANCE{color:#00c2ff}.ALIENS,.ENLIGHTENED{color:#28f428}#portal_highlight_select{z-index:2500;color:var(--color-primary);background-color:#0e3c46;font-size:11px;position:absolute;top:5px;left:10px}.portal_details th,.portal_details td{vertical-align:top;text-align:left}.portal_details th{white-space:nowrap;padding-right:1em}.portal_details tr.padding-top th,.portal_details tr.padding-top td{padding-top:.7em}#play_button{display:none}.layer_off_warning{color:var(--color-primary);text-align:center;margin:8px}.cursor_help{cursor:help}.ui-tabs-nav{border-top:1px solid #0000;border-bottom:1px solid #20a8b1;margin:3px 0 0;padding:0;display:block}.ui-tabs-nav:after{content:"";clear:left;width:0;height:0;display:block}.ui-tabs-nav li{float:left;border:1px solid #20a8b1;margin:0 0 -1px;list-style:none;display:block}.ui-tabs-nav li.ui-tabs-active{background:#0f2c3f;border-width:2px 2px 1px;border-bottom-color:#0f2c3f;margin:-1px 1px;font-weight:700}.ui-tabs-nav a{padding:.2em .7em;display:inline-block}.ui-tabs-nav .ui-icon{vertical-align:top;width:16px;height:22px;font-size:0;display:inline-block;position:relative;overflow:hidden}.ui-tabs-nav .ui-icon-close:before{content:"close";text-align:center;vertical-align:baseline;cursor:pointer;width:16px;height:16px;font-family:IITC Material Symbols;font-size:16px;position:absolute;top:2px}.leaflet-marker-icon>svg{height:inherit;width:inherit}.warning{color:#f77;text-shadow:1px 1px #000,-1px -1px #000;text-align:center;font-weight:700}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child{display:none}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2){float:left}::-webkit-input-placeholder{font-style:italic}:-moz-placeholder-shown{font-style:italic}::-moz-placeholder{font-style:italic}' +
+@media print{.leaflet-control-container,#chatcontrols,#chat,#chatinput,#sidebartoggle,#sidebar,#updatestatus,#portal_highlight_select{display:none!important}}.leaflet-control{-webkit-user-select:none;user-select:none}.leaflet-control-container .leaflet-top.leaflet-left{flex-flow:column wrap;align-content:flex-start;align-items:flex-start;width:700px;height:calc(100% - 126px);max-height:90%;display:flex}.leaflet-control-layers-overlays label.disabled{cursor:help;text-decoration:line-through}.leaflet-control-layers-base{float:left;max-height:600px;overflow-y:auto}.leaflet-control-layers-overlays{float:left;border-left:1px solid #ddd;max-height:600px;margin-left:8px;padding-left:8px;overflow-y:auto}.leaflet-control-layers-separator{display:none}.leaflet-left .leaflet-control.chat-expand{margin-left:720px}.leaflet-left,.leaflet-right{grid-gap:10px;justify-items:baseline;display:grid}.leaflet-right{justify-items:end}.leaflet-left .leaflet-control,.leaflet-right .leaflet-control{margin:0}.leaflet-top{margin-top:var(--safe-area-inset-top);top:10px}.leaflet-right{margin-right:var(--safe-area-inset-right);right:10px}.leaflet-bottom{margin-bottom:calc(22px + var(--safe-area-inset-bottom));bottom:10px}.leaflet-left{margin-left:var(--safe-area-inset-left);left:10px}.leaflet-control-scale{order:-90}.leaflet-bar{box-shadow:none;border:2px solid #0003}.leaflet-bar a{text-decoration:none}.leaflet-control-zoom-in,.leaflet-control-zoom-out{background-size:18px;font-size:0!important}.leaflet-control-zoom-in{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}.leaflet-control-zoom-out{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}#map .leaflet-popup{pointer-events:none}#map .leaflet-popup-content-wrapper{border:1px solid var(--color-bg-border);pointer-events:auto;background:#0e3d4e;border-radius:0}#map .leaflet-popup-content{color:var(--color-primary);margin:5px 8px}#map .leaflet-popup-close-button{pointer-events:auto;width:10px;height:10px;padding:2px 1px 0 0;font-size:12px;line-height:8px}#map .leaflet-popup-tip{background:var(--color-bg-border);width:1px;height:20px;margin:0 0 0 20px;padding:0;transform:none}body:not(.icons-unavailable) .leaflet-control-layers-toggle,body:not(.icons-unavailable) .leaflet-retina .leaflet-control-layers-toggle{background-image:none}.leaflet-control-layers-toggle{justify-content:center;align-items:center;display:flex}.leaflet-control-layers-toggle:before{content:"layers";color:#454545;font-family:IITC Material Symbols;font-size:28px}#chatcontrols{color:var(--color-primary);background:var(--color-bg-trans);bottom:calc(var(--chat-shrinked) + var(--safe-area-inset-bottom) + 22px);left:var(--safe-area-inset-left);z-index:3000;height:26px;padding-left:1px;position:absolute}#chatcontrols .toggle{font-size:20px;line-height:24px}#chatcontrols .toggle:before{content:"expand_less"}#chatcontrols.expand{top:var(--safe-area-inset-top);bottom:auto}#chatcontrols.expand .toggle:before{content:"expand_more"}#chatcontrols a{text-align:center;border:1px solid var(--color-bg-border);vertical-align:top;width:94px;height:24px;margin-left:-1px;line-height:24px;display:inline-block}#chatcontrols a:first-child{letter-spacing:-1px;text-decoration:none}#chatcontrols a.active{border-color:var(--color-primary);background:var(--color-bg);border-bottom-width:0;font-weight:700}#chatcontrols .loading{background-color:color-mix(RED 33%, transparent);animation:1.2s linear infinite chatloading}#chatcontrols a.active+a{border-left-color:var(--color-primary)}@keyframes chatloading{0%{background-color:color-mix(RED 40%, transparent)}50%{background-color:color-mix(RED 10%, transparent)}to{background-color:color-mix(RED 40%, transparent)}}#chat{width:708px;max-width:100vw;height:var(--chat-shrinked);bottom:calc(var(--safe-area-inset-bottom) + 23px);padding-left:var(--safe-area-inset-left);z-index:3000;background:var(--color-bg-trans);color:var(--color-secondary);border:1px solid var(--color-bg-border);box-sizing:border-box;border-bottom:0;line-height:15px;position:absolute;left:0}#chat.expand{height:auto;top:calc(var(--safe-area-inset-top) + 25px)}#chat .divider{color:#bbb}#chat .divider td:nth-child(2){text-align:center}em{color:red;font-style:normal}#chat>div{box-sizing:border-box;height:100%;padding:2px;position:relative;overflow:hidden scroll}#chat table,#chatinput table{table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;min-height:100%;margin-bottom:1px}#chat table tr:last-child,#chatinput table{height:100%}#chatinput.public mark,#chatinput.public input{color:#f66}#chatinput.alerts mark{color:#bbb}#chat td,#chatinput td{vertical-align:top;padding-bottom:3px;font-size:13px}#chat td:first-child,#chatinput td:first-child{color:#bbb;white-space:nowrap;width:44px;padding-left:2px;overflow:hidden}#chat time{cursor:help}#chat td:nth-child(2),#chatinput td:nth-child(2){white-space:nowrap;width:91px;padding-left:2px;overflow:hidden}#chat td.system_narrowcast{color:#f66}#chatall tr.faction td:nth-child(3):before,#chatalerts tr.faction td:nth-child(3):before{content:"[faction]";color:#f88;background-color:#500;margin-right:.2rem}#chatall tr.public td:nth-child(3):before,#chatalerts tr.public td:nth-child(3):before{content:"[public]";color:#ff6;background-color:#550;margin-right:.2rem}mark{background:0 0}.invisep{color:#0000;width:1px;height:1px;display:inline-block;overflow:hidden}#chatinput{background:var(--color-bg-trans);width:708px;max-width:100vw;height:calc(var(--safe-area-inset-bottom) + 23px);border:1px solid var(--color-bg-border);z-index:3001;box-sizing:border-box;padding:0 2px;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);position:absolute;bottom:0;left:0}#chatinput td{vertical-align:middle;padding-bottom:1px}#chatinput input{color:var(--color-secondary);background:0 0;width:100%;height:100%;padding:3px 4px 1px}.bidi-isolate{unicode-bidi:isolate}.pl_nudge_date{color:#ffd652;background-color:#724510;border-top:1px solid #ffd652;border-bottom:1px solid #ffd652;border-left:1px solid #ffd652;width:36px;height:18px;padding-left:2px;display:block;position:relative;left:-2px}.pl_nudge_date:after{content:"";background:url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png) no-repeat;width:5px;height:20px;position:absolute;top:-1px;right:-5px}.pl_nudge_player{cursor:pointer}.pl_nudge_me{color:#ffd652}#searchwrapper,#searchbox{position:relative}#search{width:100%;height:2em;min-height:var(--icon-target-size);padding-left:max(2em, var(--icon-target-size));padding-right:max(4em, calc(2 * var(--icon-target-size)))}#search::-webkit-search-cancel-button{-webkit-appearance:none}#searchicon,#searchcancel,#buttongeolocation{color:#bbb;min-width:var(--icon-target-size);min-height:var(--icon-target-size);background-color:#0000;border:0 #0000;justify-content:center;align-items:center;margin:auto 0;padding:0 .1em;font-size:20px;display:flex;position:absolute;top:0;bottom:0}#searchicon iitc-icon,#buttongeolocation iitc-icon{font-size:1em}#searchcancel iitc-icon{font-size:.9em}#searchicon{left:0}#searchcancel{cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;right:24px}#searchcancel.visible{opacity:1;pointer-events:auto}#buttongeolocation{cursor:pointer;right:0}#buttongeolocation:focus{outline:1px dotted var(--color-primary)}.searchquery{max-height:25em;overflow-y:auto}#searchwrapper h3{cursor:pointer;height:auto;padding:0 0 0 23px;font-size:1em;position:relative}#searchwrapper h3:before{content:"expand_less";margin-right:2px;font-family:IITC Material Symbols;font-size:14px;font-weight:400;transition:transform .3s;position:absolute;left:4px}#searchwrapper .searchquery.collapsed h3:before{transform:rotate(180deg)}#searchwrapper ul{max-height:100%;padding-left:16px;overflow:hidden}#searchwrapper li{cursor:pointer}#searchwrapper .searchquery.collapsed ul{max-height:0}#searchwrapper li a{background-position:1px;background-repeat:no-repeat;background-size:12px 12px;margin-left:-14px;padding-left:14px}#searchwrapper li:focus a,#searchwrapper li:hover a{text-decoration:underline}#searchwrapper li em{color:#ccc;font-size:.9em}#scrollwrapper{right:calc(-2 * var(--hidden-scrollbar-width) + 2px + var(--safe-area-inset-right));top:var(--safe-area-inset-top);width:calc(var(--sidebar-width) + 2 * var(--hidden-scrollbar-width));bottom:calc(var(--safe-area-inset-bottom) + 45px);z-index:3001;pointer-events:none;position:fixed;overflow:hidden auto}#sidebar{background-color:var(--color-bg-trans);border-left:1px solid var(--color-bg-border);color:#888;width:calc(var(--sidebar-width) + var(--hidden-scrollbar-width) + 1px);pointer-events:auto;max-height:100%;position:relative;top:0;left:0;overflow:hidden scroll}#sidebartoggle{width:20px;top:calc(var(--safe-area-inset-top) + 103px);z-index:3002;background-color:var(--color-bg-trans);color:var(--color-primary);border:1px solid var(--color-bg-border);right:var(--safe-area-inset-right);border-right:none;border-radius:5px 0 0 5px;margin-top:-31px;padding:20px 0;line-height:10px;text-decoration:none;display:block;position:absolute}#sidebartoggle .toggle{font-size:20px}#sidebartoggle .open:before{content:"chevron_left"}#sidebartoggle .close:before{content:"chevron_right"}body.sidebar-open .leaflet-right{margin-right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}body.sidebar-open #sidebartoggle{right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}#sidebar>*{box-sizing:border-box;width:calc(var(--sidebar-width) + 1px);border-bottom:1px solid #20a8b1}#playerstat{height:30px}h2{color:var(--color-primary);cursor:help;box-sizing:border-box;width:100%;margin:0;padding:0 4px;font-size:21px}h2 #name{vertical-align:top;white-space:nowrap;font-weight:300;display:inline}h2 #name .playername{text-overflow:ellipsis;max-width:70%;display:inline-block;overflow:hidden}h2 #name:hover .playername{max-width:50%}h2 #name:hover #signout{display:inline-block}h2 #stats{float:right;height:100%;overflow:hidden}h2 sup{margin-bottom:-2px;font-size:11px;display:block}h2 sub{margin-bottom:-2px;font-size:11px;display:block}#signout{background-color:var(--color-bg-trans-50);vertical-align:text-top;padding:0 4px;font-size:12px;font-weight:400;display:none}#gamestat span{cursor:help;box-sizing:border-box;padding:0 3px;font-weight:700;display:inline-block}#gamestat span.res{background:color-mix(var(--color-res) 60%, black)}#gamestat span.enl{background:color-mix(var(--color-enl) 60%, black)}input:not([type]),.input{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=text]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=password]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=number]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=email]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=search]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=url]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}.leaflet-control-layers input{height:auto;padding:0}#portaltitle{white-space:nowrap;margin:2px 0;line-height:24px;display:flex}#portaltitle .value{text-overflow:ellipsis;flex:1;overflow:hidden}#portaltitle iitc-icon{font-size:24px}#portaltitle .close{cursor:pointer;color:var(--color-primary);margin-right:2px;font-weight:400}.imgpreview{cursor:help;background:50%/contain no-repeat;height:190px;position:relative;overflow:hidden}.imgpreview img.hide,.imgpreview .portalDetails{display:none}#level{text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000,0 0 5px #fff;text-align:right;float:right;margin-right:15px;font-size:40px;display:block}.mods{text-align:center;width:296px;height:67px;margin:3px auto 1px}.mods span{float:left;text-align:center;cursor:help;background-color:#0000004d;border:1px solid #666;width:63px;height:63px;margin:0 2px;padding:2px;display:block;overflow:hidden}.mods span:not([title]){cursor:auto}.res .mods span,.res .meter{border:1px solid #0076b6}.enl .mods span,.enl .meter{border:1px solid #017f01}#randdetails,#resodetails{box-sizing:border-box;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;padding:0 4px}#randdetails td,#resodetails td{text-overflow:ellipsis;vertical-align:top;white-space:nowrap;width:50%;overflow:hidden}#randdetails th,#resodetails th{text-align:right;width:62px;padding:0 4px;font-weight:400}#randdetails th+th,#resodetails th+th{text-align:left;padding-left:4px;padding-right:4px}#randdetails td:first-child,#resodetails td:first-child{text-align:right;padding-left:2px}#randdetails td:last-child,#resodetails td:last-child{text-align:left;padding-right:2px}#randdetails{margin-top:4px;margin-bottom:5px}#randdetails tt{cursor:help;font-family:inherit}#artifact_target,#artifact_fragments{margin:4px 8px}#resodetails{margin-bottom:0}.meter{cursor:help;box-sizing:border-box;background:#000;width:100%;height:18px;padding:1px;display:inline-block;position:relative;top:0;left:0}.meter.north{overflow:hidden}.meter.north:before{content:"";background-color:red;border:1px solid #000;border-radius:100%;width:6px;height:6px;margin-left:-4px;display:block;position:absolute;top:-3px;left:50%}.meter span{height:14px;display:block}.meter-level{text-shadow:0 0 .3em gray;text-align:center;word-spacing:4px;position:absolute;top:-2px;left:0;right:0}.linkdetails{text-align:center;margin-bottom:0}.linkdetails aside{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox{display:none!important}#toolbox,#toolbox_component{text-align:left}#toolbox>a,#toolbox_component>a{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox_component>a>iitc-icon{margin-top:-2px;margin-right:2px;font-size:1em}#portaldetails{min-height:63px}#historydetails{text-align:center;color:var(--color-primary)}#historydetails span{color:#ff4a4a}#historydetails span.completed{color:#03fe03}#updatestatus{width:var(--sidebar-width);background-color:var(--color-bg-trans);border-bottom:0;border-top:1px solid var(--color-bg-border);border-left:1px solid var(--color-bg-border);color:var(--color-primary);padding:4px;padding-bottom:var(--safe-area-inset-bottom);bottom:0;right:var(--safe-area-inset-right);z-index:3002;box-sizing:border-box;font-size:13px;position:fixed}#updatestatus .map{margin-left:8px}#updatestatus.ghost{pointer-events:none;background:0 0;border:0}#updatestatus.ghost>*{pointer-events:auto}#loadlevel{color:#000;background:#fff;border:0 solid #20a8b1;border-width:0 1px;min-width:1.8em;margin:-4px 0;padding:4px .2em;display:inline-block}#innerstatus .failed-request{color:#f66}.redeemReward{padding:0;font-family:Inconsolata,Consolas,Menlo,Courier New,monospace;font-size:14px;list-style-type:none}.redeemReward .itemlevel{text-shadow:0 0 1px #000;font-weight:700}table.artifact tr>*{background:var(--color-bg-trans)}table.artifact td.info{min-width:110px}table.artifact .portal{min-width:200px}.ui-dialog-content.region-scoreboard-dialog,.region-scoreboard-dialog.safe-area-insets{flex-direction:column;min-height:0;display:flex;overflow:hidden}.region-scoreboard-dialog.safe-area-insets{box-sizing:border-box}.cellscore{box-sizing:border-box;flex-direction:column;flex:auto;gap:10px;min-height:0;padding:8px;display:flex;overflow-y:auto}.cellscore details.scoreboard-section{border:1px solid var(--color-bg-border);border-radius:2px;padding:8px}.cellscore .scoreboard-section>summary{color:var(--color-primary);cursor:pointer;margin:0;font-weight:700}.cellscore .region-selection>summary{flex-wrap:wrap;gap:4px 8px;display:flex}.cellscore .region-summary-name{margin-left:auto}.cellscore .scoreboard-section[open]>summary{margin-bottom:8px}.cellscore table{white-space:nowrap;width:80%;max-width:100%;margin-left:auto;margin-right:auto}.cellscore .historychart>div{width:100%}.cellscore .history-chart{width:100%;height:auto;margin-top:.5em;margin-bottom:.5em;display:block}.cellscore .logscale{vertical-align:middle;margin-top:0}.cellscore #overview{width:100%}.cellscore #overview td{white-space:nowrap;text-align:right;width:1%}.cellscore #overview th{white-space:nowrap;text-align:left;width:1%;padding-left:4px}.cellscore .region-select-form{flex-wrap:wrap;align-items:end;gap:8px;display:flex}.cellscore .region-select-form label{flex-direction:column;flex:110px;gap:3px;display:flex}.cellscore .region-select-form input{width:100%}.cellscore .checkpoint-cycle-controls{flex-wrap:wrap;justify-content:center;gap:1em;margin-bottom:8px;display:flex}.cellscore .checkpoint-cycle-controls label{align-items:center;gap:6px;display:inline-flex}.cellscore .checkpoint-cycle-controls .checkpoint-date{min-width:0}.cellscore .checkpoint-history{touch-action:pan-y}.cellscore .mac_pause{text-align:center;border:1px solid var(--color-bg-border);border-radius:5px;font-size:larger}.cellscore .daychange{border-bottom:1px dashed var(--color-bg-border)}.cellscore .region-error{color:#ff8080;margin:6px 0 0}g.checkpoint:hover circle{fill-opacity:1;stroke-width:2px}.cellscore th,.cellscore td{text-align:left;padding-left:5px}.checkpoint_table{border-collapse:collapse}.checkpoint_table th{text-align:right}.checkpoint_table td{text-align:right}.checkpointtooltip{min-width:180px}.checkpoint_timers{border:1px solid var(--color-bg-border);background:hsl(from var(--color-bg) h s 20%);border-radius:2px;flex:none;margin-top:4px;padding:4px 8px 8px}.checkpoint-timer-row{white-space:nowrap;justify-content:space-between;gap:8px;display:flex}@media (width<=600px){.cellscore{padding:6px}.cellscore .region-select-form{flex-direction:column;align-items:stretch}.checkpoint-timer-row{gap:4px;font-size:.75em}}.ui-dialog-aboutIITC .plugin-is-standard{color:#a9a9a9}.ui-dialog-aboutIITC .plugin-error{text-decoration:line-through}.ui-tooltip,.ui-dialog{z-index:9500;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);color:var(--color-secondary);padding:2px 4px;font-size:13px;line-height:15px;position:absolute}.ui-tooltip{max-width:300px}.ui-widget-overlay{z-index:10000;opacity:.6;background:#444;width:100%;height:100%;position:fixed;top:0;left:0}.ui-modal{z-index:10001!important}.ui-tooltip{z-index:10002!important}.ui-tooltip,.ui-dialog a{color:var(--color-primary)}.ui-dialog{border-radius:2px;max-width:calc(100vw - 1rem);padding:0}.ui-dialog-modal .ui-dialog-titlebar-close{display:none}.ui-dialog-titlebar{text-align:center;background-color:#083c4ee6;padding:4px;font-size:13px;line-height:15px}.ui-dialog-title,.text-overflow-ellipsis.ui-dialog-title{width:calc(100% - 45px);margin-left:8px;margin-right:45px;font-weight:700}.ui-dialog-title-active{color:var(--color-primary)}.ui-dialog-title-inactive{color:#fff}.ui-dialog-titlebar-button{vertical-align:middle;text-align:center;cursor:pointer;border:1px solid var(--color-bg-border);background-color:#0000;width:17px;height:17px;padding:0;display:table-cell;position:absolute;top:3px}.ui-dialog-titlebar-button:active{background-color:#20a8b1}.ui-dialog-titlebar-button-close{right:4px}.ui-dialog-titlebar-button-collapse{right:25px}.ui-dialog-titlebar-button-collapse-collapsed{background-color:var(--color-bg-border)}.ui-dialog-titlebar-button-collapse:after,.ui-dialog-titlebar-button-close:after,.ui-dialog-titlebar-button-close:before{content:"";border-top:2px solid var(--color-bg-border);width:11px;height:0;margin-left:-6px;position:absolute;top:3px;left:50%}.ui-dialog-titlebar-button-close:after{transform:translateY(3.5px)rotate(45deg)}.ui-dialog-titlebar-button-close:before{transform:translateY(3.5px)rotate(-45deg)}.ui-dialog-titlebar-button.ui-state-active:after,.ui-dialog-titlebar-button.ui-state-active:before,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:after,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:before,.ui-dialog-titlebar-button:active:after,.ui-dialog-titlebar-button:active:before{border-top-color:#083c4ee6}.ui-dialog-content{padding:12px;position:relative;overflow:auto;max-height:calc(100vh - 83px)!important}.ui-dialog-content-hidden{display:none!important}.ui-dialog-buttonpane{border-top:1px solid #20a8b1;padding:6px}.ui-dialog-buttonset{text-align:right}.ui-dialog-buttonset button,.ui-dialog-content button{min-width:40px;color:var(--color-primary);border:1px solid var(--color-primary);background-color:var(--color-bg-trans);padding:2px}.ui-dialog-buttonset button:hover{text-decoration:underline}body.icons-unavailable #searchwrapper h3:before{content:"▲"}body.icons-unavailable #chatcontrols .toggle:before{content:"▲"}body.icons-unavailable #chatcontrols.expand .toggle:before{content:"▼"}body.icons-unavailable .ui-tabs-nav .ui-icon-close:before{content:"×"}body.icons-unavailable #sidebartoggle .open:before{content:"◀"}body.icons-unavailable #sidebartoggle .close:before{content:"▶"}body.icons-unavailable .leaflet-control-layers-toggle:before{content:""}:root{--safe-area-inset-top:env(safe-area-inset-top);--safe-area-inset-bottom:env(safe-area-inset-bottom);--safe-area-inset-left:env(safe-area-inset-left);--safe-area-inset-right:env(safe-area-inset-right);--sidebar-width:300px;--hidden-scrollbar-width:20px;--chat-shrinked:60px;--icon-target-size:24px;--color-enl:#03fe03;--color-res:#00c5ff;--color-mac:#ff2020;--color-none:#fff;--color-primary:#ffce00;--color-secondary:#eee;--color-bg:#08304e;--color-bg-trans:color-mix(var(--color-bg) 90%, transparent);--color-bg-trans-50:color-mix(var(--color-bg) 50%, transparent);--color-bg-border:#20a8b1}.text-overflow-ellipsis{white-space:nowrap;text-overflow:ellipsis;vertical-align:text-bottom;width:100%;display:inline-block;overflow:hidden}html,body{background:#0e3d4e;width:100%;height:100%;overflow:hidden}#map{width:100%;height:100%;overflow:visible}body{margin:0;font-family:Roboto,Helvetica Neue,Helvetica,sans-serif;font-size:14px}.icon-button{cursor:pointer;min-width:var(--icon-target-size);min-height:var(--icon-target-size);justify-content:center;align-items:center;display:inline-flex}i.tiny{font-size:1rem}i.small{font-size:2rem}i.medium{font-size:4rem}i.large{font-size:6rem}.enl{color:var(--color-enl)}.res{color:var(--color-res)}.mac{color:var(--color-mac)}.none{color:var(--color-none)}.nickname{cursor:pointer}a{color:var(--color-primary);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}.help{cursor:help}.toggle{font-family:IITC Material Symbols;line-height:1;display:block}td{vertical-align:top;padding:0}td+td{padding-left:4px}#qrcode>canvas{border:8px solid #fff}.RESISTANCE{color:#00c2ff}.ALIENS,.ENLIGHTENED{color:#28f428}#portal_highlight_select{z-index:2500;color:var(--color-primary);background-color:#0e3c46;font-size:11px;position:absolute;top:5px;left:10px}.portal_details th,.portal_details td{vertical-align:top;text-align:left}.portal_details th{white-space:nowrap;padding-right:1em}.portal_details tr.padding-top th,.portal_details tr.padding-top td{padding-top:.7em}#play_button{display:none}.layer_off_warning{color:var(--color-primary);text-align:center;margin:8px}.cursor_help{cursor:help}.ui-tabs-nav{border-top:1px solid #0000;border-bottom:1px solid #20a8b1;margin:3px 0 0;padding:0;display:block}.ui-tabs-nav:after{content:"";clear:left;width:0;height:0;display:block}.ui-tabs-nav li{float:left;border:1px solid #20a8b1;margin:0 0 -1px;list-style:none;display:block}.ui-tabs-nav li.ui-tabs-active{background:#0f2c3f;border-width:2px 2px 1px;border-bottom-color:#0f2c3f;margin:-1px 1px;font-weight:700}.ui-tabs-nav a{padding:.2em .7em;display:inline-block}.ui-tabs-nav .ui-icon{vertical-align:top;width:16px;height:22px;font-size:0;display:inline-block;position:relative;overflow:hidden}.ui-tabs-nav .ui-icon-close:before{content:"close";text-align:center;vertical-align:baseline;cursor:pointer;width:16px;height:16px;font-family:IITC Material Symbols;font-size:16px;position:absolute;top:2px}.leaflet-marker-icon>svg{height:inherit;width:inherit}.warning{color:#f77;text-shadow:1px 1px #000,-1px -1px #000;text-align:center;font-weight:700}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child{display:none}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2){float:left}::-webkit-input-placeholder{font-style:italic}:-moz-placeholder-shown{font-style:italic}::-moz-placeholder{font-style:italic}' +
   '</style>' +
   '<style>' +
   '\
@@ -2132,7 +2132,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-05-105442');
+  log.log('loading done, booting. Built: ' + '2026-11-07-100239');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -29128,64 +29128,79 @@ var log = ulog('region_scoreboard');
 window.RegionScoreboardSetup = (function () {
   var mainDialog;
   var regionScore;
+  var historyChart;
+  var checkpointCycleStart;
   var timer;
+  var requestedRegion;
+  let dialogState;
+  const LOADING_TEXT = 'Loading regional scores...';
 
   /**
-   * Constructs a RegionScore object from server results. Contains methods to process and retrieve score data.
+   * Interface to manage RegionScore data from server results.
    *
    * @class
    * @name RegionScore
-   * @param {Object} serverResult - The data returned from the server for regional scores.
    */
-  function RegionScore(serverResult) {
-    this.ori_data = serverResult;
-    this.topAgents = serverResult.topAgents;
-    this.regionName = serverResult.regionName;
-    this.gameScore = serverResult.gameScore;
+  class RegionScore {
+    /**
+     * @param {Object} serverResult - The data returned from the server for regional scores.
+     */
+    constructor(serverResult) {
+      this.ori_data = serverResult;
+      this.topAgents = serverResult.topAgents;
+      this.regionName = serverResult.regionName;
+      this.gameScore = serverResult.gameScore;
 
-    this.median = [-1, -1, -1];
-    this.CP_COUNT = 35;
-    this.CP_DURATION = 5 * 60 * 60 * 1000;
-    this.CYCLE_DURATION = this.CP_DURATION * this.CP_COUNT;
+      this.median = [-1, -1, -1];
+      this.CP_COUNT = 35;
+      this.CP_DURATION = 5 * 60 * 60 * 1000;
+      this.CYCLE_DURATION = this.CP_DURATION * this.CP_COUNT;
+      this.MAC_INTERVAL = 13; // Cycles
+      this.checkpoints = [];
 
-    this.checkpoints = [];
+      // sparse: checkpoints missing from scoreHistory stay holes
+      for (var i = 0; i < serverResult.scoreHistory.length; i++) {
+        var h = serverResult.scoreHistory[i];
+        this.checkpoints[parseInt(h[0])] = [parseInt(h[1]), parseInt(h[2])];
+      }
 
-    this.hasNoTopAgents = function () {
+      this.cycleStartTime = new Date(Math.floor(Date.now() / this.CYCLE_DURATION) * this.CYCLE_DURATION);
+    }
+
+    hasNoTopAgents() {
       return this.topAgents.length === 0;
-    };
+    }
 
-    this.getAvgScore = function (faction) {
+    getAvgScore(faction) {
       return parseInt(this.gameScore[faction === window.TEAM_ENL ? 0 : 1]);
-    };
+    }
 
-    this.getAvgScoreMax = function () {
+    getAvgScoreMax() {
       return Math.max(this.getAvgScore(window.TEAM_ENL), this.getAvgScore(window.TEAM_RES), 1);
-    };
+    }
 
-    this.getCPScore = function (cp) {
+    getCPScore(cp) {
       return this.checkpoints[cp];
-    };
+    }
 
-    this.getScoreMax = function (min_value) {
-      var max = min_value || 0;
-      for (var i = 1; i < this.checkpoints.length; i++) {
-        var cp = this.checkpoints[i];
+    getScoreMax(min_value) {
+      let max = min_value || 0;
+      this.checkpoints.forEach((cp) => {
         max = Math.max(max, cp[0], cp[1]);
-      }
+      });
       return max;
-    };
+    }
 
-    this.getCPSum = function () {
-      var sums = [0, 0];
-      for (var i = 1; i < this.checkpoints.length; i++) {
-        sums[0] += this.checkpoints[i][0];
-        sums[1] += this.checkpoints[i][1];
-      }
-
+    getCPSum() {
+      const sums = [0, 0];
+      this.checkpoints.forEach((cp) => {
+        sums[0] += cp[0];
+        sums[1] += cp[1];
+      });
       return sums;
-    };
+    }
 
-    this.getAvgScoreAtCP = function (faction, cp_idx) {
+    getAvgScoreAtCP(faction, cp_idx) {
       var idx = faction === window.TEAM_RES ? 1 : 0;
 
       var score = 0;
@@ -29204,9 +29219,9 @@ window.RegionScoreboardSetup = (function () {
       }
 
       return Math.floor(score / cp_idx);
-    };
+    }
 
-    this.getScoreMedian = function (faction) {
+    getScoreMedian(faction) {
       if (this.median[faction] < 0) {
         var idx = faction === window.TEAM_RES ? 1 : 0;
         var values = this.checkpoints.map(function (val) {
@@ -29219,9 +29234,9 @@ window.RegionScoreboardSetup = (function () {
       }
 
       return this.median[faction];
-    };
+    }
 
-    this.findMedian = function (values) {
+    findMedian(values) {
       var len = values.length;
       var rank = Math.floor((len - 1) / 2);
 
@@ -29249,27 +29264,26 @@ window.RegionScoreboardSetup = (function () {
         if (rank < i) m = j;
       }
       return values[rank];
-    };
-
-    this.getLastCP = function () {
-      if (this.checkpoints.length === 0) return 0;
-      return this.checkpoints.length - 1;
-    };
-
-    this.getCycleEnd = function () {
-      return this.getCheckpointEnd(this.CP_COUNT);
-    };
-
-    this.getCheckpointEnd = function (cp) {
-      return new Date(this.cycleStartTime.getTime() + this.CP_DURATION * cp);
-    };
-
-    for (var i = 0; i < serverResult.scoreHistory.length; i++) {
-      var h = serverResult.scoreHistory[i];
-      this.checkpoints[parseInt(h[0])] = [parseInt(h[1]), parseInt(h[2])];
     }
 
-    this.cycleStartTime = new Date(Math.floor(Date.now() / this.CYCLE_DURATION) * this.CYCLE_DURATION);
+    getLastCP() {
+      if (this.checkpoints.length === 0) return 0;
+      return this.checkpoints.length - 1;
+    }
+
+    // Machina stops linking and decays once every MAC_INTERVAL cycles ("extinction event")
+    isMacPauseCycle(cycleStart) {
+      const index = Math.floor(cycleStart.getTime() / this.CYCLE_DURATION);
+      return (index + 1) % this.MAC_INTERVAL === 0;
+    }
+
+    getCycleEnd() {
+      return this.getCheckpointTime(this.CP_COUNT);
+    }
+
+    getCheckpointTime(cp) {
+      return new Date(this.cycleStartTime.getTime() + this.CP_DURATION * cp);
+    }
   }
 
   function showDialog() {
@@ -29291,21 +29305,38 @@ window.RegionScoreboardSetup = (function () {
     */
 
   function showRegion(latE6, lngE6) {
-    var text = 'Loading regional scores...';
-    if (window.useAppPanes()) {
-      var style = 'position: absolute; top: 0; width: 100%; max-width: 412px';
-      mainDialog = $('<div>', { class: 'safe-area-insets', style: style }).html(text).appendTo(document.body);
-    } else {
-      mainDialog = window.dialog({
-        title: 'Region scores',
-        html: text,
-        width: 450,
-        height: 340,
-        closeCallback: onDialogClose,
-      });
+    requestedRegion = { latE6: latE6, lngE6: lngE6 };
+    // a reload keeps the state saved before an earlier load; a new dialog starts with defaults
+    dialogState = getDialogState() || (mainDialog ? dialogState : undefined);
+
+    if (!mainDialog) {
+      if (window.useAppPanes()) {
+        var style = 'position: absolute; top: 0; bottom: 0; width: 100%; max-width: 412px';
+        mainDialog = $('<div>', { class: 'safe-area-insets region-scoreboard-dialog', style: style }).appendTo(document.body);
+      } else {
+        mainDialog = window.dialog({
+          title: 'Region scores',
+          html: LOADING_TEXT,
+          width: 520,
+          height: 600,
+          closeCallback: onDialogClose,
+        });
+        mainDialog.addClass('region-scoreboard-dialog');
+      }
     }
 
-    window.postAjax('getRegionScoreDetails', { latE6: latE6, lngE6: lngE6 }, onRequestSuccess, onRequestFailure);
+    stopTimer();
+    mainDialog.html(LOADING_TEXT);
+    const region = requestedRegion;
+    // ignore responses for a closed dialog or a superseded request
+    // requestedRegion must be a new object for each request
+    const isCurrent = () => mainDialog && region === requestedRegion;
+    window.postAjax(
+      'getRegionScoreDetails',
+      { latE6: latE6, lngE6: lngE6 },
+      (data) => isCurrent() && onRequestSuccess(data),
+      () => isCurrent() && onRequestFailure()
+    );
   }
 
   function onRequestFailure() {
@@ -29318,21 +29349,65 @@ window.RegionScoreboardSetup = (function () {
     }
 
     regionScore = new RegionScore(data.result);
-    updateDialog();
+    updateDialog(dialogState?.logscale);
+    if (dialogState) {
+      $('details.scoreboard-section', mainDialog).each((i, section) => {
+        if (dialogState.open[i] !== undefined) section.open = dialogState.open[i];
+      });
+    }
     startTimer();
   }
 
+  function getDialogState() {
+    if (!mainDialog || !$('.cellscore', mainDialog).length) return;
+    return {
+      logscale: $('input.logscale', mainDialog).prop('checked'),
+      open: $('details.scoreboard-section', mainDialog)
+        .map((i, section) => section.open)
+        .get(),
+    };
+  }
+
   function updateDialog(logscale) {
+    checkpointCycleStart = regionScore.cycleStartTime;
     mainDialog.html(
       `<div class="cellscore">` +
-        `<b>Region scores for ${regionScore.regionName}</b>` +
-        `<div class="historychart">${createResults()}${HistoryChart(regionScore, logscale)}</div>` +
-        `<b>Checkpoint overview</b><div>${createHistoryTable()}</div>` +
-        `<b>Top agents</b><div>${createAgentTable()}</div>` +
+        `<details class="scoreboard-section region-selection">` +
+        `<summary><span>Region selection</span><span class="region-summary-name">${regionScore.regionName}</span></summary>` +
+        `<form class="region-select-form">` +
+        `<label>Region ID<input name="region" type="text" required placeholder="NR02-GOLF-12" value="${getRegionName(requestedRegion)}"></label>` +
+        `<button type="submit">Show region</button>` +
+        `<button class="map-center" type="button">Use map center</button>` +
+        `</form>` +
+        `<p class="region-error" role="alert" aria-live="polite"></p>` +
+        `</details>` +
+        `<details class="scoreboard-section" open>` +
+        `<summary>Current scores</summary>` +
+        `<div class="historychart">${createResults()}` +
+        `<div class="history-chart-container">` +
+        `<svg class="history-chart" width="400" height="133" viewBox="0 0 400 133"></svg>` +
+        `<label><input type="checkbox" class="logscale"${logscale ? ' checked' : ''}> log</label>` +
+        `</div></div>` +
+        `</details>` +
+        `<details class="scoreboard-section checkpoint-section" open>` +
+        `<summary>Checkpoints</summary>` +
+        `<div class="checkpoint-cycle-controls">` +
+        `<button type="button" class="checkpoint-cycle-previous" aria-label="Previous checkpoint cycle">‹</button>` +
+        `<input type="date" class="checkpoint-date" value="${formatCycleDateInput(checkpointCycleStart)}">` +
+        `<button type="button" class="checkpoint-cycle-next" aria-label="Next checkpoint cycle">›</button>` +
+        `<button type="button" class="checkpoint-cycle-current">Current cycle</button>` +
+        `</div>` +
+        `<div class="checkpoint-history">${createCheckpointTable(checkpointCycleStart)}</div>` +
+        `</details>` +
+        `<details class="scoreboard-section" open>` +
+        `<summary>Top agents</summary><div>${createAgentTable()}</div>` +
+        `</details>` +
         `</div>` +
         createTimers()
     );
 
+    historyChart = new HistoryChart($('svg.history-chart', mainDialog)[0]);
+    historyChart.update(regionScore, logscale);
     setupToolTips();
 
     var tooltip = createResultTooltip();
@@ -29340,14 +29415,72 @@ window.RegionScoreboardSetup = (function () {
       content: window.convertTextToTableMagic(tooltip),
     });
 
-    $('.cellscore', mainDialog).accordion({
-      header: 'b',
-      heightStyle: 'fill',
+    $('.region-select-form', mainDialog).on('submit', function (event) {
+      event.preventDefault();
+      var regionName = $('input[name="region"]', this).val();
+      if (!window.plugin || !window.plugin.regions || !window.plugin.regions.getCellFromName) {
+        $('.region-error', mainDialog).text('Enable the Ingress scoring regions plugin to select a region ID.');
+        return;
+      }
+
+      var cell = window.plugin.regions.getCellFromName(regionName);
+      if (!cell) {
+        $('.region-error', mainDialog).text('Enter a valid region ID, for example NR02-GOLF-12.');
+        return;
+      }
+
+      var center = cell.getLatLng();
+      showRegion(Math.round(center.lat * 1e6), Math.round(center.lng * 1e6));
     });
 
-    $('input.logscale', mainDialog).change(function () {
-      var input = $(this);
-      updateDialog(input.prop('checked'));
+    $('.map-center', mainDialog).on('click', showDialog);
+
+    $('.checkpoint-cycle-previous', mainDialog).on('click', function () {
+      checkpointCycleStart = new Date(checkpointCycleStart.getTime() - regionScore.CYCLE_DURATION);
+      updateCheckpointHistory();
+    });
+
+    $('.checkpoint-cycle-next', mainDialog).on('click', function () {
+      checkpointCycleStart = new Date(checkpointCycleStart.getTime() + regionScore.CYCLE_DURATION);
+      updateCheckpointHistory();
+    });
+
+    $('.checkpoint-date', mainDialog).on('change', function () {
+      if (this.value) {
+        checkpointCycleStart = getCycleStartForDate(this.value);
+        updateCheckpointHistory();
+      }
+    });
+
+    $('.checkpoint-cycle-current', mainDialog).on('click', function () {
+      checkpointCycleStart = regionScore.cycleStartTime;
+      updateCheckpointHistory();
+    });
+
+    var swipeStart;
+    $('.checkpoint-history', mainDialog)
+      .on('touchstart', function (event) {
+        var touch = event.originalEvent.touches[0];
+        swipeStart = { x: touch.clientX, y: touch.clientY };
+      })
+      .on('touchend', function (event) {
+        if (!swipeStart) return;
+        var touch = event.originalEvent.changedTouches[0];
+        var deltaX = touch.clientX - swipeStart.x;
+        var deltaY = touch.clientY - swipeStart.y;
+        swipeStart = undefined;
+
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+        checkpointCycleStart = new Date(checkpointCycleStart.getTime() + (deltaX < 0 ? 1 : -1) * regionScore.CYCLE_DURATION);
+        updateCheckpointHistory();
+      })
+      .on('touchcancel', function () {
+        swipeStart = undefined;
+      });
+
+    $('input.logscale', mainDialog).on('change', function () {
+      historyChart.update(regionScore, $(this).prop('checked'));
+      setupToolTips();
     });
   }
 
@@ -29375,7 +29508,7 @@ window.RegionScoreboardSetup = (function () {
         var enl_str = score_now ? '\nEnl:\t' + formatScore(0, score_now, score_last) : '';
         var res_str = score_now ? '\nRes:\t' + formatScore(1, score_now, score_last) : '';
 
-        tooltip = 'CP:\t' + cp + '\t-\t' + formatDayHours(regionScore.getCheckpointEnd(cp)) + '\n<hr>' + enl_str + res_str;
+        tooltip = 'CP:\t' + cp + '\t-\t' + formatDayHours(regionScore.getCheckpointTime(cp)) + '\n<hr>' + enl_str + res_str;
       }
 
       elem.tooltip({
@@ -29389,34 +29522,80 @@ window.RegionScoreboardSetup = (function () {
 
   function onDialogClose() {
     stopTimer();
+    mainDialog = undefined;
   }
 
-  function createHistoryTable() {
-    var _invert = window.PLAYER.team === 'RESISTANCE';
+  function getCycleStartForDate(dateValue) {
+    const [year, month, day] = dateValue.split('-').map(Number);
+    const dayStart = new Date(year, month - 1, day).getTime();
+    const dayEnd = new Date(year, month - 1, day + 1).getTime();
+    const cycleDuration = regionScore.CYCLE_DURATION;
+
+    // prefer the cycle starting on that day, as the date input shows cycle start dates
+    // a cycle is longer than a day, so at most one starts on any day
+    const startingThatDay = Math.ceil(dayStart / cycleDuration) * cycleDuration;
+    return new Date(startingThatDay < dayEnd ? startingThatDay : Math.floor(dayStart / cycleDuration) * cycleDuration);
+  }
+
+  function formatCycleDateInput(cycleStart) {
+    var date = new Date(cycleStart.getTime());
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+  }
+
+  function updateCheckpointHistory() {
+    $('.checkpoint-date', mainDialog).val(formatCycleDateInput(checkpointCycleStart));
+    $('.checkpoint-history', mainDialog).html(createCheckpointTable(checkpointCycleStart));
+  }
+
+  function getRegionName(region) {
+    if (!window.plugin || !window.plugin.regions || !window.plugin.regions.getNameFromLatLng) return '';
+    return window.plugin.regions.getNameFromLatLng({ lat: region.latE6 / 1e6, lng: region.lngE6 / 1e6 });
+  }
+
+  function createCheckpointTable(cycleStart) {
+    const showScores = cycleStart.getTime() === regionScore.cycleStartTime.getTime();
+    const isMacPause = regionScore.isMacPauseCycle(cycleStart);
+    const _invert = window.PLAYER.team === 'RESISTANCE';
     function order(_1, _2) {
       return (_invert ? [_2, _1] : [_1, _2]).join('');
     }
-    var enl = { class: window.TEAM_TO_CSS[window.TEAM_ENL], name: window.TEAM_NAMES[window.TEAM_ENL] };
-    var res = { class: window.TEAM_TO_CSS[window.TEAM_RES], name: window.TEAM_NAMES[window.TEAM_RES] };
+    const enl = { class: window.TEAM_TO_CSS[window.TEAM_ENL], name: window.TEAM_NAMES[window.TEAM_ENL] };
+    const res = { class: window.TEAM_TO_CSS[window.TEAM_RES], name: window.TEAM_NAMES[window.TEAM_RES] };
 
-    var table = `<table class="checkpoint_table"><thead><tr><th>CP</th><th>Time</th>${order('<th>' + enl.name + '</th>', '<th>' + res.name + '</th>')}</tr>`;
+    let table = isMacPause ? "<div class='mac_pause'>MAC paused</div>" : '';
 
-    var total = regionScore.getCPSum();
     table +=
-      '<tr class="cp_total"><th></th><th></th>' +
-      order('<th class="' + enl.class + '">' + window.digits(total[0]) + '</th>', '<th class="' + res.class + '">' + window.digits(total[1]) + '</th>') +
-      '</tr></thead>';
+      `<table class="checkpoint_table"><thead><tr><th>CP</th><th>Time</th>` +
+      (showScores ? order('<th>' + enl.name + '</th>', '<th>' + res.name + '</th>') : '') +
+      `</tr>`;
 
-    for (var cp = regionScore.getLastCP(); cp > 0; cp--) {
-      var score = regionScore.getCPScore(cp);
-      var class_e = score[0] > score[1] ? ' class="' + enl.class + '"' : '';
-      var class_r = score[1] > score[0] ? ' class="' + res.class + '"' : '';
+    if (showScores) {
+      const total = regionScore.getCPSum();
 
       table +=
-        `<tr>` +
+        '<tr class="cp_total"><th></th><th></th>' +
+        order('<th class="' + enl.class + '">' + window.digits(total[0]) + '</th>', '<th class="' + res.class + '">' + window.digits(total[1]) + '</th>') +
+        '</tr>';
+    }
+    table += '</thead>';
+
+    for (var cp = regionScore.CP_COUNT; cp > 0; cp--) {
+      const checkpointDate = new Date(cycleStart.getTime() + regionScore.CP_DURATION * cp);
+      const score = showScores ? regionScore.getCPScore(cp) : undefined;
+      const class_e = score && score[0] > score[1] ? ' class="' + enl.class + '"' : '';
+      const class_r = score && score[1] > score[0] ? ' class="' + res.class + '"' : '';
+
+      const lastcheckpointDate = new Date(cycleStart.getTime() + regionScore.CP_DURATION * (cp - 1)).getDate();
+      const dayChange = checkpointDate.getDate() !== lastcheckpointDate;
+      const showDay = cp === 1 || cp === regionScore.CP_COUNT || dayChange;
+
+      table +=
+        `<tr ${dayChange ? "class='daychange'" : ''}>` +
         `<td>${cp}</td>` +
-        `<td>${formatDayHours(regionScore.getCheckpointEnd(cp))}</td>` +
-        order(`<td${class_e}>${window.digits(score[0])}</td>`, `<td${class_r}>${window.digits(score[1])}</td>`) +
+        `<td>${showDay ? formatDayHours(checkpointDate) : formatHours(checkpointDate)}</td>` +
+        (showScores
+          ? order(`<td${class_e}>${score ? window.digits(score[0]) : '–'}</td>`, `<td${class_r}>${score ? window.digits(score[1]) : '–'}</td>`)
+          : '') +
         `</tr>`;
     }
 
@@ -29513,14 +29692,14 @@ window.RegionScoreboardSetup = (function () {
   }
 
   function createTimers() {
-    var nextcp = regionScore.getCheckpointEnd(regionScore.getLastCP() + 1);
-    var endcp = regionScore.getCycleEnd();
+    const nextcp = regionScore.getCheckpointTime(regionScore.getLastCP() + 1);
+    const endcp = regionScore.getCycleEnd();
 
     return (
-      `<div class="checkpoint_timers"><table><tr>` +
-      `<td>Next CP at: ${formatHours(nextcp)} (in <span id="cycletimer"></span>)</td>` +
-      `<td>Cycle ends: ${formatDayHours(endcp)}</td>` +
-      `</tr></table></div>`
+      `<div class="checkpoint_timers"><div class="checkpoint-timer-row">` +
+      `<span>Next CP at: ${formatHours(nextcp)} (in <span id="cycletimer"></span>)</span>` +
+      `<span>Cycle ends: ${formatDayHours(endcp)}</span>` +
+      `</div></div>`
     );
   }
 
@@ -29539,7 +29718,8 @@ window.RegionScoreboardSetup = (function () {
   }
 
   function onTimer() {
-    var d = regionScore.getCheckpointEnd(regionScore.getLastCP() + 1) - new Date();
+    if (!regionScore || !mainDialog) return;
+    var d = regionScore.getCheckpointTime(regionScore.getLastCP() + 1) - new Date();
     $('#cycletimer', mainDialog).html(formatMinutes(Math.max(0, Math.floor(d / 1000))));
   }
 
@@ -29556,7 +29736,7 @@ window.RegionScoreboardSetup = (function () {
   }
 
   function formatHours(time) {
-    return pad(time.getHours()) + ':' + pad(time.getMinutes());
+    return IITC.utils.unixTimeToHHmm(time.getTime());
   }
   function formatDay(time) {
     return pad(time.getDate()) + '.' + pad(time.getMonth() + 1);
@@ -29573,6 +29753,8 @@ window.RegionScoreboardSetup = (function () {
           showDialog();
         } else if (mainDialog) {
           mainDialog.remove();
+          mainDialog = undefined;
+          stopTimer();
         }
       });
     } else {
@@ -29587,59 +29769,47 @@ window.RegionScoreboardSetup = (function () {
 })();
 
 /**
- * Creates an SVG-based history chart for regional scores.
- *
- * @function HistoryChart
- * @param {RegionScore} _regionScore - The RegionScore object containing score data.
- * @param {boolean} logscale - Whether to use logarithmic scale for the chart.
- * @returns {string} An SVG string representing the history chart.
+ * Updates an SVG history chart for regional scores.
  */
-var HistoryChart = (function () {
-  var regionScore;
-  var scaleFct;
-  var logscale;
-  var svgTickText;
-
-  function create(_regionScore, logscale) {
-    regionScore = _regionScore;
-
-    var max = regionScore.getScoreMax(10); // NOTE: ensure a min of 10 for the graph
-    max *= 1.09; // scale up maximum a little, so graph isn't squashed right against upper edge
-    setScaleType(max, logscale);
-
-    svgTickText = [];
-
-    // svg area 400x130. graph area 350x100, offset to 40,10
-    var svg =
-      '<div><svg width="400" height="133" style="margin-left: 10px;">' +
-      svgBackground() +
-      svgAxis(max) +
-      svgAveragePath() +
-      svgFactionPath() +
-      svgCheckPointMarkers() +
-      svgTickText.join('') +
-      '<foreignObject height="18" width="60" y="113" x="0" class="node"><label title="Logarithmic scale">' +
-      '<input type="checkbox" class="logscale"' +
-      (logscale ? ' checked' : '') +
-      '/>' +
-      'log</label></foreignObject>' +
-      '</svg></div>';
-
-    return svg;
+class HistoryChart {
+  /**
+   * @param {SVGElement} svg - The SVG element used to render the chart.
+   */
+  constructor(svg) {
+    this.svg = svg;
   }
 
-  function svgFactionPath() {
+  /**
+   * Replace the chart content for the supplied score data and scale.
+   *
+   * @param {RegionScore} regionScore - The RegionScore object containing score data.
+   * @param {boolean} logscale - Whether to use logarithmic scale for the chart.
+   */
+  update(regionScore, logscale) {
+    this.regionScore = regionScore;
+    this.logscale = logscale;
+    this.svgTickText = [];
+
+    var max = this.regionScore.getScoreMax(10); // NOTE: ensure a min of 10 for the graph
+    max *= 1.09; // scale up maximum a little, so graph isn't squashed right against upper edge
+    this.setScaleType(max);
+
+    this.svg.innerHTML =
+      this.svgBackground() + this.svgAxis(max) + this.svgAveragePath() + this.svgFactionPath() + this.svgCheckPointMarkers() + this.svgTickText.join('');
+  }
+
+  svgFactionPath() {
     var svgPath = '';
 
     for (var t = 0; t < 2; t++) {
-      var col = getFactionColor(t);
+      var col = this.getFactionColor(t);
       var teamPaths = [];
 
-      for (var cp = 1; cp <= regionScore.getLastCP(); cp++) {
-        var score = regionScore.getCPScore(cp);
+      for (var cp = 1; cp <= this.regionScore.getLastCP(); cp++) {
+        var score = this.regionScore.getCPScore(cp);
         if (score !== undefined) {
           var x = cp * 10 + 40;
-          teamPaths.push(x + ',' + scaleFct(score[t]));
+          teamPaths.push(x + ',' + this.scaleFct(score[t]));
         }
       }
 
@@ -29651,22 +29821,22 @@ var HistoryChart = (function () {
     return svgPath;
   }
 
-  function svgCheckPointMarkers() {
+  svgCheckPointMarkers() {
     var markers = '';
 
-    var col1 = getFactionColor(0);
-    var col2 = getFactionColor(1);
+    var col1 = this.getFactionColor(0);
+    var col2 = this.getFactionColor(1);
 
-    for (var cp = 1; cp <= regionScore.CP_COUNT; cp++) {
-      var scores = regionScore.getCPScore(cp);
+    for (var cp = 1; cp <= this.regionScore.CP_COUNT; cp++) {
+      var scores = this.regionScore.getCPScore(cp);
 
       markers +=
         `<g title="dummy" class="checkpoint" data-cp="${cp}">` + `<rect x="${cp * 10 + 35}" y="10" width="10" height="100" fill="black" fill-opacity="0" />`;
 
       if (scores) {
         markers +=
-          `<circle cx="${cp * 10 + 40}" cy="${scaleFct(scores[0])}" r="3" stroke-width="1" stroke="${col1}" fill="${col1}" fill-opacity="0.5" />` +
-          `<circle cx="${cp * 10 + 40}" cy="${scaleFct(scores[1])}" r="3" stroke-width="1" stroke="${col2}" fill="${col2}" fill-opacity="0.5" />`;
+          `<circle cx="${cp * 10 + 40}" cy="${this.scaleFct(scores[0])}" r="3" stroke-width="1" stroke="${col1}" fill="${col1}" fill-opacity="0.5" />` +
+          `<circle cx="${cp * 10 + 40}" cy="${this.scaleFct(scores[1])}" r="3" stroke-width="1" stroke="${col2}" fill="${col2}" fill-opacity="0.5" />`;
       }
 
       markers += '</g>';
@@ -29675,32 +29845,36 @@ var HistoryChart = (function () {
     return markers;
   }
 
-  function svgBackground() {
+  svgBackground() {
     return '<rect x="0" y="1" width="400" height="132" stroke="#FFCE00" fill="#08304E" />';
   }
 
-  function svgAxis(max) {
-    return '<path d="M40,110 L40,10 M40,110 L390,110" stroke="#fff" />' + createTicks(max);
+  svgAxis(max) {
+    return '<path d="M40,110 L40,10 M40,110 L390,110" stroke="#fff" />' + this.createTicks(max);
   }
 
-  function createTicks(max) {
-    var ticks = createTicksHorz();
+  createTicks(max) {
+    var ticks = this.createTicksHorz();
 
     function addVTick(i) {
-      var y = scaleFct(i);
+      var y = this.scaleFct(i);
 
       ticks.push('M40,' + y + ' L390,' + y);
-      svgTickText.push(
-        '<text x="35" y="' + y + '" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="end" fill="#fff">' + formatNumber(i) + '</text>'
+      this.svgTickText.push(
+        '<text x="35" y="' +
+          y +
+          '" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="end" fill="#fff">' +
+          this.formatNumber(i) +
+          '</text>'
       );
     }
 
     // vertical
     // first we calculate the power of 10 that is smaller than the max limit
     var vtickStep = Math.pow(10, Math.floor(Math.log10(max)));
-    if (logscale) {
+    if (this.logscale) {
       for (var i = 0; i < 4; i++) {
-        addVTick(vtickStep);
+        addVTick.call(this, vtickStep);
         vtickStep /= 10;
       }
     } else {
@@ -29712,19 +29886,19 @@ var HistoryChart = (function () {
       }
 
       for (var ti = vtickStep; ti <= max; ti += vtickStep) {
-        addVTick(ti);
+        addVTick.call(this, ti);
       }
     }
 
     return '<path d="' + ticks.join(' ') + '" stroke="#fff" opacity="0.3" />';
   }
 
-  function createTicksHorz() {
+  createTicksHorz() {
     var ticks = [];
     for (var i = 5; i <= 35; i += 5) {
       var x = i * 10 + 40;
       ticks.push('M' + x + ',10 L' + x + ',110');
-      svgTickText.push(
+      this.svgTickText.push(
         '<text x="' + x + '" y="125" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="middle" fill="#fff">' + i + '</text>'
       );
     }
@@ -29732,17 +29906,17 @@ var HistoryChart = (function () {
     return ticks;
   }
 
-  function svgAveragePath() {
+  svgAveragePath() {
     var path = '';
     for (var faction = 1; faction < 3; faction++) {
       var col = window.COLORS[faction];
 
       var points = [];
-      for (var cp = 1; cp <= regionScore.CP_COUNT; cp++) {
-        var score = regionScore.getAvgScoreAtCP(faction, cp);
+      for (var cp = 1; cp <= this.regionScore.CP_COUNT; cp++) {
+        var score = this.regionScore.getAvgScoreAtCP(faction, cp);
 
         var x = cp * 10 + 40;
-        var y = scaleFct(score);
+        var y = this.scaleFct(score);
         points.push(x + ',' + y);
       }
 
@@ -29752,30 +29926,29 @@ var HistoryChart = (function () {
     return path;
   }
 
-  function setScaleType(max, useLogScale) {
-    logscale = useLogScale;
-    if (useLogScale) {
+  setScaleType(max) {
+    if (this.logscale) {
       if (!Math.log10)
         Math.log10 = function (x) {
           return Math.log(x) / Math.LN10;
         };
 
       // 0 cannot be displayed on a log scale, so we set the minimum to 0.001 and divide by lg(0.001)=-3
-      scaleFct = function (y) {
+      this.scaleFct = function (y) {
         return Math.round(10 - (Math.log10(Math.max(0.001, y / max)) / 3) * 100);
       };
     } else {
-      scaleFct = function (y) {
+      this.scaleFct = function (y) {
         return Math.round(110 - (y / max) * 100);
       };
     }
   }
 
-  function getFactionColor(t) {
+  getFactionColor(t) {
     return t === 0 ? window.COLORS[window.TEAM_ENL] : window.COLORS[window.TEAM_RES];
   }
 
-  function formatNumber(num) {
+  formatNumber(num) {
     if (num >= 1_000_000_000) {
       return num / 1_000_000_000 + 'B';
     } else if (num >= 1_000_000) {
@@ -29786,9 +29959,7 @@ var HistoryChart = (function () {
       return num.toString();
     }
   }
-
-  return create;
-})();
+}
 
 
 })();
