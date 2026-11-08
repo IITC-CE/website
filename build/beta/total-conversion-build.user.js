@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261107.100239
+// @version        0.43.2.20261108.110655
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-07-100239';
+plugin_info.dateTimeVersion = '2026-11-08-110655';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-07-100239';
+window.iitcBuildDate = '2026-11-08-110655';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -305,11 +305,11 @@ document.head.innerHTML =
   '</style>' +
   '<style>' +
   '\
-@media print{.leaflet-control-container,#chatcontrols,#chat,#chatinput,#sidebartoggle,#sidebar,#updatestatus,#portal_highlight_select{display:none!important}}.leaflet-control{-webkit-user-select:none;user-select:none}.leaflet-control-container .leaflet-top.leaflet-left{flex-flow:column wrap;align-content:flex-start;align-items:flex-start;width:700px;height:calc(100% - 126px);max-height:90%;display:flex}.leaflet-control-layers-overlays label.disabled{cursor:help;text-decoration:line-through}.leaflet-control-layers-base{float:left;max-height:600px;overflow-y:auto}.leaflet-control-layers-overlays{float:left;border-left:1px solid #ddd;max-height:600px;margin-left:8px;padding-left:8px;overflow-y:auto}.leaflet-control-layers-separator{display:none}.leaflet-left .leaflet-control.chat-expand{margin-left:720px}.leaflet-left,.leaflet-right{grid-gap:10px;justify-items:baseline;display:grid}.leaflet-right{justify-items:end}.leaflet-left .leaflet-control,.leaflet-right .leaflet-control{margin:0}.leaflet-top{margin-top:var(--safe-area-inset-top);top:10px}.leaflet-right{margin-right:var(--safe-area-inset-right);right:10px}.leaflet-bottom{margin-bottom:calc(22px + var(--safe-area-inset-bottom));bottom:10px}.leaflet-left{margin-left:var(--safe-area-inset-left);left:10px}.leaflet-control-scale{order:-90}.leaflet-bar{box-shadow:none;border:2px solid #0003}.leaflet-bar a{text-decoration:none}.leaflet-control-zoom-in,.leaflet-control-zoom-out{background-size:18px;font-size:0!important}.leaflet-control-zoom-in{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}.leaflet-control-zoom-out{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}#map .leaflet-popup{pointer-events:none}#map .leaflet-popup-content-wrapper{border:1px solid var(--color-bg-border);pointer-events:auto;background:#0e3d4e;border-radius:0}#map .leaflet-popup-content{color:var(--color-primary);margin:5px 8px}#map .leaflet-popup-close-button{pointer-events:auto;width:10px;height:10px;padding:2px 1px 0 0;font-size:12px;line-height:8px}#map .leaflet-popup-tip{background:var(--color-bg-border);width:1px;height:20px;margin:0 0 0 20px;padding:0;transform:none}body:not(.icons-unavailable) .leaflet-control-layers-toggle,body:not(.icons-unavailable) .leaflet-retina .leaflet-control-layers-toggle{background-image:none}.leaflet-control-layers-toggle{justify-content:center;align-items:center;display:flex}.leaflet-control-layers-toggle:before{content:"layers";color:#454545;font-family:IITC Material Symbols;font-size:28px}#chatcontrols{color:var(--color-primary);background:var(--color-bg-trans);bottom:calc(var(--chat-shrinked) + var(--safe-area-inset-bottom) + 22px);left:var(--safe-area-inset-left);z-index:3000;height:26px;padding-left:1px;position:absolute}#chatcontrols .toggle{font-size:20px;line-height:24px}#chatcontrols .toggle:before{content:"expand_less"}#chatcontrols.expand{top:var(--safe-area-inset-top);bottom:auto}#chatcontrols.expand .toggle:before{content:"expand_more"}#chatcontrols a{text-align:center;border:1px solid var(--color-bg-border);vertical-align:top;width:94px;height:24px;margin-left:-1px;line-height:24px;display:inline-block}#chatcontrols a:first-child{letter-spacing:-1px;text-decoration:none}#chatcontrols a.active{border-color:var(--color-primary);background:var(--color-bg);border-bottom-width:0;font-weight:700}#chatcontrols .loading{background-color:color-mix(RED 33%, transparent);animation:1.2s linear infinite chatloading}#chatcontrols a.active+a{border-left-color:var(--color-primary)}@keyframes chatloading{0%{background-color:color-mix(RED 40%, transparent)}50%{background-color:color-mix(RED 10%, transparent)}to{background-color:color-mix(RED 40%, transparent)}}#chat{width:708px;max-width:100vw;height:var(--chat-shrinked);bottom:calc(var(--safe-area-inset-bottom) + 23px);padding-left:var(--safe-area-inset-left);z-index:3000;background:var(--color-bg-trans);color:var(--color-secondary);border:1px solid var(--color-bg-border);box-sizing:border-box;border-bottom:0;line-height:15px;position:absolute;left:0}#chat.expand{height:auto;top:calc(var(--safe-area-inset-top) + 25px)}#chat .divider{color:#bbb}#chat .divider td:nth-child(2){text-align:center}em{color:red;font-style:normal}#chat>div{box-sizing:border-box;height:100%;padding:2px;position:relative;overflow:hidden scroll}#chat table,#chatinput table{table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;min-height:100%;margin-bottom:1px}#chat table tr:last-child,#chatinput table{height:100%}#chatinput.public mark,#chatinput.public input{color:#f66}#chatinput.alerts mark{color:#bbb}#chat td,#chatinput td{vertical-align:top;padding-bottom:3px;font-size:13px}#chat td:first-child,#chatinput td:first-child{color:#bbb;white-space:nowrap;width:44px;padding-left:2px;overflow:hidden}#chat time{cursor:help}#chat td:nth-child(2),#chatinput td:nth-child(2){white-space:nowrap;width:91px;padding-left:2px;overflow:hidden}#chat td.system_narrowcast{color:#f66}#chatall tr.faction td:nth-child(3):before,#chatalerts tr.faction td:nth-child(3):before{content:"[faction]";color:#f88;background-color:#500;margin-right:.2rem}#chatall tr.public td:nth-child(3):before,#chatalerts tr.public td:nth-child(3):before{content:"[public]";color:#ff6;background-color:#550;margin-right:.2rem}mark{background:0 0}.invisep{color:#0000;width:1px;height:1px;display:inline-block;overflow:hidden}#chatinput{background:var(--color-bg-trans);width:708px;max-width:100vw;height:calc(var(--safe-area-inset-bottom) + 23px);border:1px solid var(--color-bg-border);z-index:3001;box-sizing:border-box;padding:0 2px;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);position:absolute;bottom:0;left:0}#chatinput td{vertical-align:middle;padding-bottom:1px}#chatinput input{color:var(--color-secondary);background:0 0;width:100%;height:100%;padding:3px 4px 1px}.bidi-isolate{unicode-bidi:isolate}.pl_nudge_date{color:#ffd652;background-color:#724510;border-top:1px solid #ffd652;border-bottom:1px solid #ffd652;border-left:1px solid #ffd652;width:36px;height:18px;padding-left:2px;display:block;position:relative;left:-2px}.pl_nudge_date:after{content:"";background:url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png) no-repeat;width:5px;height:20px;position:absolute;top:-1px;right:-5px}.pl_nudge_player{cursor:pointer}.pl_nudge_me{color:#ffd652}#searchwrapper,#searchbox{position:relative}#search{width:100%;height:2em;min-height:var(--icon-target-size);padding-left:max(2em, var(--icon-target-size));padding-right:max(4em, calc(2 * var(--icon-target-size)))}#search::-webkit-search-cancel-button{-webkit-appearance:none}#searchicon,#searchcancel,#buttongeolocation{color:#bbb;min-width:var(--icon-target-size);min-height:var(--icon-target-size);background-color:#0000;border:0 #0000;justify-content:center;align-items:center;margin:auto 0;padding:0 .1em;font-size:20px;display:flex;position:absolute;top:0;bottom:0}#searchicon iitc-icon,#buttongeolocation iitc-icon{font-size:1em}#searchcancel iitc-icon{font-size:.9em}#searchicon{left:0}#searchcancel{cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;right:24px}#searchcancel.visible{opacity:1;pointer-events:auto}#buttongeolocation{cursor:pointer;right:0}#buttongeolocation:focus{outline:1px dotted var(--color-primary)}.searchquery{max-height:25em;overflow-y:auto}#searchwrapper h3{cursor:pointer;height:auto;padding:0 0 0 23px;font-size:1em;position:relative}#searchwrapper h3:before{content:"expand_less";margin-right:2px;font-family:IITC Material Symbols;font-size:14px;font-weight:400;transition:transform .3s;position:absolute;left:4px}#searchwrapper .searchquery.collapsed h3:before{transform:rotate(180deg)}#searchwrapper ul{max-height:100%;padding-left:16px;overflow:hidden}#searchwrapper li{cursor:pointer}#searchwrapper .searchquery.collapsed ul{max-height:0}#searchwrapper li a{background-position:1px;background-repeat:no-repeat;background-size:12px 12px;margin-left:-14px;padding-left:14px}#searchwrapper li:focus a,#searchwrapper li:hover a{text-decoration:underline}#searchwrapper li em{color:#ccc;font-size:.9em}#scrollwrapper{right:calc(-2 * var(--hidden-scrollbar-width) + 2px + var(--safe-area-inset-right));top:var(--safe-area-inset-top);width:calc(var(--sidebar-width) + 2 * var(--hidden-scrollbar-width));bottom:calc(var(--safe-area-inset-bottom) + 45px);z-index:3001;pointer-events:none;position:fixed;overflow:hidden auto}#sidebar{background-color:var(--color-bg-trans);border-left:1px solid var(--color-bg-border);color:#888;width:calc(var(--sidebar-width) + var(--hidden-scrollbar-width) + 1px);pointer-events:auto;max-height:100%;position:relative;top:0;left:0;overflow:hidden scroll}#sidebartoggle{width:20px;top:calc(var(--safe-area-inset-top) + 103px);z-index:3002;background-color:var(--color-bg-trans);color:var(--color-primary);border:1px solid var(--color-bg-border);right:var(--safe-area-inset-right);border-right:none;border-radius:5px 0 0 5px;margin-top:-31px;padding:20px 0;line-height:10px;text-decoration:none;display:block;position:absolute}#sidebartoggle .toggle{font-size:20px}#sidebartoggle .open:before{content:"chevron_left"}#sidebartoggle .close:before{content:"chevron_right"}body.sidebar-open .leaflet-right{margin-right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}body.sidebar-open #sidebartoggle{right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}#sidebar>*{box-sizing:border-box;width:calc(var(--sidebar-width) + 1px);border-bottom:1px solid #20a8b1}#playerstat{height:30px}h2{color:var(--color-primary);cursor:help;box-sizing:border-box;width:100%;margin:0;padding:0 4px;font-size:21px}h2 #name{vertical-align:top;white-space:nowrap;font-weight:300;display:inline}h2 #name .playername{text-overflow:ellipsis;max-width:70%;display:inline-block;overflow:hidden}h2 #name:hover .playername{max-width:50%}h2 #name:hover #signout{display:inline-block}h2 #stats{float:right;height:100%;overflow:hidden}h2 sup{margin-bottom:-2px;font-size:11px;display:block}h2 sub{margin-bottom:-2px;font-size:11px;display:block}#signout{background-color:var(--color-bg-trans-50);vertical-align:text-top;padding:0 4px;font-size:12px;font-weight:400;display:none}#gamestat span{cursor:help;box-sizing:border-box;padding:0 3px;font-weight:700;display:inline-block}#gamestat span.res{background:color-mix(var(--color-res) 60%, black)}#gamestat span.enl{background:color-mix(var(--color-enl) 60%, black)}input:not([type]),.input{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=text]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=password]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=number]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=email]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=search]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=url]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}.leaflet-control-layers input{height:auto;padding:0}#portaltitle{white-space:nowrap;margin:2px 0;line-height:24px;display:flex}#portaltitle .value{text-overflow:ellipsis;flex:1;overflow:hidden}#portaltitle iitc-icon{font-size:24px}#portaltitle .close{cursor:pointer;color:var(--color-primary);margin-right:2px;font-weight:400}.imgpreview{cursor:help;background:50%/contain no-repeat;height:190px;position:relative;overflow:hidden}.imgpreview img.hide,.imgpreview .portalDetails{display:none}#level{text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000,0 0 5px #fff;text-align:right;float:right;margin-right:15px;font-size:40px;display:block}.mods{text-align:center;width:296px;height:67px;margin:3px auto 1px}.mods span{float:left;text-align:center;cursor:help;background-color:#0000004d;border:1px solid #666;width:63px;height:63px;margin:0 2px;padding:2px;display:block;overflow:hidden}.mods span:not([title]){cursor:auto}.res .mods span,.res .meter{border:1px solid #0076b6}.enl .mods span,.enl .meter{border:1px solid #017f01}#randdetails,#resodetails{box-sizing:border-box;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;padding:0 4px}#randdetails td,#resodetails td{text-overflow:ellipsis;vertical-align:top;white-space:nowrap;width:50%;overflow:hidden}#randdetails th,#resodetails th{text-align:right;width:62px;padding:0 4px;font-weight:400}#randdetails th+th,#resodetails th+th{text-align:left;padding-left:4px;padding-right:4px}#randdetails td:first-child,#resodetails td:first-child{text-align:right;padding-left:2px}#randdetails td:last-child,#resodetails td:last-child{text-align:left;padding-right:2px}#randdetails{margin-top:4px;margin-bottom:5px}#randdetails tt{cursor:help;font-family:inherit}#artifact_target,#artifact_fragments{margin:4px 8px}#resodetails{margin-bottom:0}.meter{cursor:help;box-sizing:border-box;background:#000;width:100%;height:18px;padding:1px;display:inline-block;position:relative;top:0;left:0}.meter.north{overflow:hidden}.meter.north:before{content:"";background-color:red;border:1px solid #000;border-radius:100%;width:6px;height:6px;margin-left:-4px;display:block;position:absolute;top:-3px;left:50%}.meter span{height:14px;display:block}.meter-level{text-shadow:0 0 .3em gray;text-align:center;word-spacing:4px;position:absolute;top:-2px;left:0;right:0}.linkdetails{text-align:center;margin-bottom:0}.linkdetails aside{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox{display:none!important}#toolbox,#toolbox_component{text-align:left}#toolbox>a,#toolbox_component>a{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox_component>a>iitc-icon{margin-top:-2px;margin-right:2px;font-size:1em}#portaldetails{min-height:63px}#historydetails{text-align:center;color:var(--color-primary)}#historydetails span{color:#ff4a4a}#historydetails span.completed{color:#03fe03}#updatestatus{width:var(--sidebar-width);background-color:var(--color-bg-trans);border-bottom:0;border-top:1px solid var(--color-bg-border);border-left:1px solid var(--color-bg-border);color:var(--color-primary);padding:4px;padding-bottom:var(--safe-area-inset-bottom);bottom:0;right:var(--safe-area-inset-right);z-index:3002;box-sizing:border-box;font-size:13px;position:fixed}#updatestatus .map{margin-left:8px}#updatestatus.ghost{pointer-events:none;background:0 0;border:0}#updatestatus.ghost>*{pointer-events:auto}#loadlevel{color:#000;background:#fff;border:0 solid #20a8b1;border-width:0 1px;min-width:1.8em;margin:-4px 0;padding:4px .2em;display:inline-block}#innerstatus .failed-request{color:#f66}.redeemReward{padding:0;font-family:Inconsolata,Consolas,Menlo,Courier New,monospace;font-size:14px;list-style-type:none}.redeemReward .itemlevel{text-shadow:0 0 1px #000;font-weight:700}table.artifact tr>*{background:var(--color-bg-trans)}table.artifact td.info{min-width:110px}table.artifact .portal{min-width:200px}.ui-dialog-content.region-scoreboard-dialog,.region-scoreboard-dialog.safe-area-insets{flex-direction:column;min-height:0;display:flex;overflow:hidden}.region-scoreboard-dialog.safe-area-insets{box-sizing:border-box}.cellscore{box-sizing:border-box;flex-direction:column;flex:auto;gap:10px;min-height:0;padding:8px;display:flex;overflow-y:auto}.cellscore details.scoreboard-section{border:1px solid var(--color-bg-border);border-radius:2px;padding:8px}.cellscore .scoreboard-section>summary{color:var(--color-primary);cursor:pointer;margin:0;font-weight:700}.cellscore .region-selection>summary{flex-wrap:wrap;gap:4px 8px;display:flex}.cellscore .region-summary-name{margin-left:auto}.cellscore .scoreboard-section[open]>summary{margin-bottom:8px}.cellscore table{white-space:nowrap;width:80%;max-width:100%;margin-left:auto;margin-right:auto}.cellscore .historychart>div{width:100%}.cellscore .history-chart{width:100%;height:auto;margin-top:.5em;margin-bottom:.5em;display:block}.cellscore .logscale{vertical-align:middle;margin-top:0}.cellscore #overview{width:100%}.cellscore #overview td{white-space:nowrap;text-align:right;width:1%}.cellscore #overview th{white-space:nowrap;text-align:left;width:1%;padding-left:4px}.cellscore .region-select-form{flex-wrap:wrap;align-items:end;gap:8px;display:flex}.cellscore .region-select-form label{flex-direction:column;flex:110px;gap:3px;display:flex}.cellscore .region-select-form input{width:100%}.cellscore .checkpoint-cycle-controls{flex-wrap:wrap;justify-content:center;gap:1em;margin-bottom:8px;display:flex}.cellscore .checkpoint-cycle-controls label{align-items:center;gap:6px;display:inline-flex}.cellscore .checkpoint-cycle-controls .checkpoint-date{min-width:0}.cellscore .checkpoint-history{touch-action:pan-y}.cellscore .mac_pause{text-align:center;border:1px solid var(--color-bg-border);border-radius:5px;font-size:larger}.cellscore .daychange{border-bottom:1px dashed var(--color-bg-border)}.cellscore .region-error{color:#ff8080;margin:6px 0 0}g.checkpoint:hover circle{fill-opacity:1;stroke-width:2px}.cellscore th,.cellscore td{text-align:left;padding-left:5px}.checkpoint_table{border-collapse:collapse}.checkpoint_table th{text-align:right}.checkpoint_table td{text-align:right}.checkpointtooltip{min-width:180px}.checkpoint_timers{border:1px solid var(--color-bg-border);background:hsl(from var(--color-bg) h s 20%);border-radius:2px;flex:none;margin-top:4px;padding:4px 8px 8px}.checkpoint-timer-row{white-space:nowrap;justify-content:space-between;gap:8px;display:flex}@media (width<=600px){.cellscore{padding:6px}.cellscore .region-select-form{flex-direction:column;align-items:stretch}.checkpoint-timer-row{gap:4px;font-size:.75em}}.ui-dialog-aboutIITC .plugin-is-standard{color:#a9a9a9}.ui-dialog-aboutIITC .plugin-error{text-decoration:line-through}.ui-tooltip,.ui-dialog{z-index:9500;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);color:var(--color-secondary);padding:2px 4px;font-size:13px;line-height:15px;position:absolute}.ui-tooltip{max-width:300px}.ui-widget-overlay{z-index:10000;opacity:.6;background:#444;width:100%;height:100%;position:fixed;top:0;left:0}.ui-modal{z-index:10001!important}.ui-tooltip{z-index:10002!important}.ui-tooltip,.ui-dialog a{color:var(--color-primary)}.ui-dialog{border-radius:2px;max-width:calc(100vw - 1rem);padding:0}.ui-dialog-modal .ui-dialog-titlebar-close{display:none}.ui-dialog-titlebar{text-align:center;background-color:#083c4ee6;padding:4px;font-size:13px;line-height:15px}.ui-dialog-title,.text-overflow-ellipsis.ui-dialog-title{width:calc(100% - 45px);margin-left:8px;margin-right:45px;font-weight:700}.ui-dialog-title-active{color:var(--color-primary)}.ui-dialog-title-inactive{color:#fff}.ui-dialog-titlebar-button{vertical-align:middle;text-align:center;cursor:pointer;border:1px solid var(--color-bg-border);background-color:#0000;width:17px;height:17px;padding:0;display:table-cell;position:absolute;top:3px}.ui-dialog-titlebar-button:active{background-color:#20a8b1}.ui-dialog-titlebar-button-close{right:4px}.ui-dialog-titlebar-button-collapse{right:25px}.ui-dialog-titlebar-button-collapse-collapsed{background-color:var(--color-bg-border)}.ui-dialog-titlebar-button-collapse:after,.ui-dialog-titlebar-button-close:after,.ui-dialog-titlebar-button-close:before{content:"";border-top:2px solid var(--color-bg-border);width:11px;height:0;margin-left:-6px;position:absolute;top:3px;left:50%}.ui-dialog-titlebar-button-close:after{transform:translateY(3.5px)rotate(45deg)}.ui-dialog-titlebar-button-close:before{transform:translateY(3.5px)rotate(-45deg)}.ui-dialog-titlebar-button.ui-state-active:after,.ui-dialog-titlebar-button.ui-state-active:before,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:after,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:before,.ui-dialog-titlebar-button:active:after,.ui-dialog-titlebar-button:active:before{border-top-color:#083c4ee6}.ui-dialog-content{padding:12px;position:relative;overflow:auto;max-height:calc(100vh - 83px)!important}.ui-dialog-content-hidden{display:none!important}.ui-dialog-buttonpane{border-top:1px solid #20a8b1;padding:6px}.ui-dialog-buttonset{text-align:right}.ui-dialog-buttonset button,.ui-dialog-content button{min-width:40px;color:var(--color-primary);border:1px solid var(--color-primary);background-color:var(--color-bg-trans);padding:2px}.ui-dialog-buttonset button:hover{text-decoration:underline}body.icons-unavailable #searchwrapper h3:before{content:"▲"}body.icons-unavailable #chatcontrols .toggle:before{content:"▲"}body.icons-unavailable #chatcontrols.expand .toggle:before{content:"▼"}body.icons-unavailable .ui-tabs-nav .ui-icon-close:before{content:"×"}body.icons-unavailable #sidebartoggle .open:before{content:"◀"}body.icons-unavailable #sidebartoggle .close:before{content:"▶"}body.icons-unavailable .leaflet-control-layers-toggle:before{content:""}:root{--safe-area-inset-top:env(safe-area-inset-top);--safe-area-inset-bottom:env(safe-area-inset-bottom);--safe-area-inset-left:env(safe-area-inset-left);--safe-area-inset-right:env(safe-area-inset-right);--sidebar-width:300px;--hidden-scrollbar-width:20px;--chat-shrinked:60px;--icon-target-size:24px;--color-enl:#03fe03;--color-res:#00c5ff;--color-mac:#ff2020;--color-none:#fff;--color-primary:#ffce00;--color-secondary:#eee;--color-bg:#08304e;--color-bg-trans:color-mix(var(--color-bg) 90%, transparent);--color-bg-trans-50:color-mix(var(--color-bg) 50%, transparent);--color-bg-border:#20a8b1}.text-overflow-ellipsis{white-space:nowrap;text-overflow:ellipsis;vertical-align:text-bottom;width:100%;display:inline-block;overflow:hidden}html,body{background:#0e3d4e;width:100%;height:100%;overflow:hidden}#map{width:100%;height:100%;overflow:visible}body{margin:0;font-family:Roboto,Helvetica Neue,Helvetica,sans-serif;font-size:14px}.icon-button{cursor:pointer;min-width:var(--icon-target-size);min-height:var(--icon-target-size);justify-content:center;align-items:center;display:inline-flex}i.tiny{font-size:1rem}i.small{font-size:2rem}i.medium{font-size:4rem}i.large{font-size:6rem}.enl{color:var(--color-enl)}.res{color:var(--color-res)}.mac{color:var(--color-mac)}.none{color:var(--color-none)}.nickname{cursor:pointer}a{color:var(--color-primary);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}.help{cursor:help}.toggle{font-family:IITC Material Symbols;line-height:1;display:block}td{vertical-align:top;padding:0}td+td{padding-left:4px}#qrcode>canvas{border:8px solid #fff}.RESISTANCE{color:#00c2ff}.ALIENS,.ENLIGHTENED{color:#28f428}#portal_highlight_select{z-index:2500;color:var(--color-primary);background-color:#0e3c46;font-size:11px;position:absolute;top:5px;left:10px}.portal_details th,.portal_details td{vertical-align:top;text-align:left}.portal_details th{white-space:nowrap;padding-right:1em}.portal_details tr.padding-top th,.portal_details tr.padding-top td{padding-top:.7em}#play_button{display:none}.layer_off_warning{color:var(--color-primary);text-align:center;margin:8px}.cursor_help{cursor:help}.ui-tabs-nav{border-top:1px solid #0000;border-bottom:1px solid #20a8b1;margin:3px 0 0;padding:0;display:block}.ui-tabs-nav:after{content:"";clear:left;width:0;height:0;display:block}.ui-tabs-nav li{float:left;border:1px solid #20a8b1;margin:0 0 -1px;list-style:none;display:block}.ui-tabs-nav li.ui-tabs-active{background:#0f2c3f;border-width:2px 2px 1px;border-bottom-color:#0f2c3f;margin:-1px 1px;font-weight:700}.ui-tabs-nav a{padding:.2em .7em;display:inline-block}.ui-tabs-nav .ui-icon{vertical-align:top;width:16px;height:22px;font-size:0;display:inline-block;position:relative;overflow:hidden}.ui-tabs-nav .ui-icon-close:before{content:"close";text-align:center;vertical-align:baseline;cursor:pointer;width:16px;height:16px;font-family:IITC Material Symbols;font-size:16px;position:absolute;top:2px}.leaflet-marker-icon>svg{height:inherit;width:inherit}.warning{color:#f77;text-shadow:1px 1px #000,-1px -1px #000;text-align:center;font-weight:700}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child{display:none}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2){float:left}::-webkit-input-placeholder{font-style:italic}:-moz-placeholder-shown{font-style:italic}::-moz-placeholder{font-style:italic}' +
+@media print{.leaflet-control-container,#chatcontrols,#chat,#chatinput,#sidebartoggle,#sidebar,#updatestatus,#portal_highlight_select{display:none!important}}.leaflet-control{-webkit-user-select:none;user-select:none}.leaflet-control-container .leaflet-top.leaflet-left{flex-flow:column wrap;align-content:flex-start;align-items:flex-start;width:700px;height:calc(100% - 126px);max-height:90%;display:flex}.leaflet-control-layers-overlays label.disabled{cursor:help;text-decoration:line-through}.leaflet-control-layers-base{float:left;max-height:600px;overflow-y:auto}.leaflet-control-layers-overlays{float:left;border-left:1px solid #ddd;max-height:600px;margin-left:8px;padding-left:8px;overflow-y:auto}.leaflet-control-layers-separator{display:none}.leaflet-left .leaflet-control.chat-expand{margin-left:720px}.leaflet-left,.leaflet-right{grid-gap:10px;justify-items:baseline;display:grid}.leaflet-right{justify-items:end}.leaflet-left .leaflet-control,.leaflet-right .leaflet-control{margin:0}.leaflet-top{margin-top:var(--safe-area-inset-top);top:10px}.leaflet-right{margin-right:var(--safe-area-inset-right);right:30px}.leaflet-bottom{margin-bottom:calc(22px + var(--safe-area-inset-bottom));bottom:10px}.leaflet-left{margin-left:var(--safe-area-inset-left);left:10px}.leaflet-control-scale{order:-90}.leaflet-bar{box-shadow:none;border:2px solid #0003}.leaflet-bar a{text-decoration:none}.leaflet-control-zoom-in,.leaflet-control-zoom-out{background-size:18px;font-size:0!important}.leaflet-control-zoom-in{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}.leaflet-control-zoom-out{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}#map .leaflet-popup{pointer-events:none}#map .leaflet-popup-content-wrapper{border:1px solid var(--color-bg-border);pointer-events:auto;background:#0e3d4e;border-radius:0}#map .leaflet-popup-content{color:var(--color-primary);margin:5px 8px}#map .leaflet-popup-close-button{pointer-events:auto;width:10px;height:10px;padding:2px 1px 0 0;font-size:12px;line-height:8px}#map .leaflet-popup-tip{background:var(--color-bg-border);width:1px;height:20px;margin:0 0 0 20px;padding:0;transform:none}body:not(.icons-unavailable) .leaflet-control-layers-toggle,body:not(.icons-unavailable) .leaflet-retina .leaflet-control-layers-toggle{background-image:none}.leaflet-control-layers-toggle:before{content:"layers";font-family:IITC Material Symbols}.leaflet-control-layers-toggle,.iitc-control-button>a{border-radius:inherit;justify-content:center;align-items:center;display:flex}.leaflet-control-layers-toggle:hover,.iitc-control-button a:hover{background-color:#f4f4f4;text-decoration:none}.leaflet-control-layers-toggle:before,.iitc-control-button iitc-icon{color:#454545;font-size:28px}.iitc-control-button{background:#fff;border-radius:5px;flex-direction:row-reverse;align-items:flex-start;display:flex;box-shadow:0 1px 5px #0006}.leaflet-touch .iitc-control-button{box-shadow:none;background-clip:padding-box;border:2px solid #0003}.iitc-control-button>a{flex:none;width:36px;height:36px}.leaflet-touch .iitc-control-button>a{width:44px;height:44px}.iitc-control-menu{flex-direction:column;gap:2px;max-height:60vh;padding:4px 0 4px 4px;display:none;overflow-y:auto}@media (hover:hover) and (pointer:fine){.iitc-control-button:hover>.iitc-control-menu{display:flex}}.iitc-control-button:has(:focus-visible)>.iitc-control-menu{display:flex}.iitc-control-button .iitc-control-menu a{color:#333;white-space:nowrap;border-radius:4px;padding:4px 8px;font-size:13px}#chatcontrols{color:var(--color-primary);background:var(--color-bg-trans);bottom:calc(var(--chat-shrinked) + var(--safe-area-inset-bottom) + 22px);left:var(--safe-area-inset-left);z-index:3000;height:26px;padding-left:1px;position:absolute}#chatcontrols .toggle{font-size:20px;line-height:24px}#chatcontrols .toggle:before{content:"expand_less"}#chatcontrols.expand{top:var(--safe-area-inset-top);bottom:auto}#chatcontrols.expand .toggle:before{content:"expand_more"}#chatcontrols a{text-align:center;border:1px solid var(--color-bg-border);vertical-align:top;width:94px;height:24px;margin-left:-1px;line-height:24px;display:inline-block}#chatcontrols a:first-child{letter-spacing:-1px;text-decoration:none}#chatcontrols a.active{border-color:var(--color-primary);background:var(--color-bg);border-bottom-width:0;font-weight:700}#chatcontrols .loading{background-color:color-mix(RED 33%, transparent);animation:1.2s linear infinite chatloading}#chatcontrols a.active+a{border-left-color:var(--color-primary)}@keyframes chatloading{0%{background-color:color-mix(RED 40%, transparent)}50%{background-color:color-mix(RED 10%, transparent)}to{background-color:color-mix(RED 40%, transparent)}}#chat{width:708px;max-width:100vw;height:var(--chat-shrinked);bottom:calc(var(--safe-area-inset-bottom) + 23px);padding-left:var(--safe-area-inset-left);z-index:3000;background:var(--color-bg-trans);color:var(--color-secondary);border:1px solid var(--color-bg-border);box-sizing:border-box;border-bottom:0;line-height:15px;position:absolute;left:0}#chat.expand{height:auto;top:calc(var(--safe-area-inset-top) + 25px)}#chat .divider{color:#bbb}#chat .divider td:nth-child(2){text-align:center}em{color:red;font-style:normal}#chat>div{box-sizing:border-box;height:100%;padding:2px;position:relative;overflow:hidden scroll}#chat table,#chatinput table{table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;min-height:100%;margin-bottom:1px}#chat table tr:last-child,#chatinput table{height:100%}#chatinput.public mark,#chatinput.public input{color:#f66}#chatinput.alerts mark{color:#bbb}#chat td,#chatinput td{vertical-align:top;padding-bottom:3px;font-size:13px}#chat td:first-child,#chatinput td:first-child{color:#bbb;white-space:nowrap;width:44px;padding-left:2px;overflow:hidden}#chat time{cursor:help}#chat td:nth-child(2),#chatinput td:nth-child(2){white-space:nowrap;width:91px;padding-left:2px;overflow:hidden}#chat td.system_narrowcast{color:#f66}#chatall tr.faction td:nth-child(3):before,#chatalerts tr.faction td:nth-child(3):before{content:"[faction]";color:#f88;background-color:#500;margin-right:.2rem}#chatall tr.public td:nth-child(3):before,#chatalerts tr.public td:nth-child(3):before{content:"[public]";color:#ff6;background-color:#550;margin-right:.2rem}mark{background:0 0}.invisep{color:#0000;width:1px;height:1px;display:inline-block;overflow:hidden}#chatinput{background:var(--color-bg-trans);width:708px;max-width:100vw;height:calc(var(--safe-area-inset-bottom) + 23px);border:1px solid var(--color-bg-border);z-index:3001;box-sizing:border-box;padding:0 2px;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);position:absolute;bottom:0;left:0}#chatinput td{vertical-align:middle;padding-bottom:1px}#chatinput input{color:var(--color-secondary);background:0 0;width:100%;height:100%;padding:3px 4px 1px}.bidi-isolate{unicode-bidi:isolate}.pl_nudge_date{color:#ffd652;background-color:#724510;border-top:1px solid #ffd652;border-bottom:1px solid #ffd652;border-left:1px solid #ffd652;width:36px;height:18px;padding-left:2px;display:block;position:relative;left:-2px}.pl_nudge_date:after{content:"";background:url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png) no-repeat;width:5px;height:20px;position:absolute;top:-1px;right:-5px}.pl_nudge_player{cursor:pointer}.pl_nudge_me{color:#ffd652}#searchwrapper,#searchbox{position:relative}#search{width:100%;height:2em;min-height:var(--icon-target-size);padding-left:max(2em, var(--icon-target-size));padding-right:max(4em, calc(2 * var(--icon-target-size)))}#search::-webkit-search-cancel-button{-webkit-appearance:none}#searchicon,#searchcancel,#buttongeolocation{color:#bbb;min-width:var(--icon-target-size);min-height:var(--icon-target-size);background-color:#0000;border:0 #0000;justify-content:center;align-items:center;margin:auto 0;padding:0 .1em;font-size:20px;display:flex;position:absolute;top:0;bottom:0}#searchicon iitc-icon,#buttongeolocation iitc-icon{font-size:1em}#searchcancel iitc-icon{font-size:.9em}#searchicon{left:0}#searchcancel{cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;right:24px}#searchcancel.visible{opacity:1;pointer-events:auto}#buttongeolocation{cursor:pointer;right:0}#buttongeolocation:focus{outline:1px dotted var(--color-primary)}.searchquery{max-height:25em;overflow-y:auto}#searchwrapper h3{cursor:pointer;height:auto;padding:0 0 0 23px;font-size:1em;position:relative}#searchwrapper h3:before{content:"expand_less";margin-right:2px;font-family:IITC Material Symbols;font-size:14px;font-weight:400;transition:transform .3s;position:absolute;left:4px}#searchwrapper .searchquery.collapsed h3:before{transform:rotate(180deg)}#searchwrapper ul{max-height:100%;padding-left:16px;overflow:hidden}#searchwrapper li{cursor:pointer}#searchwrapper .searchquery.collapsed ul{max-height:0}#searchwrapper li a{background-position:1px;background-repeat:no-repeat;background-size:12px 12px;margin-left:-14px;padding-left:14px}#searchwrapper li:focus a,#searchwrapper li:hover a{text-decoration:underline}#searchwrapper li em{color:#ccc;font-size:.9em}#scrollwrapper{right:calc(-2 * var(--hidden-scrollbar-width) + 2px + var(--safe-area-inset-right));top:var(--safe-area-inset-top);width:calc(var(--sidebar-width) + 2 * var(--hidden-scrollbar-width));bottom:calc(var(--safe-area-inset-bottom) + 45px);z-index:3001;pointer-events:none;position:fixed;overflow:hidden auto}#sidebar{background-color:var(--color-bg-trans);border-left:1px solid var(--color-bg-border);color:#888;width:calc(var(--sidebar-width) + var(--hidden-scrollbar-width) + 1px);pointer-events:auto;max-height:100%;position:relative;top:0;left:0;overflow:hidden scroll}#sidebartoggle{width:20px;top:calc(var(--safe-area-inset-top) + 103px);z-index:3002;background-color:var(--color-bg-trans);color:var(--color-primary);border:1px solid var(--color-bg-border);right:var(--safe-area-inset-right);border-right:none;border-radius:5px 0 0 5px;margin-top:-31px;padding:20px 0;line-height:10px;text-decoration:none;display:block;position:absolute}#sidebartoggle .toggle{font-size:20px}#sidebartoggle .open:before{content:"chevron_left"}#sidebartoggle .close:before{content:"chevron_right"}body.sidebar-open .leaflet-right{margin-right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}body.sidebar-open #sidebartoggle{right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}#sidebar>*{box-sizing:border-box;width:calc(var(--sidebar-width) + 1px);border-bottom:1px solid #20a8b1}#playerstat{height:30px}h2{color:var(--color-primary);cursor:help;box-sizing:border-box;width:100%;margin:0;padding:0 4px;font-size:21px}h2 #name{vertical-align:top;white-space:nowrap;font-weight:300;display:inline}h2 #name .playername{text-overflow:ellipsis;max-width:70%;display:inline-block;overflow:hidden}h2 #name:hover .playername{max-width:50%}h2 #name:hover #signout{display:inline-block}h2 #stats{float:right;height:100%;overflow:hidden}h2 sup{margin-bottom:-2px;font-size:11px;display:block}h2 sub{margin-bottom:-2px;font-size:11px;display:block}#signout{background-color:var(--color-bg-trans-50);vertical-align:text-top;padding:0 4px;font-size:12px;font-weight:400;display:none}#gamestat span{cursor:help;box-sizing:border-box;padding:0 3px;font-weight:700;display:inline-block}#gamestat span.res{background:color-mix(var(--color-res) 60%, black)}#gamestat span.enl{background:color-mix(var(--color-enl) 60%, black)}input:not([type]),.input{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=text]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=password]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=number]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=email]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=search]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=url]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}.leaflet-control-layers input{height:auto;padding:0}#portaltitle{white-space:nowrap;margin:2px 0;line-height:24px;display:flex}#portaltitle .value{text-overflow:ellipsis;flex:1;overflow:hidden}#portaltitle iitc-icon{font-size:24px}#portaltitle .close{cursor:pointer;color:var(--color-primary);margin-right:2px;font-weight:400}.imgpreview{cursor:help;background:50%/contain no-repeat;height:190px;position:relative;overflow:hidden}.imgpreview img.hide,.imgpreview .portalDetails{display:none}#level{text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000,0 0 5px #fff;text-align:right;float:right;margin-right:15px;font-size:40px;display:block}.mods{text-align:center;width:296px;height:67px;margin:3px auto 1px}.mods span{float:left;text-align:center;cursor:help;background-color:#0000004d;border:1px solid #666;width:63px;height:63px;margin:0 2px;padding:2px;display:block;overflow:hidden}.mods span:not([title]){cursor:auto}.res .mods span,.res .meter{border:1px solid #0076b6}.enl .mods span,.enl .meter{border:1px solid #017f01}#randdetails,#resodetails{box-sizing:border-box;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;padding:0 4px}#randdetails td,#resodetails td{text-overflow:ellipsis;vertical-align:top;white-space:nowrap;width:50%;overflow:hidden}#randdetails th,#resodetails th{text-align:right;width:62px;padding:0 4px;font-weight:400}#randdetails th+th,#resodetails th+th{text-align:left;padding-left:4px;padding-right:4px}#randdetails td:first-child,#resodetails td:first-child{text-align:right;padding-left:2px}#randdetails td:last-child,#resodetails td:last-child{text-align:left;padding-right:2px}#randdetails{margin-top:4px;margin-bottom:5px}#randdetails tt{cursor:help;font-family:inherit}#artifact_target,#artifact_fragments{margin:4px 8px}#resodetails{margin-bottom:0}.meter{cursor:help;box-sizing:border-box;background:#000;width:100%;height:18px;padding:1px;display:inline-block;position:relative;top:0;left:0}.meter.north{overflow:hidden}.meter.north:before{content:"";background-color:red;border:1px solid #000;border-radius:100%;width:6px;height:6px;margin-left:-4px;display:block;position:absolute;top:-3px;left:50%}.meter span{height:14px;display:block}.meter-level{text-shadow:0 0 .3em gray;text-align:center;word-spacing:4px;position:absolute;top:-2px;left:0;right:0}.linkdetails{text-align:center;margin-bottom:0}.linkdetails aside{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox{display:none!important}#toolbox,#toolbox_component{text-align:left}#toolbox>a,#toolbox_component>a{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}#toolbox_component>a>iitc-icon{margin-top:-2px;margin-right:2px;font-size:1em}#portaldetails{min-height:63px}#historydetails{text-align:center;color:var(--color-primary)}#historydetails span{color:#ff4a4a}#historydetails span.completed{color:#03fe03}#updatestatus{width:var(--sidebar-width);background-color:var(--color-bg-trans);border-bottom:0;border-top:1px solid var(--color-bg-border);border-left:1px solid var(--color-bg-border);color:var(--color-primary);padding:4px;padding-bottom:var(--safe-area-inset-bottom);bottom:0;right:var(--safe-area-inset-right);z-index:3002;box-sizing:border-box;font-size:13px;position:fixed}#updatestatus .map{margin-left:8px}#updatestatus.ghost{pointer-events:none;background:0 0;border:0}#updatestatus.ghost>*{pointer-events:auto}#loadlevel{color:#000;background:#fff;border:0 solid #20a8b1;border-width:0 1px;min-width:1.8em;margin:-4px 0;padding:4px .2em;display:inline-block}#innerstatus .failed-request{color:#f66}.redeemReward{padding:0;font-family:Inconsolata,Consolas,Menlo,Courier New,monospace;font-size:14px;list-style-type:none}.redeemReward .itemlevel{text-shadow:0 0 1px #000;font-weight:700}table.artifact tr>*{background:var(--color-bg-trans)}table.artifact td.info{min-width:110px}table.artifact .portal{min-width:200px}.ui-dialog-content.region-scoreboard-dialog,.region-scoreboard-dialog.safe-area-insets{flex-direction:column;min-height:0;display:flex;overflow:hidden}.region-scoreboard-dialog.safe-area-insets{box-sizing:border-box}.cellscore{box-sizing:border-box;flex-direction:column;flex:auto;gap:10px;min-height:0;padding:8px;display:flex;overflow-y:auto}.cellscore details.scoreboard-section{border:1px solid var(--color-bg-border);border-radius:2px;padding:8px}.cellscore .scoreboard-section>summary{color:var(--color-primary);cursor:pointer;margin:0;font-weight:700}.cellscore .region-selection>summary{flex-wrap:wrap;gap:4px 8px;display:flex}.cellscore .region-summary-name{margin-left:auto}.cellscore .scoreboard-section[open]>summary{margin-bottom:8px}.cellscore table{white-space:nowrap;width:80%;max-width:100%;margin-left:auto;margin-right:auto}.cellscore .historychart>div{width:100%}.cellscore .history-chart{width:100%;height:auto;margin-top:.5em;margin-bottom:.5em;display:block}.cellscore .logscale{vertical-align:middle;margin-top:0}.cellscore #overview{width:100%}.cellscore #overview td{white-space:nowrap;text-align:right;width:1%}.cellscore #overview th{white-space:nowrap;text-align:left;width:1%;padding-left:4px}.cellscore .region-select-form{flex-wrap:wrap;align-items:end;gap:8px;display:flex}.cellscore .region-select-form label{flex-direction:column;flex:110px;gap:3px;display:flex}.cellscore .region-select-form input{width:100%}.cellscore .checkpoint-cycle-controls{flex-wrap:wrap;justify-content:center;gap:1em;margin-bottom:8px;display:flex}.cellscore .checkpoint-cycle-controls label{align-items:center;gap:6px;display:inline-flex}.cellscore .checkpoint-cycle-controls .checkpoint-date{min-width:0}.cellscore .checkpoint-history{touch-action:pan-y}.cellscore .mac_pause{text-align:center;border:1px solid var(--color-bg-border);border-radius:5px;font-size:larger}.cellscore .daychange{border-bottom:1px dashed var(--color-bg-border)}.cellscore .region-error{color:#ff8080;margin:6px 0 0}g.checkpoint:hover circle{fill-opacity:1;stroke-width:2px}.cellscore th,.cellscore td{text-align:left;padding-left:5px}.checkpoint_table{border-collapse:collapse}.checkpoint_table th{text-align:right}.checkpoint_table td{text-align:right}.checkpointtooltip{min-width:180px}.checkpoint_timers{border:1px solid var(--color-bg-border);background:hsl(from var(--color-bg) h s 20%);border-radius:2px;flex:none;margin-top:4px;padding:4px 8px 8px}.checkpoint-timer-row{white-space:nowrap;justify-content:space-between;gap:8px;display:flex}@media (width<=600px){.cellscore{padding:6px}.cellscore .region-select-form{flex-direction:column;align-items:stretch}.checkpoint-timer-row{gap:4px;font-size:.75em}}.iitc-export-text,.iitc-import-text{box-sizing:border-box;resize:vertical;width:100%;height:150px}.iitc-prompt-text{box-sizing:border-box;width:100%}.iitc-prompt-error:empty{display:none}.iitc-prompt-error{color:#ff8b7f}.ui-tooltip,.ui-dialog{z-index:9500;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);padding:2px 4px;position:absolute}.ui-tooltip,.ui-dialog,.iitc-options-pane{color:var(--color-secondary);font-size:13px;line-height:15px}.ui-tooltip{max-width:300px}.ui-widget-overlay{z-index:10000;opacity:.6;background:#444;width:100%;height:100%;position:fixed;top:0;left:0}.ui-modal{z-index:10001!important}.ui-tooltip{z-index:10002!important}.ui-tooltip,.ui-dialog a{color:var(--color-primary)}.ui-dialog{border-radius:2px;max-width:calc(100vw - 1rem);padding:0}.ui-dialog-modal .ui-dialog-titlebar-close{display:none}.ui-dialog-titlebar{text-align:center;background-color:#083c4ee6;padding:4px;font-size:13px;line-height:15px}.ui-dialog-title,.text-overflow-ellipsis.ui-dialog-title{width:calc(100% - 45px);margin-left:8px;margin-right:45px;font-weight:700}.ui-dialog-title-active{color:var(--color-primary)}.ui-dialog-title-inactive{color:#fff}.ui-dialog-titlebar-button{vertical-align:middle;text-align:center;cursor:pointer;border:1px solid var(--color-bg-border);background-color:#0000;width:17px;height:17px;padding:0;display:table-cell;position:absolute;top:3px}.ui-dialog-titlebar-button:active{background-color:#20a8b1}.ui-dialog-titlebar-button-close{right:4px}.ui-dialog-titlebar-button-collapse{right:25px}.ui-dialog-titlebar-button-collapse-collapsed{background-color:var(--color-bg-border)}.ui-dialog-titlebar-button-collapse:after,.ui-dialog-titlebar-button-close:after,.ui-dialog-titlebar-button-close:before{content:"";border-top:2px solid var(--color-bg-border);width:11px;height:0;margin-left:-6px;position:absolute;top:3px;left:50%}.ui-dialog-titlebar-button-close:after{transform:translateY(3.5px)rotate(45deg)}.ui-dialog-titlebar-button-close:before{transform:translateY(3.5px)rotate(-45deg)}.ui-dialog-titlebar-button.ui-state-active:after,.ui-dialog-titlebar-button.ui-state-active:before,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:after,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:before,.ui-dialog-titlebar-button:active:after,.ui-dialog-titlebar-button:active:before{border-top-color:#083c4ee6}.ui-dialog-content{padding:12px;position:relative;overflow:auto;max-height:calc(100vh - 83px)!important}.ui-dialog-content-hidden{display:none!important}.ui-dialog-buttonpane{border-top:1px solid #20a8b1;padding:6px}.ui-dialog-buttonset{text-align:right}.ui-dialog-buttonset button,.ui-dialog-content button,.iitc-options-pane button{min-width:40px;color:var(--color-primary);border:1px solid var(--color-primary);background-color:var(--color-bg-trans);padding:2px}.ui-dialog-buttonset button:hover{text-decoration:underline}.iitc-options-page{flex-direction:column;gap:2px;display:flex}.iitc-options-row{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;padding:3px 0;display:flex}.iitc-options-row+.iitc-options-row{border-top:1px solid #ffffff0f}.iitc-options-label{flex:12em;min-width:0}.iitc-options-control{flex-wrap:wrap;align-items:center;gap:4px 8px;margin-left:auto;display:flex}.iitc-options-buttons{flex-wrap:wrap;gap:4px;display:inline-flex}.iitc-options .iitc-options-page button{padding:3px 5px}.iitc-options-icon-button{justify-content:center;align-items:center;display:inline-flex}.iitc-options-icon-button iitc-icon{font-size:16px}.iitc-options-description,.iitc-options-sub{opacity:.75;font-size:11px}.iitc-options-heading{color:var(--color-primary);border-bottom:1px solid var(--color-bg-border);margin:12px 0 4px;padding-bottom:2px;font-size:14px}.iitc-options-heading:first-child{margin-top:0}.iitc-options-text{margin:4px 0}.iitc-options-notice{border-left:2px solid var(--color-bg-border);background:#20a8b11a;margin:4px 0;padding:6px 8px}.iitc-options-notice-warning{border-left-color:var(--color-primary);background:#ffce001a}.iitc-options-notice-error{background:#ff8b7f1a;border-left-color:#ff8b7f}.iitc-options-page button[aria-disabled=true]{opacity:.5;cursor:progress}.iitc-options-error{color:#ff8b7f;flex-basis:100%}.iitc-options-message{flex-basis:100%;align-items:flex-start;gap:4px;font-size:11px;display:flex}.iitc-options-message>iitc-icon{flex:none;font-size:14px}.iitc-options-page input[type=number]{width:6em}.iitc-options-list{margin:0;padding:0;list-style:none}.iitc-options-list li{padding:2px 0}.iitc-options-list .iitc-options-list{margin-left:16px}.iitc-options-list-head{flex:1;justify-content:space-between;gap:8px;display:flex}.iitc-options-list summary{cursor:pointer;align-items:center;gap:4px;list-style:none;display:flex}.iitc-options-list summary::-webkit-details-marker{display:none}.iitc-options-list summary>iitc-icon{flex:none}.iitc-options-list details[open]>summary>iitc-icon{transform:rotate(90deg)}.iitc-options-badge{opacity:.75;flex:none}.iitc-options-item-muted{opacity:.6}.iitc-options-item-error{color:#ff8b7f;text-decoration:line-through}.iitc-options-repeat{border-collapse:collapse;width:100%}.iitc-options-repeat th{text-align:left;padding:2px 4px;font-weight:400}.iitc-options-repeat td{text-align:left;padding:2px 4px;font-weight:400}.iitc-options-repeat :is(th,td):first-child{padding-left:0}.iitc-options-repeat :is(th,td):last-child{padding-right:0}.iitc-options-repeat thead th{opacity:.75;font-size:11px}.iitc-options-repeat tbody tr+tr{border-top:1px solid #ffffff0f}.iitc-options-repeat .iitc-options-cell-buttons{white-space:nowrap;text-align:right;width:1%}.iitc-options-choice{cursor:pointer;align-items:center;gap:6px;display:inline-flex}.iitc-options-choice input{margin:0}#dialog-iitc-options{padding:0;overflow:hidden}.iitc-options{grid-template-rows:minmax(0,1fr);grid-template-columns:11rem minmax(0,1fr);height:100%;display:grid;container-type:inline-size}.iitc-options-nav{z-index:0;flex-direction:column;gap:6px;min-width:0;min-height:0;padding:12px 0 12px 12px;display:flex}input[type=search].iitc-options-search{box-sizing:border-box;border-radius:5px;width:calc(100% - 12px);height:24px;min-height:24px;padding:0 9px}.iitc-options-pages{flex-direction:column;gap:2px;min-height:0;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}.iitc-options .iitc-options-page-link{width:100%;color:inherit;font:inherit;text-align:left;cursor:pointer;background:0 0;border:1px solid #0000;border-right:0;border-radius:5px 0 0 5px;padding:5px 8px;transition:all .2s;display:block}.iitc-options .iitc-options-page-link[aria-current=page]{border-color:var(--color-bg-border);color:var(--color-primary);background:var(--color-bg)}.iitc-options-found{-webkit-line-clamp:2;line-clamp:2;opacity:.75;-webkit-box-orient:vertical;font-size:11px;display:-webkit-box;overflow:hidden}.iitc-options-nothing{opacity:.75;padding:4px 6px}.iitc-options-detail{border-left:1px solid var(--color-bg-border);background:var(--color-bg);flex-direction:column;min-width:0;min-height:0;margin-left:-1px;display:flex}.iitc-options-content{flex:1;min-height:0;padding:4px 12px 12px;overflow-y:auto}.iitc-options-detail-head{align-items:center;gap:6px;margin-bottom:6px;padding:12px 12px 0;display:flex}.iitc-options-detail-head h2{width:auto;color:var(--color-primary);cursor:auto;margin:0;padding:0;font-size:16px}.iitc-options .iitc-options-back{color:inherit;cursor:pointer;background:0 0;border:0;justify-content:center;align-items:center;padding:0;display:none}.iitc-options .iitc-options-back iitc-icon{font-size:20px}@container (width<30rem){.iitc-options-nav,.iitc-options-detail{border-left:0;grid-column:1/-1;margin-left:0}.iitc-options .iitc-options-back{display:inline-flex}input[type=search].iitc-options-search{height:33px;min-height:33px;margin-bottom:6px;font-size:16px}.iitc-options-pages{background:var(--color-bg);gap:0;padding-right:12px}[data-view=page]>.iitc-options-nav,[data-view=list]>.iitc-options-detail{display:none}.iitc-options .iitc-options-page-link{border:1px solid var(--color-bg-border);text-align:center;border-top:0;border-radius:0;padding:8px}.iitc-options .iitc-options-page-link[aria-current=page]{color:inherit}.iitc-options-search:not(:placeholder-shown)~.iitc-options-pages .iitc-options-page-link{text-align:left}.iitc-options-pages li:first-child .iitc-options-page-link{border-top:1px solid var(--color-bg-border);border-radius:5px 5px 0 0}.iitc-options-pages li:last-child .iitc-options-page-link{border-radius:0 0 5px 5px}}.iitc-options-access-keys{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:fixed;top:0;left:0;overflow:hidden}.iitc-options-match{background:color-mix(in srgb, var(--color-primary) 22%, transparent);outline:3px solid color-mix(in srgb, var(--color-primary) 22%, transparent)}.iitc-options-pane{z-index:3001;box-sizing:border-box;padding:var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);background:var(--color-bg);position:fixed;inset:0}body.icons-unavailable #searchwrapper h3:before{content:"▲"}body.icons-unavailable #chatcontrols .toggle:before{content:"▲"}body.icons-unavailable #chatcontrols.expand .toggle:before{content:"▼"}body.icons-unavailable .ui-tabs-nav .ui-icon-close:before{content:"×"}body.icons-unavailable #sidebartoggle .open:before{content:"◀"}body.icons-unavailable #sidebartoggle .close:before{content:"▶"}body.icons-unavailable .leaflet-control-layers-toggle:before{content:""}:root{--safe-area-inset-top:env(safe-area-inset-top);--safe-area-inset-bottom:env(safe-area-inset-bottom);--safe-area-inset-left:env(safe-area-inset-left);--safe-area-inset-right:env(safe-area-inset-right);--sidebar-width:300px;--hidden-scrollbar-width:20px;--chat-shrinked:60px;--icon-target-size:24px;--color-enl:#03fe03;--color-res:#00c5ff;--color-mac:#ff2020;--color-none:#fff;--color-primary:#ffce00;--color-secondary:#eee;--color-bg:#08304e;--color-bg-trans:color-mix(var(--color-bg) 90%, transparent);--color-bg-trans-50:color-mix(var(--color-bg) 50%, transparent);--color-bg-border:#20a8b1}.text-overflow-ellipsis{white-space:nowrap;text-overflow:ellipsis;vertical-align:text-bottom;width:100%;display:inline-block;overflow:hidden}html,body{background:#0e3d4e;width:100%;height:100%;overflow:hidden}#map{width:100%;height:100%;overflow:visible}body{margin:0;font-family:Roboto,Helvetica Neue,Helvetica,sans-serif;font-size:14px}.icon-button{cursor:pointer;min-width:var(--icon-target-size);min-height:var(--icon-target-size);justify-content:center;align-items:center;display:inline-flex}i.tiny{font-size:1rem}i.small{font-size:2rem}i.medium{font-size:4rem}i.large{font-size:6rem}.enl{color:var(--color-enl)}.res{color:var(--color-res)}.mac{color:var(--color-mac)}.none{color:var(--color-none)}.nickname{cursor:pointer}a{color:var(--color-primary);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}.help{cursor:help}.toggle{font-family:IITC Material Symbols;line-height:1;display:block}td{vertical-align:top;padding:0}td+td{padding-left:4px}#qrcode>canvas{border:8px solid #fff}.RESISTANCE{color:#00c2ff}.ALIENS,.ENLIGHTENED{color:#28f428}#portal_highlight_select{z-index:2500;color:var(--color-primary);background-color:#0e3c46;font-size:11px;position:absolute;top:5px;left:10px}.portal_details th,.portal_details td{vertical-align:top;text-align:left}.portal_details th{white-space:nowrap;padding-right:1em}.portal_details tr.padding-top th,.portal_details tr.padding-top td{padding-top:.7em}#play_button{display:none}.layer_off_warning{color:var(--color-primary);text-align:center;margin:8px}.cursor_help{cursor:help}.ui-tabs-nav{border-top:1px solid #0000;border-bottom:1px solid #20a8b1;margin:3px 0 0;padding:0;display:block}.ui-tabs-nav:after{content:"";clear:left;width:0;height:0;display:block}.ui-tabs-nav li{float:left;border:1px solid #20a8b1;margin:0 0 -1px;list-style:none;display:block}.ui-tabs-nav li.ui-tabs-active{background:#0f2c3f;border-width:2px 2px 1px;border-bottom-color:#0f2c3f;margin:-1px 1px;font-weight:700}.ui-tabs-nav a{padding:.2em .7em;display:inline-block}.ui-tabs-nav .ui-icon{vertical-align:top;width:16px;height:22px;font-size:0;display:inline-block;position:relative;overflow:hidden}.ui-tabs-nav .ui-icon-close:before{content:"close";text-align:center;vertical-align:baseline;cursor:pointer;width:16px;height:16px;font-family:IITC Material Symbols;font-size:16px;position:absolute;top:2px}.leaflet-marker-icon>svg{height:inherit;width:inherit}.warning{color:#f77;text-shadow:1px 1px #000,-1px -1px #000;text-align:center;font-weight:700}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child{display:none}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2){float:left}::-webkit-input-placeholder{font-style:italic}:-moz-placeholder-shown{font-style:italic}::-moz-placeholder{font-style:italic}' +
   '</style>' +
   '<style>' +
   '\
-@font-face{font-family:IITC Material Symbols;font-style:normal;font-weight:400;font-display:block;src:url(data:font/woff2;base64,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)format("woff2")}iitc-icon{letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;vertical-align:middle;-webkit-font-smoothing:antialiased;direction:ltr;font-family:IITC Material Symbols;font-size:1.25em;font-style:normal;font-weight:400;line-height:1;display:inline-block}iitc-icon[filled]{font-variation-settings:"FILL" 1}body.icons-unavailable iitc-icon{font-size:0!important}body.icons-unavailable iitc-icon:before{content:attr(label);font:inherit;font-size:1rem}body.icons-unavailable iitc-icon[fallback]:before{content:attr(fallback)}' +
+@font-face{font-family:IITC Material Symbols;font-style:normal;font-weight:400;font-display:block;src:url(data:font/woff2;base64,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)format("woff2")}iitc-icon{letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;vertical-align:middle;-webkit-font-smoothing:antialiased;direction:ltr;font-family:IITC Material Symbols;font-size:1.25em;font-style:normal;font-weight:400;line-height:1;display:inline-block}iitc-icon[filled]{font-variation-settings:"FILL" 1}body.icons-unavailable iitc-icon{font-size:0!important}body.icons-unavailable iitc-icon:before{content:attr(label);font:inherit;font-size:1rem}body.icons-unavailable iitc-icon[fallback]:before{content:attr(fallback)}' +
   '</style>' +
   // note: smartphone.css injection moved into code/smartphone.js
   '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>';
@@ -1179,6 +1179,25 @@ window.setupStyles = function () {
   $('head').append('<style>' + styles + '</style>');
 };
 
+/**
+ * Saves data to a file with the given filename
+ *
+ * @deprecated use {@link IITC.utils.exportFile} instead
+ * @function saveFile
+ * @param {string|BlobPart|BlobPart[]} data - The data to be saved; the app takes only strings
+ * @param {string} [filename] - The name of the file to save
+ * @param {string} [dataType] - The MIME type of the file, used to filter file types in the app
+ */
+window.saveFile = (data, filename, dataType) => IITC.utils.exportFile(data, filename, dataType);
+
+/**
+ * Opens the options window on the 'About IITC' page
+ *
+ * @deprecated use `IITC.options.open('about')` instead
+ * @function aboutIITC
+ */
+window.aboutIITC = () => IITC.options.open('about');
+
 
 })();
 
@@ -1337,12 +1356,6 @@ window.runOnAppBeforeBoot = function () {
     window.androidCopy = function (text) {
       window.app.copy(text);
       return false;
-    };
-  }
-
-  if (window.app.saveFile) {
-    window.saveFile = function (data, filename, dataType) {
-      window.app.saveFile(filename || '', dataType || '*/*', data);
     };
   }
 
@@ -1967,7 +1980,8 @@ function setupIngressMarkers() {
  * @function checkingIntelURL
  */
 function checkingIntelURL() {
-  if (window.location.hostname !== 'intel.ingress.com' && localStorage['pass-checking-intel-url'] !== 'true') {
+  // on until the warning is dismissed; declared on no options page, so it stays in this browser
+  if (window.location.hostname !== 'intel.ingress.com' && IITC.options.get('iitc.intelUrlWarning', true)) {
     window.dialog({
       title: 'IITC Warning',
       html: '<p>You are running IITC on a non-standard Intel domain. Correct behavior is not guaranteed. It is recommended to use the IITC at <a href="https://intel.ingress.com">intel.ingress.com</a></p>',
@@ -1975,7 +1989,7 @@ function checkingIntelURL() {
       buttons: {
         "Don't remind me": function () {
           $(this).dialog('close');
-          localStorage['pass-checking-intel-url'] = true;
+          IITC.options.set('iitc.intelUrlWarning', false);
         },
         Dismiss: function () {
           $(this).dialog('close');
@@ -2132,7 +2146,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-07-100239');
+  log.log('loading done, booting. Built: ' + '2026-11-08-110655');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -2160,6 +2174,8 @@ function boot() {
   IITC.portal.details.setup();
   window.setupRedeem();
   window.setupSidebar();
+  IITC.options._setupWindow();
+  IITC.about.setup();
   IITC.statusbar.init();
 
   loadPlugins();
@@ -21335,295 +21351,134 @@ window.setupDialogs = function () {
 // *** module: dialog_about.js ***
 (function () {
 var log = ulog('dialog_about');
-/* global L, log -- eslint */
+/* global IITC, log -- eslint */
 
 /**
- * @file This file contains functions related to the 'About IITC' dialog.
+ * @file The 'About IITC' page of the options window: versions, links, the changelog and the list
+ *       of plugins with their changelogs. Plugins that failed to start are marked as such, and the
+ *       standard ones, built together with IITC, are shown as secondary
  * @module dialog_about
  */
 
 /**
- * Displays the 'About IITC' dialog.
- * This dialog includes the IITC version, a list of loaded plugins, and other relevant information.
+ * Plugin information as the page lists it
  *
- * @function
+ * @private
+ * @typedef {Object} PluginInfo
+ * @property {string} name - Name without the 'IITC plugin:' prefix
+ * @property {string} [version] - Version, without the build timestamp it shares with IITC
+ * @property {string} [details] - Build name and date, when they say more than the version
+ * @property {string} [description]
+ * @property {*} [error] - What stopped the plugin's setup
+ * @property {boolean} standard - Built together with this IITC
+ * @property {Array} [changelog] - Entries `{version, changes}`
  */
-window.aboutIITC = function () {
-  var html = createDialogContent();
 
-  window.dialog({
-    title: 'IITC ' + getIITCVersion(),
-    id: 'iitc-about',
-    html: html,
-    width: 'auto',
-    dialogClass: 'ui-dialog-aboutIITC',
-  });
+/**
+ * Retrieves the IITC version string
+ *
+ * @private
+ * @returns {string} The IITC version string
+ */
+const getIITCVersion = () => {
+  const iitc = window.script_info;
+  return `${iitc.script?.version || iitc.dateTimeVersion} [${iitc.buildName}]`;
 };
 
-/**
- * Creates the content for the 'About IITC' dialog.
- *
- * @function
- * @returns {string} HTML content for the about dialog.
- */
-function createDialogContent() {
-  var html = `<div><b>About IITC</b></div>
-              <div>Ingress Intel Total Conversion</div>
-              <hr>
-              <div>
-               <a href="${'https://iitc.app/'}" target="_blank">IITC Homepage</a> |
-               <a href="${'https://t.me/iitc_news'}" target="_blank">Telegram channel</a><br />
-               On the script’s homepage you can:
-               <ul>
-                 <li>Find Updates</li>
-                 <li>Get Plugins</li>
-                 <li>Report Bugs</li>
-                 <li>Contribute!</li>
-               </ul>
-              </div>
-              <hr>
-              <div>Version: ${getIITCVersion()} ${createChangelog(window.script_info)}</div>`;
-
-  if (isShortOnLocalStorage()) {
-    html += '<div class="warning">You are running low on LocalStorage memory.<br/>Please free some space to prevent data loss.</div>';
-  }
-
-  if (window.isApp && window.app.getVersionName) {
-    html += '<div>IITC Mobile ' + window.app.getVersionName() + '</div>';
-  }
-
-  var plugins = getPlugins();
-  if (plugins) {
-    html += '<div><p>Plugins:</p><ul>' + plugins + '</ul></div>';
-  }
-
-  return html;
-}
+// the build timestamp ending the IITC version ('.20240101.000000'), shared by the standard plugins
+const getIITCVersionAddition = () => window.script_info.script?.version.match(/^\d+\.\d+\.\d+(\..+)$/)?.[1];
 
 /**
- * Retrieves a list of plugins currently loaded in IITC. The list includes plugin names, versions, and descriptions.
+ * Turns the information a plugin was loaded with into what the page shows
  *
- * @function
- * @returns {string} Formatted list of plugins in HTML.
+ * @private
+ * @param {Object} info - Plugin information from boot
+ * @param {number} index - Position of the plugin in the boot order
+ * @returns {PluginInfo}
  */
-function getPlugins() {
-  var pluginsInfo = window.bootPlugins.info;
-
-  while (window.bootPlugins[0]) {
-    var plugin = window.bootPlugins.shift();
-    pluginsInfo.push(plugin.info || {});
-  }
-
-  var extra = getIITCVersionAddition();
-
-  var plugins = pluginsInfo
-    .map(convertPluginInfo)
-    .sort(function (a, b) {
-      return a.name > b.name ? 1 : -1;
-    })
-    .map(function (p) {
-      return pluginInfoToString(p, extra);
-    })
-    .join('\n');
-
-  return plugins;
-}
-
-/**
- * Converts plugin information into a structured object for easier processing.
- *
- * @function
- * @param {Object} info - The plugin information object.
- * @param {number} index - The index of the plugin in the array.
- * @returns {Object} Structured plugin information.
- */
-function convertPluginInfo(info, index) {
+const convertPluginInfo = (info, index) => {
   // Plugins metadata come from 2 sources:
   // - buildName, pluginId, dateTimeVersion: inserted in plugin body by build script
   //   (only standard plugins)
   // - script.name/version/description: from GM_info object, passed to wrapper
-  //   `script` may be not available if userscript manager does not provede GM_info
+  //   `script` may be not available if userscript manager does not provide GM_info
   //   (atm: IITC-Mobile for iOS)
-  var result = {
-    build: info.buildName,
-    changelog: info.changelog,
-    id: info.pluginId,
-    name: info.pluginId,
-    date: info.dateTimeVersion,
-    error: info.error,
-    version: undefined,
-    description: undefined,
-  };
-
-  var script = info.script;
-  if (script) {
-    if (typeof script.name === 'string') {
-      result.name = script.name.replace(/^IITC[\s-]+plugin:\s+/i, ''); // cut non-informative name part
-    }
-    result.version = script.version;
-    result.description = script.description;
-  }
-
-  if (!result.name) {
+  const script = info.script;
+  let name = typeof script?.name === 'string' ? script.name.replace(/^IITC[\s-]+plugin:\s+/i, '') : info.pluginId;
+  let description = script?.description;
+  if (!name) {
     if (window.script_info.script) {
-      // check if GM_info is available
-      result.name = '[unknown plugin: index ' + index + ']';
-      result.description = "this plugin does not have proper wrapper; report to it's author";
+      // GM_info is available, so the plugin lacks the wrapper
+      name = `[unknown plugin: index ${index}]`;
+      description = "this plugin does not have proper wrapper; report to it's author";
     } else {
       // userscript manager fault
-      result.name = '[3rd-party plugin: index ' + index + ']';
+      name = `[3rd-party plugin: index ${index}]`;
     }
   }
 
-  return result;
-}
+  let version = script?.version;
+  const extra = getIITCVersionAddition();
+  // the timestamp all standard plugins share with IITC says nothing
+  if (version && extra && version.endsWith(extra)) version = version.slice(0, -extra.length);
+  version = version || info.dateTimeVersion;
+  const details = [info.buildName && `[${info.buildName}]`, info.dateTimeVersion !== version && info.dateTimeVersion].filter(Boolean).join(' ');
 
-/**
- * Creates a changelog section for a given plugin.
- *
- * @function
- * @param {Object} plugin - The plugin for which to create the changelog.
- * @returns {string} HTML string representing the changelog.
- */
-function createChangelog(plugin) {
-  var id = 'plugin-changelog-' + plugin.id;
-  return (
-    `<a onclick="$('#${id}').toggle()">changelog</a>` +
-    `<ul id="${id}" style="display: none;">` +
-    plugin.changelog
-      .map(function (logEntry) {
-        return (
-          '<li>' +
-          logEntry.version +
-          '<ul>' +
-          logEntry.changes
-            .map(function (change) {
-              return `<li>${change}</li>`;
-            })
-            .join('') +
-          '</ul></li>'
-        );
-      })
-      .join('') +
-    '</ul>'
-  );
-}
-
-/**
- * Converts plugin information into a string format suitable for display in the 'About IITC' dialog.
- *
- * @function
- * @param {Object} p - The plugin information object.
- * @param {string} extra - Additional version information.
- * @returns {string} Formatted plugin information string.
- */
-function pluginInfoToString(p, extra) {
-  var info = {
-    changelog: '',
-    class: '',
-    description: p.description || '',
-    name: p.name,
-    verinfo: formatVerInfo(p, extra),
+  return {
+    name,
+    version,
+    details: details || undefined,
+    description,
+    error: info.error,
+    standard: info.buildName === window.script_info.buildName && info.dateTimeVersion === window.script_info.dateTimeVersion,
+    changelog: info.changelog,
   };
+};
 
-  if (isStandardPlugin(p)) {
-    info.class += 'plugin-is-standard';
-  }
-
-  if (p.error) {
-    info.class += ' plugin-error';
-    info.description = p.error;
-  }
-
-  if (p.changelog) {
-    info.changelog = createChangelog(p);
-  }
-
-  return L.Util.template('<li class="{class}" title="{description}">{name}{verinfo} {changelog}</li>', info);
-}
+// changelog entries as list entries, versions holding their changes
+const changelogItems = (changelog) =>
+  (changelog ?? []).map((entry) => ({ title: String(entry.version), items: (entry.changes ?? []).map((change) => ({ title: String(change) })) }));
 
 /**
- * Checks if a given plugin is a standard plugin based on the build name and date.
- * Standard plugins are those that match the build and date of the main IITC script.
+ * Lists the plugins loaded, by name
  *
- * @function
- * @param {Object} plugin - The plugin object to check.
- * @returns {boolean} True if the plugin is standard, false otherwise.
+ * @private
+ * @returns {Array<Object>} Entries of a `list` block
  */
-function isStandardPlugin(plugin) {
-  return plugin.build === window.script_info.buildName && plugin.date === window.script_info.dateTimeVersion;
-}
-
-/**
- * Retrieves the IITC version string.
- *
- * @function
- * @returns {string} The IITC version string.
- */
-function getIITCVersion() {
-  var iitc = window.script_info;
-  return ((iitc.script && iitc.script.version) || iitc.dateTimeVersion) + ' [' + iitc.buildName + ']';
-}
-
-/**
- * Extracts the additional version information from the IITC script version.
- *
- * @function
- * @returns {string} The additional version information, if any.
- */
-function getIITCVersionAddition() {
-  var extra = window.script_info.script && window.script_info.script.version.match(/^\d+\.\d+\.\d+(\..+)$/);
-  return extra && extra[1];
-}
-
-/**
- * Formats version information for plugins and the main script.
- * If an 'extra' parameter is provided and matches the end of the version string, it is removed.
- * This is used to cut off a common timestamp appended to versions.
- * The function also prepares a tooltip showing the build number and date, if available.
- *
- * @function formatVerInfo
- * @param {Object} p - The plugin or script object containing version information.
- * @param {string} [extra] - An optional extra string to be removed from the version information.
- * @returns {string} Formatted version string with optional HTML tooltip.
- */
-function formatVerInfo(p, extra) {
-  if (p.version && extra) {
-    var cutPos = p.version.length - extra.length;
-    // cut extra version component (timestamp) if it is equal to main script's one
-    if (p.version.substring(cutPos) === extra) {
-      p.version = p.version.substring(0, cutPos);
-    }
+const pluginItems = () => {
+  const pluginsInfo = window.bootPlugins.info;
+  // plugins that have not run their setup yet are listed as they are
+  while (window.bootPlugins[0]) {
+    pluginsInfo.push(window.bootPlugins.shift().info || {});
   }
 
-  p.version = p.version || p.date;
-  if (p.version) {
-    var tooltip = [];
-    if (p.build) {
-      tooltip.push('[' + p.build + ']');
-    }
-    if (p.date && p.date !== p.version) {
-      tooltip.push(p.date);
-    }
-    return L.Util.template(' - <code{title}>{version}</code>', {
-      title: tooltip[0] ? ' title="' + tooltip.join(' ') + '"' : '',
-      version: p.version,
+  return pluginsInfo
+    .map(convertPluginInfo)
+    .sort((a, b) => (a.name > b.name ? 1 : -1))
+    .map((plugin) => {
+      const state = plugin.error ? 'error' : plugin.standard ? 'muted' : undefined;
+      const tooltip = [plugin.error ? String(plugin.error) : plugin.description, plugin.details].filter(Boolean).join('\n');
+      return {
+        title: plugin.name,
+        badge: plugin.version,
+        tooltip: tooltip || undefined,
+        state,
+        items: plugin.changelog ? changelogItems(plugin.changelog) : undefined,
+        collapsed: true,
+      };
     });
-  }
-
-  return '';
-}
+};
 
 /**
  * Checks if the browser's local storage is running short on available space.
  * This function tries to write a specific amount of data to the local storage and captures any errors.
  * If an error occurs, it is an indication that the local storage has limited free space left.
  *
- * @function
+ * @private
  * @returns {boolean} Returns `true` if the local storage is running short on space, otherwise `false`.
  */
-function isShortOnLocalStorage() {
-  var MINIMUM_FREE_SPACE = 100000;
+const isShortOnLocalStorage = () => {
+  const MINIMUM_FREE_SPACE = 100000;
   try {
     localStorage.setItem('_MEM_CHECK_', '#'.repeat(MINIMUM_FREE_SPACE));
   } catch (e) {
@@ -21633,7 +21488,48 @@ function isShortOnLocalStorage() {
 
   localStorage.removeItem('_MEM_CHECK_');
   return false;
-}
+};
+
+/**
+ * Declares the `about` page of the options window; called at boot
+ *
+ * @memberof IITC.about
+ */
+const setup = () => {
+  IITC.options.register('about', {
+    title: 'About IITC',
+    shortcut: { class: 'cursor_help' },
+    blocks: [
+      { type: 'text', text: () => `Ingress Intel Total Conversion ${getIITCVersion()}` },
+      {
+        type: 'text',
+        // called also while the block is hidden
+        text: () => `IITC Mobile ${window.app?.getVersionName?.()}`,
+        visible: () => Boolean(window.isApp && window.app?.getVersionName),
+      },
+      {
+        type: 'notice',
+        level: 'warning',
+        text: 'You are running low on LocalStorage memory. Please free some space to prevent data loss.',
+        visible: isShortOnLocalStorage,
+      },
+      { type: 'link', title: 'IITC Homepage', url: 'https://iitc.app/' },
+      { type: 'link', title: 'Telegram channel', url: 'https://t.me/iitc_news' },
+      { type: 'text', text: 'On the homepage you can find updates, get plugins, report bugs and contribute.' },
+      { type: 'list', items: () => [{ title: 'Changelog', items: changelogItems(window.script_info.changelog), collapsed: true }] },
+      { type: 'heading', title: 'Plugins' },
+      { type: 'list', items: pluginItems },
+    ],
+  });
+};
+
+/**
+ * The 'About IITC' page
+ *
+ * @memberof IITC
+ * @namespace about
+ */
+IITC.about = { setup, _convertPluginInfo: convertPluginInfo };
 
 
 })();
@@ -22495,6 +22391,15 @@ var log = ulog('hooks');
  * - `nicknameClicked`: Event triggered when a player's nickname is clicked.
  * - `geoSearch`: Event triggered during a geographic search.
  * - `search`: Event triggered during a search operation.
+ * - `optionChanged`: Called after the value of an option has changed (see `IITC.options`), for declared
+ *                     options and for plugin state stored or removed through `IITC.options` alike;
+ *                     provides `{ key, value, oldValue, source }`. `source` is `local` unless the caller
+ *                     passes another one: sync uses `remote`, and `legacy` marks a value moved from an older build
+ * - `optionsPageRegistered`: Called after an options page is declared, once its values can be read;
+ *                             provides `{ pageId, keys }` with the keys this declaration owns. A section added
+ *                             to a page with `IITC.options.extend` is announced too, with `extensionId` and
+ *                             the id of the page it extends as `pageId`, registered or not. Declarations made
+ *                             before a handler was added are not announced again
  *
  * @module hooks
  */
@@ -25869,6 +25774,2312 @@ IITC.registerLegacyAliases(IITC.map.tiles, {
 })();
 
 
+// *** module: options.js ***
+(function () {
+var log = ulog('options');
+/* global IITC, log -- eslint */
+
+/**
+ * Options API
+ *
+ * A plugin declares its options page with `register` in its setup, reads the values with `get` where it
+ * needs them and reacts to changes in `onChange`. The options are blocks with a `key`; the core validates
+ * every value, applies the defaults and stores only values that differ from the default. Blocks without
+ * a key are the rest of the page: actions and content. Options sync between devices by default, through
+ * the Sync plugin; `sync: false` keeps one on this device. A plugin without a page of its own adds a section
+ * to the page of another with `extend`
+ *
+ * Every value is kept under `iitc-option:<key>`. Keys that were never declared still work through
+ * `get`/`set`, without validation; until a page or an extension of one declares it, a key is read and
+ * written as undeclared
+ *
+ * @memberof IITC
+ * @namespace options
+ */
+
+/**
+ * A block of an options page; its `type` tells what it draws and which properties it reads:
+ *
+ * | `type` | Draws | Reads |
+ * | --- | --- | --- |
+ * | `boolean`, `number`, `string`, `select`, `color` | a field holding the option its `key` names | `key`, `title`, `description`, `default`, `value`, `validate`, `onChange`, `sync`; `min`, `max`, `step` for `number`; `choices` for `select`; `alpha` for `color` |
+ * | `action` | a button that runs `action` | `title`, `description`, `button`, `icon`, `action` |
+ * | `export` | Copy, and Save file with a `filename` | `title`, `description`, `data`, `filename`, `dataType` |
+ * | `import` | Paste, and Choose file with `accept` | `title`, `description`, `onData`, `accept`, `onFiles` |
+ * | `choice` | a radio before the title of each item of a `repeat`, one choice per `repeat` | `selected`, `action` |
+ * | `heading`, `link` | a section title; a link | `title`, `url` |
+ * | `text`, `notice` | a paragraph; a framed message | `text`, `level` |
+ * | `list` | entries, nested ones folded | `items` |
+ * | `repeat` | a table with a row of `blocks` for every item of `over` | `over`, `blocks` |
+ *
+ * Every block reads `visible`, and fields, actions, exports, imports and choices also `enabled`. Display
+ * properties (`title`, `description`, `button`, `icon`, `text`, `url`, `level`, `items`, `visible`, `enabled`,
+ * `value`, `selected`) take a value or a function, called whenever the page is drawn; inside a `repeat` the
+ * function receives the item
+ *
+ * @memberof IITC.options
+ * @typedef {Object} OptionBlock
+ * @property {string} type - Block type, from the table above
+ * @property {string|Function} [title] - Label of a field, an action, an `export` or an `import`, text of a `heading`
+ *                                    or a `link`
+ * @property {string|Function} [button] - Short text of the button of an `action`, such as 'Delete', next to the
+ *                                     `title`. Without it the button carries the `title`
+ * @property {string|Function} [icon] - Icon an `action` button shows instead of its text, a Material Symbols
+ *                                      name such as 'delete'; the text becomes the tooltip
+ * @property {string|Function} [description] - Explanation shown under the title
+ * @property {boolean|Function} [visible=true] - False hides the block
+ * @property {boolean|Function} [enabled=true] - False shows the block without letting the user change or run it
+ * @property {string} [key] - Name of the option a field holds, addressed as `<namespace>.<key>`; every field has one
+ * @property {*|Function} [default] - Value used while nothing valid is stored. Inside a `repeat` it may be a function
+ *                                    of the item, giving the default of the item's entry
+ * @property {*|Function} [value] - Value a field shows instead of the stored one, when it is derived from other
+ *                                  options (a flag that a broader rule already sets)
+ * @property {number} [min] - Lowest allowed `number`
+ * @property {number} [max] - Highest allowed `number`
+ * @property {number} [step] - Allowed `number` increment, counted from `min` or 0
+ * @property {Array|Function} [choices] - `select` choices: values or `{value, label}` objects. A function must
+ *                                        return all choices at once: a value missing from them is not allowed
+ * @property {boolean} [alpha] - Allows `color` values with an alpha channel (`#rrggbbaa`)
+ * @property {Function} [validate] - Returns true, or an error message for a value that is not allowed
+ * @property {Function} [onChange] - Called with `(value, oldValue, source)` after the value has changed
+ * @property {boolean} [sync=true] - False keeps the option on this device: sync neither sends nor applies it,
+ *                                   while a local backup still holds it
+ * @property {Function} [action] - Runs when an `action` block is pressed, or a `choice` is made, with the item
+ *                                 inside a `repeat`; the text it returns and the error it throws are shown next to
+ *                                 the button, and a promise is waited for
+ * @property {boolean|Function} [selected] - Whether the item is the chosen one, for a `choice`
+ * @property {Function} [data] - Returns the text an `export` block hands over; receives the item inside a `repeat`
+ * @property {string} [filename] - Lets an `export` block also save `data` as a file of this name
+ * @property {string} [dataType] - MIME type of that file
+ * @property {Function} [onData] - Receives `(text, filename, item)` from an `import` block: the pasted text, or the
+ *                                 file read; the text it returns is shown instead of 'Imported', an error it throws
+ *                                 is shown too, and a promise is waited for
+ * @property {string} [accept] - Lets an `import` block also read files of these types, as in the `accept`
+ *                               attribute of a file input
+ * @property {Function} [onFiles] - Receives `(files, item)` from an `import` block with `accept` instead of `onData`,
+ *                                  and lets the user choose several files: all of them, as `[{name, text}]`; what it
+ *                                  returns and throws is shown as for `onData`. With it, `onData` is needed only for
+ *                                  the Paste button
+ * @property {string|Function} [text] - Text of a `text` or a `notice` block
+ * @property {string|Function} [url] - Address a `link` opens
+ * @property {'info'|'warning'|'error'|Function} [level='info'] - Kind of a `notice`
+ * @property {Array<IITC.options.OptionsListItem>|Function} [items] - Entries of a `list`
+ * @property {Function} [over] - Items of a `repeat` block, returned as `[{id, title}]` with ids that stay the same between calls;
+ *                               `get` also calls it to give the items without a stored entry their default, so it
+ *                               must be able to list them whenever the options are read
+ * @property {Array<IITC.options.OptionBlock>} [blocks] - Blocks of a `repeat` block; their options hold a map of item id to value
+ */
+
+/**
+ * @memberof IITC.options
+ * @typedef {Object} OptionsListItem
+ * @property {string} title - Main text
+ * @property {string} [sub] - Second line
+ * @property {string} [badge] - Short text at the end of the line, such as a version
+ * @property {string} [tooltip] - Text shown on hover over the main line
+ * @property {'muted'|'error'} [state] - Shows the entry as secondary, or as failed
+ * @property {Array<IITC.options.OptionsListItem>} [items] - Nested entries
+ * @property {boolean} [collapsed=false] - Hides the nested entries until the entry is opened
+ */
+
+/**
+ * @memberof IITC.options
+ * @typedef {Object} OptionsPage
+ * @property {string} title - Page title
+ * @property {string} [namespace] - Prefix of the page's option keys. Defaults to the page id
+ * @property {Array<IITC.options.OptionBlock>} blocks - Page content
+ * @property {boolean|Object|Function} [shortcut] - Adds a toolbox button that opens the page, while the
+ *   `iitc.toolboxShortcuts` option is on: `true`, or the arguments of `IITC.toolbox.addButton` but `id` and
+ *   `action` (`label` is the page title by default), or a function returning them, called again on
+ *   `IITC.options.refresh(pageId)`, for a button that shows state
+ * @property {string} [accesskey] - Access key that opens the page, with the toolbox button or without it;
+ *   the button shows it in its tooltip
+ */
+
+const FIELD_TYPES = ['boolean', 'number', 'string', 'select', 'color'];
+
+const BLOCK_TYPES = [...FIELD_TYPES, 'action', 'choice', 'export', 'import', 'heading', 'text', 'link', 'list', 'notice', 'repeat'];
+
+const TYPE_DEFAULTS = {
+  boolean: false,
+  number: 0,
+  string: '',
+  color: '#000000',
+};
+
+const STORAGE_PREFIX = 'iitc-option:';
+
+// lookups take keys from plugins and imported files, so names like `constructor` must not hit Object.prototype
+const pages = Object.create(null);
+const definitions = Object.create(null);
+// sections plugins add to the pages of others, by page id and extension id; kept apart from the pages,
+// so a page registered again keeps them
+const extensions = Object.create(null);
+
+const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const sameValue = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+// the choices of a `select` as `{value, label}`
+const choicesOf = (def) => {
+  const choices = typeof def.choices === 'function' ? def.choices() : def.choices;
+  return (choices ?? []).map((choice) => (isPlainObject(choice) ? choice : { value: choice, label: choice }));
+};
+
+const choiceValues = (def) => choicesOf(def).map((choice) => choice.value);
+
+// the default of one value: of the option, or of the entry of a `repeat` map for an item, which a
+// function of the item may give
+const entryDefault = (def, item) => {
+  if (typeof def.default === 'function') {
+    try {
+      return def.default(item);
+    } catch (e) {
+      log.warn(`options: default of "${def.fullKey}" failed: ${e}`);
+    }
+  } else if (def.default !== undefined) return def.default;
+  if (def.type !== 'select') return TYPE_DEFAULTS[def.type];
+  try {
+    return choiceValues(def)[0];
+  } catch (e) {
+    log.warn(`options: choices of "${def.fullKey}" failed: ${e}`);
+    return undefined;
+  }
+};
+
+const defaultOf = (def) => (def.map ? {} : entryDefault(def));
+
+// a map of a `repeat` with the default entry of each item of `over` that has none stored
+const withItemDefaults = (def, map) => {
+  let items;
+  try {
+    items = def.repeat.over?.() ?? [];
+  } catch (e) {
+    log.warn(`options: items of the repeat of "${def.fullKey}" failed: ${e}`);
+    return map;
+  }
+  const result = { ...map };
+  for (const item of items) {
+    if (!Object.hasOwn(result, item.id)) result[item.id] = entryDefault(def, item);
+  }
+  return result;
+};
+
+// a map of a `repeat` without the entries equal to the default of their item; with a default function,
+// entries of ids `over` does not list stay, as do all entries while `over` fails
+const withoutItemDefaults = (def, map) => {
+  let items;
+  if (typeof def.default === 'function') {
+    try {
+      items = new Map((def.repeat.over?.() ?? []).map((item) => [item.id, item]));
+    } catch (e) {
+      log.warn(`options: items of the repeat of "${def.fullKey}" failed: ${e}`);
+      return map;
+    }
+  }
+  return Object.fromEntries(Object.entries(map).filter(([id, entry]) => (items && !items.has(id)) || !sameValue(entry, entryDefault(def, items?.get(id)))));
+};
+
+/**
+ * Checks one value against an option's type and constraints
+ *
+ * @private
+ * @returns {true|string} True, or the reason the value is not allowed
+ */
+const validateValue = (def, value) => {
+  switch (def.type) {
+    case 'boolean':
+      if (typeof value !== 'boolean') return 'not a boolean';
+      break;
+    case 'number':
+      if (typeof value !== 'number' || !Number.isFinite(value)) return 'not a number';
+      if (def.min !== undefined && value < def.min) return `less than ${def.min}`;
+      if (def.max !== undefined && value > def.max) return `greater than ${def.max}`;
+      if (def.step) {
+        const steps = (value - (def.min ?? 0)) / def.step;
+        if (Math.abs(steps - Math.round(steps)) > 1e-9) return `not a multiple of ${def.step}`;
+      }
+      break;
+    case 'string':
+      if (typeof value !== 'string') return 'not a string';
+      break;
+    case 'select':
+      try {
+        if (!choiceValues(def).includes(value)) return 'not one of the choices';
+      } catch (e) {
+        log.warn(`options: choices of "${def.fullKey}" failed: ${e}`);
+      }
+      break;
+    case 'color': {
+      const pattern = def.alpha ? /^#[0-9a-f]{6}([0-9a-f]{2})?$/i : /^#[0-9a-f]{6}$/i;
+      if (typeof value !== 'string' || !pattern.test(value)) return 'not a color';
+      break;
+    }
+  }
+
+  if (def.validate) {
+    const result = def.validate(value);
+    if (result !== true) return typeof result === 'string' ? result : 'rejected by validate';
+  }
+  return true;
+};
+
+// like validateValue; a throwing validate counts as an invalid value
+const validateEntry = (def, value) => {
+  try {
+    return validateValue(def, value);
+  } catch (e) {
+    return `check failed: ${e}`;
+  }
+};
+
+// like validateEntry, entry by entry for `repeat` maps
+const validate = (def, value) => {
+  if (!def.map) return validateEntry(def, value);
+  if (!isPlainObject(value)) return 'not a map';
+  for (const [id, entry] of Object.entries(value)) {
+    const result = validateEntry(def, entry);
+    if (result !== true) return `${id}: ${result}`;
+  }
+  return true;
+};
+
+// parsed stored value, read anew on every call so callers may change it; undefined when missing or
+// unreadable; no defaults or validation
+const readStored = (key, quiet = false) => {
+  const storageKey = STORAGE_PREFIX + key;
+  const stored = localStorage.getItem(storageKey);
+  if (stored === null) return undefined;
+
+  try {
+    return JSON.parse(stored);
+  } catch (e) {
+    if (!quiet) log.warn(`options: cannot read "${storageKey}": ${e}`);
+    return undefined;
+  }
+};
+
+// the string a value is kept as in localStorage; throws when it cannot be serialized
+const encodeStored = (value) => {
+  const stored = JSON.stringify(value);
+  if (stored === undefined) throw new TypeError('the value cannot be serialized');
+  return stored;
+};
+
+// the default of a declared option in its stored form, undefined when it cannot be stored (a select
+// whose choices are not loaded yet)
+const storedDefault = (key) => {
+  try {
+    return encodeStored(defaultOf(definitions[key]));
+  } catch {
+    return undefined;
+  }
+};
+
+// stores an encoded value; false when localStorage refuses it
+const writeStored = (storageKey, stored) => {
+  try {
+    localStorage.setItem(storageKey, stored);
+  } catch (e) {
+    log.error(`options: cannot store "${storageKey}": ${e}`);
+    return false;
+  }
+  return true;
+};
+
+// runs the optionChanged hook, then the block's onChange
+const notifyChange = (key, value, oldValue, source) => {
+  window.runHooks('optionChanged', { key, value, oldValue, source });
+  const onChange = definitions[key]?.onChange;
+  if (!onChange) return;
+  try {
+    onChange(value, oldValue, source);
+  } catch (e) {
+    log.error(`options: onChange of "${key}" failed: ${e}`);
+  }
+};
+
+/**
+ * Collects the options declared by a page, including the ones inside `repeat` blocks, and skips
+ * blocks of unknown types with a warning
+ *
+ * @private
+ * @param {string} namespace - Prefix of the page's keys
+ * @param {Array<IITC.options.OptionBlock>} blocks - Blocks to scan
+ * @param {IITC.options.OptionBlock} [repeat] - The `repeat` block the blocks are repeated in, so their options hold maps
+ * @returns {Array<Object>} Option definitions
+ */
+const collectDefinitions = (namespace, blocks, repeat = undefined) => {
+  const result = [];
+  for (const block of blocks ?? []) {
+    if (!BLOCK_TYPES.includes(block?.type)) {
+      log.warn(`options: unknown block type "${block?.type}" in "${namespace}"`);
+      continue;
+    }
+    if (block.type === 'repeat') {
+      result.push(...collectDefinitions(namespace, block.blocks, block));
+      continue;
+    }
+    if (block.key === undefined) continue;
+    if (!FIELD_TYPES.includes(block.type)) {
+      log.warn(`options: block type "${block.type}" cannot hold an option ("${block.key}")`);
+      continue;
+    }
+
+    const fullKey = `${namespace}.${block.key}`;
+    const map = repeat !== undefined;
+    // a function gives the default of an entry from its item, so it has no item to work from outside a repeat
+    if (!map && typeof block.default === 'function') {
+      log.warn(`options: "${fullKey}" takes a default function only inside a repeat`);
+      result.push({ ...block, default: undefined, fullKey, map });
+      continue;
+    }
+    result.push({ ...block, fullKey, map, repeat });
+  }
+  return result;
+};
+
+// who declared an option, for warnings
+const declarer = (def) => (def.extensionId === undefined ? `page "${def.pageId}"` : `extension "${def.extensionId}" of page "${def.pageId}"`);
+
+/**
+ * Declares the options of a page or of an extension of it in place of the ones that declaration made
+ * before; a key declared elsewhere already stays with that declaration, with a warning
+ *
+ * @private
+ * @param {string} pageId - Page id
+ * @param {string|undefined} extensionId - Extension id, undefined for the page itself
+ * @param {string} namespace - Prefix of the keys
+ * @param {Array<IITC.options.OptionBlock>} blocks - Blocks holding the options
+ * @returns {string[]} The keys declared
+ */
+const declare = (pageId, extensionId, namespace, blocks) => {
+  for (const key of Object.keys(definitions)) {
+    if (definitions[key].pageId === pageId && definitions[key].extensionId === extensionId) delete definitions[key];
+  }
+  const keys = [];
+  for (const def of collectDefinitions(namespace, blocks)) {
+    const existing = definitions[def.fullKey];
+    if (existing) {
+      log.warn(`options: "${def.fullKey}" is already declared by ${declarer(existing)}`);
+      continue;
+    }
+    definitions[def.fullKey] = { ...def, pageId, extensionId };
+    keys.push(def.fullKey);
+  }
+  return keys;
+};
+
+/**
+ * Declares an options page and the options its blocks hold. Registering a page id again replaces the
+ * earlier declaration and announces no change: a stored value the new declaration rejects reads as
+ * the default
+ *
+ * @memberof IITC.options
+ * @param {string} pageId - Unique page id, usually the plugin id
+ * @param {IITC.options.OptionsPage} page - Page declaration
+ * @returns {boolean} True if the page was registered
+ *
+ * @example <caption>A page</caption>
+ * IITC.options.register('my-plugin', {
+ *   title: 'My plugin',
+ *   shortcut: true,
+ *   blocks: [
+ *     { type: 'boolean', key: 'show', title: 'Show on the map', default: true, onChange: (show) => (show ? draw() : clear()) },
+ *     { type: 'select', key: 'style', title: 'Style', choices: ['Lines', 'Dots'], default: 'Lines', onChange: draw },
+ *     { type: 'heading', title: 'Data' },
+ *     { type: 'export', title: 'Marked portals', data: () => JSON.stringify(load()), filename: 'my-plugin.json' },
+ *     { type: 'import', title: 'Marked portals', onData: (text) => save(JSON.parse(text)), accept: '.json' },
+ *     {
+ *       type: 'action',
+ *       title: 'Forget marked portals',
+ *       button: 'Forget',
+ *       // a promise is waited for; the text returned or the error thrown shows next to the button
+ *       action: async () => {
+ *         if (!Object.keys(load()).length) throw new Error('Nothing is marked');
+ *         await save({});
+ *         return 'Forgotten';
+ *       },
+ *     },
+ *   ],
+ * });
+ * // the values are read where they are needed
+ * if (IITC.options.get('my-plugin.show')) draw();
+ *
+ * @example <caption>An option for each item of a list</caption>
+ * IITC.options.register('my-plugin', {
+ *   title: 'My plugin',
+ *   blocks: [
+ *     {
+ *       type: 'repeat',
+ *       over: () => [
+ *         { id: 'ENL', title: 'Enlightened' },
+ *         { id: 'RES', title: 'Resistance' },
+ *       ],
+ *       blocks: [{ type: 'color', key: 'color', title: 'Color', default: (item) => (item.id === 'ENL' ? '#03dc03' : '#0088ff') }],
+ *     },
+ *   ],
+ * });
+ * // a map of item id to value, with the default of every item that has nothing stored
+ * IITC.options.get('my-plugin.color'); // { ENL: '#03dc03', RES: '#0088ff' }
+ */
+const register = (pageId, page) => {
+  if (typeof pageId !== 'string' || !pageId) {
+    log.warn('options: page id is missing');
+    return false;
+  }
+  if (!Array.isArray(page?.blocks)) {
+    log.warn(`options: page "${pageId}" has no blocks`);
+    return false;
+  }
+
+  const namespace = page.namespace ?? pageId;
+  pages[pageId] = { ...page, namespace };
+  const keys = declare(pageId, undefined, namespace, page.blocks);
+
+  // last, so optionsPageRegistered handlers (sync) see the page settled
+  window.runHooks('optionsPageRegistered', { pageId, keys });
+  return true;
+};
+
+/**
+ * Adds a section to the page of another plugin, such as options of an add-on on the page of the plugin it
+ * works with. The section follows the page's own blocks under a heading of its title; sections of several
+ * extensions follow by title, whatever order their plugins load in. Its options are declared at once,
+ * whether the page is registered yet or not, and the section shows once it is. Extending the page again
+ * with the same extension id replaces the section and its options, as `register` replaces a page
+ *
+ * @memberof IITC.options
+ * @param {string} pageId - Id of the page to extend
+ * @param {string} extensionId - Unique id of the section, usually the id of the plugin adding it
+ * @param {Object} section - Section declaration
+ * @param {string} [section.title] - Heading of the section. Defaults to the extension id
+ * @param {string} [section.namespace] - Prefix of the section's option keys. Defaults to the extension id, so
+ *                                       a plugin that also registers a page of its own under its id gives the
+ *                                       section a namespace of its own: a key declared twice stays with the
+ *                                       first declaration
+ * @param {Array<IITC.options.OptionBlock>} section.blocks - Section content, of the same blocks as a page
+ * @returns {boolean} True if the section was added
+ *
+ * @example
+ * IITC.options.extend('draw-tools', 'kml-import', {
+ *   title: 'KML import',
+ *   blocks: [
+ *     { type: 'boolean', key: 'fit', title: 'Zoom to the imported shapes', default: true },
+ *     { type: 'import', title: 'KML file', onData: (text) => importKml(text), accept: '.kml' },
+ *   ],
+ * });
+ * if (IITC.options.get('kml-import.fit')) map.fitBounds(bounds);
+ */
+const extend = (pageId, extensionId, section) => {
+  if (typeof pageId !== 'string' || !pageId) {
+    log.warn('options: page id is missing');
+    return false;
+  }
+  if (typeof extensionId !== 'string' || !extensionId) {
+    log.warn(`options: extension id is missing for page "${pageId}"`);
+    return false;
+  }
+  if (!Array.isArray(section?.blocks)) {
+    log.warn(`options: extension "${extensionId}" of page "${pageId}" has no blocks`);
+    return false;
+  }
+
+  const namespace = section.namespace ?? extensionId;
+  extensions[pageId] ??= Object.create(null);
+  extensions[pageId][extensionId] = { ...section, title: String(section.title ?? extensionId), namespace };
+  const keys = declare(pageId, extensionId, namespace, section.blocks);
+
+  window.runHooks('optionsPageRegistered', { pageId, extensionId, keys });
+  return true;
+};
+
+// the sections extensions add to a page, by title and then by extension id
+const sectionsOf = (pageId) =>
+  Object.entries(extensions[pageId] ?? {})
+    .map(([id, section]) => ({ ...section, id }))
+    .sort((a, b) => a.title.localeCompare(b.title) || a.id.localeCompare(b.id));
+
+/**
+ * Turns the stored value of a declared option into its effective value
+ *
+ * @private
+ * @param {string} key - Full option key
+ * @param {*} stored - Value read from localStorage, undefined when there is none
+ * @param {boolean} [quiet=false] - Skips the invalid-value warning
+ * @returns {*} The stored value if it is valid, otherwise the default; of a stored map, the valid entries
+ */
+const resolve = (key, stored, quiet = false) => {
+  const def = definitions[key];
+  if (stored === undefined) return defaultOf(def);
+
+  // one entry that went bad (a choice since removed) must not take the others with it
+  if (def.map && isPlainObject(stored)) {
+    const entries = Object.entries(stored).filter(([id, entry]) => {
+      const result = validateEntry(def, entry);
+      if (result !== true && !quiet) log.warn(`options: stored entry "${id}" of "${key}" is ignored: ${result}`);
+      return result === true;
+    });
+    return Object.fromEntries(entries);
+  }
+
+  const result = validate(def, stored);
+  if (result !== true) {
+    if (!quiet) log.warn(`options: stored value of "${key}" is ignored: ${result}`);
+    return defaultOf(def);
+  }
+  return stored;
+};
+
+// the value `get` returns: of a `repeat` map also the default entries of the items that have none stored
+const effective = (key, stored, quiet = false) => {
+  const def = definitions[key];
+  const value = resolve(key, stored, quiet);
+  return def.map ? withItemDefaults(def, value) : value;
+};
+
+/**
+ * Returns the value of an option; a declared option falls back to its default when nothing valid
+ * is stored. A map of a `repeat` holds its valid stored entries, and the default entry of each item
+ * `over` returns that has none stored; `over` must be able to list the items by then
+ *
+ * @memberof IITC.options
+ * @param {string} key - Option key, `<namespace>.<key>`
+ * @param {*} [fallback] - Value for an undeclared key with nothing stored
+ * @returns {*} The option value
+ *
+ * @example
+ * const mode = IITC.options.get('link-show-direction.mode');
+ */
+const get = (key, fallback) => {
+  const stored = readStored(key);
+  if (!definitions[key]) return stored === undefined ? fallback : stored;
+  return effective(key, stored);
+};
+
+/**
+ * Tells whether an option may travel to other devices: it is declared, and not with `sync: false`
+ *
+ * @private
+ * @param {string} key - Option key, `<namespace>.<key>`
+ * @returns {boolean} True for a declared option that syncs
+ */
+const syncs = (key) => definitions[key] !== undefined && definitions[key].sync !== false;
+
+/**
+ * Tells what localStorage holds for a key, without logging: nothing, a value that reads and passes
+ * the declaration, or one that cannot be read or fails it (an old range, choices not loaded yet)
+ *
+ * @private
+ * @param {string} key - Option key, `<namespace>.<key>`
+ * @returns {'missing'|'valid'|'invalid'} The state of the stored value
+ */
+const storedState = (key) => {
+  if (localStorage.getItem(STORAGE_PREFIX + key) === null) return 'missing';
+  const stored = readStored(key, true);
+  if (stored === undefined) return 'invalid';
+  const def = definitions[key];
+  return !def || validate(def, stored) === true ? 'valid' : 'invalid';
+};
+
+/**
+ * Tells whether an option may take a value, without storing it; an undeclared key takes any value
+ *
+ * @memberof IITC.options
+ * @param {string} key - Option key, `<namespace>.<key>`
+ * @param {*} value - Value to check
+ * @returns {true|string} True, or the reason the value is not allowed
+ */
+const check = (key, value) => (definitions[key] ? validate(definitions[key], value) : true);
+
+// values from another device apply only to declared options that do not belong to this device
+const refusesRemote = (key, source) => {
+  if (source !== 'remote') return false;
+  if (syncs(key)) return false;
+  log.warn(`options: "${key}" ${definitions[key] ? 'belongs to this device' : 'is not declared'} and ignores remote values`);
+  return true;
+};
+
+/**
+ * Stores the value of an option. Values of declared options are validated first; a value stored in the same
+ * form as the one already there changes nothing, and a value stored in the same form as the default is
+ * removed, as `reset` does. A map of a `repeat` keeps only the entries that differ from the default of their
+ * item, and is removed when none is left. The `optionChanged` hook and the block's `onChange` run when the value
+ * actually changes, and receive the value as `get` returns it
+ *
+ * Storing `undefined` under an undeclared key removes the value, as `reset` does;
+ * a declared option rejects it
+ *
+ * @memberof IITC.options
+ * @param {string} key - Option key, `<namespace>.<key>`
+ * @param {*} value - New value
+ * @param {Object} [opts]
+ * @param {string} [opts.source='local'] - Origin of the change, passed to the optionChanged hook; sync uses
+ *                                           `remote`, and `legacy` marks a value moved from an older build: it
+ *                                           gets no sync time, so the shared records win over it
+ * @returns {boolean} False if the value is not allowed or could not be stored, or if a `remote` value
+ *          targets an undeclared key or an option declared with `sync: false`
+ *
+ * @example
+ * IITC.options.set('draw-tools.color', '#a24ac3');
+ *
+ * @example <caption>Moving an option from an older localStorage key</caption>
+ * IITC.options.register('my-plugin', {
+ *   title: 'My plugin',
+ *   blocks: [{ type: 'number', key: 'radius', title: 'Radius, m', min: 0, default: 40 }],
+ * });
+ * const legacy = localStorage.getItem('plugin-my-plugin-radius');
+ * if (legacy !== null) {
+ *   // a legacy value gets no sync time, so a value synced from other devices wins over it
+ *   IITC.options.set('my-plugin.radius', Number(legacy), { source: 'legacy' });
+ *   // the value moves once
+ *   localStorage.removeItem('plugin-my-plugin-radius');
+ * }
+ */
+const set = (key, value, opts) => {
+  const source = opts?.source ?? 'local';
+  if (refusesRemote(key, source)) return false;
+  const def = definitions[key];
+  if (!def && value === undefined) {
+    reset(key, { source });
+    return true;
+  }
+
+  if (def) {
+    const result = validate(def, value);
+    if (result !== true) {
+      log.warn(`options: value of "${key}" is rejected: ${result}`);
+      return false;
+    }
+  }
+
+  const storageKey = STORAGE_PREFIX + key;
+  let encoded;
+  try {
+    encoded = encodeStored(def?.map ? withoutItemDefaults(def, value) : value);
+  } catch (e) {
+    log.error(`options: cannot store "${storageKey}": ${e}`);
+    return false;
+  }
+  // a value equal to the default is not kept, as if the option was never changed
+  if (def && encoded === storedDefault(key)) return reset(key, { source });
+  if (encoded === localStorage.getItem(storageKey)) return true;
+
+  const stored = readStored(key);
+  const oldValue = def ? effective(key, stored, true) : stored;
+  if (!writeStored(storageKey, encoded)) return false;
+
+  const current = readStored(key);
+  const newValue = def ? effective(key, current, true) : current === undefined ? value : current;
+  if (!sameValue(newValue, oldValue)) notifyChange(key, newValue, oldValue, source);
+  return true;
+};
+
+/**
+ * Removes the stored value, so a declared option returns to its default
+ *
+ * @memberof IITC.options
+ * @param {string} key - Option key, `<namespace>.<key>`
+ * @param {Object} [opts]
+ * @param {string} [opts.source='local'] - Origin of the change, passed to the optionChanged hook; sync uses `remote`
+ * @returns {boolean} False if a `remote` reset targets an undeclared key or an option declared with `sync: false`
+ *
+ * @example
+ * IITC.options.reset('draw-tools.color');
+ */
+const reset = (key, opts) => {
+  const source = opts?.source ?? 'local';
+  if (refusesRemote(key, source)) return false;
+  const def = definitions[key];
+  const stored = readStored(key);
+  const oldValue = def ? effective(key, stored, true) : stored;
+  localStorage.removeItem(STORAGE_PREFIX + key);
+
+  const value = get(key);
+  if (!sameValue(value, oldValue)) notifyChange(key, value, oldValue, source);
+  return true;
+};
+
+/**
+ * Collects the stored values of declared options; defaults are left out, so an import on another
+ * device keeps that device's defaults. Values are not validated here: choices may still be loading,
+ * and `import` checks every value anyway
+ *
+ * @alias IITC.options.exportValues
+ * @param {Object} [opts]
+ * @param {boolean} [opts.sync=false] - Leaves out options declared with `sync: false`, for sending to other devices
+ * @returns {Object<string, *>} Values by option key
+ *
+ * @example
+ * const backup = JSON.stringify(IITC.options.exportValues());
+ */
+const exportValues = (opts) => {
+  const values = {};
+  for (const key of Object.keys(definitions)) {
+    if (opts?.sync && !syncs(key)) continue;
+    const stored = readStored(key);
+    if (stored !== undefined) values[key] = stored;
+  }
+  return values;
+};
+
+/**
+ * Stores values produced by `export`. Each value goes through `set`, so it is validated
+ * and announced like any other change. Keys no registered page declares are skipped, and so are
+ * options declared with `sync: false` when the values come from another device (source `remote`)
+ *
+ * @alias IITC.options.importValues
+ * @param {Object<string, *>} values - Values by option key
+ * @param {Object} [opts]
+ * @param {string} [opts.source='local'] - Origin of the values, passed to the optionChanged hook; sync uses `remote`
+ * @returns {{applied: string[], rejected: string[], skipped: string[]}} Keys stored, keys whose value
+ *          was not allowed or could not be stored, and keys left alone
+ *
+ * @example
+ * const { rejected } = IITC.options.importValues(JSON.parse(backup));
+ */
+const importValues = (values, opts) => {
+  const result = { applied: [], rejected: [], skipped: [] };
+  if (!isPlainObject(values)) {
+    log.warn('options: import expects an object of values by key');
+    return result;
+  }
+
+  for (const [key, value] of Object.entries(values)) {
+    const def = definitions[key];
+    if (!def || (!syncs(key) && opts?.source === 'remote')) result.skipped.push(key);
+    else if (set(key, value, opts)) result.applied.push(key);
+    else result.rejected.push(key);
+  }
+  return result;
+};
+
+IITC.options = {
+  register,
+  extend,
+  get,
+  set,
+  reset,
+  exportValues,
+  importValues,
+  check,
+  _syncs: syncs,
+  _storedState: storedState,
+  _pages: pages,
+  _definitions: definitions,
+  _extensions: extensions,
+  _sections: sectionsOf,
+  // for the page renderer: the default of a value or of the entry of an item, the valid stored entries of a map
+  // without the defaults, so a change of one entry stores only that one, and the choices of a select (none when
+  // they fail)
+  _entryDefault: (key, item) => (definitions[key] ? entryDefault(definitions[key], item) : undefined),
+  _entries: (key) => (definitions[key] ? resolve(key, readStored(key), true) : readStored(key)),
+  _choices: (key) => {
+    try {
+      return definitions[key] ? choicesOf(definitions[key]) : [];
+    } catch (e) {
+      log.warn(`options: choices of "${key}" failed: ${e}`);
+      return [];
+    }
+  },
+};
+
+
+})();
+
+
+// *** module: options_general.js ***
+(function () {
+var log = ulog('options_general');
+/* global IITC -- eslint */
+
+/**
+ * @file General options of IITC, declared as the `iitc` page for options of several core modules.
+ *       This file sorts right after options.js in the bundle, so the page exists before boot(), where
+ *       core modules and plugin setups first read its values
+ * @module options_general
+ */
+
+// the text of a backup file: the stored values of all declared options
+const backup = () => JSON.stringify(IITC.options.exportValues(), null, 2);
+
+// stores the values of a backup, and tells what was left out
+const restore = (text) => {
+  let values;
+  try {
+    values = JSON.parse(text);
+  } catch {
+    values = undefined;
+  }
+  if (values === null || typeof values !== 'object' || Array.isArray(values)) throw new Error('This is not an options backup');
+
+  const { applied, rejected, skipped } = IITC.options.importValues(values);
+  const total = applied.length + rejected.length + skipped.length;
+  let report = `Imported ${applied.length} of ${total} options.`;
+  // options of plugins that are not installed here
+  if (skipped.length) report += ` Not declared by any plugin here: ${skipped.join(', ')}.`;
+  if (rejected.length) report += ` Not allowed or not stored: ${rejected.join(', ')}.`;
+  return report;
+};
+
+IITC.options.register('iitc', {
+  title: 'General',
+  blocks: [
+    {
+      type: 'select',
+      key: 'passcodeFormat',
+      title: 'Passcode rewards',
+      choices: [
+        { value: 'long', label: 'Long' },
+        { value: 'short', label: 'Short' },
+      ],
+      default: 'long',
+    },
+    {
+      type: 'boolean',
+      key: 'syncOptions',
+      title: 'Sync IITC options',
+      default: true,
+      // whether this device takes part is the device's own choice
+      sync: false,
+      visible: () => Boolean(window.plugin?.sync),
+    },
+    {
+      type: 'boolean',
+      key: 'toolboxShortcuts',
+      title: 'Shortcuts to options pages in the toolbox',
+      description: 'Buttons that open the pages of some plugins directly',
+      default: true,
+    },
+    {
+      type: 'boolean',
+      key: 'optionsPane',
+      title: 'Options in a panel of the app',
+      description: 'Otherwise a link in the toolbox opens them in a window over the map. The panel stays in the app menu until reload',
+      default: true,
+      visible: () => window.useAppPanes(),
+    },
+    { type: 'heading', title: 'Backup' },
+    {
+      type: 'export',
+      title: 'Export options',
+      description: 'Options changed from their defaults, as text or a file',
+      data: backup,
+      filename: 'IITC-options.json',
+      dataType: 'application/json',
+    },
+    {
+      type: 'import',
+      title: 'Import options',
+      description: 'From text or a file; options in the backup replace the ones here, and options it lacks stay as they are',
+      onData: restore,
+      accept: '.json,application/json',
+    },
+  ],
+});
+
+// options of older builds, kept as plain strings under keys of their own; each moves once, converted, and
+// its key goes, so a value set back to the default later is not moved again
+const LEGACY = [
+  ['iitc-passcode-format', 'iitc.passcodeFormat', (format) => format],
+  // 'true' records that the warning was dismissed for good
+  ['pass-checking-intel-url', 'iitc.intelUrlWarning', (dismissed) => dismissed !== 'true'],
+];
+for (const [legacyKey, key, convert] of LEGACY) {
+  const stored = localStorage.getItem(legacyKey);
+  if (stored === null) continue;
+  IITC.options.set(key, convert(stored), { source: 'legacy' });
+  localStorage.removeItem(legacyKey);
+}
+
+
+})();
+
+
+// *** module: options_render.js ***
+(function () {
+var log = ulog('options_render');
+/* global IITC, log -- eslint */
+
+/**
+ * @file Draws an options page from its blocks. The page is drawn again as a whole after every change made
+ *       on it, so a block whose title, visibility or value depends on other options follows them without
+ *       any binding. Focus, the text cursor and text typed but not applied yet survive the redraw
+ * @module options_render
+ */
+
+// the lists of About and the changelogs nest no deeper
+const LIST_DEPTH = 3;
+
+// properties shown on the page; any of them may be a function of the repeated item
+const DISPLAY_PROPERTIES = ['title', 'description', 'button', 'icon', 'text', 'url', 'level', 'items', 'visible', 'enabled', 'value', 'selected'];
+
+// handler a block cannot work without, by type
+const HANDLERS = { choice: 'action', action: 'action', export: 'data', import: 'onData' };
+
+// declared blocks already warned about, so a redraw does not repeat the warning
+const reported = new WeakSet();
+
+// the declared block behind an evaluated copy
+const DECLARED = Symbol('declared');
+
+// ids that tie labels to their fields
+let lastId = 0;
+
+// the name of the group of radios a declared choice draws
+const choiceGroups = new WeakMap();
+
+/**
+ * What a container remembers between drawings
+ *
+ * @private
+ * @typedef {Object} ContainerState
+ * @property {string} pageId - Page drawn last
+ * @property {Map<string, Object>} messages - Texts left by actions of that page, by control id
+ * @property {Set<string>} pending - Actions still running, as `<pageId>#<control id>`
+ * @property {boolean} scheduled - A redraw is waiting
+ * @property {boolean} pointerDown - A mouse button or a finger is down in the container
+ * @property {Function} [afterPointer] - The redraw waiting for the pointer to come up
+ */
+const states = new WeakMap();
+
+const stateOf = (container) => {
+  let state = states.get(container);
+  if (state) return state;
+  state = { pageId: undefined, query: '', messages: new Map(), pending: new Set(), scheduled: false, pointerDown: false };
+  states.set(container, state);
+  // a redraw between the press and the release would take the pressed control away, and its click with it
+  container.addEventListener('pointerdown', () => {
+    state.pointerDown = true;
+    const released = () => {
+      state.pointerDown = false;
+      const redraw = state.afterPointer;
+      state.afterPointer = undefined;
+      // after the click that follows the release
+      if (redraw) setTimeout(redraw);
+    };
+    const doc = container.ownerDocument;
+    doc.addEventListener('pointerup', released, { once: true, capture: true });
+    doc.addEventListener('pointercancel', released, { once: true, capture: true });
+  });
+  return state;
+};
+
+const warnOnce = (block, message) => {
+  const declared = block[DECLARED] ?? block;
+  if (reported.has(declared)) return;
+  reported.add(declared);
+  log.warn(message);
+};
+
+const el = (tag, props = {}, ...children) => {
+  const element = document.createElement(tag);
+  for (const [name, value] of Object.entries(props)) {
+    if (value === undefined || value === null || value === false) continue;
+    if (name === 'className') element.className = value;
+    else if (name === 'dataset') Object.assign(element.dataset, value);
+    else if (name in element) element[name] = value;
+    else element.setAttribute(name, value === true ? '' : value);
+  }
+  element.append(...children.filter((child) => child !== undefined && child !== null && child !== false));
+  return element;
+};
+
+// a line telling how an action or a change went, with an icon of success or of failure
+const note = (text, error, role = 'status') =>
+  el(
+    'div',
+    { className: error ? 'iitc-options-message iitc-options-error' : 'iitc-options-message', role },
+    el('iitc-icon', { fallback: error ? '!' : '✓' }, error ? 'error' : 'check_circle'),
+    el('span', { className: 'iitc-options-message-text' }, text)
+  );
+
+const asText = (value) => (value === undefined || value === null ? '' : String(value));
+
+// the block with its display properties worked out for this drawing
+const evaluate = (block, item) => {
+  const result = { ...block, [DECLARED]: block };
+  for (const name of DISPLAY_PROPERTIES) {
+    if (typeof block[name] === 'function') result[name] = block[name](item);
+  }
+  return result;
+};
+
+const handlerOf = (block) => {
+  const name = HANDLERS[block.type];
+  if (!name || typeof block[name] === 'function') return block[name];
+  warnOnce(block, `options: ${block.type} block "${block.title}" has no ${name} function`);
+  return undefined;
+};
+
+/**
+ * One drawing of a page into a container, or of a section an extension adds to the page
+ *
+ * @private
+ */
+class PageView {
+  constructor(pageId, container, section = undefined) {
+    this.pageId = pageId;
+    this.container = container;
+    this.page = IITC.options._pages[pageId];
+    this.state = stateOf(container);
+    // a section has keys of its own, and control ids apart from the ones of the page's blocks
+    this.namespace = section ? section.namespace : this.page.namespace;
+    this.prefix = section ? `+${encodeURIComponent(section.id)}/` : '';
+  }
+
+  // whether the container still shows this page
+  get current() {
+    return this.container.isConnected && this.state.pageId === this.pageId;
+  }
+
+  redraw() {
+    if (this.current) renderPage(this.pageId, this.container);
+  }
+
+  // runs after the current task, and after the click when the pointer is down, so the control pressed or
+  // tabbed to stays in place
+  later(run) {
+    if (!this.state.pointerDown) {
+      setTimeout(run);
+      return;
+    }
+    const before = this.state.afterPointer;
+    this.state.afterPointer = before
+      ? () => {
+          before();
+          run();
+        }
+      : run;
+  }
+
+  // a redraw after the current task, and after the click; changes before it share one redraw
+  scheduleRedraw() {
+    if (this.state.scheduled) return;
+    this.state.scheduled = true;
+    this.later(() => {
+      this.state.scheduled = false;
+      this.redraw();
+    });
+  }
+
+  // runs the handler of an action and waits for it, then leaves the text it returns or the error it throws
+  // next to the control and redraws; the control stays disabled meanwhile
+  async act(id, handler) {
+    const pending = `${this.pageId}#${id}`;
+    if (this.state.pending.has(pending)) return;
+    this.state.pending.add(pending);
+    this.state.messages.clear();
+    this.redraw();
+    let message;
+    try {
+      const text = await handler();
+      if (typeof text === 'string' && text) message = { text };
+    } catch (e) {
+      log.warn(`options: action on page "${this.pageId}" failed`, e);
+      message = { text: e?.message ?? String(e), error: true };
+    } finally {
+      this.state.pending.delete(pending);
+    }
+    if (!this.current) return;
+    if (message) this.state.messages.set(id, message);
+    this.redraw();
+  }
+
+  isPending(id) {
+    return this.state.pending.has(`${this.pageId}#${id}`);
+  }
+
+  // texts left by actions of the control `id`
+  notes(id) {
+    return [...this.state.messages].filter(([key]) => key === id || key.startsWith(`${id}:`)).map(([, message]) => note(message.text, message.error));
+  }
+
+  // full key and shown value of a field; inside a repeat the value is the item's entry of `map`
+  field(block, item, map) {
+    const key = `${this.namespace}.${block.key}`;
+    if (block.value !== undefined) return { key, value: block.value };
+    if (!item) return { key, value: IITC.options.get(key) };
+    return { key, value: map?.[item.id] ?? IITC.options._entryDefault(key, item) };
+  }
+
+  // stores a value a field was changed to; a refused value stays in the field with the reason under its row
+  change(block, item, value, input) {
+    this.state.messages.clear();
+    const key = `${this.namespace}.${block.key}`;
+    const next = item ? { ...IITC.options._entries(key), [item.id]: value } : value;
+    const check = IITC.options.check(key, next);
+    if (check !== true || !IITC.options.set(key, next)) {
+      input.setAttribute('aria-invalid', 'true');
+      const box = input.closest('.iitc-options-row, td') ?? input.parentElement;
+      box.querySelector('.iitc-options-error')?.remove();
+      box.append(note(check === true ? 'The value could not be stored' : check, true, 'alert'));
+      return;
+    }
+    this.scheduleRedraw();
+  }
+
+  // a running action keeps its button focusable, marked as unavailable; act ignores it meanwhile
+  // with an icon, the text is the tooltip, and shows in place of the icon while the icon font is missing
+  button(id, text, enabled, handler, icon) {
+    return el(
+      'button',
+      {
+        type: 'button',
+        className: icon && 'iitc-options-icon-button',
+        title: icon && text,
+        'aria-label': icon && text,
+        dataset: { focusId: id },
+        disabled: !enabled || !handler,
+        'aria-disabled': this.isPending(id) && 'true',
+        onclick: () => this.act(id, handler),
+      },
+      icon ? el('iitc-icon', { fallback: text }, icon) : text
+    );
+  }
+
+  control(block, item, id, map) {
+    const enabled = block.enabled !== false;
+    switch (block.type) {
+      case 'boolean':
+      case 'number':
+      case 'string':
+      case 'select':
+      case 'color':
+        return this.input(block, item, id, enabled, map);
+      case 'action': {
+        const action = handlerOf(block);
+        // without a text of its own the button carries the title
+        const text = asText(block.button ?? block.title);
+        return this.button(id, text, enabled, action && (() => action(item)), block.icon);
+      }
+      case 'choice':
+        return this.choice(block, item, id, enabled);
+      case 'export': {
+        const data = handlerOf(block);
+        const title = asText(block.title);
+        return el(
+          'span',
+          { className: 'iitc-options-buttons' },
+          this.button(`${id}:copy`, 'Copy', enabled, data && (() => IITC.utils.exportText(data(item), { title }))),
+          block.filename && this.button(`${id}:save`, 'Save file', enabled, data && (() => IITC.utils.exportFile(data(item), block.filename, block.dataType)))
+        );
+      }
+      case 'import': {
+        const onFiles = typeof block.onFiles === 'function' ? block.onFiles : undefined;
+        // a block that reads files with onFiles needs no onData, and has no Paste button without it
+        const onData = onFiles && typeof block.onData !== 'function' ? undefined : handlerOf(block);
+        const title = asText(block.title);
+        // the text onData returns tells what was imported
+        const report = (text) => (typeof text === 'string' && text ? text : 'Imported');
+        const paste = async () => {
+          const text = await IITC.utils.importText({ title });
+          if (text === undefined) return undefined;
+          return report(await onData(text, undefined, item));
+        };
+        const read = async (files) => report(onFiles ? await onFiles(files, item) : await onData(files[0].text, files[0].name, item));
+        // the button waits only for reading the files: importFile never settles when no file is chosen.
+        // Read later, once the press that opened the file dialog is done
+        const open = () => {
+          IITC.utils.importFile({ accept: block.accept, multiple: Boolean(onFiles) }).then((files) => {
+            if (files.length) this.later(() => this.act(`${id}:open`, () => read(files)));
+          });
+        };
+        return el(
+          'span',
+          { className: 'iitc-options-buttons' },
+          (onData || !onFiles) && this.button(`${id}:paste`, 'Paste', enabled, onData && paste),
+          block.accept && this.button(`${id}:open`, 'Choose file', enabled, (onFiles || onData) && open)
+        );
+      }
+      default:
+        return undefined;
+    }
+  }
+
+  input(block, item, id, enabled, map) {
+    if (block.key === undefined) {
+      warnOnce(block, `options: ${block.type} block "${block.title}" on page "${this.pageId}" has no key`);
+      return undefined;
+    }
+    const { key, value } = this.field(block, item, map);
+    // fields in a repeat have no label of their own
+    const name = item ? asText(block.title) : undefined;
+    const common = { dataset: { focusId: id }, disabled: !enabled, title: name, 'aria-label': name };
+    const commit = (input, next) => this.change(block, item, next, input);
+
+    switch (block.type) {
+      case 'boolean': {
+        const input = el('input', { ...common, type: 'checkbox', checked: value === true });
+        input.addEventListener('change', () => commit(input, input.checked));
+        return input;
+      }
+      case 'number': {
+        const input = el('input', { ...common, type: 'number', min: block.min, max: block.max, step: block.step ?? 'any' });
+        input.defaultValue = String(value ?? '');
+        input.addEventListener('change', () => commit(input, input.value.trim() === '' ? NaN : Number(input.value)));
+        return input;
+      }
+      case 'string': {
+        const input = el('input', { ...common, type: 'text' });
+        input.defaultValue = String(value ?? '');
+        input.addEventListener('change', () => commit(input, input.value));
+        return input;
+      }
+      case 'select': {
+        const list = IITC.options._choices(key);
+        const known = list.some((choice) => choice.value === value);
+        // the index stands for the value, so values of any type survive the round trip through the DOM;
+        // a value that is not among the options shows as such, so choosing any option is a change
+        const select = el(
+          'select',
+          common,
+          !known && el('option', { value: '', disabled: true, selected: true }, String(value ?? '')),
+          ...list.map((choice, index) => el('option', { value: String(index), selected: choice.value === value }, asText(choice.label)))
+        );
+        select.addEventListener('change', () => commit(select, list[Number(select.value)]?.value));
+        return select;
+      }
+      case 'color': {
+        const rgb = typeof value === 'string' ? value.slice(0, 7) : '#000000';
+        const input = el('input', { ...common, type: 'color', value: rgb });
+        if (!block.alpha) {
+          input.addEventListener('change', () => commit(input, input.value));
+          return input;
+        }
+        // the alpha channel as a percentage next to the color, both forming one value
+        const alpha = typeof value === 'string' && value.length === 9 ? Math.round((parseInt(value.slice(7), 16) / 255) * 100) : 100;
+        const opacity = el('input', {
+          dataset: { focusId: `${id}:alpha` },
+          disabled: !enabled,
+          type: 'range',
+          min: 0,
+          max: 100,
+          value: alpha,
+          title: 'Opacity',
+          'aria-label': 'Opacity',
+        });
+        const combined = () => {
+          const byte = Math.round((Number(opacity.value) / 100) * 255);
+          return byte === 255 ? input.value : input.value + byte.toString(16).padStart(2, '0');
+        };
+        input.addEventListener('change', () => commit(input, combined()));
+        opacity.addEventListener('change', () => commit(opacity, combined()));
+        return el('span', { className: 'iitc-options-color' }, input, opacity);
+      }
+    }
+    return undefined;
+  }
+
+  // a radio before the title of the item, checked on the selected one; choosing another runs the action
+  // after the click, as a change does, since the action redraws the page
+  choice(block, item, id, enabled) {
+    if (!item) {
+      warnOnce(block, `options: choice block "${block.title}" on page "${this.pageId}" works only inside a repeat`);
+      return undefined;
+    }
+    const action = handlerOf(block);
+    const declared = block[DECLARED];
+    if (!choiceGroups.has(declared)) choiceGroups.set(declared, `iitc-options-choice-${++lastId}`);
+    // named by the label of its row
+    const input = el('input', {
+      type: 'radio',
+      name: choiceGroups.get(declared),
+      checked: block.selected === true,
+      disabled: !enabled || !action,
+      dataset: { focusId: id },
+    });
+    input.addEventListener('change', () => this.later(() => this.act(id, () => action(item))));
+    return input;
+  }
+
+  list(items, depth) {
+    return el(
+      'ul',
+      { className: 'iitc-options-list' },
+      ...(items ?? []).map((entry) => {
+        // the tooltip belongs to the entry's own line, not to its nested entries
+        const head = el(
+          'div',
+          { className: 'iitc-options-list-head', title: entry.tooltip },
+          el('span', { className: 'iitc-options-list-title' }, String(entry.title ?? '')),
+          entry.badge !== undefined && el('span', { className: 'iitc-options-badge' }, String(entry.badge))
+        );
+        const sub = entry.sub !== undefined && el('div', { className: 'iitc-options-sub' }, String(entry.sub));
+        const nested = entry.items?.length && depth < LIST_DEPTH ? this.list(entry.items, depth + 1) : undefined;
+        const className = entry.state ? `iitc-options-item-${entry.state}` : undefined;
+        if (nested && entry.collapsed) {
+          const summary = el('summary', {}, el('iitc-icon', { fallback: '▸' }, 'chevron_right'), head);
+          return el('li', { className }, el('details', {}, summary, sub, nested));
+        }
+        return el('li', { className }, head, sub, nested);
+      })
+    );
+  }
+
+  // the block as a row of the page; undefined for a block that is not shown or fails to draw
+  row(declared, index) {
+    const id = this.prefix + index;
+    try {
+      return this.buildRow(declared, id);
+    } catch (e) {
+      log.warn(`options: block ${id} of page "${this.pageId}" failed to draw`, e);
+      return undefined;
+    }
+  }
+
+  buildRow(declared, id) {
+    const block = evaluate(declared);
+    if (block.visible === false) return undefined;
+
+    const title = asText(block.title);
+    const description = block.description !== undefined && el('div', { className: 'iitc-options-description' }, asText(block.description));
+
+    switch (block.type) {
+      case 'heading':
+        return el('h3', { className: 'iitc-options-heading' }, title);
+      case 'text':
+        return el('p', { className: 'iitc-options-text' }, asText(block.text));
+      case 'link':
+        return el('a', { className: 'iitc-options-link', href: block.url, target: '_blank', rel: 'noopener', dataset: { focusId: id } }, title);
+      case 'notice':
+        return el('div', { className: `iitc-options-notice iitc-options-notice-${block.level ?? 'info'}` }, asText(block.text));
+      case 'list':
+        return this.list(block.items, 1);
+      case 'repeat':
+        return this.repeat(declared, id);
+    }
+
+    const control = this.control(block, undefined, id);
+    if (!control) return undefined;
+    if (block.type === 'action' && block.button === undefined) {
+      // the button carries the title, so only the description is left on the label side
+      return el(
+        'div',
+        { className: 'iitc-options-row iitc-options-action' },
+        description && el('div', { className: 'iitc-options-label' }, description),
+        el('div', { className: 'iitc-options-control' }, control),
+        ...this.notes(id)
+      );
+    }
+    // a field gets its title as a label, so clicking the title reaches the field
+    const field = control.matches('input, select') ? control : control.querySelector('input, select');
+    if (field) field.id = `iitc-options-field-${++lastId}`;
+    const label = el(
+      field ? 'label' : 'div',
+      { className: 'iitc-options-label', htmlFor: field?.id },
+      el('span', { className: 'iitc-options-title' }, title),
+      description
+    );
+    return el(
+      'div',
+      { className: `iitc-options-row iitc-options-${block.type}`, dataset: block.key ? { key: `${this.namespace}.${block.key}` } : {} },
+      label,
+      el('div', { className: 'iitc-options-control' }, control),
+      // under the label and the control, so they stay on one line
+      ...this.notes(id)
+    );
+  }
+
+  cell(inner, item, id, maps) {
+    // buttons keep to the end of the row, the title taking the room left
+    const props = { className: HANDLERS[inner.type] ? 'iitc-options-cell-buttons' : undefined };
+    try {
+      const block = evaluate(inner, item);
+      if (block.visible === false) return el('td', props);
+      return el('td', props, this.control(block, item, id, maps.get(inner)), ...this.notes(id));
+    } catch (e) {
+      log.warn(`options: block ${id} of page "${this.pageId}" failed to draw`, e);
+      return el('td', props);
+    }
+  }
+
+  // the radio of the choice of a repeat for one item; nothing while the choice is hidden or fails
+  radio(inner, item, id) {
+    try {
+      const block = evaluate(inner, item);
+      if (block.visible === false) return undefined;
+      return this.choice(block, item, id, block.enabled !== false);
+    } catch (e) {
+      log.warn(`options: block ${id} of page "${this.pageId}" failed to draw`, e);
+      return undefined;
+    }
+  }
+
+  repeat(block, id) {
+    const items = block.over?.() ?? [];
+    // headers without rows tell nothing
+    if (!items.length) return undefined;
+    const blocks = block.blocks ?? [];
+    // each map is read once for all items
+    const maps = new Map(blocks.filter((inner) => inner.key !== undefined).map((inner) => [inner, IITC.options.get(`${this.namespace}.${inner.key}`)]));
+    const choices = blocks.filter((inner) => inner.type === 'choice');
+    for (const extra of choices.slice(1)) warnOnce(extra, `options: a repeat on page "${this.pageId}" takes one choice; "${extra.title}" is left out`);
+    const choiceId = (item) => `${id}/${item.id}/${blocks.indexOf(choices[0])}`;
+    const columns = blocks.map((inner, innerIndex) => [inner, innerIndex]).filter(([inner]) => inner.type !== 'choice');
+    const rows = items.map((item) => {
+      const cells = columns.map(([inner, innerIndex]) => this.cell(inner, item, `${id}/${item.id}/${innerIndex}`, maps));
+      const title = String(item.title ?? item.id);
+      // the radio of the choice stands before the title of its row, which is its label; the messages of its
+      // action follow the title
+      const radio = choices.length ? this.radio(choices[0], item, choiceId(item)) : undefined;
+      const head = radio ? el('label', { className: 'iitc-options-choice' }, radio, title) : title;
+      return el('tr', {}, el('th', { scope: 'row' }, head, ...(choices.length ? this.notes(choiceId(item)) : [])), ...cells);
+    });
+    // a button carries its own text, so its column needs no header; a table of buttons has no header row
+    const headers = columns.map(([inner]) => (HANDLERS[inner.type] || typeof inner.title === 'function' ? '' : asText(inner.title)));
+    const head = headers.some(Boolean) && el('thead', {}, el('tr', {}, el('th'), ...headers.map((header) => el('th', { scope: 'col' }, header))));
+    return el('table', { className: 'iitc-options-repeat' }, head, el('tbody', {}, ...rows));
+  }
+
+  draw() {
+    const rows = this.page.blocks.map((block, index) => this.row(block, index));
+    // sections of extensions follow the page's own blocks, each under its title
+    for (const section of IITC.options._sections(this.pageId)) {
+      const view = new PageView(this.pageId, this.container, section);
+      rows.push(
+        el('h3', { className: 'iitc-options-heading', dataset: { extension: section.id } }, section.title),
+        ...section.blocks.map((block, index) => view.row(block, index))
+      );
+    }
+    return el('div', { className: 'iitc-options-page', dataset: { page: this.pageId } }, ...rows);
+  }
+}
+
+// the focused control of the container, to give the focus back after a redraw
+const saveFocus = (container) => {
+  const active = container.ownerDocument.activeElement;
+  if (!active || !container.contains(active) || !active.dataset?.focusId) return undefined;
+  const state = { id: active.dataset.focusId };
+  if (active.tagName === 'INPUT' && (active.type === 'text' || active.type === 'number')) {
+    // text typed but not applied yet
+    if (active.value !== active.defaultValue) state.value = active.value;
+    try {
+      state.selection = [active.selectionStart, active.selectionEnd];
+    } catch {
+      // number inputs have no selection
+    }
+  }
+  return state;
+};
+
+const restoreFocus = (container, state) => {
+  if (!state) return;
+  const target = [...container.querySelectorAll('[data-focus-id]')].find((element) => element.dataset.focusId === state.id);
+  if (!target) return;
+  if (state.value !== undefined) target.value = state.value;
+  target.focus();
+  if (state.selection?.[0] !== null && state.selection?.[0] !== undefined) {
+    try {
+      target.setSelectionRange(...state.selection);
+    } catch {
+      // the control no longer takes a selection
+    }
+  }
+};
+
+// the elements whose text a search looks at
+const SEARCHED_ELEMENTS =
+  '.iitc-options-label, .iitc-options-text, .iitc-options-notice, .iitc-options-heading, .iitc-options-link, .iitc-options-action button';
+
+// marks what contains the query, ignoring case: the whole row of a control, otherwise the element itself
+const markMatches = (root, query) => {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return;
+  for (const element of root.querySelectorAll(SEARCHED_ELEMENTS)) {
+    if (element.textContent.toLowerCase().includes(needle)) (element.closest('.iitc-options-row') ?? element).classList.add('iitc-options-match');
+  }
+};
+
+/**
+ * Draws an options page into a container, replacing what the container holds. Changes made on the page
+ * draw it again; a change made elsewhere needs another call
+ *
+ * @private
+ * @param {string} pageId - Id of a registered page
+ * @param {HTMLElement} container - Element to draw into
+ * @param {string} [query] - Search whose matches on the page are marked; stays in force for the redraws
+ *                           until another is given
+ * @returns {boolean} False when no such page is registered
+ */
+const renderPage = (pageId, container, query) => {
+  if (!IITC.options._pages[pageId]) {
+    log.warn(`options: no page "${pageId}" to draw`);
+    return false;
+  }
+  const state = stateOf(container);
+  // the focus and the messages belong to the page drawn before
+  const samePage = state.pageId === pageId;
+  if (query !== undefined) state.query = query;
+  else if (!samePage) state.query = '';
+  if (!samePage) state.messages.clear();
+  state.pageId = pageId;
+  const focus = samePage ? saveFocus(container) : undefined;
+  container.replaceChildren(new PageView(pageId, container).draw());
+  markMatches(container, state.query);
+  restoreFocus(container, focus);
+  return true;
+};
+
+// for the options window: draws the page a container shows again after the current task, and after
+// the click when the pointer is down, as after a change made on the page
+const redrawLater = (container) => {
+  const pageId = states.get(container)?.pageId;
+  if (pageId) new PageView(pageId, container).scheduleRedraw();
+};
+
+IITC.options._renderPage = renderPage;
+IITC.options._redrawLater = redrawLater;
+// shared with the options window
+IITC.options._el = el;
+
+
+})();
+
+
+// *** module: options_sync.js ***
+(function () {
+var log = ulog('options_sync');
+/* global IITC, log -- eslint */
+
+/**
+ * @file Replication of options between devices through the file `iitc[options]` of the Sync plugin, while
+ *       `iitc.syncOptions` is on. Each synced key is shared as `{ value, updated }`, or
+ *       `{ deleted: true, updated }` once reset, so a reset reaches devices that were closed. The newer
+ *       record of a key wins in both directions, and a value stored without a time gives way to any shared
+ *       record. Changes are timed before the file is loaded too, and sent once it is
+ * @module options_sync
+ */
+
+// localStorage key of the times of the last change of each synced key on this device
+const TIMES_KEY = 'iitc-options-sync-times';
+
+// the file of the Sync plugin that holds the shared records
+const PLUGIN = 'iitc';
+const FIELD = 'options';
+
+const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+// a usable time here: a whole number that + 1 still increases exactly
+const isTime = (time) => Number.isSafeInteger(time) && time >= 0 && time < Number.MAX_SAFE_INTEGER;
+
+// a usable time in the shared records, with room for the + 1 of a change made after it
+const isFileTime = (time) => Number.isSafeInteger(time) && time >= 0 && time < 2 ** 52;
+
+// the Sync plugin taking the records
+const syncPlugin = {
+  // the holder of the synced map; the plugin replaces the field when another client wrote the file
+  store: { [FIELD]: {} },
+  started: false,
+  // keys changed here, sent together once the current task is done
+  queued: new Set(),
+  scheduled: false,
+
+  enabled: () => IITC.options.get('iitc.syncOptions') === true,
+
+  // installed in a version that can keep the map outside window.plugin; IITC has loaded, so a new file
+  // starts with the pages of all plugins
+  available: () => window.iitcLoaded === true && typeof window.plugin?.sync?.getFileMap === 'function',
+
+  // the synced map is loaded and not stopped by a sign-out
+  ready() {
+    return this.started && this.enabled() && window.plugin.sync.isInitialized(PLUGIN, FIELD);
+  },
+
+  start() {
+    if (this.started || !this.enabled() || !this.available()) return;
+    // what a newly created file starts with
+    this.store[FIELD] = records();
+    try {
+      window.plugin.sync.registerMapForSync(PLUGIN, FIELD, null, () => this.reconcile(), { holder: this.store });
+    } catch (e) {
+      // the plugin failed to register the map; turning the option off and on again tries once more
+      log.warn('options: the Sync plugin could not take the options', e);
+      return;
+    }
+    this.started = true;
+  },
+
+  // an import or a page of changes in one task becomes one upload of the file
+  queue(key) {
+    if (!this.ready()) return;
+    this.queued.add(key);
+    if (this.scheduled) return;
+    this.scheduled = true;
+    queueMicrotask(() => this.flush());
+  },
+
+  flush() {
+    this.scheduled = false;
+    const keys = [...this.queued];
+    this.queued.clear();
+    if (this.ready()) this.send(keys);
+  },
+
+  send(keys) {
+    for (const key of keys) this.queued.delete(key);
+    const sent = records(keys);
+    if (!Object.keys(sent).length) return;
+    Object.assign(this.store[FIELD], sent);
+    window.plugin.sync.updateMap(PLUGIN, FIELD, Object.keys(sent));
+  },
+
+  // runs after every load of the synced map; with keys, only for those
+  reconcile(keys) {
+    if (this.ready()) this.send(reconcile(keys));
+  },
+};
+
+// the shared records, or undefined until the Sync plugin has taken the map and loaded the file
+const fileRecords = () => {
+  if (!syncPlugin.started) return undefined;
+  const records = window.plugin.sync.getFileMap(PLUGIN, FIELD);
+  return isObject(records) ? records : undefined;
+};
+
+const fileTime = (records, key) => {
+  const updated = records && Object.hasOwn(records, key) ? records[key]?.updated : undefined;
+  return isFileTime(updated) ? updated : undefined;
+};
+
+const loadTimes = () => {
+  let times;
+  try {
+    times = JSON.parse(localStorage.getItem(TIMES_KEY));
+  } catch {
+    return {};
+  }
+  if (!isObject(times)) return {};
+  return Object.fromEntries(Object.entries(times).filter(([, time]) => isTime(time)));
+};
+
+// reads, updates and stores at once, so a time recorded by a nested change is never overwritten;
+// undefined forgets the time
+const setTime = (key, time) => {
+  const times = loadTimes();
+  if (time === undefined) delete times[key];
+  else times[key] = time;
+  localStorage.setItem(TIMES_KEY, JSON.stringify(times));
+};
+
+// the record of a key as this device holds it, or undefined when it holds nothing it may send:
+// a stored value that cannot be read or fails its declaration (an old range, choices still
+// loading) would only be rejected elsewhere, and it is not a reset either
+const localRecord = (key, times) => {
+  const updated = times[key] ?? 0;
+  const state = IITC.options._storedState(key);
+  if (state === 'missing') return { deleted: true, updated };
+  if (state === 'valid') return { value: IITC.options.get(key), updated };
+  return undefined;
+};
+
+// the records this device holds for the keys, all stored values that may leave the device by default,
+// leaving out keys it holds nothing to send for
+const records = (keys = Object.keys(IITC.options.exportValues({ sync: true }))) => {
+  const times = loadTimes();
+  return Object.fromEntries(keys.map((key) => [key, localRecord(key, times)]).filter(([, record]) => record));
+};
+
+// applies the shared records newer than what this device holds, and returns the keys the shared records
+// lack or hold older than this device, to be sent; with keys, only for those. Does nothing while
+// `iitc.syncOptions` is off
+const reconcile = (keys) => {
+  const remote = fileRecords();
+  if (!remote || IITC.options.get('iitc.syncOptions') !== true) return [];
+  const wanted = (key) => !keys || keys.includes(key);
+
+  for (const [key, record] of Object.entries(remote)) {
+    // a key not declared here yet is reconciled when its page registers
+    if (!wanted(key) || !IITC.options._syncs(key) || !isFileTime(record?.updated)) continue;
+    const time = loadTimes()[key];
+    // a stored value this device cannot use gives way to the shared record, whatever its time
+    const known = IITC.options._storedState(key) === 'invalid' ? undefined : time;
+    if (known !== undefined && record.updated <= known) continue;
+    // set first, so a change that onChange makes in reply gets a later time and wins everywhere;
+    // a record from before syncing (time 0) leaves no time, so the shared records keep leading the key
+    setTime(key, record.updated > 0 ? record.updated : undefined);
+    const applied = record.deleted ? IITC.options.reset(key, { source: 'remote' }) : IITC.options.set(key, record.value, { source: 'remote' });
+    // a rejected value, say for choices not loaded yet, is tried again on the next reconcile
+    if (!applied) setTime(key, time);
+  }
+
+  const times = loadTimes();
+  const local = new Set([...Object.keys(IITC.options.exportValues({ sync: true })), ...Object.keys(times).filter((key) => IITC.options._syncs(key))]);
+  return [...local].filter((key) => {
+    const shared = fileTime(remote, key);
+    return wanted(key) && (shared === undefined || (times[key] ?? -Infinity) > shared);
+  });
+};
+
+// a change made on this device gets its time and goes out with the next upload; values applied from the
+// shared records are not changes made here, and values moved from an older build get no time, so they
+// give way to the shared records
+const onOptionChanged = ({ key, value, source }) => {
+  if (key === 'iitc.syncOptions') {
+    if (value !== true) return;
+    if (syncPlugin.started) syncPlugin.reconcile();
+    else syncPlugin.start();
+    return;
+  }
+  if (source === 'remote' || source === 'legacy' || !IITC.options._syncs(key)) return;
+  // later than the record it replaces and than the shared one, even when this device's clock lags
+  const shared = fileTime(fileRecords(), key);
+  setTime(key, Math.max(Date.now(), (loadTimes()[key] ?? 0) + 1, (shared ?? 0) + 1));
+  syncPlugin.queue(key);
+};
+
+// the shared records of the keys a page or an extension declares, after the current task, so the plugin
+// that registers finishes its setup before onChange runs
+const onPageRegistered = ({ keys }) => {
+  queueMicrotask(() => syncPlugin.reconcile(keys));
+};
+
+// for tests
+IITC.options._sync = { TIMES_KEY, records, reconcile, onOptionChanged, onPageRegistered, loadTimes, setTime, syncPlugin };
+
+// handlers return nothing: a false would stop the remaining hook handlers
+window.addHook('optionChanged', onOptionChanged);
+window.addHook('optionsPageRegistered', onPageRegistered);
+window.addHook('iitcLoaded', () => {
+  syncPlugin.start();
+});
+// the Sync plugin loaded after IITC
+window.addHook('pluginSyncReady', () => {
+  syncPlugin.start();
+});
+
+
+})();
+
+
+// *** module: options_window.js ***
+(function () {
+var log = ulog('options_window');
+/* global IITC, L, log -- eslint */
+
+/**
+ * @file The options window: the list of options pages next to the page chosen, and a search over
+ *       the titles and texts of all pages. A narrow window shows the list or the page, with a way back.
+ *       The window is a dialog over the map, so a change shows on the map at once, or fills the pane
+ *       of an app. The page shown follows changes of its own options made elsewhere, such as values arriving
+ *       through sync
+ * @module options_window
+ */
+
+// pages of IITC itself come first, the rest follow by title
+const FIRST_PAGES = ['iitc', 'about'];
+
+// texts of a block searched for a query; titles computed when drawn are left out
+const SEARCHED = ['title', 'description', 'text'];
+
+// longest text the search shows under a page
+const FOUND_LENGTH = 80;
+
+// height of the dialog, in pixels; a lower screen gets a lower dialog
+const HEIGHT = 560;
+
+const PANE_ID = 'options';
+const LINK_ID = 'options-toolbox-link';
+
+// the window's element and its dialog while it is open; the page and the query stay between openings
+const view = {
+  root: null,
+  dialog: null,
+  pageId: undefined,
+  query: '',
+  pane: null,
+  paneAdded: false,
+  mapButton: null,
+};
+
+const el = (...args) => IITC.options._el(...args);
+
+/**
+ * Ids of the registered pages in the order the window lists them
+ *
+ * @private
+ * @returns {string[]}
+ */
+const pageIds = () => {
+  const pages = IITC.options._pages;
+  const rank = (id) => (FIRST_PAGES.includes(id) ? FIRST_PAGES.indexOf(id) : FIRST_PAGES.length);
+  return Object.keys(pages).sort((a, b) => rank(a) - rank(b) || String(pages[a].title ?? a).localeCompare(String(pages[b].title ?? b)));
+};
+
+const titleOf = (pageId) => String(IITC.options._pages[pageId]?.title ?? pageId);
+
+// a block the page does not show; inside a repeat, `visible` as a function of the item counts as shown
+const hidden = (block, inRepeat) => {
+  if (typeof block?.visible !== 'function') return block?.visible === false;
+  if (inRepeat) return false;
+  try {
+    return block.visible() === false;
+  } catch {
+    // drawing the page reports the error
+    return false;
+  }
+};
+
+// texts of the blocks shown, the ones inside a repeat too
+const blockTexts = (blocks, inRepeat = false) =>
+  (blocks ?? []).flatMap((block) => {
+    if (hidden(block, inRepeat)) return [];
+    const own = SEARCHED.filter((name) => typeof block?.[name] === 'string').map((name) => block[name]);
+    return block?.type === 'repeat' ? [...own, ...blockTexts(block.blocks, true)] : own;
+  });
+
+/**
+ * Finds the texts of a page that contain the query, ignoring case
+ *
+ * @private
+ * @returns {string[]|null} Texts of the page's blocks that match, empty when only the page title does;
+ *                          null when nothing on the page matches
+ */
+const search = (pageId, query) => {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return [];
+  // the sections of extensions are searched with their titles
+  const sections = IITC.options._sections(pageId).flatMap((section) => [section.title, ...blockTexts(section.blocks)]);
+  const found = [...blockTexts(IITC.options._pages[pageId].blocks), ...sections].filter((text) => text.toLowerCase().includes(needle));
+  if (found.length) return found;
+  return titleOf(pageId).toLowerCase().includes(needle) ? [] : null;
+};
+
+const shorten = (text) => (text.length > FOUND_LENGTH ? `${text.slice(0, FOUND_LENGTH - 1)}…` : text);
+
+const isOpen = () => view.root !== null && view.root.isConnected;
+
+const part = (className) => view.root.querySelector(`.${className}`);
+
+const content = () => part('iitc-options-content');
+
+const navLink = (pageId) => [...view.root.querySelectorAll('.iitc-options-page-link')].find((link) => link.dataset.page === pageId);
+
+const isHidden = (element) => element.ownerDocument.defaultView.getComputedStyle(element).display === 'none';
+
+// the tooltip of a page in the list, telling its access key; none on a touch screen, where a tap that opens
+// the page would show it
+const accessKeyHint = (pageId) => {
+  const accesskey = IITC.options._pages[pageId]?.accesskey;
+  if (!accesskey || window.matchMedia?.('(hover: none)').matches) return undefined;
+  return `Access key [${accesskey}]`;
+};
+
+// draws the list again; the focus stays on the page it was on
+const drawNav = () => {
+  const list = part('iitc-options-pages');
+  const focused = list.contains(document.activeElement) ? document.activeElement.dataset.page : undefined;
+  const entries = pageIds()
+    .map((pageId) => [pageId, search(pageId, view.query)])
+    .filter(([, found]) => found !== null)
+    .map(([pageId, found]) =>
+      el(
+        'li',
+        {},
+        el(
+          'button',
+          {
+            type: 'button',
+            className: 'iitc-options-page-link',
+            dataset: { page: pageId },
+            title: accessKeyHint(pageId),
+            'aria-current': pageId === view.pageId && 'page',
+            onclick: () => choose(pageId),
+          },
+          el('span', { className: 'iitc-options-page-title' }, titleOf(pageId)),
+          // what the search found on the page
+          found.length > 0 && el('span', { className: 'iitc-options-found' }, found.slice(0, 3).map(shorten).join(' · '))
+        )
+      )
+    );
+  list.replaceChildren(...entries);
+  if (!entries.length) list.append(el('li', { className: 'iitc-options-nothing' }, 'Nothing found'));
+  if (focused !== undefined) navLink(focused)?.focus();
+};
+
+const drawPage = () => {
+  part('iitc-options-page-heading').textContent = view.pageId ? titleOf(view.pageId) : '';
+  if (view.pageId) IITC.options._renderPage(view.pageId, content(), view.query);
+  else content().replaceChildren();
+};
+
+// shows a page; in a narrow window it takes the place of the list, and the focus moves to the way back
+const choose = (pageId) => {
+  const another = pageId !== view.pageId;
+  view.pageId = pageId;
+  view.root.dataset.view = 'page';
+  view.root.querySelectorAll('.iitc-options-page-link').forEach((link) => {
+    if (link.dataset.page === pageId) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  });
+  drawPage();
+  if (another) {
+    // another page starts at its top, or at what the search found on it
+    content().scrollTop = 0;
+    content().querySelector('.iitc-options-match')?.scrollIntoView?.({ block: 'center' });
+  }
+  const nav = part('iitc-options-nav');
+  if (nav.contains(document.activeElement) && isHidden(nav)) part('iitc-options-back').focus();
+};
+
+// the window, showing the page in a narrow window too when `showPage` is set
+const build = (showPage) => {
+  const searchInput = el('input', {
+    type: 'search',
+    className: 'iitc-options-search',
+    placeholder: 'Search',
+    value: view.query,
+    'aria-label': 'Search options',
+  });
+  // the list and the page show what the query finds
+  const searched = () => {
+    drawNav();
+    if (view.pageId) drawPage();
+  };
+  searchInput.addEventListener('input', () => {
+    view.query = searchInput.value;
+    searched();
+  });
+  // Escape clears the search first, and closes the window only from an empty field
+  searchInput.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !searchInput.value) return;
+    event.stopPropagation();
+    searchInput.value = '';
+    view.query = '';
+    searched();
+  });
+
+  const back = el(
+    'button',
+    {
+      type: 'button',
+      className: 'iitc-options-back',
+      'aria-label': 'Back to the list of pages',
+      onclick: () => {
+        view.root.dataset.view = 'list';
+        (navLink(view.pageId) ?? searchInput).focus();
+      },
+    },
+    el('iitc-icon', {}, 'arrow_back')
+  );
+
+  view.root = el(
+    'div',
+    { className: 'iitc-options', dataset: { view: showPage ? 'page' : 'list' } },
+    el('nav', { className: 'iitc-options-nav' }, searchInput, el('ul', { className: 'iitc-options-pages' })),
+    el(
+      'section',
+      { className: 'iitc-options-detail' },
+      el('div', { className: 'iitc-options-detail-head' }, back, el('h2', { className: 'iitc-options-page-heading' })),
+      el('div', { className: 'iitc-options-content' })
+    )
+  );
+  drawNav();
+  drawPage();
+  return view.root;
+};
+
+// a page to show: the one chosen last while it is still registered, or the first
+const currentPage = () => (IITC.options._pages[view.pageId] ? view.pageId : pageIds()[0]);
+
+const openDialog = (showPage) => {
+  view.dialog = window.dialog({
+    id: 'iitc-options',
+    title: 'Options',
+    html: build(showPage),
+    width: 700,
+    height: Math.min(HEIGHT, window.innerHeight - 16),
+    closeCallback: () => {
+      view.root = null;
+      view.dialog = null;
+    },
+  });
+  // the dialog focuses the search as its first field; on a smartphone that would open the keyboard over the window
+  const search = part('iitc-options-search');
+  if (IITC.utils.isSmartphone() && document.activeElement === search) search.blur();
+};
+
+// no close button: the app leaves the pane by showing another
+const openPane = (showPage) => {
+  view.pane = el('div', { id: 'iitc-options-pane', className: 'iitc-options-pane' }, build(showPage));
+  document.body.append(view.pane);
+};
+
+const closePane = () => {
+  view.pane?.remove();
+  view.pane = null;
+  view.root = null;
+};
+
+const display = (pageId) => {
+  const showPage = pageId !== undefined;
+
+  if (isOpen()) {
+    if (showPage) choose(pageId);
+    view.dialog?.dialog?.('moveToTop');
+  } else {
+    // a wide window always shows a page next to the list
+    view.pageId = pageId ?? currentPage();
+    if (window.currentPane === PANE_ID) {
+      openPane(showPage);
+      return;
+    }
+    // on a smartphone the dialog shows over the map pane
+    if (IITC.utils.isSmartphone() && window.currentPane !== 'map') window.show('map');
+    openDialog(showPage);
+  }
+};
+
+// the page open() asked for before it switched to the pane
+let paneRequest;
+
+const entry = () => {
+  if (!window.useAppPanes()) return 'button';
+  return IITC.options.get('iitc.optionsPane') ? 'pane' : 'toolbox';
+};
+
+/**
+ * Opens the options window, on a given page or on the page chosen last
+ *
+ * A toolbox button to an options page comes from the page's `shortcut`, which the user can turn off
+ * with the other shortcuts; `IITC.toolbox.addButton` is for a plugin's own dialogs that are not part
+ * of the options, such as lists and other views of map data. In an app with panes the window is a pane
+ * of the app, unless `iitc.optionsPane` is off
+ *
+ * @memberof IITC.options
+ * @param {string} [pageId] - Page to show
+ * @returns {boolean} False when no such page is registered
+ *
+ * @example
+ * // a toolbox button that opens the page
+ * IITC.options.register('my-plugin', { title: 'My plugin', shortcut: true, blocks });
+ * // the page opened from the plugin's own code, such as a link in its dialog
+ * IITC.options.open('my-plugin');
+ */
+const open = (pageId) => {
+  if (pageId !== undefined && !IITC.options._pages[pageId]) {
+    log.warn(`options: no page "${pageId}" to open`);
+    return false;
+  }
+  if (entry() === 'pane' && window.currentPane !== PANE_ID) {
+    // the window opens when the pane is shown
+    paneRequest = { pageId };
+    window.show(PANE_ID);
+    return true;
+  }
+  display(pageId);
+  return true;
+};
+
+/**
+ * Draws the page shown in the options window again, after the current task and after the click when
+ * the pointer is down, and updates the toolbox shortcut of the page. Changes of the page's own options and
+ * of the sections extensions add to it redraw it already; a page that also shows other state calls this when
+ * that state changes
+ *
+ * @memberof IITC.options
+ * @param {string} [pageId] - Redraws only if this page is shown; all shortcuts are updated without it
+ */
+const refresh = (pageId) => {
+  (pageId === undefined ? Object.keys(IITC.options._pages) : [pageId]).forEach(updateShortcut);
+  if (!isOpen() || (pageId !== undefined && pageId !== view.pageId)) return;
+  IITC.options._redrawLater(content());
+};
+
+// a change made on the page redraws it already; this follows changes made elsewhere, such as by sync, of the
+// options the page and the sections extensions add to it declare. Options of other pages are left to
+// refresh, so an open select is not closed by unrelated changes
+const onOptionChanged = ({ key }) => {
+  if (isOpen() && IITC.options._pages[view.pageId] && IITC.options._definitions[key]?.pageId === view.pageId) IITC.options._redrawLater(content());
+};
+
+const onPageRegistered = ({ pageId }) => {
+  if (!isOpen()) return;
+  drawNav();
+  if (pageId !== view.pageId) return;
+  part('iitc-options-page-heading').textContent = titleOf(pageId);
+  IITC.options._redrawLater(content());
+};
+
+const shortcutId = (pageId) => `options-shortcut-${pageId}`;
+
+// the shortcut arguments each button was drawn with, so a refresh that changes nothing leaves the toolbox alone
+const drawnShortcuts = new Map();
+
+// the arguments of a page's toolbox button, or undefined when the page has none
+const shortcutOf = (pageId) => {
+  const page = IITC.options._pages[pageId];
+  if (!page?.shortcut || IITC.options.get('iitc.toolboxShortcuts') === false) return undefined;
+  let args = page.shortcut;
+  try {
+    if (typeof args === 'function') args = args();
+  } catch (e) {
+    log.warn(`options: shortcut of page "${pageId}" failed`, e);
+    return undefined;
+  }
+  args = { label: titleOf(pageId), ...(typeof args === 'object' ? args : {}) };
+  if (!page.accesskey) return args;
+  const hint = `[${page.accesskey}]`;
+  return { ...args, accesskey: page.accesskey, title: args.title ? `${args.title} ${hint}` : hint };
+};
+
+// the access keys of pages without a toolbox button, on links that are not seen but still take the key
+const accessKeyLinks = () => {
+  let links = document.getElementById('iitc-options-access-keys');
+  if (!links) {
+    links = el('div', { id: 'iitc-options-access-keys', className: 'iitc-options-access-keys', 'aria-hidden': 'true' });
+    document.body.append(links);
+  }
+  return links;
+};
+
+// keeps the access key of a page working while the page has no toolbox button
+const updateAccessKey = (pageId, hasButton) => {
+  const accesskey = IITC.options._pages[pageId]?.accesskey;
+  const link = document.getElementById(`options-access-key-${pageId}`);
+  if (hasButton || !accesskey) {
+    link?.remove();
+    return;
+  }
+  if (link) {
+    link.accessKey = accesskey;
+    return;
+  }
+  accessKeyLinks().append(el('a', { id: `options-access-key-${pageId}`, accessKey: accesskey, tabIndex: -1, onclick: () => open(pageId) }));
+};
+
+// adds, updates or removes the toolbox button of a page, as its declaration and iitc.toolboxShortcuts say;
+// the access key of the page moves to a hidden link when there is no button
+const updateShortcut = (pageId) => {
+  const args = IITC.toolbox ? shortcutOf(pageId) : undefined;
+  updateAccessKey(pageId, Boolean(args));
+  if (!IITC.toolbox) return;
+  const id = shortcutId(pageId);
+  const exists = Boolean(IITC.toolbox.buttons[id]);
+  if (!args) {
+    if (exists) IITC.toolbox.removeButton(id);
+    drawnShortcuts.delete(id);
+    return;
+  }
+  const drawn = JSON.stringify(args);
+  if (exists && drawnShortcuts.get(id) === drawn) return;
+  drawnShortcuts.set(id, drawn);
+  // added anew, since updateButton keeps arguments that a shortcut function no longer returns
+  if (exists) IITC.toolbox.removeButton(id);
+  IITC.toolbox.addButton({ ...args, id, action: () => open(pageId) });
+};
+
+const setMapButton = (wanted) => {
+  if (!wanted) {
+    view.mapButton?.remove();
+    view.mapButton = null;
+    return;
+  }
+  if (view.mapButton || !window.map || !globalThis.L?.Control) return;
+  const Button = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd: () => {
+      // the pages, shown beside the button under a mouse; filled on the way in, so it has the pages of plugins
+      const menu = el('div', { className: 'iitc-control-menu' });
+      const fillMenu = () => {
+        // drawn anew, the item in focus would lose it
+        if (menu.contains(document.activeElement)) return;
+        menu.replaceChildren(
+          ...pageIds().map((pageId) =>
+            el(
+              'a',
+              {
+                href: '#',
+                role: 'button',
+                title: accessKeyHint(pageId),
+                onclick: (event) => {
+                  event.preventDefault();
+                  open(pageId);
+                },
+              },
+              titleOf(pageId)
+            )
+          )
+        );
+      };
+      const container = el(
+        'div',
+        { className: 'iitc-control-button' },
+        el(
+          'a',
+          {
+            href: '#',
+            role: 'button',
+            title: 'IITC and plugin options',
+            'aria-label': 'Options',
+            onclick: (event) => {
+              event.preventDefault();
+              open();
+            },
+          },
+          el('iitc-icon', { fallback: '⚙' }, 'tune')
+        ),
+        menu
+      );
+      for (const type of ['pointerenter', 'focusin']) container.addEventListener(type, fillMenu);
+      L.DomEvent.disableClickPropagation(container);
+      return container;
+    },
+  });
+  view.mapButton = new Button().addTo(window.map);
+};
+
+/**
+ * Shows the way to the window that `entry` names. An app cannot remove a pane, so it stays until
+ * IITC is reloaded and still opens the window
+ *
+ * @private
+ */
+const updateEntry = () => {
+  const mode = entry();
+  if (IITC.toolbox) {
+    const hasLink = Boolean(IITC.toolbox.buttons[LINK_ID]);
+    if (mode === 'toolbox' && !hasLink) {
+      IITC.toolbox.addButton({ id: LINK_ID, label: 'Options', title: 'IITC and plugin options', action: () => open() });
+    } else if (mode !== 'toolbox' && hasLink) {
+      IITC.toolbox.removeButton(LINK_ID);
+    }
+  }
+  setMapButton(mode === 'button');
+  if (mode === 'pane' && !view.paneAdded) {
+    window.app.addPane(PANE_ID, 'Options', 'tune');
+    view.paneAdded = true;
+  }
+};
+
+Object.assign(IITC.options, { open, refresh, _pageIds: pageIds, _setupWindow: updateEntry, _view: view });
+
+// handlers return nothing: a false would stop the remaining hook handlers
+window.addHook('optionChanged', (event) => {
+  onOptionChanged(event);
+  if (event.key === 'iitc.toolboxShortcuts') Object.keys(IITC.options._pages).forEach(updateShortcut);
+  if (event.key === 'iitc.optionsPane') updateEntry();
+});
+window.addHook('paneChanged', (pane) => {
+  if (pane === PANE_ID) {
+    const request = paneRequest;
+    paneRequest = undefined;
+    // a dialog left open from before the pane was chosen gives way to it
+    if (isOpen() && !view.pane) view.dialog?.dialog?.('close');
+    display(request?.pageId);
+  } else if (view.pane) {
+    closePane();
+  }
+});
+window.addHook('optionsPageRegistered', (event) => {
+  onPageRegistered(event);
+  updateShortcut(event.pageId);
+});
+
+
+})();
+
+
 // *** module: ornaments.js ***
 (function () {
 var log = ulog('ornaments');
@@ -25892,10 +28103,10 @@ var log = ulog('ornaments');
  * (there are 7 different colors for each of them)
  *
  * Ornament IDs are dynamic. NIANTIC might change them at any time without prior notice.
- * New ornamnent IDs found on the map will be recorded and saved to knownOrnaments from
- * which the Ornaments dialog will be filled with checked checkboxes.
- * To exclude a set of ornaments, even if they have not yet shown up on the map, the user
- * can add an entry to excludedOrnaments, which will compared (startsWith) to all known and
+ * New ornament IDs found on the map are recorded on this device, and the Ornaments page of the
+ * options window lists them with a checkbox to hide each; the hidden ones are an option, synced
+ * between devices. To exclude a set of ornaments, even if they have not yet shown up on the map,
+ * the user can add an entry to excludedOrnaments, which will compared (startsWith) to all known and
  * future IDs. example: "ap" to exclude all Ornaments for anomalies (ap1, ap2, ap2_v)
  */
 window.ornaments = {
@@ -25919,7 +28130,7 @@ window.ornaments = {
    * be filled from a plugin
    * ```
    * 'ornamentID' : {
-   *   name: 'meaningful name',     // shows up in dialog
+   *   name: 'meaningful name',     // shows up on the Ornaments options page
    *   layer: 'name for the Layer', // shows up in layerchooser, optional, if not set
    *                                // ornament will be in "Ornaments"
    *   url: 'url',                  // from which the image will be taken, optional,
@@ -25944,10 +28155,27 @@ window.ornaments = {
   excludedOrnaments: [],
 
   /**
-   * List of known ornaments.
+   * Known ornaments: the ones seen on this device and the hidden ones, each with whether it is hidden.
    * @property {object} knownOrnaments - Object tracking known ornaments.
    */
   knownOrnaments: {},
+
+  /**
+   * localStorage key of the IDs of the ornaments seen on this device, kept apart from the options
+   * @constant
+   * @type {string}
+   */
+  KNOWN_KEY: 'iitc-ornaments-known',
+
+  // IDs of the ornaments seen on this device
+  _seen: new Set(),
+
+  // set while a redraw waits in the microtask queue, so changes in one task redraw once
+  _reloadQueued: false,
+
+  // set while storing the ornaments seen waits in the microtask queue, so new ones in one task are stored and
+  // shown once
+  _seenQueued: false,
 
   /**
    * Sets up the ornament layer and necessary event handlers.
@@ -25956,12 +28184,14 @@ window.ornaments = {
    * @memberof window.ornaments
    */
   setup: function () {
+    this.registerOptions();
     this._portals = {};
     this.layerGroup = () => new L.LayerGroup();
     if (window.map.options.preferCanvas && L.Browser.canvas && !window.DISABLE_CANVASICONLAYER) {
       this.layerGroup = L.canvasIconLayer;
       L.CanvasIconLayer.mergeOptions({ padding: L.Canvas.prototype.options.padding });
     }
+    this.migrate();
     this.load();
 
     this.layers = {};
@@ -25970,14 +28200,187 @@ window.ornaments = {
 
     window.layerChooser.addOverlay(this.layers['Ornaments'], 'Ornaments');
     window.layerChooser.addOverlay(this.layers['Excluded ornaments'], 'Excluded ornaments', { default: false });
+  },
 
-    IITC.toolbox.addButton({
-      id: 'ornaments-toolbox-link',
-      label: 'Ornaments Opt',
-      title: 'Edit ornament exclusions',
+  /**
+   * Declares the `ornaments` options page: `excluded` is the comma-separated list of ID prefixes to hide,
+   * and `hidden` maps each hidden ornament ID to true. A change from the page, a backup or sync updates
+   * `excludedOrnaments` and `knownOrnaments` and schedules a redraw
+   *
+   * @memberof window.ornaments
+   */
+  registerOptions() {
+    IITC.options.register('ornaments', {
+      title: 'Ornaments',
       accesskey: 'o',
-      action: window.ornaments.ornamentsOpt,
+      shortcut: { label: 'Ornaments Opt', title: 'Edit ornament exclusions' },
+      blocks: [
+        {
+          type: 'string',
+          key: 'excluded',
+          title: 'Hide ornaments that start with',
+          description: 'Separated by spaces or commas',
+          onChange: (text) => {
+            const prefixes = window.ornaments.parsePrefixes(text);
+            // a list save() stores from the one in use needs no reload
+            if (prefixes.join(',') === window.ornaments.excludedOrnaments.join(',')) return;
+            window.ornaments.excludedOrnaments = prefixes;
+            window.ornaments.scheduleReload();
+          },
+        },
+        { type: 'heading', title: 'Known ornaments' },
+        {
+          type: 'text',
+          text: 'None seen yet; ornaments are listed as they show up on the map',
+          visible: () => !Object.keys(window.ornaments.knownOrnaments).length,
+        },
+        {
+          type: 'repeat',
+          // the ornaments seen here and the ones hidden on any device
+          over: () =>
+            Object.keys(window.ornaments.knownOrnaments)
+              .sort()
+              .map((id) => ({ id, title: window.ornaments.icon[id]?.name ? `${window.ornaments.icon[id].name} (${id})` : id })),
+          blocks: [
+            {
+              type: 'boolean',
+              key: 'hidden',
+              title: 'Hide',
+              // an ornament a prefix hides shows as hidden, and only the prefix can show it again
+              enabled: (item) => !window.ornaments.isExcluded(item.id),
+              value: (item) => (window.ornaments.isExcluded(item.id) ? true : undefined),
+              onChange: (hidden) => {
+                window.ornaments.knownOrnaments = window.ornaments.knownFrom(hidden);
+                window.ornaments.scheduleReload();
+              },
+            },
+          ],
+        },
+        {
+          type: 'action',
+          title: 'Forget known ornaments',
+          description:
+            'Clears the Hide marks on every device and forgets the ornaments seen; the ones on the map now are listed again at once, and the prefixes stay',
+          button: 'Forget',
+          action: () => window.ornaments.initOrnaments(),
+        },
+      ],
     });
+  },
+
+  /**
+   * Redraws the ornaments once the current task is done, however many changes it makes
+   *
+   * @memberof window.ornaments
+   */
+  scheduleReload() {
+    if (this._reloadQueued) return;
+    this._reloadQueued = true;
+    queueMicrotask(() => {
+      this._reloadQueued = false;
+      this.reload();
+    });
+  },
+
+  /**
+   * Builds `knownOrnaments` from the ornaments seen on this device and the hidden flags
+   *
+   * @memberof window.ornaments
+   * @param {Object<string, boolean>} hidden - Hidden flags by ornament ID, as the `hidden` option holds them
+   * @returns {Object<string, boolean>} Whether each known ornament is hidden
+   */
+  knownFrom(hidden) {
+    const ids = new Set([...this._seen, ...Object.keys(hidden).filter((id) => hidden[id] === true)]);
+    return Object.fromEntries([...ids].map((id) => [id, hidden[id] === true]));
+  },
+
+  /**
+   * Reads the IDs of the ornaments seen on this device; none when the stored list cannot be read
+   *
+   * @memberof window.ornaments
+   * @returns {string[]}
+   */
+  readSeen() {
+    try {
+      const ids = JSON.parse(localStorage.getItem(this.KNOWN_KEY));
+      return Array.isArray(ids) ? ids.filter((id) => typeof id === 'string') : [];
+    } catch (e) {
+      log.warn(`ornaments: cannot read "${this.KNOWN_KEY}": ${e}`);
+      return [];
+    }
+  },
+
+  /**
+   * Stores the IDs of the ornaments seen on this device once the current task is done, and redraws the
+   * options page of ornaments if it is shown, so it lists the new ones
+   *
+   * @memberof window.ornaments
+   */
+  scheduleSeenSave() {
+    if (this._seenQueued) return;
+    this._seenQueued = true;
+    queueMicrotask(() => {
+      this._seenQueued = false;
+      localStorage.setItem(this.KNOWN_KEY, JSON.stringify([...this._seen]));
+      IITC.options.refresh('ornaments');
+    });
+  },
+
+  /**
+   * Moves the ornament options of older builds to the options, once: the prefixes from `excludedOrnaments`,
+   * and from `knownOrnaments` the hidden ornaments and the ornaments seen. The legacy keys go, values left out
+   * as unreadable with them; the list of ornaments seen marks the move as done
+   *
+   * @memberof window.ornaments
+   */
+  migrate() {
+    if (localStorage.getItem(this.KNOWN_KEY) !== null) return;
+    const legacy = (key) => {
+      try {
+        return JSON.parse(localStorage.getItem(key));
+      } catch (e) {
+        log.warn(`ornaments: cannot read the legacy "${key}": ${e}`);
+        return null;
+      }
+    };
+
+    const excluded = legacy('excludedOrnaments');
+    if (Array.isArray(excluded))
+      IITC.options.set('ornaments.excluded', excluded.filter((prefix) => typeof prefix === 'string').join(','), { source: 'legacy' });
+    else if (excluded !== null) log.warn('ornaments: the legacy "excludedOrnaments" is not a list and is left out');
+
+    const known = legacy('knownOrnaments');
+    let seen = [];
+    if (known !== null && typeof known === 'object' && !Array.isArray(known)) {
+      seen = Object.keys(known);
+      // any truthy entry hid the ornament in older builds
+      IITC.options.set('ornaments.hidden', Object.fromEntries(seen.filter((id) => known[id]).map((id) => [id, true])), { source: 'legacy' });
+    } else if (known !== null) log.warn('ornaments: the legacy "knownOrnaments" is not a map and is left out');
+    localStorage.setItem(this.KNOWN_KEY, JSON.stringify(seen));
+    localStorage.removeItem('excludedOrnaments');
+    localStorage.removeItem('knownOrnaments');
+  },
+
+  /**
+   * Tells whether a prefix of `excludedOrnaments` hides an ornament
+   *
+   * @memberof window.ornaments
+   * @param {string} id - Ornament ID
+   * @returns {boolean}
+   */
+  isExcluded(id) {
+    return this.excludedOrnaments.some((prefix) => id.startsWith(prefix));
+  },
+
+  /**
+   * Splits a list of ornament ID prefixes separated by spaces or commas
+   *
+   * @memberof window.ornaments
+   * @param {string} text - Prefixes as typed by the user
+   * @returns {string[]} Non-empty prefixes
+   */
+  parsePrefixes(text) {
+    return text.split(/[\s,]+/).filter(Boolean);
   },
 
   /**
@@ -26010,8 +28413,10 @@ window.ornaments = {
         var anchor = [size / 2, size / 2];
         var iconUrl = '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/' + ornament + '.png';
 
-        if (!this.knownOrnaments[ornament]) {
-          this.knownOrnaments[ornament] = false;
+        if (!(ornament in this.knownOrnaments)) this.knownOrnaments[ornament] = false;
+        if (!this._seen.has(ornament)) {
+          this._seen.add(ornament);
+          this.scheduleSeenSave();
         }
 
         if (ornament in this.icon) {
@@ -26079,54 +28484,48 @@ window.ornaments = {
   },
 
   /**
-   * Initializes known ornaments.
+   * Forgets the ornaments seen on this device and clears the hidden ones on every device; the redraw lists the
+   * ornaments on the map again at once, and the prefixes stay
    *
    * @function
    * @memberof window.ornaments
    */
   initOrnaments: function () {
+    this._seen = new Set();
+    // an empty list rather than none, which would move the legacy options again
+    localStorage.setItem(this.KNOWN_KEY, '[]');
     this.knownOrnaments = {};
-    this.save();
+    IITC.options.reset('ornaments.hidden');
+    this.scheduleReload();
   },
 
   /**
-   * Loads ornament data from localStorage.
+   * Loads the ornament options
    *
    * @function
    * @memberof window.ornaments
    */
   load: function () {
-    var dataStr;
-    try {
-      dataStr = localStorage.getItem('excludedOrnaments');
-      if (!dataStr) {
-        return;
-      }
-      this.excludedOrnaments = JSON.parse(dataStr);
-    } catch (e) {
-      log.warn('ornaments: failed to load excludedOrnaments from localStorage: ' + e);
-    }
-    try {
-      dataStr = localStorage.getItem('knownOrnaments');
-      if (!dataStr) {
-        this.initOrnaments();
-        return;
-      }
-      this.knownOrnaments = JSON.parse(dataStr);
-    } catch (e) {
-      log.warn('ornaments: failed to load data from localStorage: ' + e);
-    }
+    this.excludedOrnaments = this.parsePrefixes(IITC.options.get('ornaments.excluded'));
+    this._seen = new Set(this.readSeen());
+    this.knownOrnaments = this.knownFrom(IITC.options.get('ornaments.hidden'));
   },
 
   /**
-   * Saves the current ornament configuration to localStorage.
+   * Stores `excludedOrnaments` and `knownOrnaments`, as the prefixes, the hidden ornaments and the ornaments
+   * seen, and redraws the ornaments
    *
    * @function
    * @memberof window.ornaments
    */
   save: function () {
-    localStorage['excludedOrnaments'] = JSON.stringify(this.excludedOrnaments);
-    localStorage['knownOrnaments'] = JSON.stringify(this.knownOrnaments);
+    const known = Object.entries(this.knownOrnaments);
+    for (const [id] of known) this._seen.add(id);
+    this.scheduleSeenSave();
+    IITC.options.set('ornaments.excluded', this.excludedOrnaments.join(','));
+    // any truthy entry hides, as for older builds
+    IITC.options.set('ornaments.hidden', Object.fromEntries(known.filter(([, hidden]) => hidden).map(([id]) => [id, true])));
+    this.scheduleReload();
   },
 
   /**
@@ -26142,112 +28541,12 @@ window.ornaments = {
   },
 
   /**
-   * Processes input data for managing ornaments.
+   * Opens the Ornaments page of the options window, which replaces the options dialog
    *
-   * @function
+   * @deprecated use `IITC.options.open('ornaments')` instead
    * @memberof window.ornaments
    */
-  processInput: function () {
-    window.ornaments.excludedOrnaments = $('#ornaments_E')
-      .val()
-      .split(/[\s,]+/);
-    window.ornaments.excludedOrnaments = window.ornaments.excludedOrnaments.filter(function (ornamentCode) {
-      return ornamentCode !== '';
-    });
-    // process the input from the checkboxes
-    for (var ornamentCode in window.ornaments.knownOrnaments) {
-      var input = $('#chk_orn_' + ornamentCode);
-      window.ornaments.knownOrnaments[ornamentCode] = input.is(':checked');
-    }
-  },
-
-  /**
-   * Generates a list of ornaments for display in the options dialog.
-   *
-   * @function
-   * @memberof window.ornaments
-   * @returns {string} HTML string representing the list of ornaments.
-   */
-  ornamentsList: function () {
-    var text = '';
-    var sortedIDs = Object.keys(window.ornaments.knownOrnaments).sort();
-
-    sortedIDs.forEach(function (ornamentCode) {
-      var hidden = window.ornaments.excludedOrnaments.some(function (code) {
-        return ornamentCode.startsWith(code);
-      });
-
-      var name = window.ornaments.icon[ornamentCode] ? window.ornaments.icon[ornamentCode].name + ' (' + ornamentCode + ')' : ornamentCode;
-      var checked = window.ornaments.knownOrnaments[ornamentCode] || hidden ? 'checked ' : '';
-      text += '<label><input id="chk_orn_' + ornamentCode + '" type="checkbox" ' + checked;
-      text += ' onchange="window.ornaments.processInput();window.ornaments.save();window.ornaments.reload()"';
-      text += hidden ? 'disabled' : '';
-      text += '>' + name + '</label><br>';
-    });
-    return text;
-  },
-
-  /**
-   * Replaces the content of the ornaments list in the dialog.
-   *
-   * @function
-   * @memberof window.ornaments
-   */
-  replaceOL: function () {
-    document.getElementById('ornamentsList').innerHTML = window.ornaments.ornamentsList();
-  },
-
-  /**
-   * Handles changes in ornament options and updates the map accordingly.
-   *
-   * @function
-   * @memberof window.ornaments
-   */
-  onChangeHandler: function () {
-    window.ornaments.processInput();
-    window.ornaments.replaceOL();
-    window.ornaments.save();
-    window.ornaments.reload();
-  },
-
-  /**
-   * Opens the dialog for ornament options, allowing users to manage ornament visibility.
-   *
-   * @function
-   * @memberof window.ornaments
-   */
-  ornamentsOpt: function () {
-    var excludedIDs = window.ornaments.excludedOrnaments.join(',');
-    var html =
-      '<div class="ornamentsOpts">' +
-      'Hide Ornaments from IITC that start with:<br>' +
-      `<input type="text" value="${excludedIDs}" id="ornaments_E"` +
-      ' onchange="window.ornaments.onChangeHandler()" /><br>' +
-      '(separator: space or comma allowed)<hr>' +
-      '<b>known Ornaments, check to hide:</b><br>' +
-      `<div id="ornamentsList"> ${window.ornaments.ornamentsList()}</div>` +
-      '</div>';
-
-    window.dialog({
-      html: html,
-      id: 'ornamentsOpt',
-      title: 'Ornament excludes',
-      buttons: {
-        RESET: function () {
-          window.ornaments.initOrnaments();
-          window.ornaments.reload();
-          $(this).dialog('close');
-        },
-        OK: function () {
-          // process the input from the input
-          window.ornaments.processInput();
-          window.ornaments.save();
-          window.ornaments.reload();
-          $(this).dialog('close');
-        },
-      },
-    });
-  },
+  ornamentsOpt: () => IITC.options.open('ornaments'),
 };
 
 
@@ -28879,7 +31178,7 @@ IITC.registerLegacyAliases(IITC.portal.marker, legacyMarkerMappings);
 // *** module: redeeming.js ***
 (function () {
 var log = ulog('redeeming');
-/* global log -- eslint */
+/* global IITC, log -- eslint */
 
 /**
  * @file This file contains functions related to the handling of passcode redeeming in Ingress.
@@ -28953,12 +31252,7 @@ window.handleRedeemResponse = function (data, textStatus, jqXHR) {
     window.setupPlayerStat();
   }
 
-  var format = 'long';
-  try {
-    format = localStorage['iitc-passcode-format'];
-  } catch {
-    /* empty */
-  }
+  let format = IITC.options.get('iitc.passcodeFormat');
 
   var formatHandlers = {
     short: window.formatPasscodeShort,
@@ -28974,7 +31268,7 @@ window.handleRedeemResponse = function (data, textStatus, jqXHR) {
 
     buttons[label.toUpperCase()] = function () {
       $(this).dialog('close');
-      localStorage['iitc-passcode-format'] = label;
+      IITC.options.set('iitc.passcodeFormat', label);
       window.handleRedeemResponse(data, textStatus, jqXHR);
     };
   });
@@ -31339,13 +33633,6 @@ function setupAddons() {
     mouseover: setPermaLink,
   });
 
-  IITC.toolbox.addButton({
-    id: 'about-iitc',
-    label: 'About IITC',
-    action: window.aboutIITC,
-    class: 'cursor_help',
-  });
-
   window.artifact.setup();
 
   window.RegionScoreboardSetup();
@@ -31434,7 +33721,7 @@ const _runBeforeBoot = function () {
   // add smartphone stylesheet
   const style = document.createElement('style');
   style.textContent = '\
-body{color:#fff}#updatestatus{color:#d4d5d6;width:100%;padding:0;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:#262c32;border:0;right:0}#updatestatus .map{margin-left:4px}#innerstatus{float:right;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px;overflow:hidden}#loadlevel{color:#fff;background:0 0;border-width:0}#mobileinfo{float:left;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px 0;transition:opacity .2s;position:relative;overflow:hidden}#mobileinfo.loading{opacity:.6}#mobileinfo .portallevel{color:#fff;padding:0 .25em}#mobileinfo .resonator{border-top:3px solid var(--resonator-color,#ccc);box-sizing:border-box;width:12%;height:100%;position:absolute;top:0}#mobileinfo .resonator[data-slot="0"]{left:0%}#mobileinfo .resonator[data-slot="1"]{left:12.5%}#mobileinfo .resonator[data-slot="2"]{left:25%}#mobileinfo .resonator[data-slot="3"]{left:37.5%}#mobileinfo .resonator[data-slot="4"]{left:50%}#mobileinfo .resonator[data-slot="5"]{left:62.5%}#mobileinfo .resonator[data-slot="6"]{left:75%}#mobileinfo .resonator[data-slot="7"]{left:87.5%}#mobileinfo .resonator.empty{border-top-color:#0000}#mobileinfo .resonator.north:before{content:"";background-color:var(--resonator-color,red);z-index:1;border-radius:100%;width:6px;height:6px;margin-left:-3px;display:block;position:absolute;top:-3px;left:50%}#mobileinfo .filllevel{height:3px;position:absolute;bottom:0}#mobileinfo .enl .filllevel{background-color:var(--color-enl)!important}#mobileinfo .res .filllevel{background-color:var(--color-res)!important}#mobileinfo .mac .filllevel{background-color:var(--color-mac)!important}#playerstat{height:initial}#playerstat h2{flex-wrap:wrap;justify-content:space-between;padding:5px;display:flex}#playerstat h2 #name{align-items:center;display:flex}#playerstat h2 #name .playername,#playerstat h2 #name:hover .playername{max-width:60vw}#playerstat h2 #stats{white-space:nowrap;overflow:initial}#name #signout{position:initial;margin-left:4px;display:inline-block}#searchwrapper .ui-accordion-header{padding:.3em 0}#searchwrapper li{line-height:1.3em}#chatcontrols{width:100%;height:38px;left:0;display:none!important}#chatcontrols a:first-child{display:none}#chatcontrols a{vertical-align:middle;box-sizing:border-box;width:50px;height:36px;line-height:36px;text-decoration:none;overflow:hidden}#chat{width:auto;height:auto;margin-top:var(--safe-area-inset-top);margin-bottom:var(--safe-area-inset-bottom);padding-right:var(--safe-area-inset-right);bottom:30px;left:0;right:0;top:1px!important}#chatinput{width:100%;height:calc(var(--safe-area-inset-bottom) + 30px);padding-right:var(--safe-area-inset-right)}#chat td:nth-child(2),#chatinput td:nth-child(2){width:77px}#chatcontrols a.active{border-color:var(--color-primary);border-bottom-width:0;font-weight:700}#chatcontrols a.active+a{border-left-color:var(--color-primary)}#sidebartoggle{display:none!important}#scrollwrapper{box-sizing:border-box;bottom:0;left:0;right:0;width:100%!important;max-height:none!important}#sidebar{border:0;min-height:100%;width:100%!important}#sidebar>*{width:100%}#portaldetails{min-height:0}.fullimg{width:100%}.leaflet-popup-content{color:#000}.linkdetails aside,#toolbox>a,#toolbox_component>a{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#portaldetails .close{border:1px outset var(--color-bg-border);font-size:22px}#scrollwrapper{inset:0}.safe-area-insets,#scrollwrapper{padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}body.sidebar-open .leaflet-right{margin-right:var(--safe-area-inset-right)}.leaflet-bottom{bottom:5px}:root{--top-controls-height:38px}body.show-controls #chatcontrols{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);width:calc(100% - 1px);height:calc(var(--top-controls-height) + var(--safe-area-inset-top));top:0;overflow-x:auto;display:flex!important}body.show-controls #chatcontrols a{flex:1;min-width:fit-content;padding:0 5px}body.show-controls #map{height:calc(100vh - var(--top-controls-height) - 25px);margin-top:var(--top-controls-height)}body.show-controls #scrollwrapper{margin-top:var(--top-controls-height)}body.show-controls #chat{top:var(--top-controls-height)!important}';
+body{color:#fff}#updatestatus{color:#d4d5d6;width:100%;padding:0;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:#262c32;border:0;right:0}#updatestatus .map{margin-left:4px}#innerstatus{float:right;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px;overflow:hidden}#loadlevel{color:#fff;background:0 0;border-width:0}#mobileinfo{float:left;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px 0;transition:opacity .2s;position:relative;overflow:hidden}#mobileinfo.loading{opacity:.6}#mobileinfo .portallevel{color:#fff;padding:0 .25em}#mobileinfo .resonator{border-top:3px solid var(--resonator-color,#ccc);box-sizing:border-box;width:12%;height:100%;position:absolute;top:0}#mobileinfo .resonator[data-slot="0"]{left:0%}#mobileinfo .resonator[data-slot="1"]{left:12.5%}#mobileinfo .resonator[data-slot="2"]{left:25%}#mobileinfo .resonator[data-slot="3"]{left:37.5%}#mobileinfo .resonator[data-slot="4"]{left:50%}#mobileinfo .resonator[data-slot="5"]{left:62.5%}#mobileinfo .resonator[data-slot="6"]{left:75%}#mobileinfo .resonator[data-slot="7"]{left:87.5%}#mobileinfo .resonator.empty{border-top-color:#0000}#mobileinfo .resonator.north:before{content:"";background-color:var(--resonator-color,red);z-index:1;border-radius:100%;width:6px;height:6px;margin-left:-3px;display:block;position:absolute;top:-3px;left:50%}#mobileinfo .filllevel{height:3px;position:absolute;bottom:0}#mobileinfo .enl .filllevel{background-color:var(--color-enl)!important}#mobileinfo .res .filllevel{background-color:var(--color-res)!important}#mobileinfo .mac .filllevel{background-color:var(--color-mac)!important}#playerstat{height:initial}#playerstat h2{flex-wrap:wrap;justify-content:space-between;padding:5px;display:flex}#playerstat h2 #name{align-items:center;display:flex}#playerstat h2 #name .playername,#playerstat h2 #name:hover .playername{max-width:60vw}#playerstat h2 #stats{white-space:nowrap;overflow:initial}#name #signout{position:initial;margin-left:4px;display:inline-block}#searchwrapper .ui-accordion-header{padding:.3em 0}#searchwrapper li{line-height:1.3em}#chatcontrols{width:100%;height:38px;left:0;display:none!important}#chatcontrols a:first-child{display:none}#chatcontrols a{vertical-align:middle;box-sizing:border-box;width:50px;height:36px;line-height:36px;text-decoration:none;overflow:hidden}#chat{width:auto;height:auto;margin-top:var(--safe-area-inset-top);margin-bottom:var(--safe-area-inset-bottom);padding-right:var(--safe-area-inset-right);bottom:30px;left:0;right:0;top:1px!important}#chatinput{width:100%;height:calc(var(--safe-area-inset-bottom) + 30px);padding-right:var(--safe-area-inset-right)}#chat td:nth-child(2),#chatinput td:nth-child(2){width:77px}#chatcontrols a.active{border-color:var(--color-primary);border-bottom-width:0;font-weight:700}#chatcontrols a.active+a{border-left-color:var(--color-primary)}#sidebartoggle{display:none!important}.leaflet-right{right:10px}#scrollwrapper{box-sizing:border-box;bottom:0;left:0;right:0;width:100%!important;max-height:none!important}#sidebar{border:0;min-height:100%;width:100%!important}#sidebar>*{width:100%}#portaldetails{min-height:0}.fullimg{width:100%}.leaflet-popup-content{color:#000}.linkdetails aside,#toolbox>a,#toolbox_component>a{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#portaldetails .close{border:1px outset var(--color-bg-border);font-size:22px}#scrollwrapper{inset:0}.safe-area-insets,#scrollwrapper{padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}body.sidebar-open .leaflet-right{margin-right:var(--safe-area-inset-right)}.leaflet-bottom{bottom:5px}:root{--top-controls-height:38px}body.show-controls #chatcontrols{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);width:calc(100% - 1px);height:calc(var(--top-controls-height) + var(--safe-area-inset-top));top:0;overflow-x:auto;display:flex!important}body.show-controls #chatcontrols a{flex:1;min-width:fit-content;padding:0 5px}body.show-controls #map{height:calc(100vh - var(--top-controls-height) - 25px);margin-top:var(--top-controls-height)}body.show-controls #scrollwrapper{margin-top:var(--top-controls-height)}body.show-controls #chat{top:var(--top-controls-height)!important}.iitc-options .iitc-options-page button{min-height:34px;padding:5px 10px}.iitc-options .iitc-options-buttons{gap:8px}.iitc-options .iitc-options-page .iitc-options-icon-button{min-width:34px}.iitc-options .iitc-options-page .iitc-options-icon-button iitc-icon{font-size:20px}.iitc-options input[type=radio]{width:20px;height:20px}.iitc-options .iitc-options-page-link{padding:8px}.iitc-options .iitc-options-back{min-width:36px;min-height:36px}.iitc-options .iitc-options-back iitc-icon{font-size:24px}.iitc-prompt-text{font-size:16px}';
   document.head.append(style);
 
   window.smartphone.mapButton = createPaneButton('map');
@@ -32918,7 +35205,7 @@ IITC.registerLegacyAliases(window.IITC.utils, legacyFunctionMappings);
 // *** module: utils_file.js ***
 (function () {
 var log = ulog('utils_file');
-/* global L, log -- eslint */
+/* global IITC, L, log -- eslint */
 
 /**
  * @file This file provides utilities for handling files in an environment-independent way, including
@@ -32954,18 +35241,6 @@ function saveAs(data, filename, dataType) {
 
   URL.revokeObjectURL(objectURL);
 } // alternative: https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js
-
-/**
- * Saves data to a file with the given filename. This function is an alias to the `saveAs` function.
- * or it can use the IITC Mobile file chooser (overwritten in app.js). The `dataType` parameter can be used to filter
- * file types in the IITCm file chooser.
- *
- * @function saveFile
- * @param {string|BlobPart|BlobPart[]} data - The data to be saved.
- * @param {string} [filename] - The name of the file to save.
- * @param {string} [dataType] - The MIME type of the file, used to specify the file format.
- */
-window.saveFile = saveAs;
 
 /**
  * Leaflet wrapper over [FileReader](https://w3c.github.io/FileAPI/#APIASynch) Web API,
@@ -33242,6 +35517,192 @@ L.FileListLoader.loadFiles = function (options) {
   L.FileReader._chooseFiles(loader.load.bind(loader), options);
   return loader;
 };
+
+/**
+ * Hands text over to the user: to the share sheet in the app, elsewhere in a dialog with a button
+ * that copies it to the clipboard
+ *
+ * @memberof IITC.utils
+ * @param {string} text - Text to hand over
+ * @param {Object} [options]
+ * @param {string} [options.title='Export'] - Title of the dialog
+ */
+const exportText = (text, { title = 'Export' } = {}) => {
+  if (window.isApp && window.app?.shareString) {
+    window.app.shareString(text);
+    return;
+  }
+  const textarea = document.createElement('textarea');
+  textarea.className = 'iitc-export-text';
+  textarea.readOnly = true;
+  textarea.value = text;
+  textarea.addEventListener('focus', () => textarea.select());
+  window.dialog({
+    title,
+    html: textarea,
+    width: 600,
+    // a second export replaces the first
+    id: 'iitc-export-text',
+    buttons: {
+      Copy: (event) => {
+        const button = event.currentTarget;
+        // the selection lets the user copy by hand where the clipboard is not available
+        textarea.select();
+        if (!navigator.clipboard) {
+          button.textContent = 'Press Ctrl+C';
+          return;
+        }
+        navigator.clipboard.writeText(text).then(
+          () => {
+            button.textContent = 'Copied';
+          },
+          (e) => {
+            button.textContent = 'Press Ctrl+C';
+            log.warn('Could not copy to the clipboard', e);
+          }
+        );
+      },
+    },
+  });
+};
+
+/**
+ * Asks the user for text in a dialog
+ *
+ * @memberof IITC.utils
+ * @param {Object} [options]
+ * @param {string} [options.title='Import'] - Title of the dialog
+ * @param {string} [options.label] - Explanation above the text field
+ * @returns {Promise<string|undefined>} The text without surrounding white space, or undefined when
+ *                                      nothing was entered or the dialog is closed without OK
+ */
+const importText = ({ title = 'Import', label = 'Paste the text here' } = {}) =>
+  new Promise((resolve) => {
+    const content = document.createElement('div');
+    const text = document.createElement('p');
+    text.textContent = label;
+    const textarea = document.createElement('textarea');
+    textarea.className = 'iitc-import-text';
+    content.append(text, textarea);
+    window.dialog({
+      title,
+      html: content,
+      width: 600,
+      // a second import closes the first, which then resolves with undefined
+      id: 'iitc-import-text',
+      buttons: {
+        OK: function () {
+          resolve(textarea.value.trim() || undefined);
+          $(this).dialog('close');
+        },
+      },
+      closeCallback: () => resolve(undefined),
+    });
+  });
+
+/**
+ * Asks the user for a line of text, such as a name, in a dialog. OK or Enter applies it
+ *
+ * @memberof IITC.utils
+ * @param {Object} [options]
+ * @param {string} [options.title='Enter text'] - Title of the dialog
+ * @param {string} [options.label] - Explanation above the text field
+ * @param {string} [options.value=''] - Text the field starts with
+ * @param {Function} [options.validate] - Receives the text without surrounding white space and returns true,
+ *                                        or a message shown in the dialog, which then stays open
+ * @returns {Promise<string|undefined>} The text without surrounding white space, or undefined when
+ *                                      nothing was entered or the dialog is closed without OK
+ */
+const promptText = ({ title = 'Enter text', label, value = '', validate } = {}) =>
+  new Promise((resolve) => {
+    const content = document.createElement('div');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'iitc-prompt-text';
+    input.value = value;
+    const error = document.createElement('p');
+    error.className = 'iitc-prompt-error';
+    error.setAttribute('role', 'alert');
+    if (label) {
+      const text = document.createElement('p');
+      text.textContent = label;
+      content.append(text);
+    }
+    content.append(input, error);
+
+    const submit = (box) => {
+      const text = input.value.trim();
+      let check;
+      try {
+        check = text && validate ? validate(text) : true;
+      } catch (e) {
+        check = String(e?.message ?? e);
+      }
+      if (check !== true) {
+        error.textContent = check;
+        input.focus();
+        return;
+      }
+      resolve(text || undefined);
+      $(box).dialog('close');
+    };
+    const box = window.dialog({
+      title,
+      html: content,
+      // a second prompt closes the first, which then resolves with undefined
+      id: 'iitc-prompt-text',
+      buttons: {
+        OK: function () {
+          submit(this);
+        },
+      },
+      closeCallback: () => resolve(undefined),
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      submit(box);
+    });
+    input.focus();
+  });
+
+/**
+ * Saves data as a file: downloads it, or in the app lets the user pick where to save it,
+ * with `dataType` filtering the file types the app offers
+ *
+ * @memberof IITC.utils
+ * @param {string} data - The data to save; the app takes only strings
+ * @param {string} [filename] - Suggested file name
+ * @param {string} [dataType] - MIME type of the file
+ */
+const exportFile = (data, filename, dataType) => {
+  if (window.app?.saveFile) {
+    window.app.saveFile(filename || '', dataType || '*/*', data);
+  } else {
+    saveAs(data, filename, dataType);
+  }
+};
+
+/**
+ * Lets the user pick files and reads them as text
+ *
+ * @memberof IITC.utils
+ * @param {Object} [options]
+ * @param {string} [options.accept] - File types to offer, as in the `accept` attribute of a file input
+ * @param {boolean} [options.multiple=false] - Allows picking more than one file
+ * @returns {Promise<Array<{name: string, text: string}>>} The files that could be read; stays pending
+ *                                                       when the user closes the file chooser without picking
+ */
+const importFile = ({ accept, multiple = false } = {}) =>
+  new Promise((resolve) => {
+    const files = [];
+    // an accept of undefined would become the attribute value 'undefined'
+    L.FileListLoader.loadFiles(accept === undefined ? { multiple } : { accept, multiple })
+      .on('load', (e) => files.push({ name: e.file.name, text: e.reader.result }))
+      .on('loaded', () => resolve(files));
+  });
+
+Object.assign(IITC.utils, { exportText, importText, promptText, exportFile, importFile });
 
 
 })();

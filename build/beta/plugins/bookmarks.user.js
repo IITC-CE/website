@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.5.0.20261107.100239
+// @version        0.5.0.20261108.110655
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-07-100239';
+plugin_info.dateTimeVersion = '2026-11-08-110655';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -61,7 +61,6 @@ var changelog = [
 
   HOOKS:
   - pluginBkmrksEdit: fired when a bookmarks/folder is removed, added or sorted, also when a folder is opened/closed;
-  - pluginBkmrksOpenOpt: fired when the "Bookmarks Options" panel is opened (you can add new options);
   - pluginBkmrksSyncEnd: fired when the sync is finished;
 
 ********************************************************************** */
@@ -128,6 +127,17 @@ window.plugin.bookmarks.escapeHtml = function (text) {
     .replace(/\\/g, '&#92;');
 };
 
+// the text escapeHtml was given, for labels shown as text rather than as HTML
+window.plugin.bookmarks.unescapeHtml = (html) =>
+  html
+    .replace(/&#92;/g, '\\')
+    .replace(/&#47;/g, '/')
+    .replace(/&#039;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&gt;/g, '>')
+    .replace(/&lt;/g, '<')
+    .replace(/&amp;/g, '&');
+
 window.plugin.bookmarks.escapeUnicode = function (str) {
   for (var result = '', index = 0, charCode; !isNaN((charCode = str.charCodeAt(index))); ) {
     if ((charCode & 127) === charCode) {
@@ -143,6 +153,8 @@ window.plugin.bookmarks.escapeUnicode = function (str) {
 // Update the localStorage
 window.plugin.bookmarks.saveStorage = function () {
   localStorage[window.plugin.bookmarks.KEY_STORAGE] = JSON.stringify(window.plugin.bookmarks.currentProject);
+  // the options page lists the folders
+  IITC.options.refresh('bookmarks');
 };
 
 // Load the localStorage
@@ -199,6 +211,8 @@ window.plugin.bookmarks.refreshBkmrks = function () {
 
   window.plugin.bookmarks.updateStarPortal();
   window.plugin.bookmarks.jquerySortableScript();
+  // the options page lists the folders
+  IITC.options.refresh('bookmarks');
 };
 
 /** *************************************************************************************************************************************************************/
@@ -759,75 +773,53 @@ window.plugin.bookmarks.jquerySortableScript = function () {
 /** ************************************************************************************************************************************************************/
 /** OPTIONS ****************************************************************************************************************************************************/
 /** ************************************************************************************************************************************************************/
-// Manual import, export and reset data
-window.plugin.bookmarks.manualOpt = function () {
-  window.dialog({
-    html: window.plugin.bookmarks.htmlSetbox,
-    dialogClass: 'ui-dialog-bkmrksSet',
-    id: 'plugin-bookmarks-options',
-    title: 'Bookmarks Options',
-  });
+/**
+ * Opens the plugin's page of the options window, which replaces the options dialog
+ *
+ * @deprecated use `IITC.options.open('bookmarks')` instead
+ */
+window.plugin.bookmarks.manualOpt = () => IITC.options.open('bookmarks');
 
-  window.runHooks('pluginBkmrksOpenOpt');
-};
-
-window.plugin.bookmarks.optAlert = function (message) {
-  $('.ui-dialog-bkmrksSet .ui-dialog-buttonset').prepend('<p class="bkrmks-alert" style="float:left;margin-top:4px;">' + message + '</p>');
-  $('.bkrmks-alert').delay(2500).fadeOut();
-};
-
-window.plugin.bookmarks.optCopy = function () {
-  if (window.isApp && window.app.shareString) {
-    return window.app.shareString(window.plugin.bookmarks.escapeUnicode(localStorage[window.plugin.bookmarks.KEY_STORAGE]));
-  } else {
-    window.dialog({
-      html:
-        '<p><a onclick="$(\'.ui-dialog-bkmrksSet-copy textarea\').select();">Select all</a> and press CTRL+C to copy it.</p><textarea readonly>' +
-        window.plugin.bookmarks.escapeUnicode(localStorage[window.plugin.bookmarks.KEY_STORAGE]) +
-        '</textarea>',
-      dialogClass: 'ui-dialog-bkmrksSet-copy',
-      id: 'plugin-bookmarks-export',
-      title: 'Bookmarks Export',
-    });
-  }
-};
+// the stored bookmarks, with characters beyond ASCII escaped, for an export
+window.plugin.bookmarks.exportData = () => window.plugin.bookmarks.escapeUnicode(localStorage.getItem(window.plugin.bookmarks.KEY_STORAGE));
 
 window.plugin.bookmarks.optExport = function () {
-  var data = localStorage[window.plugin.bookmarks.KEY_STORAGE];
-  window.saveFile(data, 'IITC-bookmarks.json', 'application/json');
+  IITC.utils.exportFile(window.plugin.bookmarks.exportData(), 'IITC-bookmarks.json', 'application/json');
 };
 
-window.plugin.bookmarks.optPaste = function () {
-  var promptAction = prompt('Press CTRL+V to paste it.', '');
-  if (promptAction !== null && promptAction !== '') {
-    try {
-      JSON.parse(promptAction); // try to parse JSON first
-      localStorage[window.plugin.bookmarks.KEY_STORAGE] = promptAction;
-      window.plugin.bookmarks.refreshBkmrks();
-      window.runHooks('pluginBkmrksEdit', { target: 'all', action: 'import' });
-      console.log('BOOKMARKS: reset and imported bookmarks');
-      window.plugin.bookmarks.optAlert('Successful. ');
-    } catch (e) {
-      console.warn('BOOKMARKS: failed to import data: ' + e);
-      window.plugin.bookmarks.optAlert('<span style="color: #f88">Import failed </span>');
-    }
+/**
+ * Replaces all bookmarks with exported ones
+ *
+ * @param {string} text - Bookmarks as exported
+ * @returns {string} What was imported
+ * @throws {Error} When the text is not bookmarks
+ */
+window.plugin.bookmarks.importData = (text) => {
+  let data;
+  try {
+    data = JSON.parse(text); // try to parse JSON first
+  } catch (e) {
+    console.warn('BOOKMARKS: failed to import data: ' + e);
+    throw new Error('These are not bookmarks');
   }
+  // stored as is, so anything else would break the plugin on the next load
+  const isList = (list) => list !== null && typeof list === 'object' && !Array.isArray(list);
+  if (!isList(data) || !isList(data.maps) || !isList(data.portals)) throw new Error('These are not bookmarks');
+  localStorage.setItem(window.plugin.bookmarks.KEY_STORAGE, text);
+  window.plugin.bookmarks.refreshBkmrks();
+  window.runHooks('pluginBkmrksEdit', { target: 'all', action: 'import' });
+  console.log('BOOKMARKS: reset and imported bookmarks');
+  return 'Imported bookmarks';
 };
 
-window.plugin.bookmarks.optImport = function () {
-  L.FileListLoader.loadFiles({ accept: 'application/json' }).on('load', function (e) {
-    try {
-      JSON.parse(e.reader.result); // try to parse JSON first
-      localStorage[window.plugin.bookmarks.KEY_STORAGE] = e.reader.result;
-      window.plugin.bookmarks.refreshBkmrks();
-      window.runHooks('pluginBkmrksEdit', { target: 'all', action: 'import' });
-      console.log('BOOKMARKS: reset and imported bookmarks');
-      window.plugin.bookmarks.optAlert('Successful. ');
-    } catch (e) {
-      console.warn('BOOKMARKS: failed to import data: ' + e);
-      window.plugin.bookmarks.optAlert('<span style="color: #f88">Import failed </span>');
-    }
-  });
+/**
+ * Lets the user pick a file of bookmarks, which replace all bookmarks
+ *
+ * @returns {Promise<string|undefined>} What was imported, undefined when no file was picked
+ */
+window.plugin.bookmarks.optImport = async () => {
+  const [file] = await IITC.utils.importFile({ accept: 'application/json' });
+  return file ? window.plugin.bookmarks.importData(file.text) : undefined;
 };
 
 window.plugin.bookmarks.optReset = function () {
@@ -839,10 +831,12 @@ window.plugin.bookmarks.optReset = function () {
     window.plugin.bookmarks.refreshBkmrks();
     window.runHooks('pluginBkmrksEdit', { target: 'all', action: 'reset' });
     console.log('BOOKMARKS: reset all bookmarks');
-    window.plugin.bookmarks.optAlert('Successful. ');
+    return 'Deleted all bookmarks';
   }
+  return undefined;
 };
 
+// keeps or resets the position of the bookmarks box; the box is on the desktop only
 window.plugin.bookmarks.optBox = function (command) {
   if (!window.isApp) {
     switch (command) {
@@ -851,16 +845,16 @@ window.plugin.bookmarks.optBox = function (command) {
         var boxY = parseInt($('#bookmarksBox').css('left'));
         window.plugin.bookmarks.statusBox.pos = { x: boxX, y: boxY };
         window.plugin.bookmarks.saveStorageBox();
-        window.plugin.bookmarks.optAlert('Position acquired. ');
-        break;
+        return 'Position saved';
       case 'reset':
         $('#bookmarksBox').css({ top: 100, left: 100 });
         window.plugin.bookmarks.optBox('save');
-        break;
+        return 'Position reset';
     }
   } else {
-    window.plugin.bookmarks.optAlert('Only IITC desktop. ');
+    throw new Error('Only on IITC for desktop');
   }
+  return undefined;
 };
 
 window.plugin.bookmarks.dialogLoadListFolders = function (idBox, clickAction, showOthersF, scanType /* 0 = maps&portals; 1 = maps; 2 = portals*/) {
@@ -898,36 +892,93 @@ window.plugin.bookmarks.dialogLoadListFolders = function (idBox, clickAction, sh
   return r;
 };
 
-window.plugin.bookmarks.renameFolder = function (elem) {
-  var type = $(elem).data('type');
-  var idFold = $(elem).data('id');
+// the folders of both kinds of bookmarks, except the folder of the bookmarks outside any folder
+window.plugin.bookmarks.folders = () =>
+  ['maps', 'portals'].flatMap((type) =>
+    Object.entries(window.plugin.bookmarks.currentProject?.[type] ?? {})
+      .filter(([id]) => id !== window.plugin.bookmarks.KEY_OTHER_BKMRK)
+      // labels are stored escaped for the bookmarks box, which shows them as HTML
+      .map(([id, folder]) => ({ id: `${type}/${id}`, title: `${window.plugin.bookmarks.unescapeHtml(folder.label)} (${type})`, type, folderId: id }))
+  );
 
-  var promptAction = prompt('Insert a new name.', '');
-  if (promptAction !== null && promptAction !== '') {
-    try {
-      var newName = window.plugin.bookmarks.escapeHtml(promptAction);
+/**
+ * Asks for a new name of a folder in a dialog that shows the current one, and renames it
+ *
+ * @param {string} type - 'maps' or 'portals'
+ * @param {string} idFold - Folder id
+ * @returns {Promise<string|undefined>} What was done, undefined when no name was given
+ */
+window.plugin.bookmarks.renameFolder = async (type, idFold) => {
+  const folder = window.plugin.bookmarks.currentProject[type][idFold];
+  const name = await IITC.utils.promptText({ title: 'Rename folder', value: window.plugin.bookmarks.unescapeHtml(folder.label) });
+  if (name === undefined) return undefined;
 
-      window.plugin.bookmarks.currentProject[type][idFold].label = newName;
-      $('#bookmarksDialogRenameF #' + idFold).text(newName);
-      window.plugin.bookmarks.saveStorage();
-      window.plugin.bookmarks.refreshBkmrks();
-      window.runHooks('pluginBkmrksEdit', { target: 'all', action: 'import' });
+  folder.label = window.plugin.bookmarks.escapeHtml(name);
+  window.plugin.bookmarks.saveStorage();
+  window.plugin.bookmarks.refreshBkmrks();
+  window.runHooks('pluginBkmrksEdit', { target: 'all', action: 'import' });
 
-      console.log('BOOKMARKS: renamed bookmarks folder');
-      window.plugin.bookmarks.optAlert('Successful. ');
-    } catch (e) {
-      console.warn('BOOKMARKS: failed to rename folder: ' + e);
-      window.plugin.bookmarks.optAlert('<span style="color: #f88">Rename failed </span>');
-    }
-  }
+  console.log('BOOKMARKS: renamed bookmarks folder');
+  return 'Renamed';
 };
 
-window.plugin.bookmarks.optRenameF = function () {
-  window.dialog({
-    html: window.plugin.bookmarks.dialogLoadListFolders('bookmarksDialogRenameF', 'window.plugin.bookmarks.renameFolder', false, 0),
-    dialogClass: 'ui-dialog-bkmrksSet-copy',
-    id: 'plugin-bookmarks-rename-folder',
-    title: 'Bookmarks Rename Folder',
+window.plugin.bookmarks.registerOptions = () => {
+  IITC.options.register('bookmarks', {
+    title: 'Bookmarks',
+    shortcut: { label: 'Bookmarks Opt' },
+    blocks: [
+      {
+        type: 'export',
+        title: 'Export bookmarks',
+        description: 'Bookmarks and folders, as text or a file',
+        data: () => window.plugin.bookmarks.exportData(),
+        filename: 'IITC-bookmarks.json',
+        dataType: 'application/json',
+      },
+      {
+        type: 'import',
+        title: 'Import bookmarks',
+        description: 'From text or a file; replaces all bookmarks',
+        onData: (text) => window.plugin.bookmarks.importData(text),
+        accept: 'application/json',
+      },
+      { type: 'heading', title: 'Folders' },
+      {
+        type: 'text',
+        text: 'No folders yet. Add one with + Folder in the bookmarks',
+        visible: () => !window.plugin.bookmarks.folders().length,
+      },
+      {
+        type: 'repeat',
+        over: () => window.plugin.bookmarks.folders(),
+        blocks: [{ type: 'action', title: 'Rename', action: (folder) => window.plugin.bookmarks.renameFolder(folder.type, folder.folderId) }],
+      },
+      { type: 'heading', title: 'Bookmarks box', visible: () => !window.isApp },
+      {
+        type: 'action',
+        title: 'Box position',
+        description: 'Keeps the box where it is now',
+        button: 'Save',
+        visible: () => !window.isApp,
+        action: () => window.plugin.bookmarks.optBox('save'),
+      },
+      {
+        type: 'action',
+        title: 'Default box position',
+        description: 'Moves the box back to the top left corner',
+        button: 'Reset',
+        visible: () => !window.isApp,
+        action: () => window.plugin.bookmarks.optBox('reset'),
+      },
+      { type: 'heading', title: 'Danger zone' },
+      {
+        type: 'action',
+        title: 'Delete all bookmarks',
+        description: 'Bookmarks and folders; asks before deleting, cannot be undone',
+        button: 'Delete',
+        action: () => window.plugin.bookmarks.optReset(),
+      },
+    ],
   });
 };
 
@@ -1476,21 +1527,6 @@ window.plugin.bookmarks.setupContent = function () {
     '<a class="bkmrksStar" accesskey="b" onclick="window.plugin.bookmarks.switchStarPortal();return false;" title="Save this portal in your bookmarks [b]"><iitc-icon filled>star</iitc-icon></a>';
   window.plugin.bookmarks.htmlMoveBtn =
     '<a id="bookmarksMove" class="btn" onclick="window.plugin.bookmarks.moveMode();return false;">Show/Hide "Move" button</a>';
-
-  var actions = '';
-  actions += '<a onclick="window.plugin.bookmarks.optReset();return false;">Reset bookmarks</a>';
-  actions += '<a onclick="window.plugin.bookmarks.optCopy();return false;">Copy bookmarks</a>';
-  actions += '<a onclick="window.plugin.bookmarks.optPaste();return false;">Paste bookmarks</a>';
-
-  actions += '<a onclick="window.plugin.bookmarks.optImport();return false;">Import bookmarks</a>';
-  actions += '<a onclick="window.plugin.bookmarks.optExport();return false;">Export bookmarks</a>';
-
-  actions += '<a onclick="window.plugin.bookmarks.optRenameF();return false;">Rename Folder</a>';
-  if (!window.isApp) {
-    actions += '<a onclick="window.plugin.bookmarks.optBox(\'save\');return false;">Save box position</a>';
-    actions += '<a onclick="window.plugin.bookmarks.optBox(\'reset\');return false;">Reset box position</a>';
-  }
-  window.plugin.bookmarks.htmlSetbox = '<div id="bkmrksSetbox">' + actions + '</div>';
 };
 
 /** ************************************************************************************************************************************************************/
@@ -1539,12 +1575,11 @@ window.plugin.bookmarks.initMPE = function () {
 
 var setup = function () {
   window.plugin.bookmarks.isSmart = IITC.utils.isSmartphone();
+  window.plugin.bookmarks.registerOptions();
 
   // HOOKS:
   // - pluginBkmrksEdit:    fired when a bookmarks/folder is removed, added or sorted,
   //                        also when a folder is opened/closed.
-  // - pluginBkmrksOpenOpt: fired when the "Bookmarks Options" panel is opened
-  //                        (you can add new options);
   // - pluginBkmrksSyncEnd: fired when the sync is finished;
 
   // If the storage not exists or is a old version
@@ -1571,10 +1606,6 @@ var setup = function () {
     if (window.useAppPanes()) window.app.addPane('plugin-bookmarks', 'Bookmarks', 'star');
     window.addHook('paneChanged', window.plugin.bookmarks.onPaneChanged);
   }
-  IITC.toolbox.addButton({
-    label: 'Bookmarks Opt',
-    action: window.plugin.bookmarks.manualOpt,
-  });
   IITC.toolbox.addButton({
     label: 'Auto draw',
     title: 'Draw lines/triangles between bookmarked portals [q]',
@@ -1628,7 +1659,7 @@ var setup = function () {
 // moved setupCSS to the end to improve readability of built script
 window.plugin.bookmarks.setupCSS = function () {
   $('<style>').prop('type', 'text/css').html('\
-@media print{#bkmrksTrigger{display:none!important}}#bookmarksBox :not(iitc-icon){text-indent:0;box-sizing:border-box;width:auto;height:auto;margin:0;padding:0;font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:20px;text-decoration:none;display:block}#bookmarksBox{z-index:4001;width:231px;height:auto;display:block;top:100px;left:100px;overflow:hidden;position:absolute!important}#bookmarksBox .addForm,#bookmarksBox #bookmarksTypeBar,#bookmarksBox h5{color:#fff;height:28px;font-size:14px;overflow:hidden}#bookmarksBox #topBar{height:15px!important}#bookmarksBox #topBar *{float:left!important;height:14px!important}#bookmarksBox .handle{text-align:center;color:#fff;cursor:move;width:80%;line-height:6px}#bookmarksBox #topBar .btn{cursor:pointer;color:#20a8b1;text-align:center;width:10%;font-size:18px;font-weight:700;line-height:13px;display:block}#bookmarksBox #topBar #bookmarksDel{text-indent:-999px;background:#b42e2e;overflow:hidden}#bookmarksBox #topBar #bookmarksMin:hover{color:#ffce00}#bookmarksBox #bookmarksTypeBar{clear:both}#bookmarksBox h5{text-align:center;color:#788;width:50%;padding:4px 0 23px;height:93px!important}#bookmarksBox h5.current{cursor:default;background:0;color:#fff!important}#bookmarksBox h5:hover{color:#ffce00;background:0 0}#bookmarksBox #topBar,#bookmarksBox .addForm,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .bookmarkList li.bookmarksEmpty,#bookmarksBox .bookmarkList li.bkmrk a,#bookmarksBox .bookmarkList li.bkmrk:hover{background-color:#08304ed9}#bookmarksBox h5,#bookmarksBox .bookmarkList li.bkmrk:hover .bookmarksLink,#bookmarksBox .addForm *{background:#0000004d}#bookmarksBox .addForm *{float:left;display:block;height:28px!important}#bookmarksBox .addForm a{cursor:pointer;color:#20a8b1;text-align:center;width:35%;padding:4px 0 23px;font-size:12px;line-height:20px}#bookmarksBox .addForm a:hover{color:#000;background:#ffce00;text-decoration:none}#bookmarksBox .addForm input{color:#ffce00;height:28px;padding:0 8px 1px;font-size:12px;line-height:12px;font-size:11px!important}#bookmarksBox #bkmrk_portals .addForm input{width:65%}#bookmarksBox #bkmrk_maps .addForm input{width:42%}#bookmarksBox #bkmrk_maps .addForm a{width:29%}#bookmarksBox .addForm input:hover,#bookmarksBox .addForm input:focus{background:#0009;outline:0}#bookmarksBox .bookmarkList>ul{clear:both;color:#fff;max-height:580px;list-style-type:none;overflow:hidden auto}#bookmarksBox .sortable-placeholder{background:#08304e8c;box-shadow:inset 1px 0 #20a8b1}#bookmarksBox .ui-sortable-helper{border-top-width:1px}#bookmarksBox .bookmarkList{display:none}#bookmarksBox .bookmarkList.current{display:block}#bookmarksBox h5,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk,#bookmarksBox ul li.bkmrk a{height:22px}#bookmarksBox h5,#bookmarksBox ul li.bkmrk a{cursor:pointer;float:left;overflow:hidden}#bookmarksBox ul .bookmarksEmpty{text-indent:27px;color:#eee}#bookmarksBox ul .bookmarksRemoveFrom{text-align:center;color:#fff;width:10%}#bookmarksBox .bookmarksRemoveFrom iitc-icon{line-height:18px}#bookmarksBox ul .bookmarksLink{color:#ffce00;width:90%;padding:0 10px 0 8px}#bookmarksBox ul .bookmarksLink.selected{color:#03fe03}#bookmarksBox ul .othersBookmarks .bookmarksLink{width:90%}#bookmarksBox ul .bookmarksLink:hover{color:#03fe03}#bookmarksBox ul .bookmarksRemoveFrom:hover{color:#fff;background:#e22!important}#bookmarksBox,#bookmarksBox *{border:0 solid #20a8b1}#bookmarksBox #topBar,#bookmarksBox ul .bookmarkFolder{border-top-width:1px}#bookmarksBox #topBar,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarkFolder .folderLabel,#bookmarksBox ul li.bkmrk a{border-bottom-width:1px}#bookmarksBox ul .bookmarkFolder{border-left-width:1px;border-right-width:1px}#bookmarksBox #topBar *,#bookmarksBox #bookmarksTypeBar *,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk{border-left-width:1px}#bookmarksBox #topBar,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarksRemoveFrom{border-right-width:1px}#bookmarksBox ul .bookmarkFolder.othersBookmarks li.bkmrk,#bookmarksBox ul .bookmarkFolder .folderLabel .bookmarksRemoveFrom{border-left-width:0}#bkmrksTrigger{cursor:pointer;z-index:2999;text-indent:-100%;text-align:center;background-position:bottom;background-repeat:no-repeat;width:47px;height:0;margin-top:-36px;text-decoration:none;transition:margin-top .1s ease-in-out;display:block;position:absolute;top:0;left:277px;overflow:hidden}#bkmrksTrigger:hover{margin-top:0}.portal-list-bookmark iitc-icon{cursor:pointer;margin:-4px -3px -2px;font-size:19px}#bkmrksTrigger{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAABPCAMAAABMDWzEAAAANlBMVEX/////zgD/zgD///////8Aru7/zgAAru4TtPAAAADA7PtAwvLk9/6b3/n///8Aru510/b/zgDZKp6YAAAACnRSTlOAxo5FtDw9mPoA9GJiegAAAklJREFUeF6dle26ozAIhFO1NkK+vP+b3WbBJRwM7dn5lad9BweoaThI63Z42hfmLn4rLv84d8WvpWxe+fNcFL+VUtzy57kLv67lrbDOqu/nW8tfQ1i3MmjbfrKPc9BjCYfiy2qjjNoDZRfcaBnxnl8Mm8KN4bFzv6q6lVT/P369+DBZFmsZ+LAmWbHllz7XB/OBwDDhF1rVIvwFhHt+vw4dqbViKdC0wHySSsE3e/FxpHPpAo+vUehUSCk7PBuYTpCUw/JsAIoipzlfUTHimPGNMujQ7LA86sSqm2x4BFXbOjTPSWJFxtgpbRTFd+VITdPGQG3b8hArCbm7n9vVefqZxT8I0G2Y+Yi4XFNy+Jqpn695WlP6ksdWSJB9PmJrkMqolADyjIdyrzSrD1Pc8lND8vrNFvfnkw3u8NYAn+ev+M/7iorPH3n8Jd9+mT+b8fg8EBZb+o4n+n0gx4yPMp5MZ3LkW77XJAaZZkdmPtv7JGG9EfLLrnkS3DjiRWseej6OrnXd0ub/hQbftIPHCnfzjDz6sXjy3seKoBqXG97yqiCgmFv198uNYy7XptHlr8aHcbk8NW5veMtrg+A1Ojy3oCeLDs9zgfEHEi2vu03INu4Y/fk3OVOo6N2f8u5IqDs+NvMaYOJQaHj5rut1vGIda/zk5dmdfh7H8XypUJpP0luNne56xnEdildRRPyIfMMDSnGWhEJQvEQZittQwoONYkP946OOMnsERuZNFKMXOYiXkXsO4U0UL1QwffqPCH4Us4xgovih/gBs1LqNE0afwAAAAABJRU5ErkJggg==)}.bkmrksStar iitc-icon{float:left;min-width:var(--icon-target-size,24px);min-height:var(--icon-target-size,24px);justify-content:center;align-items:center;margin:0 0 0 2px;display:inline-flex}.bkmrksStar iitc-icon,.bkmrksStar.favorite:focus iitc-icon{color:var(--color-none)}.bkmrksStar:focus iitc-icon,.bkmrksStar.favorite iitc-icon,.portal-list-bookmark.favorite iitc-icon{color:var(--color-primary)}body.icons-unavailable .bkmrksStar iitc-icon:before,body.icons-unavailable .portal-list-bookmark iitc-icon:before{content:"☆"}body.icons-unavailable .bkmrksStar.favorite iitc-icon:before,body.icons-unavailable .portal-list-bookmark.favorite iitc-icon:before{content:"★"}#bookmarksBox .bookmarkList .bookmarkFolder{background:#083a4eb3;height:auto;margin-top:-1px;overflow:hidden}#bookmarksBox .bookmarkList ul li.sortable-placeholder{background:#083a4ee6;box-shadow:inset -1px 0 #20a8b1,inset 1px 0 #20a8b1,0 -1px #20a8b1}#bookmarksBox .bookmarkList .bkmrk.ui-sortable-helper{border-right-width:1px;border-left-width:1px!important}#bookmarksBox .bookmarkList ul li ul li.sortable-placeholder{height:23px;box-shadow:inset 0 -1px #20a8b1,inset 1px 0 #20a8b1}#bookmarksBox .bookmarkList ul li.bookmarkFolder.ui-sortable-helper,#bookmarksBox .bookmarkList ul li.othersBookmarks ul li.sortable-placeholder{box-shadow:inset 0 -1px #20a8b1}#bookmarksBox #topBar #bookmarksDel,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksRemoveFrom,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{border-bottom-width:1px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox .bookmarkList .triangle{width:0;height:0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel{cursor:pointer;text-indent:0;background:#069;height:25px;overflow:visible}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>*{float:left;height:25px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor{color:#fff;width:90%;line-height:25px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left;border-width:5px 0 5px 7px;border-color:#0000 #0000 #0000 #fff;margin:7px 7px 0 6px}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{border-width:7px 5px 0;border-color:#fff #0000 #0000;margin:9px 5px 0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 12px 10px 0;border-color:#0000 #20a8b1 #0000 #0000;margin:-20px 0 0;display:none;position:relative;top:21px;left:219px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 10px 9px 0;border-color:#0000 #069 #0000 #0000;top:18px;left:0}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel:hover>span>span{border-color:#0000 #036 #0000 #0000}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{background:#036}#bookmarksBox .bookmarkList .bookmarkFolder ul{margin-left:10%;display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open ul{min-height:22px;display:block}#bookmarksBox .bookmarkFolder.othersBookmarks ul{margin-left:0}#bookmarksBox .bookmarksRemoveFrom{display:none!important}#bookmarksBox.deleteMode .bookmarksRemoveFrom{display:block!important}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox ul .bookmarksLink,#bookmarksBox ul .othersBookmarks .bookmarksLink{width:100%!important}#bookmarksBox.deleteMode .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox.deleteMode ul .bookmarksLink,#bookmarksBox.deleteMode ul .othersBookmarks .bookmarksLink{width:90%!important}#bookmarksBox.mobile{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:0 0!important;border:0!important;width:100%!important;height:100%!important;margin:0!important;position:absolute!important;top:0!important;left:0!important;overflow:auto!important}#bookmarksBox.mobile .bookmarkList ul,#bookmarksBox.mobile .bookmarkList ul li,#bookmarksBox.mobile .bookmarkList.current,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder.open ul{width:100%!important;display:block!important}#bookmarksBox.mobile *{box-shadow:none!important;border-width:0!important}#bookmarksBox.mobile #topBar #bookmarksMin,#bookmarksBox.mobile #topBar .handle{display:none!important}#bookmarksBox.mobile #bookmarksTypeBar h5{cursor:pointer;text-align:center;float:left;width:50%;padding:7px 0;height:auto!important}#bookmarksBox.mobile #bookmarksTypeBar h5.current{cursor:default;color:#fff}#bookmarksBox.mobile #bookmarksTypeBar,#bookmarksBox.mobile .bookmarkList .addForm{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{clear:both;height:36px!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel a,#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a{background:0 0;height:auto;padding:7px 0;box-shadow:inset 0 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksRemoveFrom,#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksRemoveFrom{width:10%;background:0 0!important;box-shadow:inset 0 1px #20a8b1,inset -1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksAnchor,#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksLink{text-indent:10px;height:36px;line-height:24px;overflow:hidden}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{margin-left:0!important}#bookmarksBox.mobile .bookmarkList>ul{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.othersBookmarks ul{border-top:5px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder,#bookmarksBox.mobile .bookmarkList li.bkmrk{box-shadow:inset 0 1px #20a8b1,1px 0 #20a8b1,-1px 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList>ul{max-height:none}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{box-shadow:0 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{width:90%!important;margin-left:10%!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder.othersBookmarks ul{width:100%!important;margin-left:0%!important}#bookmarksBox.mobile{margin-bottom:5px!important}#bookmarksBox.mobile #bookmarksTypeBar{height:auto}#bookmarksBox.mobile .addForm,#bookmarksBox.mobile .addForm *{padding:0;height:35px!important}#bookmarksBox.mobile .addForm a{line-height:37px}#bookmarksBox.mobile .addForm input{text-indent:10px}#bookmarksBox.mobile #bookmarksTypeBar h5,#bookmarksBox.mobile .bookmarkList .addForm a{box-shadow:-1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder ul{min-height:37px!important;display:none!important}#updatestatus .bkmrksStar{float:left;background:#262c32;margin:-25px 0 0 -5px;padding:0 3px 1px 4px}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox.mobile .bookmarkList .triangle{width:0!important;height:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left!important;border-width:5px 0 5px 7px!important;border-color:#0000 #0000 #0000 #fff!important;margin:7px 3px 0 13px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{border-width:7px 5px 0!important;border-color:#fff #0000 #0000!important;margin:9px 1px 0 12px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 12px 10px 0!important;border-color:#0000 #20a8b1 #0000 #0000!important;margin:-20px 0 0 100%!important;display:none!important;position:relative!important;top:21px!important;left:-10px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 10px 9px 0!important;border-color:#0000 #069 #0000 #0000!important;top:18px!important;left:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:block!important}#bkmrksAutoDrawer,#bkmrksAutoDrawer p,#bkmrksAutoDrawer a{margin:0;padding:0;display:block}#bkmrksAutoDrawer .bookmarkFolder{border:1px solid #20a8b1;margin-bottom:4px}#bkmrksAutoDrawer .folderLabel{color:#fff;background:#069;padding:4px 0}#bkmrksAutoDrawer .bookmarkFolder div{background:#0000004d;border-top:1px solid #20a8b1;padding:6px 0}#bkmrksAutoDrawer .bookmarkFolder#idOthers .folderLabel{display:none}#bkmrksAutoDrawer .bookmarkFolder#idOthers div{border-top:none;display:block}#bkmrksAutoDrawer a{text-indent:10px;padding:2px 0}#bkmrksAutoDrawer .longdistance{color:#fc0;border-bottom:1px dashed;font-weight:700}#bkmrksAutoDrawer .bookmarkFolder div{display:none}#bkmrksAutoDrawer a.bkmrk.selected{color:#03dc03}#bkmrksSetbox a{color:#ffce00;text-align:center;background:#08304ee6;border:1px solid #ffce00;width:80%;margin:10px auto;padding:3px 0;display:block}#bkmrksSetbox a.disabled,#bkmrksSetbox a.disabled:hover{color:#666;border-color:#666;text-decoration:none}.ui-dialog-bkmrksSet-copy textarea{resize:vertical;width:96%;height:120px}#bookmarksBox.mobile a.bookmarksMoveIn{display:none!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a.bookmarksMoveIn{text-align:center;color:#fff;width:10%;background:0 0!important;box-shadow:inset 0 1px #20a8b1,inset -1px 0 #20a8b1!important}#bookmarksBox.mobile.moveMode a.bookmarksMoveIn{display:block!important}#bookmarksBox.moveMode ul .bookmarksLink,#bookmarksBox.moveMode ul .othersBookmarks .bookmarksLink{width:90%!important}.bookmarksDialog h3{text-transform:capitalize;margin-top:10px}.bookmarksDialog .bookmarkFolder{color:#fff;cursor:pointer;background:#069;border:1px solid #20a8b1;margin-bottom:4px;padding:4px 10px}.bookmarksDialog .bookmarkFolder:hover{text-decoration:underline}#bookmarksBox.mobile #topBar .btn{color:#fff;width:100%;padding-top:17px;font-size:13px;font-weight:400;text-indent:0!important;height:45px!important}#bookmarksBox.mobile .btn{background:#222;width:50%!important}#bookmarksBox.mobile .btn.left{border-right:1px solid #20a8b1!important}#bookmarksBox.mobile .btn#bookmarksMove{background:#b42e2e}#bkmrksSetbox{text-align:center}').appendTo('head');
+@media print{#bkmrksTrigger{display:none!important}}#bookmarksBox :not(iitc-icon){text-indent:0;box-sizing:border-box;width:auto;height:auto;margin:0;padding:0;font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:20px;text-decoration:none;display:block}#bookmarksBox{z-index:4001;width:231px;height:auto;display:block;top:100px;left:100px;overflow:hidden;position:absolute!important}#bookmarksBox .addForm,#bookmarksBox #bookmarksTypeBar,#bookmarksBox h5{color:#fff;height:28px;font-size:14px;overflow:hidden}#bookmarksBox #topBar{height:15px!important}#bookmarksBox #topBar *{float:left!important;height:14px!important}#bookmarksBox .handle{text-align:center;color:#fff;cursor:move;width:80%;line-height:6px}#bookmarksBox #topBar .btn{cursor:pointer;color:#20a8b1;text-align:center;width:10%;font-size:18px;font-weight:700;line-height:13px;display:block}#bookmarksBox #topBar #bookmarksDel{text-indent:-999px;background:#b42e2e;overflow:hidden}#bookmarksBox #topBar #bookmarksMin:hover{color:#ffce00}#bookmarksBox #bookmarksTypeBar{clear:both}#bookmarksBox h5{text-align:center;color:#788;width:50%;padding:4px 0 23px;height:93px!important}#bookmarksBox h5.current{cursor:default;background:0;color:#fff!important}#bookmarksBox h5:hover{color:#ffce00;background:0 0}#bookmarksBox #topBar,#bookmarksBox .addForm,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .bookmarkList li.bookmarksEmpty,#bookmarksBox .bookmarkList li.bkmrk a,#bookmarksBox .bookmarkList li.bkmrk:hover{background-color:#08304ed9}#bookmarksBox h5,#bookmarksBox .bookmarkList li.bkmrk:hover .bookmarksLink,#bookmarksBox .addForm *{background:#0000004d}#bookmarksBox .addForm *{float:left;display:block;height:28px!important}#bookmarksBox .addForm a{cursor:pointer;color:#20a8b1;text-align:center;width:35%;padding:4px 0 23px;font-size:12px;line-height:20px}#bookmarksBox .addForm a:hover{color:#000;background:#ffce00;text-decoration:none}#bookmarksBox .addForm input{color:#ffce00;height:28px;padding:0 8px 1px;font-size:12px;line-height:12px;font-size:11px!important}#bookmarksBox #bkmrk_portals .addForm input{width:65%}#bookmarksBox #bkmrk_maps .addForm input{width:42%}#bookmarksBox #bkmrk_maps .addForm a{width:29%}#bookmarksBox .addForm input:hover,#bookmarksBox .addForm input:focus{background:#0009;outline:0}#bookmarksBox .bookmarkList>ul{clear:both;color:#fff;max-height:580px;list-style-type:none;overflow:hidden auto}#bookmarksBox .sortable-placeholder{background:#08304e8c;box-shadow:inset 1px 0 #20a8b1}#bookmarksBox .ui-sortable-helper{border-top-width:1px}#bookmarksBox .bookmarkList{display:none}#bookmarksBox .bookmarkList.current{display:block}#bookmarksBox h5,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk,#bookmarksBox ul li.bkmrk a{height:22px}#bookmarksBox h5,#bookmarksBox ul li.bkmrk a{cursor:pointer;float:left;overflow:hidden}#bookmarksBox ul .bookmarksEmpty{text-indent:27px;color:#eee}#bookmarksBox ul .bookmarksRemoveFrom{text-align:center;color:#fff;width:10%}#bookmarksBox .bookmarksRemoveFrom iitc-icon{line-height:18px}#bookmarksBox ul .bookmarksLink{color:#ffce00;width:90%;padding:0 10px 0 8px}#bookmarksBox ul .bookmarksLink.selected{color:#03fe03}#bookmarksBox ul .othersBookmarks .bookmarksLink{width:90%}#bookmarksBox ul .bookmarksLink:hover{color:#03fe03}#bookmarksBox ul .bookmarksRemoveFrom:hover{color:#fff;background:#e22!important}#bookmarksBox,#bookmarksBox *{border:0 solid #20a8b1}#bookmarksBox #topBar,#bookmarksBox ul .bookmarkFolder{border-top-width:1px}#bookmarksBox #topBar,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarkFolder .folderLabel,#bookmarksBox ul li.bkmrk a{border-bottom-width:1px}#bookmarksBox ul .bookmarkFolder{border-left-width:1px;border-right-width:1px}#bookmarksBox #topBar *,#bookmarksBox #bookmarksTypeBar *,#bookmarksBox .addForm *,#bookmarksBox ul li.bkmrk{border-left-width:1px}#bookmarksBox #topBar,#bookmarksBox #bookmarksTypeBar,#bookmarksBox .addForm,#bookmarksBox ul .bookmarksRemoveFrom{border-right-width:1px}#bookmarksBox ul .bookmarkFolder.othersBookmarks li.bkmrk,#bookmarksBox ul .bookmarkFolder .folderLabel .bookmarksRemoveFrom{border-left-width:0}#bkmrksTrigger{cursor:pointer;z-index:2999;text-indent:-100%;text-align:center;background-position:bottom;background-repeat:no-repeat;width:47px;height:0;margin-top:-36px;text-decoration:none;transition:margin-top .1s ease-in-out;display:block;position:absolute;top:0;left:277px;overflow:hidden}#bkmrksTrigger:hover{margin-top:0}.portal-list-bookmark iitc-icon{cursor:pointer;margin:-4px -3px -2px;font-size:19px}#bkmrksTrigger{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAABPCAMAAABMDWzEAAAANlBMVEX/////zgD/zgD///////8Aru7/zgAAru4TtPAAAADA7PtAwvLk9/6b3/n///8Aru510/b/zgDZKp6YAAAACnRSTlOAxo5FtDw9mPoA9GJiegAAAklJREFUeF6dle26ozAIhFO1NkK+vP+b3WbBJRwM7dn5lad9BweoaThI63Z42hfmLn4rLv84d8WvpWxe+fNcFL+VUtzy57kLv67lrbDOqu/nW8tfQ1i3MmjbfrKPc9BjCYfiy2qjjNoDZRfcaBnxnl8Mm8KN4bFzv6q6lVT/P369+DBZFmsZ+LAmWbHllz7XB/OBwDDhF1rVIvwFhHt+vw4dqbViKdC0wHySSsE3e/FxpHPpAo+vUehUSCk7PBuYTpCUw/JsAIoipzlfUTHimPGNMujQ7LA86sSqm2x4BFXbOjTPSWJFxtgpbRTFd+VITdPGQG3b8hArCbm7n9vVefqZxT8I0G2Y+Yi4XFNy+Jqpn695WlP6ksdWSJB9PmJrkMqolADyjIdyrzSrD1Pc8lND8vrNFvfnkw3u8NYAn+ev+M/7iorPH3n8Jd9+mT+b8fg8EBZb+o4n+n0gx4yPMp5MZ3LkW77XJAaZZkdmPtv7JGG9EfLLrnkS3DjiRWseej6OrnXd0ub/hQbftIPHCnfzjDz6sXjy3seKoBqXG97yqiCgmFv198uNYy7XptHlr8aHcbk8NW5veMtrg+A1Ojy3oCeLDs9zgfEHEi2vu03INu4Y/fk3OVOo6N2f8u5IqDs+NvMaYOJQaHj5rut1vGIda/zk5dmdfh7H8XypUJpP0luNne56xnEdildRRPyIfMMDSnGWhEJQvEQZittQwoONYkP946OOMnsERuZNFKMXOYiXkXsO4U0UL1QwffqPCH4Us4xgovih/gBs1LqNE0afwAAAAABJRU5ErkJggg==)}.bkmrksStar iitc-icon{float:left;min-width:var(--icon-target-size,24px);min-height:var(--icon-target-size,24px);justify-content:center;align-items:center;margin:0 0 0 2px;display:inline-flex}.bkmrksStar iitc-icon,.bkmrksStar.favorite:focus iitc-icon{color:var(--color-none)}.bkmrksStar:focus iitc-icon,.bkmrksStar.favorite iitc-icon,.portal-list-bookmark.favorite iitc-icon{color:var(--color-primary)}body.icons-unavailable .bkmrksStar iitc-icon:before,body.icons-unavailable .portal-list-bookmark iitc-icon:before{content:"☆"}body.icons-unavailable .bkmrksStar.favorite iitc-icon:before,body.icons-unavailable .portal-list-bookmark.favorite iitc-icon:before{content:"★"}#bookmarksBox .bookmarkList .bookmarkFolder{background:#083a4eb3;height:auto;margin-top:-1px;overflow:hidden}#bookmarksBox .bookmarkList ul li.sortable-placeholder{background:#083a4ee6;box-shadow:inset -1px 0 #20a8b1,inset 1px 0 #20a8b1,0 -1px #20a8b1}#bookmarksBox .bookmarkList .bkmrk.ui-sortable-helper{border-right-width:1px;border-left-width:1px!important}#bookmarksBox .bookmarkList ul li ul li.sortable-placeholder{height:23px;box-shadow:inset 0 -1px #20a8b1,inset 1px 0 #20a8b1}#bookmarksBox .bookmarkList ul li.bookmarkFolder.ui-sortable-helper,#bookmarksBox .bookmarkList ul li.othersBookmarks ul li.sortable-placeholder{box-shadow:inset 0 -1px #20a8b1}#bookmarksBox #topBar #bookmarksDel,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksRemoveFrom,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{border-bottom-width:1px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox .bookmarkList .triangle{width:0;height:0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel{cursor:pointer;text-indent:0;background:#069;height:25px;overflow:visible}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>*{float:left;height:25px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor{color:#fff;width:90%;line-height:25px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left;border-width:5px 0 5px 7px;border-color:#0000 #0000 #0000 #fff;margin:7px 7px 0 6px}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{border-width:7px 5px 0;border-color:#fff #0000 #0000;margin:9px 5px 0}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 12px 10px 0;border-color:#0000 #20a8b1 #0000 #0000;margin:-20px 0 0;display:none;position:relative;top:21px;left:219px}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 10px 9px 0;border-color:#0000 #069 #0000 #0000;top:18px;left:0}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open .folderLabel:hover>span>span{border-color:#0000 #036 #0000 #0000}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel:hover .bookmarksAnchor{background:#036}#bookmarksBox .bookmarkList .bookmarkFolder ul{margin-left:10%;display:none}#bookmarksBox .bookmarkList .bookmarkFolder.open ul{min-height:22px;display:block}#bookmarksBox .bookmarkFolder.othersBookmarks ul{margin-left:0}#bookmarksBox .bookmarksRemoveFrom{display:none!important}#bookmarksBox.deleteMode .bookmarksRemoveFrom{display:block!important}#bookmarksBox .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox ul .bookmarksLink,#bookmarksBox ul .othersBookmarks .bookmarksLink{width:100%!important}#bookmarksBox.deleteMode .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor,#bookmarksBox.deleteMode ul .bookmarksLink,#bookmarksBox.deleteMode ul .othersBookmarks .bookmarksLink{width:90%!important}#bookmarksBox.mobile{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);background:0 0!important;border:0!important;width:100%!important;height:100%!important;margin:0!important;position:absolute!important;top:0!important;left:0!important;overflow:auto!important}#bookmarksBox.mobile .bookmarkList ul,#bookmarksBox.mobile .bookmarkList ul li,#bookmarksBox.mobile .bookmarkList.current,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder.open ul{width:100%!important;display:block!important}#bookmarksBox.mobile *{box-shadow:none!important;border-width:0!important}#bookmarksBox.mobile #topBar #bookmarksMin,#bookmarksBox.mobile #topBar .handle{display:none!important}#bookmarksBox.mobile #bookmarksTypeBar h5{cursor:pointer;text-align:center;float:left;width:50%;padding:7px 0;height:auto!important}#bookmarksBox.mobile #bookmarksTypeBar h5.current{cursor:default;color:#fff}#bookmarksBox.mobile #bookmarksTypeBar,#bookmarksBox.mobile .bookmarkList .addForm{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk,#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{clear:both;height:36px!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel a,#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a{background:0 0;height:auto;padding:7px 0;box-shadow:inset 0 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksRemoveFrom,#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksRemoveFrom{width:10%;background:0 0!important;box-shadow:inset 0 1px #20a8b1,inset -1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder a.bookmarksAnchor,#bookmarksBox.mobile .bookmarkList li.bkmrk a.bookmarksLink{text-indent:10px;height:36px;line-height:24px;overflow:hidden}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{margin-left:0!important}#bookmarksBox.mobile .bookmarkList>ul{border-bottom:1px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.othersBookmarks ul{border-top:5px solid #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder,#bookmarksBox.mobile .bookmarkList li.bkmrk{box-shadow:inset 0 1px #20a8b1,1px 0 #20a8b1,-1px 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList>ul{max-height:none}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder .folderLabel{box-shadow:0 1px #20a8b1!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder ul{width:90%!important;margin-left:10%!important}#bookmarksBox.mobile .bookmarkList ul li.bookmarkFolder.othersBookmarks ul{width:100%!important;margin-left:0%!important}#bookmarksBox.mobile{margin-bottom:5px!important}#bookmarksBox.mobile #bookmarksTypeBar{height:auto}#bookmarksBox.mobile .addForm,#bookmarksBox.mobile .addForm *{padding:0;height:35px!important}#bookmarksBox.mobile .addForm a{line-height:37px}#bookmarksBox.mobile .addForm input{text-indent:10px}#bookmarksBox.mobile #bookmarksTypeBar h5,#bookmarksBox.mobile .bookmarkList .addForm a{box-shadow:-1px 0 #20a8b1!important}#bookmarksBox.mobile .bookmarkList li.bookmarkFolder ul{min-height:37px!important;display:none!important}#updatestatus .bkmrksStar{float:left;background:#262c32;margin:-25px 0 0 -5px;padding:0 3px 1px 4px}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span,#bookmarksBox.mobile .bookmarkList .triangle{width:0!important;height:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel .bookmarksAnchor span{float:left!important;border-width:5px 0 5px 7px!important;border-color:#0000 #0000 #0000 #fff!important;margin:7px 3px 0 13px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel .bookmarksAnchor span{border-width:7px 5px 0!important;border-color:#fff #0000 #0000!important;margin:9px 1px 0 12px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 12px 10px 0!important;border-color:#0000 #20a8b1 #0000 #0000!important;margin:-20px 0 0 100%!important;display:none!important;position:relative!important;top:21px!important;left:-10px!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder .folderLabel>span>span{border-width:0 10px 9px 0!important;border-color:#0000 #069 #0000 #0000!important;top:18px!important;left:0!important}#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span,#bookmarksBox.mobile .bookmarkList .bookmarkFolder.open .folderLabel>span>span{display:block!important}#bkmrksAutoDrawer,#bkmrksAutoDrawer p,#bkmrksAutoDrawer a{margin:0;padding:0;display:block}#bkmrksAutoDrawer .bookmarkFolder{border:1px solid #20a8b1;margin-bottom:4px}#bkmrksAutoDrawer .folderLabel{color:#fff;background:#069;padding:4px 0}#bkmrksAutoDrawer .bookmarkFolder div{background:#0000004d;border-top:1px solid #20a8b1;padding:6px 0}#bkmrksAutoDrawer .bookmarkFolder#idOthers .folderLabel{display:none}#bkmrksAutoDrawer .bookmarkFolder#idOthers div{border-top:none;display:block}#bkmrksAutoDrawer a{text-indent:10px;padding:2px 0}#bkmrksAutoDrawer .longdistance{color:#fc0;border-bottom:1px dashed;font-weight:700}#bkmrksAutoDrawer .bookmarkFolder div{display:none}#bkmrksAutoDrawer a.bkmrk.selected{color:#03dc03}#bookmarksBox.mobile a.bookmarksMoveIn{display:none!important}#bookmarksBox.mobile .bookmarkList ul li ul li.bkmrk a.bookmarksMoveIn{text-align:center;color:#fff;width:10%;background:0 0!important;box-shadow:inset 0 1px #20a8b1,inset -1px 0 #20a8b1!important}#bookmarksBox.mobile.moveMode a.bookmarksMoveIn{display:block!important}#bookmarksBox.moveMode ul .bookmarksLink,#bookmarksBox.moveMode ul .othersBookmarks .bookmarksLink{width:90%!important}.bookmarksDialog h3{text-transform:capitalize;margin-top:10px}.bookmarksDialog .bookmarkFolder{color:#fff;cursor:pointer;background:#069;border:1px solid #20a8b1;margin-bottom:4px;padding:4px 10px}.bookmarksDialog .bookmarkFolder:hover{text-decoration:underline}#bookmarksBox.mobile #topBar .btn{color:#fff;width:100%;padding-top:17px;font-size:13px;font-weight:400;text-indent:0!important;height:45px!important}#bookmarksBox.mobile .btn{background:#222;width:50%!important}#bookmarksBox.mobile .btn.left{border-right:1px solid #20a8b1!important}#bookmarksBox.mobile .btn#bookmarksMove{background:#b42e2e}').appendTo('head');
 };
 
 setup.info = plugin_info; //add the script info data to the function as a property

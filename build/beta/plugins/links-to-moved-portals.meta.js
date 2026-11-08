@@ -2,7 +2,7 @@
 // @author         screach
 // @name           IITC plugin: Links to moved portals
 // @category       Layer
-// @version        0.1.3.20261107.100239
+// @version        0.1.3.20261108.110655
 // @description    Show links to portals with different location data
 // @id             links-to-moved-portals
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion

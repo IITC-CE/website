@@ -2,8 +2,8 @@
 // @author         xelio
 // @name           IITC plugin: Sync
 // @category       Misc
-// @version        0.6.1.20261107.100239
-// @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques, Draw Tools). Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
+// @version        0.6.1.20261108.110655
+// @description    Sync data between clients via Google Drive API. Only syncs data from specific plugins (currently: Keys, Bookmarks, Uniques, Draw Tools) and IITC options. Sign in via the 'Sync' link. Data is synchronized every 3 minutes.
 // @id             sync
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
 // @updateURL      https://iitc.app/build/beta/plugins/sync.meta.js
