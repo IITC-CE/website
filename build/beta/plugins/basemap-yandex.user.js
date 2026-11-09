@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Yandex maps
 // @category       Map Tiles
-// @version        0.3.5.20261109.131557
+// @version        0.3.5.20261109.134020
 // @description    Add Yandex.com (Russian/Русский) map layers
 // @id             basemap-yandex
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,12 +21,12 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-09-131557';
+plugin_info.dateTimeVersion = '2026-11-09-134020';
 plugin_info.pluginId = 'basemap-yandex';
 //END PLUGIN AUTHORS NOTE
 
 /* exported setup, changelog --eslint */
-/* global L -- eslint */
+/* global IITC, L -- eslint */
 
 var changelog = [
   {
@@ -65,16 +65,29 @@ mapYandex.types = {
   },
 };
 
-mapYandex.options = {
-  // set this to your API key
-  apiParams: '<your API-key>',
-};
-
 function setup() {
+  IITC.options.extend('api-keys', 'basemap-yandex', {
+    title: 'Yandex Maps',
+    namespace: 'api-keys',
+    blocks: [
+      {
+        type: 'string',
+        key: 'yandex',
+        title: 'API key',
+        description:
+          'For the Yandex layers, a key of the JavaScript API. The layers load without it, though the terms of Yandex ask for one. A new key applies after IITC reloads',
+      },
+      { type: 'link', title: 'Get a key', url: 'https://developer.tech.yandex.ru/services' },
+    ],
+  });
   setupYandexLeaflet();
 
+  // the API script loads once, with the parameters of the first layer: the key of the user when there is one,
+  // as the API loads without a key too
+  const apikey = IITC.options.get('api-keys.yandex').trim();
+  const apiParams = apikey ? { apikey } : {};
   for (var name in mapYandex.types) {
-    var options = L.extend({}, mapYandex.options, mapYandex.types[name]);
+    var options = L.extend({ apiParams }, mapYandex.types[name]);
     window.layerChooser.addBaseLayer(L.yandex(options), 'Yandex ' + name, { isDark: options.isDark });
   }
 }

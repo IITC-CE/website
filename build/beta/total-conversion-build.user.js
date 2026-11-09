@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261109.131557
+// @version        0.43.2.20261109.134020
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-09-131557';
+plugin_info.dateTimeVersion = '2026-11-09-134020';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-09-131557';
+window.iitcBuildDate = '2026-11-09-134020';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2145,7 +2145,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-09-131557');
+  log.log('loading done, booting. Built: ' + '2026-11-09-134020');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -23347,6 +23347,45 @@ function getPosition() {
   }
 }
 
+// key of the CARTO basemaps that IITC comes with; a key of the user's own on the API keys page replaces it
+const CARTO_API_KEY = 'cb1_2d98_1_8c4c1ddaeb0a769373718043';
+
+/**
+ * Creates the CARTO layers and declares their key on the API keys page; a change of the key reloads their tiles
+ *
+ * @memberof IITC.map
+ * @inner
+ * @private
+ * @returns {Object.<String, L.TileLayer>} The layers by name
+ */
+function createCartoLayers() {
+  const layers = {};
+  const url = () => {
+    const key = IITC.options.get('api-keys.carto').trim() || CARTO_API_KEY;
+    return `https://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png?key=${encodeURIComponent(key)}`;
+  };
+
+  IITC.options.extend('api-keys', 'carto', {
+    title: 'CARTO',
+    namespace: 'api-keys',
+    blocks: [
+      {
+        type: 'string',
+        key: 'carto',
+        title: 'API key',
+        description: 'For the CartoDB layers. Empty uses the key IITC comes with',
+        onChange: () => Object.values(layers).forEach((layer) => layer.setUrl(url())),
+      },
+      { type: 'link', title: 'Get a key', url: 'https://carto.com/basemaps/apikey/' },
+    ],
+  });
+
+  const attribution = IITC.map.osmAttributionTemplate;
+  layers[DEFAULT_MAP /* 'CartoDB Dark Matter' */] = L.tileLayer(url(), { attribution, theme: 'dark_all', isDark: true });
+  layers['CartoDB Positron'] = L.tileLayer(url(), { attribution, theme: 'light_all', isDark: false });
+  return layers;
+}
+
 /**
  * Initializes and returns a collection of default basemap layers. The function creates a set of base layers
  * including CartoDB (both dark and light themes), and various Google Maps layers (Default Ingress Map, Roads,
@@ -23372,11 +23411,7 @@ function createDefaultBaseMapLayers() {
 
   // cartodb has some nice tiles too - both dark and light subtle maps - http://cartodb.com/basemaps/
   // (not available over https though - not on the right domain name anyway)
-  const cartoAttr = IITC.map.osmAttributionTemplate;
-  const cartoAPIKey = 'cb1_2d98_1_8c4c1ddaeb0a769373718043';
-  const cartoUrl = `https://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png?key=${cartoAPIKey}`;
-  baseLayers[DEFAULT_MAP /* 'CartoDB Dark Matter' */] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'dark_all', isDark: true });
-  baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl, { attribution: cartoAttr, theme: 'light_all', isDark: false });
+  Object.assign(baseLayers, createCartoLayers());
 
   // Google Maps - including ingress default (using the stock-intel API-key)
   baseLayers['Google Default Ingress Map'] = new L.GridLayer.GoogleMutant({
@@ -25982,6 +26017,8 @@ const withoutItemDefaults = (def, map) => {
 /**
  * Checks one value against an option's type and constraints
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  * @returns {true|string} True, or the reason the value is not allowed
  */
@@ -26102,6 +26139,8 @@ const notifyChange = (key, value, oldValue, source) => {
  * Collects the options declared by a page, including the ones inside `repeat` blocks, and skips
  * blocks of unknown types with a warning
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  * @param {string} namespace - Prefix of the page's keys
  * @param {Array<IITC.options.OptionBlock>} blocks - Blocks to scan
@@ -26145,6 +26184,8 @@ const declarer = (def) => (def.extensionId === undefined ? `page "${def.pageId}"
  * Declares the options of a page or of an extension of it in place of the ones that declaration made
  * before; a key declared elsewhere already stays with that declaration, with a warning
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  * @param {string} pageId - Page id
  * @param {string|undefined} extensionId - Extension id, undefined for the page itself
@@ -26269,6 +26310,24 @@ const register = (pageId, page) => {
  *   ],
  * });
  * if (IITC.options.get('kml-import.fit')) map.fitBounds(bounds);
+ *
+ * @example <caption>A key on the API keys page</caption>
+ * // the section is titled after the service, and its key reads as `api-keys.<service>`
+ * IITC.options.extend('api-keys', 'my-plugin', {
+ *   title: 'Example Maps',
+ *   namespace: 'api-keys',
+ *   blocks: [
+ *     {
+ *       type: 'string',
+ *       key: 'example-maps',
+ *       title: 'API key',
+ *       description: 'Empty uses the key IITC comes with',
+ *       onChange: () => layer.setUrl(tileUrl()),
+ *     },
+ *     { type: 'link', title: 'Get a key', url: 'https://example.com/keys' },
+ *   ],
+ * });
+ * const tileUrl = () => `https://tiles.example.com/{z}/{x}/{y}.png?key=${IITC.options.get('api-keys.example-maps').trim() || SHARED_KEY}`;
  */
 const extend = (pageId, extensionId, section) => {
   if (typeof pageId !== 'string' || !pageId) {
@@ -26302,6 +26361,8 @@ const sectionsOf = (pageId) =>
 /**
  * Turns the stored value of a declared option into its effective value
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  * @param {string} key - Full option key
  * @param {*} stored - Value read from localStorage, undefined when there is none
@@ -26359,6 +26420,7 @@ const get = (key, fallback) => {
 /**
  * Tells whether an option may travel to other devices: it is declared, and not with `sync: false`
  *
+ * @alias IITC.options._syncs
  * @private
  * @param {string} key - Option key, `<namespace>.<key>`
  * @returns {boolean} True for a declared option that syncs
@@ -26369,6 +26431,7 @@ const syncs = (key) => definitions[key] !== undefined && definitions[key].sync !
  * Tells what localStorage holds for a key, without logging: nothing, a value that reads and passes
  * the declaration, or one that cannot be read or fails it (an old range, choices not loaded yet)
  *
+ * @alias IITC.options._storedState
  * @private
  * @param {string} key - Option key, `<namespace>.<key>`
  * @returns {'missing'|'valid'|'invalid'} The state of the stored value
@@ -26587,6 +26650,32 @@ IITC.options = {
 })();
 
 
+// *** module: options_api_keys.js ***
+(function () {
+var log = ulog('options_api_keys');
+/* global IITC -- eslint */
+
+/**
+ * @file The `api-keys` page, where the user enters keys of the services that IITC and plugins load maps
+ *       and data from. The page holds no fields of its own: the core and every plugin that uses a service
+ *       extend it with a section named after the service, under the `api-keys` namespace, so each key reads
+ *       as `api-keys.<service>` whichever plugin declared it
+ */
+
+IITC.options.register('api-keys', {
+  title: 'API keys',
+  blocks: [
+    {
+      type: 'text',
+      text: 'Keys of the services that map layers and plugins use. A key of your own has its own request limit, not shared with other IITC users',
+    },
+  ],
+});
+
+
+})();
+
+
 // *** module: options_general.js ***
 (function () {
 var log = ulog('options_general');
@@ -26594,9 +26683,8 @@ var log = ulog('options_general');
 
 /**
  * @file General options of IITC, declared as the `iitc` page for options of several core modules.
- *       This file sorts right after options.js in the bundle, so the page exists before boot(), where
+ *       This file sorts after options.js in the bundle, so the page exists before boot(), where
  *       core modules and plugin setups first read its values
- * @module options_general
  */
 
 // the text of a backup file: the stored values of all declared options
@@ -26704,7 +26792,6 @@ var log = ulog('options_render');
  * @file Draws an options page from its blocks. The page is drawn again as a whole after every change made
  *       on it, so a block whose title, visibility or value depends on other options follows them without
  *       any binding. Focus, the text cursor and text typed but not applied yet survive the redraw
- * @module options_render
  */
 
 // the lists of About and the changelogs nest no deeper
@@ -26731,6 +26818,8 @@ const choiceGroups = new WeakMap();
 /**
  * What a container remembers between drawings
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  * @typedef {Object} ContainerState
  * @property {string} pageId - Page drawn last
@@ -26814,6 +26903,8 @@ const handlerOf = (block) => {
 /**
  * One drawing of a page into a container, or of a section an extension adds to the page
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  */
 class PageView {
@@ -27294,6 +27385,7 @@ const markMatches = (root, query) => {
  * Draws an options page into a container, replacing what the container holds. Changes made on the page
  * draw it again; a change made elsewhere needs another call
  *
+ * @alias IITC.options._renderPage
  * @private
  * @param {string} pageId - Id of a registered page
  * @param {HTMLElement} container - Element to draw into
@@ -27347,7 +27439,6 @@ var log = ulog('options_sync');
  *       `{ deleted: true, updated }` once reset, so a reset reaches devices that were closed. The newer
  *       record of a key wins in both directions, and a value stored without a time gives way to any shared
  *       record. Changes are timed before the file is loaded too, and sent once it is
- * @module options_sync
  */
 
 // localStorage key of the times of the last change of each synced key on this device
@@ -27562,7 +27653,6 @@ var log = ulog('options_window');
  *       The window is a dialog over the map, so a change shows on the map at once, or fills the pane
  *       of an app. The page shown follows changes of its own options made elsewhere, such as values arriving
  *       through sync
- * @module options_window
  */
 
 // pages of IITC itself come first, the rest follow by title
@@ -27596,6 +27686,7 @@ const el = (...args) => IITC.options._el(...args);
 /**
  * Ids of the registered pages in the order the window lists them
  *
+ * @alias IITC.options._pageIds
  * @private
  * @returns {string[]}
  */
@@ -27630,6 +27721,8 @@ const blockTexts = (blocks, inRepeat = false) =>
 /**
  * Finds the texts of a page that contain the query, ignoring case
  *
+ * @memberof IITC.options
+ * @inner
  * @private
  * @returns {string[]|null} Texts of the page's blocks that match, empty when only the page title does;
  *                          null when nothing on the page matches
@@ -28032,6 +28125,7 @@ const setMapButton = (wanted) => {
  * Shows the way to the window that `entry` names. An app cannot remove a pane, so it stays until
  * IITC is reloaded and still opens the window
  *
+ * @alias IITC.options._setupWindow
  * @private
  */
 const updateEntry = () => {
