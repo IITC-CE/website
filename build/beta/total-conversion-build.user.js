@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261109.134020
+// @version        0.43.2.20261112.114252
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-09-134020';
+plugin_info.dateTimeVersion = '2026-11-12-114252';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-09-134020';
+window.iitcBuildDate = '2026-11-12-114252';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2145,7 +2145,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-09-134020');
+  log.log('loading done, booting. Built: ' + '2026-11-12-114252');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -26724,6 +26724,14 @@ IITC.options.register('iitc', {
     },
     {
       type: 'boolean',
+      key: 'machinaAtLevel1',
+      title: 'Machina portals at the size of level 1',
+      description: 'Clusters of high-level Machina portals stay apart and easy to click',
+      default: false,
+      onChange: () => IITC.portal.highlighter.resetAll(),
+    },
+    {
+      type: 'boolean',
       key: 'syncOptions',
       title: 'Sync IITC options',
       default: true,
@@ -30908,6 +30916,9 @@ function do_prefetch(e) {
   }
 }
 
+// the level whose size a marker takes: Machina portals may take the size of level 1, so their clusters do not overlap
+const sizeLevel = (team, level) => (team === window.TEAM_MAC && level > 0 && IITC.options.get('iitc.machinaAtLevel1') ? 1 : level);
+
 L.PortalMarker = L.CircleMarker.extend({
   options: {},
 
@@ -31133,7 +31144,7 @@ L.PortalMarker = L.CircleMarker.extend({
   _scale: function () {
     const scale = IITC.portal.marker.scale();
 
-    const level = Math.floor(this._level || 0);
+    const level = sizeLevel(this._team, Math.floor(this._level || 0));
 
     let lvlWeight = L.PortalMarker.LEVEL_TO_WEIGHT[level] * Math.sqrt(scale);
     const lvlRadius = L.PortalMarker.LEVEL_TO_RADIUS[level] * scale;
@@ -31219,9 +31230,10 @@ const getStyleOptions = function (details) {
   const scale = IITC.portal.marker.scale();
 
   const level = Math.floor(details.level || 0);
+  const size = sizeLevel(details.team, level);
 
-  let lvlWeight = L.PortalMarker.LEVEL_TO_WEIGHT[level] * Math.sqrt(scale);
-  const lvlRadius = L.PortalMarker.LEVEL_TO_RADIUS[level] * scale;
+  let lvlWeight = L.PortalMarker.LEVEL_TO_WEIGHT[size] * Math.sqrt(scale);
+  const lvlRadius = L.PortalMarker.LEVEL_TO_RADIUS[size] * scale;
 
   let dashArray = null;
   // thinner and dashed outline for placeholder portals
