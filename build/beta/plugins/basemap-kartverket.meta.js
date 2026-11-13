@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Kartverket.no maps (Norway)
 // @category       Map Tiles
-// @version        0.3.2.20261112.114252
+// @version        0.3.2.20261113.172947
 // @description    Add Kartverket.no map layers.
 // @id             basemap-kartverket
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
