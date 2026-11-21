@@ -2,7 +2,7 @@
 // @author         949
 // @name           IITC plugin: Find farms on map
 // @category       Layer
-// @version        1.5.0.20261120.134347
+// @version        1.5.0.20261121.090213
 // @description    Show farms by minimum level
 // @id             farms-find
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-20-134347';
+plugin_info.dateTimeVersion = '2026-11-21-090213';
 plugin_info.pluginId = 'farms-find';
 //END PLUGIN AUTHORS NOTE
 
@@ -301,24 +301,15 @@ window.plugin.farmFind.setupCSS = function () {
         ' font-family: "coda",arial,helvetica,sans-serif;' +
         ' background-color:#0E3C46;' +
         ' color:#ffce00;' +
-        '}\n'
-    )
-    .appendTo('head');
-};
-
-window.plugin.farmFind.setupSmartCSS = function () {
-  $('<style>')
-    .prop('type', 'text/css')
-    .html(
-      '' +
-        '#farm_level_select {' +
-        ' top: var(--safe-area-inset-top) !important;' +
+        '}\n' +
+        'body.smartphone #farm_level_select {' +
+        ' top: var(--safe-area-inset-top);' +
         ' right: var(--safe-area-inset-right);' +
-        ' left: auto !important;' +
+        ' left: auto;' +
         ' margin-right: 0;' +
         '}\n' +
-        'body.show-controls #farm_level_select {' +
-        ' top: calc(var(--safe-area-inset-top) + var(--top-controls-height) + 10px) !important;' +
+        'body.smartphone.show-controls #farm_level_select {' +
+        ' top: calc(var(--safe-area-inset-top) + var(--top-controls-height) + 10px);' +
         ' right: calc(var(--safe-area-inset-right) + 60px);' +
         '}\n'
     )
@@ -340,9 +331,6 @@ var setup = function () {
   window.plugin.farmFind.minLevel = 7;
   window.plugin.farmFind.minNearby = 5;
   window.plugin.farmFind.setupCSS();
-  if (IITC.utils.isSmartphone()) {
-    window.plugin.farmFind.setupSmartCSS();
-  }
   window.plugin.farmFind.Radius = 500;
   IITC.toolbox.addButton({
     id: 'findFarmClick',

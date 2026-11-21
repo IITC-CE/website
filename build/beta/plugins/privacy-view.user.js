@@ -2,7 +2,7 @@
 // @author         johnd0e
 // @name           IITC plugin: Privacy view on Intel
 // @category       Misc
-// @version        1.2.4.20261120.134347
+// @version        1.2.4.20261121.090213
 // @description    Hide info from intel which shouldn't leak to players of the other faction.
 // @id             privacy-view
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-20-134347';
+plugin_info.dateTimeVersion = '2026-11-21-090213';
 plugin_info.pluginId = 'privacy-view';
 //END PLUGIN AUTHORS NOTE
 
@@ -82,16 +82,14 @@ privacyView.toggle = () => {
 };
 
 function setup() {
-  let css = '.privacy_active #playerstat { display: none; }';
   // on mobile the chat stays out of sight in its own pane until it is opened
-  if (!IITC.utils.isSmartphone()) {
-    css +=
-      '.privacy_active #chatinput,' +
-      '.privacy_active #chatcontrols > a:not(#privacytoggle),' +
-      '.privacy_active #chat { display: none; }' +
-      '.privacy_active #chatcontrols { bottom: 0; top: auto }' +
-      '.privacy_active .leaflet-left .leaflet-control {margin-left: 10px}';
-  }
+  const css =
+    '.privacy_active #playerstat { display: none; }' +
+    'body:not(.smartphone).privacy_active #chatinput,' +
+    'body:not(.smartphone).privacy_active #chatcontrols > a:not(#privacytoggle),' +
+    'body:not(.smartphone).privacy_active #chat { display: none; }' +
+    'body:not(.smartphone).privacy_active #chatcontrols { bottom: 0; top: auto }' +
+    'body:not(.smartphone).privacy_active .leaflet-left .leaflet-control {margin-left: 10px}';
   $('<style>').html(css).appendTo('head');
 
   if (IITC.utils.isSmartphone()) {

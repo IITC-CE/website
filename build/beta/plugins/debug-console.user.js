@@ -2,7 +2,7 @@
 // @author         jaiperdu
 // @name           IITC plugin: Debug console tab
 // @category       Debug
-// @version        0.3.0.20261120.134347
+// @version        0.3.0.20261121.090213
 // @description    Add a debug console tab
 // @id             debug-console
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-20-134347';
+plugin_info.dateTimeVersion = '2026-11-21-090213';
 plugin_info.pluginId = 'debug-console';
 //END PLUGIN AUTHORS NOTE
 
@@ -136,7 +136,6 @@ function applyFilters(container) {
 function buildFilterBar(container) {
   var bar = document.createElement('div');
   bar.className = 'debug-filters';
-  if (IITC.utils.isSmartphone()) bar.classList.add('mobile');
 
   FILTERS.forEach(function (filter) {
     var button = document.createElement('button');
@@ -448,7 +447,7 @@ function setup() {
 }\
 \
 /* touch targets take the full width, and there is no pointer to reveal them on hover */\
-.debug-filters.mobile button {\
+body.smartphone .debug-filters button {\
     flex: 1;\
     opacity: 1;\
     padding: 4px 0;\
