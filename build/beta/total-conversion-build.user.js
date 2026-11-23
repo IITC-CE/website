@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261121.090213
+// @version        0.43.2.20261123.114437
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-21-090213';
+plugin_info.dateTimeVersion = '2026-11-23-114437';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-21-090213';
+window.iitcBuildDate = '2026-11-23-114437';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -2342,7 +2342,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-21-090213');
+  log.log('loading done, booting. Built: ' + '2026-11-23-114437');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -23440,7 +23440,7 @@ IITC.map = {};
  * Default map layer
  *  used when no or an invalid base layer is stored in settings
  */
-const DEFAULT_MAP = 'CartoDB Dark Matter';
+const DEFAULT_MAP = 'Google Default Ingress Map';
 
 /**
  * Warning shown in the portal details panel when some standard layers are turned off
@@ -23578,7 +23578,7 @@ function createCartoLayers() {
   });
 
   const attribution = IITC.map.osmAttributionTemplate;
-  layers[DEFAULT_MAP /* 'CartoDB Dark Matter' */] = L.tileLayer(url(), { attribution, theme: 'dark_all', isDark: true });
+  layers['CartoDB Dark Matter'] = L.tileLayer(url(), { attribution, theme: 'dark_all', isDark: true });
   layers['CartoDB Positron'] = L.tileLayer(url(), { attribution, theme: 'light_all', isDark: false });
   return layers;
 }
