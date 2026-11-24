@@ -1,0 +1,2 @@
+versionName=0.43.2-test-2026.11.24-12:44
+versionCode=1795524208
