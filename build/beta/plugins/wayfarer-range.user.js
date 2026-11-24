@@ -2,7 +2,7 @@
 // @author         morph
 // @name           IITC plugin: Wayfarer portal submission range
 // @category       Layer
-// @version        0.2.0.20261123.114437
+// @version        0.2.0.20261124.083955
 // @description    Add a 20m range around portals and drawn markers, to aid Wayfarer portals submissions
 // @id             wayfarer-range
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'wayfarer-range';
 //END PLUGIN AUTHORS NOTE
 
@@ -131,13 +131,13 @@ window.plugin.wayfarerrange.showOrHide = function () {
     // show the layer
     if (!window.plugin.wayfarerrange.wayfarerLayerHolderGroup.hasLayer(window.plugin.wayfarerrange.wayfarerCircleHolderGroup)) {
       window.plugin.wayfarerrange.wayfarerLayerHolderGroup.addLayer(window.plugin.wayfarerrange.wayfarerCircleHolderGroup);
-      $('.leaflet-control-layers-list span:contains("Wayfarer range")').parent('label').removeClass('disabled').attr('title', '');
+      $('.leaflet-control-layers-list span:contains("Wayfarer range")').parent('label').removeClass('disabled').removeAttr('data-popover');
     }
   } else {
     // hide the layer
     if (window.plugin.wayfarerrange.wayfarerLayerHolderGroup.hasLayer(window.plugin.wayfarerrange.wayfarerCircleHolderGroup)) {
       window.plugin.wayfarerrange.wayfarerLayerHolderGroup.removeLayer(window.plugin.wayfarerrange.wayfarerCircleHolderGroup);
-      $('.leaflet-control-layers-list span:contains("Wayfarer range")').parent('label').addClass('disabled').attr('title', 'Zoom in to show those.');
+      $('.leaflet-control-layers-list span:contains("Wayfarer range")').parent('label').addClass('disabled').attr('data-popover', 'Zoom in to show those.');
     }
   }
 };

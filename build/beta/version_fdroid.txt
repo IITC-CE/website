@@ -1,2 +1,2 @@
-versionName=0.43.2-beta-2026.11.23-11:44
-versionCode=1795434246
+versionName=0.43.2-beta-2026.11.24-08:40
+versionCode=1795509565

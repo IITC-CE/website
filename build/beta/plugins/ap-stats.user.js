@@ -2,7 +2,7 @@
 // @author         Hollow011
 // @name           IITC plugin: Available AP statistics
 // @category       Info
-// @version        0.4.7.20261123.114437
+// @version        0.4.7.20261124.083955
 // @description    Displays the per-team AP gains available in the current view.
 // @id             ap-stats
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'ap-stats';
 //END PLUGIN AUTHORS NOTE
 
@@ -106,7 +106,7 @@ window.plugin.compAPStats.update = function (hasFinished) {
       `Capture ${data.capturePortals} neutral portals, complete ${data.finishPortals} portals\n` +
       `Reclaim ${data.reclaimPortals} machina portals\n` +
       `(unknown additional AP for links/fields)`;
-    return `<tr><td>${team}</td><td style="text-align:right" title="${title}">${window.digits(data.AP)}</td></tr>`;
+    return `<tr><td>${team}</td><td style="text-align:right" data-popover="${title}">${window.digits(data.AP)}</td></tr>`;
   };
 
   $('#available_ap_display').html(

@@ -2,7 +2,7 @@
 // @author         xelio
 // @name           IITC plugin: Keys
 // @category       Misc
-// @version        0.4.4.20261123.114437
+// @version        0.4.4.20261124.083955
 // @description    Allow manual entry of key counts for each portal. Use the 'keys-on-map' plugin to show the numbers on the map, and 'sync' to share between multiple browsers or desktop/mobile.
 // @id             keys
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'keys';
 //END PLUGIN AUTHORS NOTE
 
@@ -265,18 +265,18 @@ window.plugin.keys.setupCSS = function () {
 window.plugin.keys.setupContent = function () {
   window.plugin.keys.contentHTML =
     '<div id="keys-content-outer">' +
-    ' <div id="keys-label" title="Problem? Point to the question mark!">Key(s):</div>' +
+    ' <div id="keys-label" data-popover="Problem? Point to the question mark!">Key(s):</div>' +
     ' <div id="keys-subtract" class="keys-button" onclick="window.plugin.keys.addKey(-1);">' +
     '  <iitc-icon label="Remove" fallback="−">remove</iitc-icon>' +
     ' </div>' +
-    ' <div id="keys-count" title="Problem? Point to the question mark!"></div>' +
+    ' <div id="keys-count" data-popover="Problem? Point to the question mark!"></div>' +
     ' <div id="keys-add" class="keys-button" onclick="window.plugin.keys.addKey(1);">' +
     '  <iitc-icon label="Add" fallback="+">add</iitc-icon>' +
     ' </div>' +
-    ' <div id="keys-help" title="You MUST manually input your count of keys!\n' +
+    ' <div id="keys-help" data-popover="You MUST manually input your count of keys!\n' +
     'This plugin CANNOT automatically get the keys from Ingress!"><iitc-icon fallback="?">help</iitc-icon></div>' +
     '</div>';
-  window.plugin.keys.disabledMessage = '<div id="keys-content-outer" title="Your browser do not support localStorage">Plugin Keys disabled</div>';
+  window.plugin.keys.disabledMessage = '<div id="keys-content-outer" data-popover="Your browser do not support localStorage">Plugin Keys disabled</div>';
 };
 
 window.plugin.keys.setupPortalsList = function () {

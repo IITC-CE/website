@@ -2,7 +2,7 @@
 // @author         breunigs
 // @name           IITC plugin: Player activity tracker
 // @category       Layer
-// @version        0.14.2.20261123.114437
+// @version        0.14.2.20261124.083955
 // @description    Draw trails for the path a user took onto the map based on status messages in COMMs. Uses up to three hours of data. Does not request chat data on its own, even if that would be useful.
 // @id             player-activity-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'player-activity-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -108,14 +108,6 @@ window.plugin.playerTracker.setup = function () {
     window.layerChooser.addOverlay(window.plugin.playerTracker.drawnTracesEnl, 'Player Tracker Enlightened');
     window.layerChooser.addOverlay(window.plugin.playerTracker.drawnTracesRes, 'Player Tracker Resistance');
   }
-  window.map.on('layeradd', function (obj) {
-    if (obj.layer === window.plugin.playerTracker.drawnTracesEnl || obj.layer === window.plugin.playerTracker.drawnTracesRes) {
-      obj.layer.eachLayer(function (marker) {
-        if (marker._icon) window.setupTooltips($(marker._icon));
-      });
-    }
-  });
-
   window.plugin.playerTracker.playerPopup = new L.Popup({ offset: new L.Point([1, -34]) });
 
   window.addHook('publicChatDataAvailable', window.plugin.playerTracker.handleData);
@@ -140,31 +132,23 @@ window.plugin.playerTracker.onClickListener = function (event) {
   }
 };
 
-// force close all open tooltips before markers are cleared
-window.plugin.playerTracker.closeIconTooltips = function () {
-  window.plugin.playerTracker.drawnTracesRes.eachLayer(function (layer) {
-    if ($(layer._icon)) {
-      $(layer._icon).tooltip('close');
-    }
-  });
-  window.plugin.playerTracker.drawnTracesEnl.eachLayer(function (layer) {
-    if ($(layer._icon)) {
-      $(layer._icon).tooltip('close');
-    }
-  });
-};
+/**
+ * Does nothing: the popover of a marker closes by itself when the marker is cleared
+ *
+ * @deprecated
+ */
+window.plugin.playerTracker.closeIconTooltips = function () {};
 
 window.plugin.playerTracker.zoomListener = function () {
   var ctrl = $('.leaflet-control-layers-selector + span:contains("Player Tracker")').parent();
   if (window.map.getZoom() < window.PLAYER_TRACKER_MIN_ZOOM) {
-    if (!window.isTouchDevice()) window.plugin.playerTracker.closeIconTooltips();
     window.plugin.playerTracker.drawnTracesEnl.clearLayers();
     window.plugin.playerTracker.drawnTracesRes.clearLayers();
-    ctrl.addClass('disabled').attr('title', 'Zoom in to show those.');
+    ctrl.addClass('disabled').attr('data-popover', 'Zoom in to show those.');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
     IITC.chat.backgroundChannelData('plugin.playerTracker', 'all', false); // disable this plugin's interest in 'all' COMM
   } else {
-    ctrl.removeClass('disabled').attr('title', '');
+    ctrl.removeClass('disabled').removeAttr('data-popover');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
     IITC.chat.backgroundChannelData('plugin.playerTracker', 'all', true); // enable this plugin's interest in 'all' COMM
   }
@@ -410,22 +394,10 @@ window.plugin.playerTracker.drawData = function () {
 
     // m.bindPopup(title);
 
-    if (tooltip) {
-      // ensure tooltips are closed, sometimes they linger
-      m.on('mouseout', function () {
-        $(this._icon).tooltip('close');
-      });
-    }
-
     playerData.marker = m;
 
     m.addTo(window.plugin.playerTracker.getDrawnTracesByTeam(playerData.team));
     window.registerMarkerForOMS(m);
-
-    // jQueryUI doesn’t automatically notice the new markers
-    if (!isTouchDev) {
-      window.setupTooltips($(m._icon));
-    }
   });
 
   // draw the poly lines to the map
@@ -480,7 +452,6 @@ window.plugin.playerTracker.handleData = function (data) {
 
   window.plugin.playerTracker.discardOldData();
   window.plugin.playerTracker.processNewData(data);
-  if (!window.isTouchDevice()) window.plugin.playerTracker.closeIconTooltips();
 
   window.plugin.playerTracker.drawnTracesEnl.clearLayers();
   window.plugin.playerTracker.drawnTracesRes.clearLayers();

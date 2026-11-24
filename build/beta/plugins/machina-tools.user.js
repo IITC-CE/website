@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina Tools
 // @author         Perringaiden
 // @category       Misc
-// @version        0.9.4.20261123.114437
+// @version        0.9.4.20261124.083955
 // @description    Machina investigation tools - 2 new layers to see possible Machina spread and portal detail links to display Machina cluster information and to navigate to parent or seed Machina portal
 // @id             machina-tools
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'machina-tools';
 //END PLUGIN AUTHORS NOTE
 
@@ -311,9 +311,9 @@ function renderLinkLen(len, i, offset) {
   var maxRange = window.LINK_RANGE_MAC[index];
   if (len > maxRange) {
     lenElement.addClass('exceeded');
-    lenElement.prop('title', 'Link length exceeded expected range - ' + window.formatDistance(maxRange));
+    lenElement.attr('data-popover', 'Link length exceeded expected range - ' + window.formatDistance(maxRange));
   } else {
-    lenElement.prop('title', window.formatDistance(maxRange));
+    lenElement.attr('data-popover', window.formatDistance(maxRange));
   }
   return lenElement;
 }
@@ -381,7 +381,7 @@ machinaTools.displayCluster = function (portalGuid) {
 
 function createInfoLink(text, title, clickCallback) {
   var aside = $('<aside>');
-  $('<a>', { title: title, click: clickCallback, html: text }).appendTo(aside);
+  $('<a>', { 'data-popover': title, click: clickCallback, html: text }).appendTo(aside);
   return aside;
 }
 
@@ -494,9 +494,9 @@ machinaTools.portalRemoved = function (data) {
 
 function toggleLayerChooser(name, enable) {
   if (enable) {
-    $(`.leaflet-control-layers-list span:contains("${name}")`).parent('label').removeClass('disabled').attr('title', '');
+    $(`.leaflet-control-layers-list span:contains("${name}")`).parent('label').removeClass('disabled').removeAttr('data-popover');
   } else {
-    $(`.leaflet-control-layers-list span:contains("${name}")`).parent('label').addClass('disabled').attr('title', 'Zoom in to show those.');
+    $(`.leaflet-control-layers-list span:contains("${name}")`).parent('label').addClass('disabled').attr('data-popover', 'Zoom in to show those.');
   }
 }
 
@@ -767,7 +767,7 @@ machinaTools.refreshLinkLengths = function () {
     var html = machinaTools.linkMaxLengthsHtml(machinaTools._maxLinks.slice(1), 1);
     html.prop('id', 'machina-links-overlay-drag-handle');
     if (machinaTools._maxLinks[0] > 0) {
-      $('<div>', { class: 'warning', title: 'Data incomplete - some origin portals not loaded' }).text('🔴').appendTo(html);
+      $('<div>', { class: 'warning', 'data-popover': 'Data incomplete - some origin portals not loaded' }).text('🔴').appendTo(html);
     }
 
     if (IITC.utils.isSmartphone()) {
@@ -883,7 +883,8 @@ function setupControlButtons() {
         },
         false
       );
-      button.title = 'Record Machina Conflict Zones';
+      button.dataset.popover = 'Record Machina Conflict Zones';
+      button.setAttribute('aria-label', 'Record Machina Conflict Zones');
 
       var container = document.createElement('div');
       container.className = 'leaflet-control-machina-record leaflet-bar';

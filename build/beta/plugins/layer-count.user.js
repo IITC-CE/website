@@ -2,7 +2,7 @@
 // @author         fkloft
 // @name           IITC plugin: Layer count
 // @category       Info
-// @version        0.2.5.20261123.114437
+// @version        0.2.5.20261124.083955
 // @description    Allow users to count nested fields
 // @id             layer-count
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'layer-count';
 //END PLUGIN AUTHORS NOTE
 
@@ -167,7 +167,8 @@ function setup() {
         },
         false
       );
-      button.title = 'Count nested fields';
+      button.dataset.popover = 'Count nested fields';
+      button.setAttribute('aria-label', 'Count nested fields');
 
       tooltip = document.createElement('div');
       tooltip.className = 'leaflet-control-layer-count-tooltip';

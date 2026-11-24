@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Bookmarks for maps and portals
 // @category       Controls
-// @version        0.5.0.20261123.114437
+// @version        0.5.0.20261124.083955
 // @description    Save your favorite Maps and Portals and move the intel map with a click. Works with sync. Supports Multi-Project-Extension
 // @id             bookmarks
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'bookmarks';
 //END PLUGIN AUTHORS NOTE
 
@@ -243,7 +243,7 @@ window.plugin.bookmarks.addBoxButton = function () {
       const container = L.DomUtil.create('div', 'iitc-control-button iitc-bookmarks-button');
       const button = L.DomUtil.create('a', '', container);
       button.href = '#';
-      button.title = 'Show the bookmarks [v]';
+      button.dataset.popover = 'Show the bookmarks [v]';
       button.setAttribute('role', 'button');
       button.setAttribute('aria-label', 'Bookmarks');
       const icon = L.DomUtil.create('iitc-icon', '', button);
@@ -271,7 +271,7 @@ window.plugin.bookmarks.updateBoxButton = function (boxShown) {
   const minimize = document.getElementById('bookmarksMin');
   if (minimize) {
     minimize.accessKey = boxShown ? 'v' : '';
-    minimize.title = 'Minimize [v]';
+    minimize.dataset.popover = 'Minimize [v]';
   }
 };
 
@@ -333,7 +333,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
 
     // Create a label and a anchor for the sortable
     var folderDelete =
-      '<span class="folderLabel"><a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, \'folder\');return false;" title="Remove this folder"><iitc-icon fallback="X">close</iitc-icon></a>';
+      '<span class="folderLabel"><a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, \'folder\');return false;" data-popover="Remove this folder" aria-label="Remove this folder"><iitc-icon fallback="X">close</iitc-icon></a>';
     var folderName =
       '<a class="bookmarksAnchor" onclick="window.plugin.bookmarks.openFolder(this);return false"><span></span>' + folders['label'] + '</a></span>'; // <span><span></span></span>';
     var folderLabel = folderDelete + folderName;
@@ -352,7 +352,7 @@ window.plugin.bookmarks.loadList = function (typeList) {
     var fold = folders['bkmrk'];
     for (var idBkmrk in fold) {
       var btn_link;
-      var btn_remove = `<a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, '${typeList}');return false;" title="Remove from bookmarks"><iitc-icon fallback="X">close</iitc-icon></a>`;
+      var btn_remove = `<a class="bookmarksRemoveFrom" onclick="window.plugin.bookmarks.removeElement(this, '${typeList}');return false;" data-popover="Remove from bookmarks" aria-label="Remove from bookmarks"><iitc-icon fallback="X">close</iitc-icon></a>`;
 
       var btn_move = '';
       if (window.plugin.bookmarks.isSmart) {
@@ -434,7 +434,7 @@ window.plugin.bookmarks.onPortalSelected = function () {
       // Prepend a star to mobile status-bar
       if (window.plugin.bookmarks.isSmart) {
         $('#updatestatus').prepend(window.plugin.bookmarks.htmlStar);
-        $('#updatestatus .bkmrksStar').attr('title', '');
+        $('#updatestatus .bkmrksStar').removeAttr('data-popover');
       }
 
       $('#portaldetails > h3.title').prepend(window.plugin.bookmarks.htmlStar);
@@ -1090,7 +1090,7 @@ window.plugin.bookmarks.autoDrawOnSelect = function () {
 
   function distanceElement(distance) {
     var text = window.formatDistance(distance);
-    return distance >= 200000 ? '<em title="Long distance link" class="help longdistance">' + text + '</em>' : text;
+    return distance >= 200000 ? '<em data-popover="Long distance link" class="help longdistance">' + text + '</em>' : text;
   }
 
   if (latlngs.length === 2) {
@@ -1529,9 +1529,9 @@ window.plugin.bookmarks.setupContent = function () {
   window.plugin.bookmarks.htmlBkmrksBox =
     '<div id="bookmarksBox">' +
     ' <div id="topBar">' +
-    '  <a id="bookmarksMin" class="btn" onclick="window.plugin.bookmarks.switchStatusBkmrksBox(0);return false;" title="Minimize">-</a>' +
+    '  <a id="bookmarksMin" class="btn" onclick="window.plugin.bookmarks.switchStatusBkmrksBox(0);return false;" data-popover="Minimize" aria-label="Minimize">-</a>' +
     '  <div class="handle">...</div>' +
-    '  <a id="bookmarksDel" class="btn" onclick="window.plugin.bookmarks.deleteMode();return false;" title="Show/Hide \'X\' button">Show/Hide "X" button</a>' +
+    '  <a id="bookmarksDel" class="btn" onclick="window.plugin.bookmarks.deleteMode();return false;" data-popover="Show/Hide \'X\' button">Show/Hide "X" button</a>' +
     ' </div>' +
     ' <div id="bookmarksTypeBar">' +
     '  <h5 class="bkmrk_maps current" onclick="window.plugin.bookmarks.switchPageBkmrksBox(this, 0);return false">Maps</h5>' +
@@ -1554,9 +1554,9 @@ window.plugin.bookmarks.setupContent = function () {
     ' <div style="border-bottom-width:1px;"></div>' +
     '</div>';
 
-  window.plugin.bookmarks.htmlDisabledMessage = '<div title="Your browser do not support localStorage">Plugin Bookmarks disabled*.</div>';
+  window.plugin.bookmarks.htmlDisabledMessage = '<div data-popover="Your browser do not support localStorage">Plugin Bookmarks disabled*.</div>';
   window.plugin.bookmarks.htmlStar =
-    '<a class="bkmrksStar" accesskey="b" onclick="window.plugin.bookmarks.switchStarPortal();return false;" title="Save this portal in your bookmarks [b]"><iitc-icon filled>star</iitc-icon></a>';
+    '<a class="bkmrksStar" accesskey="b" onclick="window.plugin.bookmarks.switchStarPortal();return false;" data-popover="Save this portal in your bookmarks [b]" aria-label="Save this portal in your bookmarks"><iitc-icon filled>star</iitc-icon></a>';
   window.plugin.bookmarks.htmlMoveBtn =
     '<a id="bookmarksMove" class="btn" onclick="window.plugin.bookmarks.moveMode();return false;">Show/Hide "Move" button</a>';
 };

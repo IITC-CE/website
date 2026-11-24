@@ -2,7 +2,7 @@
 // @author         ZasoGD
 // @name           IITC plugin: Multi Projects Extension
 // @category       Controls
-// @version        0.2.0.20261123.114437
+// @version        0.2.0.20261124.083955
 // @description    Create separated projects in some plugins.
 // @id             multi-projects-extension
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'multi-projects-extension';
 //END PLUGIN AUTHORS NOTE
 
@@ -250,8 +250,8 @@ window.plugin.mpe.getHTML.project = function (PJ) {
 
   listElem += `<div class="mpe manager ${PJ} list-group-item" data-mpe="${PJ}">`;
   listElem += `<h4>${PROJ.title}</h4>`;
-  listElem += `<a class="left" onclick="window.plugin.mpe.action.deleteProject('${PJ}');return false;" title="Delete Current">${txtDel}</a>`;
-  listElem += `<a class="right" onclick="window.plugin.mpe.action.createNewProject('${PJ}');return false;" title="Create New">${txtNew}</a>`;
+  listElem += `<a class="left" onclick="window.plugin.mpe.action.deleteProject('${PJ}');return false;" data-popover="Delete Current" aria-label="Delete Current">${txtDel}</a>`;
+  listElem += `<a class="right" onclick="window.plugin.mpe.action.createNewProject('${PJ}');return false;" data-popover="Create New" aria-label="Create New">${txtNew}</a>`;
   listElem += `<select class="left" onchange="window.plugin.mpe.action.switchProject('${PJ}', $(this).val());return false;">`;
 
   listElem += window.plugin.mpe.getHTML.projectOptions(PJ);
@@ -318,17 +318,17 @@ function getProjectIcon(PJ) {
 
   var icon = window.plugin.mpe.data.getIcon(PJ);
   if (icon.length !== 0) {
-    return '<iitc-icon class="left" title="' + title + '">' + icon + '</iitc-icon>';
+    return '<iitc-icon class="left" data-popover="' + title + '">' + icon + '</iitc-icon>';
   }
 
   if (window.plugin.faIcon) {
     var fa = window.plugin.mpe.data.getFaClass(PJ);
     fa = fa.length !== 0 ? fa : 'nofa';
-    return '<i class="left fa ' + fa + '" title="' + title + '"></i>';
+    return '<i class="left fa ' + fa + '" data-popover="' + title + '"></i>';
   }
 
   var short = title ? title.substr(0, 3) : 'n/a';
-  return '<i class="left fa" title="' + title + '">' + short + '</i>';
+  return '<i class="left fa" data-popover="' + title + '">' + short + '</i>';
 }
 
 // ------------------------------------------------------

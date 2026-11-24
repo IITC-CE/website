@@ -2,7 +2,7 @@
 // @name           IITC plugin: Machina tracker
 // @author         McBen
 // @category       Layer
-// @version        1.1.3.20261123.114437
+// @version        1.1.3.20261124.083955
 // @description    Show locations of Machina activities
 // @id             machina-tracker
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'machina-tracker';
 //END PLUGIN AUTHORS NOTE
 
@@ -134,11 +134,11 @@ machinaTracker.zoomListener = function () {
   var ctrl = $('.leaflet-control-layers-list span:contains("Machina Tracker")').parent('label');
   if (window.map.getZoom() < machinaTracker.MACHINA_TRACKER_MIN_ZOOM) {
     machinaTracker.drawnTraces.clearLayers();
-    ctrl.addClass('disabled').attr('title', 'Zoom in to show those.');
+    ctrl.addClass('disabled').attr('data-popover', 'Zoom in to show those.');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
     IITC.chat.backgroundChannelData('plugin.machinaTracker', 'all', false); // disable this plugin's interest in 'all' COMM
   } else {
-    ctrl.removeClass('disabled').attr('title', '');
+    ctrl.removeClass('disabled').removeAttr('data-popover');
     // note: zoomListener is also called at init time to set up things, so we only need to do this in here
     IITC.chat.backgroundChannelData('plugin.machinaTracker', 'all', true); // enable this plugin's interest in 'all' COMM
   }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author         jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.43.2.20261123.114437
+// @version        0.43.2.20261124.083955
 // @description    Total conversion for the ingress intel map.
 // @run-at         document-end
 // @id             total-conversion-build
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'total-conversion-build';
 //END PLUGIN AUTHORS NOTE
 
@@ -228,7 +228,7 @@ window.script_info.changelog = [
 if (document.documentElement.getAttribute('itemscope') !== null) {
   throw new Error('Ingress Intel Website is down, not a userscript issue.');
 }
-window.iitcBuildDate = '2026-11-23-114437';
+window.iitcBuildDate = '2026-11-24-083955';
 
 // disable vanilla JS
 window.onload = function () {};
@@ -305,7 +305,7 @@ document.head.innerHTML =
   '</style>' +
   '<style>' +
   '\
-@media print{.leaflet-control-container,#chatcontrols,#chat,#chatinput,#sidebar,#updatestatus,#portal_highlight_select{display:none!important}}.leaflet-control{-webkit-user-select:none;user-select:none}.leaflet-control-container .leaflet-top.leaflet-left{flex-flow:column wrap;align-content:flex-start;align-items:flex-start;width:700px;height:calc(100% - 126px);max-height:90%;display:flex}.leaflet-control-layers-overlays label.disabled{cursor:help;text-decoration:line-through}.leaflet-control-layers-base{float:left;max-height:600px;overflow-y:auto}.leaflet-control-layers-overlays{float:left;border-left:1px solid #ddd;max-height:600px;margin-left:8px;padding-left:8px;overflow-y:auto}.leaflet-control-layers-separator{display:none}.leaflet-left .leaflet-control.chat-expand{margin-left:720px}.leaflet-left,.leaflet-right{grid-gap:10px;justify-items:baseline;display:grid}.leaflet-right{justify-items:end}.leaflet-left .leaflet-control,.leaflet-right .leaflet-control{margin:0}.leaflet-top{margin-top:var(--safe-area-inset-top);top:10px}.leaflet-right{margin-right:var(--safe-area-inset-right);right:10px}.leaflet-bottom{margin-bottom:calc(22px + var(--safe-area-inset-bottom));bottom:10px}body.smartphone .leaflet-bottom{bottom:5px}.leaflet-left{margin-left:var(--safe-area-inset-left);left:10px}.leaflet-control-scale{order:-90}.leaflet-right .iitc-sidebar-toggle{order:-10}.leaflet-right .leaflet-control-layers{order:-9}.leaflet-right .iitc-options-button{order:-8}.leaflet-right .iitc-bookmarks-button{order:-7}.leaflet-bar{box-shadow:none;border:2px solid #0003}.leaflet-bar a{text-decoration:none}.leaflet-control-zoom-in,.leaflet-control-zoom-out{background-size:18px;font-size:0!important}.leaflet-control-zoom-in{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}.leaflet-control-zoom-out{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}#map .leaflet-popup{pointer-events:none}#map .leaflet-popup-content-wrapper{border:1px solid var(--color-bg-border);pointer-events:auto;background:#0e3d4e;border-radius:0}#map .leaflet-popup-content{color:var(--color-primary);margin:5px 8px}#map .leaflet-popup-close-button{pointer-events:auto;width:10px;height:10px;padding:2px 1px 0 0;font-size:12px;line-height:8px}#map .leaflet-popup-tip{background:var(--color-bg-border);width:1px;height:20px;margin:0 0 0 20px;padding:0;transform:none}body:not(.icons-unavailable) .leaflet-control-layers-toggle,body:not(.icons-unavailable) .leaflet-retina .leaflet-control-layers-toggle{background-image:none}.leaflet-control-layers-toggle:before{content:"layers";font-family:IITC Material Symbols}.leaflet-control-layers-toggle,.iitc-control-button>a{border-radius:inherit;justify-content:center;align-items:center;display:flex}.leaflet-control-layers-toggle:hover,.iitc-control-button a:hover{background-color:#f4f4f4;text-decoration:none}.leaflet-control-layers-toggle:before,.iitc-control-button iitc-icon{color:#454545;font-size:28px}.iitc-control-button{background:#fff;border-radius:5px;flex-direction:row-reverse;align-items:flex-start;display:flex;box-shadow:0 1px 5px #0006}.leaflet-touch .iitc-control-button{box-shadow:none;background-clip:padding-box;border:2px solid #0003}.iitc-control-button>a{flex:none;width:36px;height:36px}.leaflet-touch .iitc-control-button>a{width:44px;height:44px}.iitc-control-menu{flex-direction:column;gap:2px;max-height:60vh;padding:4px 0 4px 4px;display:none;overflow-y:auto}@media (hover:hover) and (pointer:fine){.iitc-control-button:hover>.iitc-control-menu{display:flex}}.iitc-control-button:has(:focus-visible)>.iitc-control-menu{display:flex}.iitc-control-button .iitc-control-menu a{color:#333;white-space:nowrap;border-radius:4px;padding:4px 8px;font-size:13px}#chatcontrols{color:var(--color-primary);background:var(--color-bg-trans);bottom:calc(var(--chat-shrinked) + var(--safe-area-inset-bottom) + 22px);left:var(--safe-area-inset-left);z-index:3000;height:26px;padding-left:1px;position:absolute}#chatcontrols .toggle{font-size:20px;line-height:24px}#chatcontrols .toggle:before{content:"expand_less"}#chatcontrols.expand{top:var(--safe-area-inset-top);bottom:auto}#chatcontrols.expand .toggle:before{content:"expand_more"}#chatcontrols a{text-align:center;border:1px solid var(--color-bg-border);vertical-align:top;width:94px;height:24px;margin-left:-1px;line-height:24px;display:inline-block}#chatcontrols a:first-child{letter-spacing:-1px;text-decoration:none}#chatcontrols a.active{border-color:var(--color-primary);background:var(--color-bg);border-bottom-width:0;font-weight:700}#chatcontrols .loading{background-color:#ff000054;animation:1.2s linear infinite chatloading}#chatcontrols a.active+a{border-left-color:var(--color-primary)}body.smartphone #chatcontrols{width:100%;height:38px;display:none;left:0}body.smartphone #chatcontrols a:first-child{display:none}body.smartphone #chatcontrols a{vertical-align:middle;box-sizing:border-box;width:50px;height:36px;line-height:36px;text-decoration:none;overflow:hidden}body.smartphone.show-controls #chatcontrols{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);width:calc(100% - 1px);height:calc(var(--top-controls-height) + var(--safe-area-inset-top));top:0;overflow-x:auto;display:flex!important}body.smartphone.show-controls #chatcontrols a{flex:1;min-width:fit-content;padding:0 5px}@keyframes chatloading{0%{background-color:#f006}50%{background-color:#ff00001a}to{background-color:#f006}}#chat{width:708px;max-width:100vw;height:var(--chat-shrinked);bottom:calc(var(--safe-area-inset-bottom) + 23px);padding-left:var(--safe-area-inset-left);z-index:3000;background:var(--color-bg-trans);color:var(--color-secondary);border:1px solid var(--color-bg-border);box-sizing:border-box;border-bottom:0;line-height:15px;position:absolute;left:0}#chat.expand{height:auto;top:calc(var(--safe-area-inset-top) + 25px)}#chat .divider{color:#bbb}#chat .divider td:nth-child(2){text-align:center}body.smartphone #chat{width:auto;height:auto;margin-top:var(--safe-area-inset-top);margin-bottom:var(--safe-area-inset-bottom);padding-right:var(--safe-area-inset-right);top:1px;bottom:30px;left:0;right:0}body.smartphone.show-controls #chat{top:var(--top-controls-height)}em{color:red;font-style:normal}#chat>div{box-sizing:border-box;height:100%;padding:2px;position:relative;overflow:hidden scroll}#chat table,#chatinput table{table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;min-height:100%;margin-bottom:1px}#chat table tr:last-child,#chatinput table{height:100%}#chatinput.public mark,#chatinput.public input{color:#f66}#chatinput.alerts mark{color:#bbb}#chat td,#chatinput td{vertical-align:top;padding-bottom:3px;font-size:13px}#chat td:first-child,#chatinput td:first-child{color:#bbb;white-space:nowrap;width:44px;padding-left:2px;overflow:hidden}#chat time{cursor:help}#chat td:nth-child(2),#chatinput td:nth-child(2){white-space:nowrap;width:91px;padding-left:2px;overflow:hidden}body.smartphone #chat td:nth-child(2),body.smartphone #chatinput td:nth-child(2){width:77px}#chat td.system_narrowcast{color:#f66}#chatall tr.faction td:nth-child(3):before,#chatalerts tr.faction td:nth-child(3):before{content:"[faction]";color:#f88;background-color:#500;margin-right:.2rem}#chatall tr.public td:nth-child(3):before,#chatalerts tr.public td:nth-child(3):before{content:"[public]";color:#ff6;background-color:#550;margin-right:.2rem}mark{background:0 0}.invisep{color:#0000;width:1px;height:1px;display:inline-block;overflow:hidden}#chatinput{background:var(--color-bg-trans);width:708px;max-width:100vw;height:calc(var(--safe-area-inset-bottom) + 23px);border:1px solid var(--color-bg-border);z-index:3001;box-sizing:border-box;padding:0 2px;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);position:absolute;bottom:0;left:0}body.smartphone #chatinput{width:100%;height:calc(var(--safe-area-inset-bottom) + 30px);padding-right:var(--safe-area-inset-right)}#chatinput td{vertical-align:middle;padding-bottom:1px}#chatinput input{color:var(--color-secondary);background:0 0;width:100%;height:100%;padding:3px 4px 1px}.bidi-isolate{unicode-bidi:isolate}.pl_nudge_date{color:#ffd652;background-color:#724510;border-top:1px solid #ffd652;border-bottom:1px solid #ffd652;border-left:1px solid #ffd652;width:36px;height:18px;padding-left:2px;display:block;position:relative;left:-2px}.pl_nudge_date:after{content:"";background:url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png) no-repeat;width:5px;height:20px;position:absolute;top:-1px;right:-5px}.pl_nudge_player{cursor:pointer}.pl_nudge_me{color:#ffd652}#searchwrapper,#searchbox{position:relative}#search{width:100%;height:2em;min-height:var(--icon-target-size);padding-left:max(2em, var(--icon-target-size));padding-right:max(4em, calc(2 * var(--icon-target-size)))}#search::-webkit-search-cancel-button{-webkit-appearance:none}#searchicon,#searchcancel,#buttongeolocation{color:#bbb;min-width:var(--icon-target-size);min-height:var(--icon-target-size);background-color:#0000;border:0 #0000;justify-content:center;align-items:center;margin:auto 0;padding:0 .1em;font-size:20px;display:flex;position:absolute;top:0;bottom:0}#searchicon iitc-icon,#buttongeolocation iitc-icon{font-size:1em}#searchcancel iitc-icon{font-size:.9em}#searchicon{left:0}#searchcancel{cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;right:24px}#searchcancel.visible{opacity:1;pointer-events:auto}#buttongeolocation{cursor:pointer;right:0}#buttongeolocation:focus{outline:1px dotted var(--color-primary)}.searchquery{max-height:25em;overflow-y:auto}#searchwrapper h3{cursor:pointer;height:auto;padding:0 0 0 23px;font-size:1em;position:relative}#searchwrapper h3:before{content:"expand_less";margin-right:2px;font-family:IITC Material Symbols;font-size:14px;font-weight:400;transition:transform .3s;position:absolute;left:4px}#searchwrapper .searchquery.collapsed h3:before{transform:rotate(180deg)}#searchwrapper ul{max-height:100%;padding-left:16px;overflow:hidden}#searchwrapper li{cursor:pointer}body.smartphone #searchwrapper li{line-height:1.3em}#searchwrapper .searchquery.collapsed ul{max-height:0}#searchwrapper li a{background-position:1px;background-repeat:no-repeat;background-size:12px 12px;margin-left:-14px;padding-left:14px}#searchwrapper li:focus a,#searchwrapper li:hover a{text-decoration:underline}#searchwrapper li em{color:#ccc;font-size:.9em}#scrollwrapper{right:calc(-2 * var(--hidden-scrollbar-width) + 2px + var(--safe-area-inset-right));top:var(--safe-area-inset-top);width:calc(var(--sidebar-width) + 2 * var(--hidden-scrollbar-width));bottom:calc(var(--safe-area-inset-bottom) + 45px);z-index:3001;pointer-events:none;position:fixed;overflow:hidden auto}body.smartphone #scrollwrapper{box-sizing:border-box;width:100%;padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);top:0;bottom:0;left:0;right:0}body.smartphone.show-controls #scrollwrapper{margin-top:var(--top-controls-height)}#sidebar{background-color:var(--color-bg-trans);border-left:1px solid var(--color-bg-border);color:#888;width:calc(var(--sidebar-width) + var(--hidden-scrollbar-width) + 1px);pointer-events:auto;max-height:100%;position:relative;top:0;left:0;overflow:hidden scroll}body.smartphone #sidebar{border:0;width:100%;min-height:100%}body.sidebar-open .leaflet-right{margin-right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}body.sidebar-open.smartphone .leaflet-right{margin-right:var(--safe-area-inset-right)}.leaflet-right .leaflet-control.iitc-sidebar-toggle{--toggle-reach:10px;box-sizing:border-box;width:calc(36px + var(--toggle-reach));height:28px;margin-right:calc(-1 * var(--toggle-reach));background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);border-right:none;border-radius:5px 0 0 5px;display:flex;box-shadow:0 1px 5px #0006}body:not(.sidebar-open) .leaflet-right .leaflet-control.iitc-sidebar-toggle{--toggle-reach:calc(10px + var(--safe-area-inset-right))}.leaflet-touch .leaflet-right .leaflet-control.iitc-sidebar-toggle{width:calc(48px + var(--toggle-reach));height:38px}.iitc-sidebar-toggle button{padding:0 var(--toggle-reach) 0 0;border-radius:inherit;color:var(--color-primary);background:0 0;border:none;flex:1;justify-content:center;align-items:center;display:flex}.iitc-sidebar-toggle button:hover{background-color:color-mix(in srgb, var(--color-bg-border) 25%, transparent)}@supports not (color:color-mix(in srgb, red, red)){.iitc-sidebar-toggle button:hover{background-color:#20a8b140}}.iitc-sidebar-toggle iitc-icon{font-size:24px}.leaflet-touch .iitc-sidebar-toggle iitc-icon{font-size:28px}#sidebar>*{box-sizing:border-box;width:calc(var(--sidebar-width) + 1px);border-bottom:1px solid #20a8b1}body.smartphone #sidebar>*{width:100%}#playerstat{height:30px}body.smartphone #playerstat{height:initial}h2{color:var(--color-primary);cursor:help;box-sizing:border-box;width:100%;margin:0;padding:0 4px;font-size:21px}h2 #name{vertical-align:top;white-space:nowrap;font-weight:300;display:inline}h2 #name .playername{text-overflow:ellipsis;max-width:70%;display:inline-block;overflow:hidden}h2 #name:hover .playername{max-width:50%}h2 #name:hover #signout{display:inline-block}h2 #stats{float:right;height:100%;overflow:hidden}h2 sup{margin-bottom:-2px;font-size:11px;display:block}h2 sub{margin-bottom:-2px;font-size:11px;display:block}body.smartphone #playerstat h2{flex-wrap:wrap;justify-content:space-between;padding:5px;display:flex}body.smartphone #playerstat h2 #name{align-items:center;display:flex}body.smartphone #playerstat h2 #name .playername,body.smartphone #playerstat h2 #name:hover .playername{max-width:60vw}body.smartphone #playerstat h2 #stats{white-space:nowrap;overflow:initial}#signout{background-color:var(--color-bg-trans-50);vertical-align:text-top;padding:0 4px;font-size:12px;font-weight:400;display:none}body.smartphone #name #signout{position:initial;margin-left:4px;display:inline-block}#gamestat span{cursor:help;box-sizing:border-box;padding:0 3px;font-weight:700;display:inline-block}#gamestat span.res{background:color-mix(in oklab, var(--color-res) 60%, black)}#gamestat span.enl{background:color-mix(in oklab, var(--color-enl) 60%, black)}@supports not (color:color-mix(in srgb, red, red)){#gamestat span.res{background:#006180}#gamestat span.enl{background:#018001}}input:not([type]),.input{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=text]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=password]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=number]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=email]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=search]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=url]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}.leaflet-control-layers input{height:auto;padding:0}#portaltitle{white-space:nowrap;margin:2px 0;line-height:24px;display:flex}#portaltitle .value{text-overflow:ellipsis;flex:1;overflow:hidden}#portaltitle iitc-icon{font-size:24px}#portaltitle .close{cursor:pointer;color:var(--color-primary);margin-right:2px;font-weight:400}body.smartphone #portaldetails .close{border:1px outset var(--color-bg-border);font-size:22px}.imgpreview{cursor:help;background:50%/contain no-repeat;height:190px;position:relative;overflow:hidden}.imgpreview img.hide,.imgpreview .portalDetails{display:none}.fullimg{width:100%}#level{text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000,0 0 5px #fff;text-align:right;float:right;margin-right:15px;font-size:40px;display:block}.mods{text-align:center;width:296px;height:67px;margin:3px auto 1px}.mods span{float:left;text-align:center;cursor:help;background-color:#0000004d;border:1px solid #666;width:63px;height:63px;margin:0 2px;padding:2px;display:block;overflow:hidden}.mods span:not([title]){cursor:auto}.res .mods span,.res .meter{border:1px solid #0076b6}.enl .mods span,.enl .meter{border:1px solid #017f01}#randdetails,#resodetails{box-sizing:border-box;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;padding:0 4px}#randdetails td,#resodetails td{text-overflow:ellipsis;vertical-align:top;white-space:nowrap;width:50%;overflow:hidden}#randdetails th,#resodetails th{text-align:right;width:62px;padding:0 4px;font-weight:400}#randdetails th+th,#resodetails th+th{text-align:left;padding-left:4px;padding-right:4px}#randdetails td:first-child,#resodetails td:first-child{text-align:right;padding-left:2px}#randdetails td:last-child,#resodetails td:last-child{text-align:left;padding-right:2px}#randdetails{margin-top:4px;margin-bottom:5px}#randdetails tt{cursor:help;font-family:inherit}#artifact_target,#artifact_fragments{margin:4px 8px}#resodetails{margin-bottom:0}.meter{cursor:help;box-sizing:border-box;background:#000;width:100%;height:18px;padding:1px;display:inline-block;position:relative;top:0;left:0}.meter.north{overflow:hidden}.meter.north:before{content:"";background-color:red;border:1px solid #000;border-radius:100%;width:6px;height:6px;margin-left:-4px;display:block;position:absolute;top:-3px;left:50%}.meter span{height:14px;display:block}.meter-level{text-shadow:0 0 .3em gray;text-align:center;word-spacing:4px;position:absolute;top:-2px;left:0;right:0}.linkdetails{text-align:center;margin-bottom:0}.linkdetails aside{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}body.smartphone .linkdetails aside{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#toolbox{display:none!important}#toolbox,#toolbox_component{text-align:left}#toolbox>a,#toolbox_component>a{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}body.smartphone #toolbox>a,body.smartphone #toolbox_component>a{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#toolbox_component>a>iitc-icon{margin-top:-2px;margin-right:2px;font-size:1em}#portaldetails{min-height:63px}body.smartphone #portaldetails{min-height:0}#historydetails{text-align:center;color:var(--color-primary)}#historydetails span{color:#ff4a4a}#historydetails span.completed{color:#03fe03}#updatestatus{width:var(--sidebar-width);background-color:var(--color-bg-trans);border-bottom:0;border-top:1px solid var(--color-bg-border);border-left:1px solid var(--color-bg-border);color:var(--color-primary);padding:4px;padding-bottom:var(--safe-area-inset-bottom);bottom:0;right:var(--safe-area-inset-right);z-index:3002;box-sizing:border-box;font-size:13px;position:fixed}#updatestatus .map{margin-left:8px}#updatestatus.ghost{pointer-events:none;background:0 0;border:0}#updatestatus.ghost>*{pointer-events:auto}body.smartphone #updatestatus{color:#d4d5d6;width:100%;padding:0;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);right:0}body.smartphone #updatestatus:not(.ghost){background:#262c32;border:0}body.smartphone #updatestatus .map{margin-left:4px}#loadlevel{color:#000;background:#fff;border:0 solid #20a8b1;border-width:0 1px;min-width:1.8em;margin:-4px 0;padding:4px .2em;display:inline-block}body.smartphone #loadlevel{color:#fff;background:0 0;border-width:0}#innerstatus .failed-request{color:#f66}body.smartphone #innerstatus{float:right;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px;overflow:hidden}#mobileinfo{float:left;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px 0;transition:opacity .2s;position:relative;overflow:hidden}#mobileinfo.loading{opacity:.6}#mobileinfo .portallevel{color:#fff;padding:0 .25em}#mobileinfo .resonator{border-top:3px solid var(--resonator-color,#ccc);box-sizing:border-box;width:12%;height:100%;position:absolute;top:0}#mobileinfo .resonator[data-slot="0"]{left:0%}#mobileinfo .resonator[data-slot="1"]{left:12.5%}#mobileinfo .resonator[data-slot="2"]{left:25%}#mobileinfo .resonator[data-slot="3"]{left:37.5%}#mobileinfo .resonator[data-slot="4"]{left:50%}#mobileinfo .resonator[data-slot="5"]{left:62.5%}#mobileinfo .resonator[data-slot="6"]{left:75%}#mobileinfo .resonator[data-slot="7"]{left:87.5%}#mobileinfo .resonator.empty{border-top-color:#0000}#mobileinfo .resonator.north:before{content:"";background-color:var(--resonator-color,red);z-index:1;border-radius:100%;width:6px;height:6px;margin-left:-3px;display:block;position:absolute;top:-3px;left:50%}#mobileinfo .filllevel{height:3px;position:absolute;bottom:0}#mobileinfo .enl .filllevel{background-color:var(--color-enl)}#mobileinfo .res .filllevel{background-color:var(--color-res)}#mobileinfo .mac .filllevel{background-color:var(--color-mac)}.redeemReward{padding:0;font-family:Inconsolata,Consolas,Menlo,Courier New,monospace;font-size:14px;list-style-type:none}.redeemReward .itemlevel{text-shadow:0 0 1px #000;font-weight:700}table.artifact tr>*{background:var(--color-bg-trans)}table.artifact td.info{min-width:110px}table.artifact .portal{min-width:200px}.ui-dialog-content.region-scoreboard-dialog,.region-scoreboard-dialog.safe-area-insets{flex-direction:column;min-height:0;display:flex;overflow:hidden}.region-scoreboard-dialog.safe-area-insets{box-sizing:border-box}body.smartphone .safe-area-insets{padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}.cellscore{box-sizing:border-box;flex-direction:column;flex:auto;gap:10px;min-height:0;padding:8px;display:flex;overflow-y:auto}.cellscore details.scoreboard-section{border:1px solid var(--color-bg-border);border-radius:2px;padding:8px}.cellscore .scoreboard-section>summary{color:var(--color-primary);margin:0;font-weight:700}.cellscore .region-selection>summary{flex-wrap:wrap;gap:4px 8px;display:flex}.cellscore .region-summary-name{margin-left:auto}.cellscore .scoreboard-section[open]>summary{margin-bottom:8px}.cellscore table{white-space:nowrap;width:80%;max-width:100%;margin-left:auto;margin-right:auto}.cellscore .historychart>div{width:100%}.cellscore .history-chart{width:100%;height:auto;margin-top:.5em;margin-bottom:.5em;display:block}.cellscore .logscale{vertical-align:middle;margin-top:0}.cellscore #overview{width:100%}.cellscore #overview td{white-space:nowrap;text-align:right;width:1%}.cellscore #overview th{white-space:nowrap;text-align:left;width:1%;padding-left:4px}.cellscore .region-select-form{flex-wrap:wrap;align-items:end;gap:8px;display:flex}.cellscore .region-select-form label{flex-direction:column;flex:110px;gap:3px;display:flex}.cellscore .region-select-form input{width:100%}.cellscore .checkpoint-cycle-controls{flex-wrap:wrap;justify-content:center;gap:1em;margin-bottom:8px;display:flex}.cellscore .checkpoint-cycle-controls label{align-items:center;gap:6px;display:inline-flex}.cellscore .checkpoint-cycle-controls .checkpoint-date{min-width:0}.cellscore .checkpoint-history{touch-action:pan-y}.cellscore .mac_pause{text-align:center;border:1px solid var(--color-bg-border);border-radius:5px;font-size:larger}.cellscore .daychange{border-bottom:1px dashed var(--color-bg-border)}.cellscore .region-error{color:#ff8080;margin:6px 0 0}g.checkpoint:hover circle{fill-opacity:1;stroke-width:2px}.cellscore th,.cellscore td{text-align:left;padding-left:5px}.checkpoint_table{border-collapse:collapse}.checkpoint_table th{text-align:right}.checkpoint_table td{text-align:right}.checkpointtooltip{min-width:180px}.checkpoint_timers{border:1px solid var(--color-bg-border);background:hsl(from var(--color-bg) h s 20%);border-radius:2px;flex:none;margin-top:4px;padding:4px 8px 8px}.checkpoint-timer-row{white-space:nowrap;justify-content:space-between;gap:8px;display:flex}@media (max-width:600px){.cellscore{padding:6px}.cellscore .region-select-form{flex-direction:column;align-items:stretch}.checkpoint-timer-row{gap:4px;font-size:.75em}}.iitc-export-text,.iitc-import-text{box-sizing:border-box;resize:vertical;width:100%;height:150px}.iitc-prompt-text{box-sizing:border-box;width:100%}body.smartphone .iitc-prompt-text{font-size:16px}.iitc-prompt-error:empty{display:none}.iitc-prompt-error{color:#ff8b7f}.ui-tooltip,.ui-dialog{z-index:9500;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);padding:2px 4px;position:absolute}.ui-tooltip,.ui-dialog,.iitc-options-pane{color:var(--color-secondary);font-size:13px;line-height:15px}.ui-tooltip{max-width:300px}.ui-widget-overlay{z-index:10000;opacity:.6;background:#444;width:100%;height:100%;position:fixed;top:0;left:0}.ui-modal{z-index:10001!important}.ui-tooltip{z-index:10002!important}.ui-tooltip,.ui-dialog a{color:var(--color-primary)}.ui-dialog{border-radius:2px;max-width:calc(100vw - 1rem);padding:0}.ui-dialog-modal .ui-dialog-titlebar-close{display:none}.ui-dialog-titlebar{text-align:center;background-color:#083c4ee6;padding:4px;font-size:13px;line-height:15px}.ui-dialog-title,.text-overflow-ellipsis.ui-dialog-title{width:calc(100% - 45px);margin-left:8px;margin-right:45px;font-weight:700}.ui-dialog-title-active{color:var(--color-primary)}.ui-dialog-title-inactive{color:#fff}.ui-dialog-titlebar-button{vertical-align:middle;text-align:center;border:1px solid var(--color-bg-border);background-color:#0000;width:17px;height:17px;padding:0;display:table-cell;position:absolute;top:3px}.ui-dialog-titlebar-button:active{background-color:#20a8b1}.ui-dialog-titlebar-button-close{right:4px}.ui-dialog-titlebar-button-collapse{right:25px}.ui-dialog-titlebar-button-collapse-collapsed{background-color:var(--color-bg-border)}.ui-dialog-titlebar-button-collapse:after,.ui-dialog-titlebar-button-close:after,.ui-dialog-titlebar-button-close:before{content:"";border-top:2px solid var(--color-bg-border);width:11px;height:0;margin-left:-6px;position:absolute;top:3px;left:50%}.ui-dialog-titlebar-button-close:after{transform:translateY(3.5px)rotate(45deg)}.ui-dialog-titlebar-button-close:before{transform:translateY(3.5px)rotate(-45deg)}.ui-dialog-titlebar-button.ui-state-active:after,.ui-dialog-titlebar-button.ui-state-active:before,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:after,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:before,.ui-dialog-titlebar-button:active:after,.ui-dialog-titlebar-button:active:before{border-top-color:#083c4ee6}.ui-dialog-content{padding:12px;position:relative;overflow:auto;max-height:calc(100vh - 83px)!important}.ui-dialog-content-hidden{display:none!important}.ui-dialog-buttonpane{border-top:1px solid #20a8b1;padding:6px}.ui-dialog-buttonset{text-align:right}.ui-dialog-buttonset button,.ui-dialog-content button,.iitc-options-pane button{min-width:40px;color:var(--color-primary);border:1px solid var(--color-primary);background-color:var(--color-bg-trans);padding:2px}.ui-dialog-buttonset button:hover{text-decoration:underline}.iitc-options-page{flex-direction:column;gap:2px;display:flex}.iitc-options-row{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;padding:3px 0;display:flex}.iitc-options-row+.iitc-options-row{border-top:1px solid #ffffff0f}.iitc-options-label{flex:12em;min-width:0}.iitc-options-control{flex-wrap:wrap;align-items:center;gap:4px 8px;margin-left:auto;display:flex}.iitc-options-buttons{flex-wrap:wrap;gap:4px;display:inline-flex}body.smartphone .iitc-options .iitc-options-buttons{gap:8px}.iitc-options .iitc-options-page button{padding:3px 5px}body.smartphone .iitc-options .iitc-options-page button{min-height:34px;padding:5px 10px}.iitc-options-icon-button{justify-content:center;align-items:center;display:inline-flex}.iitc-options-icon-button iitc-icon{font-size:16px}body.smartphone .iitc-options .iitc-options-page .iitc-options-icon-button{min-width:34px}body.smartphone .iitc-options .iitc-options-page .iitc-options-icon-button iitc-icon{font-size:20px}.iitc-options-description,.iitc-options-sub{opacity:.75;font-size:11px}.iitc-options-heading{color:var(--color-primary);border-bottom:1px solid var(--color-bg-border);margin:12px 0 4px;padding-bottom:2px;font-size:14px}.iitc-options-heading:first-child{margin-top:0}.iitc-options-text{margin:4px 0}.iitc-options-notice{border-left:2px solid var(--color-bg-border);background:#20a8b11a;margin:4px 0;padding:6px 8px}.iitc-options-notice-warning{border-left-color:var(--color-primary);background:#ffce001a}.iitc-options-notice-error{background:#ff8b7f1a;border-left-color:#ff8b7f}.iitc-options-page button[aria-disabled=true]{opacity:.5;cursor:progress}.iitc-options-error{color:#ff8b7f;flex-basis:100%}.iitc-options-message{flex-basis:100%;align-items:flex-start;gap:4px;font-size:11px;display:flex}.iitc-options-message>iitc-icon{flex:none;font-size:14px}.iitc-options-page input[type=number]{width:6em}body.smartphone .iitc-options input[type=radio]{width:20px;height:20px}.iitc-options-list{margin:0;padding:0;list-style:none}.iitc-options-list li{padding:2px 0}.iitc-options-list .iitc-options-list{margin-left:16px}.iitc-options-list-head{flex:1;justify-content:space-between;gap:8px;display:flex}.iitc-options-list summary{align-items:center;gap:4px;list-style:none;display:flex}.iitc-options-list summary::-webkit-details-marker{display:none}.iitc-options-list summary>iitc-icon{flex:none}.iitc-options-list details[open]>summary>iitc-icon{transform:rotate(90deg)}.iitc-options-badge{opacity:.75;flex:none}.iitc-options-item-muted{opacity:.6}.iitc-options-item-error{color:#ff8b7f;text-decoration:line-through}.iitc-options-repeat{border-collapse:collapse;width:100%}.iitc-options-repeat th{text-align:left;padding:2px 4px;font-weight:400}.iitc-options-repeat td{text-align:left;padding:2px 4px;font-weight:400}.iitc-options-repeat :-webkit-any(th,td):first-child{padding-left:0}.iitc-options-repeat :is(th,td):first-child{padding-left:0}.iitc-options-repeat :-webkit-any(th,td):last-child{padding-right:0}.iitc-options-repeat :is(th,td):last-child{padding-right:0}.iitc-options-repeat thead th{opacity:.75;font-size:11px}.iitc-options-repeat tbody tr+tr{border-top:1px solid #ffffff0f}.iitc-options-repeat .iitc-options-cell-buttons{white-space:nowrap;text-align:right;width:1%}.iitc-options-choice{align-items:center;gap:6px;display:inline-flex}.iitc-options-choice input{margin:0}#dialog-iitc-options{padding:0;overflow:hidden}.iitc-options{grid-template-rows:minmax(0,1fr);grid-template-columns:11rem minmax(0,1fr);height:100%;display:grid;container-type:inline-size}.iitc-options-nav{z-index:0;flex-direction:column;gap:6px;min-width:0;min-height:0;padding:12px 0 12px 12px;display:flex}input[type=search].iitc-options-search{box-sizing:border-box;border-radius:5px;width:calc(100% - 12px);height:24px;min-height:24px;padding:0 9px}.iitc-options-pages{flex-direction:column;gap:2px;min-height:0;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}.iitc-options .iitc-options-page-link{width:100%;color:inherit;font:inherit;text-align:left;background:0 0;border:1px solid #0000;border-right:0;border-radius:5px 0 0 5px;padding:5px 8px;transition:all .2s;display:block}.iitc-options .iitc-options-page-link[aria-current=page]{border-color:var(--color-bg-border);color:var(--color-primary);background:var(--color-bg)}body.smartphone .iitc-options .iitc-options-page-link{padding:8px}.iitc-options-found{-webkit-line-clamp:2;line-clamp:2;opacity:.75;-webkit-box-orient:vertical;font-size:11px;display:-webkit-box;overflow:hidden}.iitc-options-nothing{opacity:.75;padding:4px 6px}.iitc-options-detail{border-left:1px solid var(--color-bg-border);background:var(--color-bg);flex-direction:column;min-width:0;min-height:0;margin-left:-1px;display:flex}.iitc-options-content{flex:1;min-height:0;padding:4px 12px 12px;overflow-y:auto}.iitc-options-detail-head{align-items:center;gap:6px;margin-bottom:6px;padding:12px 12px 0;display:flex}.iitc-options-detail-head h2{width:auto;color:var(--color-primary);cursor:auto;margin:0;padding:0;font-size:16px}.iitc-options .iitc-options-back{color:inherit;background:0 0;border:0;justify-content:center;align-items:center;padding:0;display:none}.iitc-options .iitc-options-back iitc-icon{font-size:20px}body.smartphone .iitc-options .iitc-options-back{min-width:36px;min-height:36px}body.smartphone .iitc-options .iitc-options-back iitc-icon{font-size:24px}@container (width<30rem){.iitc-options-nav,.iitc-options-detail{border-left:0;grid-column:1/-1;margin-left:0}.iitc-options .iitc-options-back{display:inline-flex}input[type=search].iitc-options-search{height:33px;min-height:33px;margin-bottom:6px;font-size:16px}.iitc-options-pages{background:var(--color-bg);gap:0;padding-right:12px}[data-view=page]>.iitc-options-nav,[data-view=list]>.iitc-options-detail{display:none}.iitc-options .iitc-options-page-link{border:1px solid var(--color-bg-border);text-align:center;border-top:0;border-radius:0;padding:8px}.iitc-options .iitc-options-page-link[aria-current=page]{color:inherit}.iitc-options-search:not(:placeholder-shown)~.iitc-options-pages .iitc-options-page-link{text-align:left}.iitc-options-pages li:first-child .iitc-options-page-link{border-top:1px solid var(--color-bg-border);border-radius:5px 5px 0 0}.iitc-options-pages li:last-child .iitc-options-page-link{border-radius:0 0 5px 5px}}.iitc-options-access-keys{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:fixed;top:0;left:0;overflow:hidden}.iitc-options-match{background:color-mix(in srgb, var(--color-primary) 22%, transparent);outline:3px solid color-mix(in srgb, var(--color-primary) 22%, transparent)}@supports not (color:color-mix(in srgb, red, red)){.iitc-options-match{background:#ffce0038;outline:3px solid #ffce0038}}.iitc-options-pane{z-index:3001;box-sizing:border-box;padding:var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);background:var(--color-bg);position:fixed;top:0;bottom:0;left:0;right:0}body.icons-unavailable #searchwrapper h3:before{content:"▲"}body.icons-unavailable #chatcontrols .toggle:before{content:"▲"}body.icons-unavailable #chatcontrols.expand .toggle:before{content:"▼"}body.icons-unavailable .ui-tabs-nav .ui-icon-close:before{content:"×"}body.icons-unavailable .leaflet-control-layers-toggle:before{content:""}:root{--safe-area-inset-top:env(safe-area-inset-top);--safe-area-inset-bottom:env(safe-area-inset-bottom);--safe-area-inset-left:env(safe-area-inset-left);--safe-area-inset-right:env(safe-area-inset-right);--sidebar-width:300px;--hidden-scrollbar-width:20px;--chat-shrinked:60px;--icon-target-size:24px;--top-controls-height:38px;--color-enl:#03fe03;--color-res:#00c5ff;--color-mac:#ff2020;--color-none:#fff;--color-primary:#ffce00;--color-secondary:#eee;--color-bg:#08304e;--color-bg-trans:color-mix(in srgb, var(--color-bg) 90%, transparent);--color-bg-trans-50:color-mix(in srgb, var(--color-bg) 50%, transparent);--color-bg-border:#20a8b1}@supports not (color:color-mix(in srgb, red, red)){:root{--color-bg-trans:#08304ee6;--color-bg-trans-50:#08304e80}}.text-overflow-ellipsis{white-space:nowrap;text-overflow:ellipsis;vertical-align:text-bottom;width:100%;display:inline-block;overflow:hidden}html,body{background:#0e3d4e;width:100%;height:100%;overflow:hidden}#map{width:100%;height:100%;overflow:visible}body.smartphone.show-controls #map{height:calc(100vh - var(--top-controls-height) - 25px);margin-top:var(--top-controls-height)}body{margin:0;font-family:Roboto,Helvetica Neue,Helvetica,sans-serif;font-size:14px}body.smartphone{color:#fff}.icon-button{cursor:pointer;min-width:var(--icon-target-size);min-height:var(--icon-target-size);justify-content:center;align-items:center;display:inline-flex}i.tiny{font-size:1rem}i.small{font-size:2rem}i.medium{font-size:4rem}i.large{font-size:6rem}.enl{color:var(--color-enl)}.res{color:var(--color-res)}.mac{color:var(--color-mac)}.none{color:var(--color-none)}.nickname{cursor:pointer}a{color:var(--color-primary);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}button,select,summary,label{cursor:pointer}input[type=checkbox]{cursor:pointer}input[type=radio]{cursor:pointer}input[type=color]{cursor:pointer}input[type=range]{cursor:pointer}button:disabled,select:disabled,input:disabled{cursor:not-allowed}.help{cursor:help}.toggle{font-family:IITC Material Symbols;line-height:1;display:block}td{vertical-align:top;padding:0}td+td{padding-left:4px}#qrcode>canvas{border:8px solid #fff}.RESISTANCE{color:#00c2ff}.ALIENS,.ENLIGHTENED{color:#28f428}#portal_highlight_select{z-index:2500;color:var(--color-primary);background-color:#0e3c46;font-size:11px;position:absolute;top:5px;left:10px}.portal_details th,.portal_details td{vertical-align:top;text-align:left}.portal_details th{white-space:nowrap;padding-right:1em}.portal_details tr.padding-top th,.portal_details tr.padding-top td{padding-top:.7em}#play_button{display:none}.layer_off_warning{color:var(--color-primary);text-align:center;margin:8px}.cursor_help{cursor:help}.ui-tabs-nav{border-top:1px solid #0000;border-bottom:1px solid #20a8b1;margin:3px 0 0;padding:0;display:block}.ui-tabs-nav:after{content:"";clear:left;width:0;height:0;display:block}.ui-tabs-nav li{float:left;border:1px solid #20a8b1;margin:0 0 -1px;list-style:none;display:block}.ui-tabs-nav li.ui-tabs-active{background:#0f2c3f;border-width:2px 2px 1px;border-bottom-color:#0f2c3f;margin:-1px 1px;font-weight:700}.ui-tabs-nav a{padding:.2em .7em;display:inline-block}.ui-tabs-nav .ui-icon{vertical-align:top;width:16px;height:22px;font-size:0;display:inline-block;position:relative;overflow:hidden}.ui-tabs-nav .ui-icon-close:before{content:"close";text-align:center;vertical-align:baseline;cursor:pointer;width:16px;height:16px;font-family:IITC Material Symbols;font-size:16px;position:absolute;top:2px}.leaflet-marker-icon>svg{height:inherit;width:inherit}.warning{color:#f77;text-shadow:1px 1px #000,-1px -1px #000;text-align:center;font-weight:700}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child{display:none}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2){float:left}::-webkit-input-placeholder{font-style:italic}:-moz-placeholder-shown{font-style:italic}::-moz-placeholder{font-style:italic}' +
+@media print{.leaflet-control-container,#chatcontrols,#chat,#chatinput,#sidebar,#updatestatus,#portal_highlight_select{display:none!important}}.leaflet-control{-webkit-user-select:none;user-select:none}.leaflet-control-container .leaflet-top.leaflet-left{flex-flow:column wrap;align-content:flex-start;align-items:flex-start;width:700px;height:calc(100% - 126px);max-height:90%;display:flex}.leaflet-control-layers-overlays label.disabled{cursor:help;text-decoration:line-through}.leaflet-control-layers-base{float:left;max-height:600px;overflow-y:auto}.leaflet-control-layers-overlays{float:left;border-left:1px solid #ddd;max-height:600px;margin-left:8px;padding-left:8px;overflow-y:auto}.leaflet-control-layers-separator{display:none}.leaflet-left .leaflet-control.chat-expand{margin-left:720px}.leaflet-left,.leaflet-right{grid-gap:10px;justify-items:baseline;display:grid}.leaflet-right{justify-items:end}.leaflet-left .leaflet-control,.leaflet-right .leaflet-control{margin:0}.leaflet-top{margin-top:var(--safe-area-inset-top);top:10px}.leaflet-right{margin-right:var(--safe-area-inset-right);right:10px}.leaflet-bottom{margin-bottom:calc(22px + var(--safe-area-inset-bottom));bottom:10px}body.smartphone .leaflet-bottom{bottom:5px}.leaflet-left{margin-left:var(--safe-area-inset-left);left:10px}.leaflet-control-scale{order:-90}.leaflet-right .iitc-sidebar-toggle{order:-10}.leaflet-right .leaflet-control-layers{order:-9}.leaflet-right .iitc-options-button{order:-8}.leaflet-right .iitc-bookmarks-button{order:-7}.leaflet-bar{box-shadow:none;border:2px solid #0003}.leaflet-bar a{text-decoration:none}.leaflet-control-zoom-in,.leaflet-control-zoom-out{background-size:18px;font-size:0!important}.leaflet-control-zoom-in{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M9 3v12M3 9h12\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}.leaflet-control-zoom-out{background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 18 18\'%3E%3Cpath d=\'M3.5 9h11\' stroke=\'black\' stroke-width=\'2.2\' fill=\'none\'/%3E%3C/svg%3E")}#map .leaflet-popup{pointer-events:none}#map .leaflet-popup-content-wrapper{border:1px solid var(--color-bg-border);pointer-events:auto;background:#0e3d4e;border-radius:0}#map .leaflet-popup-content{color:var(--color-primary);margin:5px 8px}#map .leaflet-popup-close-button{pointer-events:auto;width:10px;height:10px;padding:2px 1px 0 0;font-size:12px;line-height:8px}#map .leaflet-popup-tip{background:var(--color-bg-border);width:1px;height:20px;margin:0 0 0 20px;padding:0;transform:none}body:not(.icons-unavailable) .leaflet-control-layers-toggle,body:not(.icons-unavailable) .leaflet-retina .leaflet-control-layers-toggle{background-image:none}.leaflet-control-layers-toggle:before{content:"layers";font-family:IITC Material Symbols}.leaflet-control-layers-toggle,.iitc-control-button>a{border-radius:inherit;justify-content:center;align-items:center;display:flex}.leaflet-control-layers-toggle:hover,.iitc-control-button a:hover{background-color:#f4f4f4;text-decoration:none}.leaflet-control-layers-toggle:before,.iitc-control-button iitc-icon{color:#454545;font-size:28px}.iitc-control-button{background:#fff;border-radius:5px;flex-direction:row-reverse;align-items:flex-start;display:flex;box-shadow:0 1px 5px #0006}.leaflet-touch .iitc-control-button{box-shadow:none;background-clip:padding-box;border:2px solid #0003}.iitc-control-button>a{flex:none;width:36px;height:36px}.leaflet-touch .iitc-control-button>a{width:44px;height:44px}.iitc-control-menu{flex-direction:column;gap:2px;max-height:60vh;padding:4px 0 4px 4px;display:none;overflow-y:auto}@media (hover:hover) and (pointer:fine){.iitc-control-button:hover>.iitc-control-menu{display:flex}}.iitc-control-button:has(:focus-visible)>.iitc-control-menu{display:flex}.iitc-control-button .iitc-control-menu a{color:#333;white-space:nowrap;border-radius:4px;padding:4px 8px;font-size:13px}#chatcontrols{color:var(--color-primary);background:var(--color-bg-trans);bottom:calc(var(--chat-shrinked) + var(--safe-area-inset-bottom) + 22px);left:var(--safe-area-inset-left);z-index:3000;height:26px;padding-left:1px;position:absolute}#chatcontrols .toggle{font-size:20px;line-height:24px}#chatcontrols .toggle:before{content:"expand_less"}#chatcontrols.expand{top:var(--safe-area-inset-top);bottom:auto}#chatcontrols.expand .toggle:before{content:"expand_more"}#chatcontrols a{text-align:center;border:1px solid var(--color-bg-border);vertical-align:top;width:94px;height:24px;margin-left:-1px;line-height:24px;display:inline-block}#chatcontrols a:first-child{letter-spacing:-1px;text-decoration:none}#chatcontrols a.active{border-color:var(--color-primary);background:var(--color-bg);border-bottom-width:0;font-weight:700}#chatcontrols .loading{background-color:#ff000054;animation:1.2s linear infinite chatloading}#chatcontrols a.active+a{border-left-color:var(--color-primary)}body.smartphone #chatcontrols{width:100%;height:38px;display:none;left:0}body.smartphone #chatcontrols a:first-child{display:none}body.smartphone #chatcontrols a{vertical-align:middle;box-sizing:border-box;width:50px;height:36px;line-height:36px;text-decoration:none;overflow:hidden}body.smartphone.show-controls #chatcontrols{box-sizing:border-box;padding-top:var(--safe-area-inset-top);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);width:calc(100% - 1px);height:calc(var(--top-controls-height) + var(--safe-area-inset-top));top:0;overflow-x:auto;display:flex!important}body.smartphone.show-controls #chatcontrols a{flex:1;min-width:fit-content;padding:0 5px}@keyframes chatloading{0%{background-color:#f006}50%{background-color:#ff00001a}to{background-color:#f006}}#chat{width:708px;max-width:100vw;height:var(--chat-shrinked);bottom:calc(var(--safe-area-inset-bottom) + 23px);padding-left:var(--safe-area-inset-left);z-index:3000;background:var(--color-bg-trans);color:var(--color-secondary);border:1px solid var(--color-bg-border);box-sizing:border-box;border-bottom:0;line-height:15px;position:absolute;left:0}#chat.expand{height:auto;top:calc(var(--safe-area-inset-top) + 25px)}#chat .divider{color:#bbb}#chat .divider td:nth-child(2){text-align:center}body.smartphone #chat{width:auto;height:auto;margin-top:var(--safe-area-inset-top);margin-bottom:var(--safe-area-inset-bottom);padding-right:var(--safe-area-inset-right);top:1px;bottom:30px;left:0;right:0}body.smartphone.show-controls #chat{top:var(--top-controls-height)}em{color:red;font-style:normal}#chat>div{box-sizing:border-box;height:100%;padding:2px;position:relative;overflow:hidden scroll}#chat table,#chatinput table{table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;min-height:100%;margin-bottom:1px}#chat table tr:last-child,#chatinput table{height:100%}#chatinput.public mark,#chatinput.public input{color:#f66}#chatinput.alerts mark{color:#bbb}#chat td,#chatinput td{vertical-align:top;padding-bottom:3px;font-size:13px}#chat td:first-child,#chatinput td:first-child{color:#bbb;white-space:nowrap;width:44px;padding-left:2px;overflow:hidden}#chat time{cursor:help}#chat td:nth-child(2),#chatinput td:nth-child(2){white-space:nowrap;width:91px;padding-left:2px;overflow:hidden}body.smartphone #chat td:nth-child(2),body.smartphone #chatinput td:nth-child(2){width:77px}#chat td.system_narrowcast{color:#f66}#chatall tr.faction td:nth-child(3):before,#chatalerts tr.faction td:nth-child(3):before{content:"[faction]";color:#f88;background-color:#500;margin-right:.2rem}#chatall tr.public td:nth-child(3):before,#chatalerts tr.public td:nth-child(3):before{content:"[public]";color:#ff6;background-color:#550;margin-right:.2rem}mark{background:0 0}.invisep{color:#0000;width:1px;height:1px;display:inline-block;overflow:hidden}#chatinput{background:var(--color-bg-trans);width:708px;max-width:100vw;height:calc(var(--safe-area-inset-bottom) + 23px);border:1px solid var(--color-bg-border);z-index:3001;box-sizing:border-box;padding:0 2px;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);position:absolute;bottom:0;left:0}body.smartphone #chatinput{width:100%;height:calc(var(--safe-area-inset-bottom) + 30px);padding-right:var(--safe-area-inset-right)}#chatinput td{vertical-align:middle;padding-bottom:1px}#chatinput input{color:var(--color-secondary);background:0 0;width:100%;height:100%;padding:3px 4px 1px}.bidi-isolate{unicode-bidi:isolate}.pl_nudge_date{color:#ffd652;background-color:#724510;border-top:1px solid #ffd652;border-bottom:1px solid #ffd652;border-left:1px solid #ffd652;width:36px;height:18px;padding-left:2px;display:block;position:relative;left:-2px}.pl_nudge_date:after{content:"";background:url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png) no-repeat;width:5px;height:20px;position:absolute;top:-1px;right:-5px}.pl_nudge_player{cursor:pointer}.pl_nudge_me{color:#ffd652}#searchwrapper,#searchbox{position:relative}#search{width:100%;height:2em;min-height:var(--icon-target-size);padding-left:max(2em, var(--icon-target-size));padding-right:max(4em, calc(2 * var(--icon-target-size)))}#search::-webkit-search-cancel-button{-webkit-appearance:none}#searchicon,#searchcancel,#buttongeolocation{color:#bbb;min-width:var(--icon-target-size);min-height:var(--icon-target-size);background-color:#0000;border:0 #0000;justify-content:center;align-items:center;margin:auto 0;padding:0 .1em;font-size:20px;display:flex;position:absolute;top:0;bottom:0}#searchicon iitc-icon,#buttongeolocation iitc-icon{font-size:1em}#searchcancel iitc-icon{font-size:.9em}#searchicon{left:0}#searchcancel{cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;right:24px}#searchcancel.visible{opacity:1;pointer-events:auto}#buttongeolocation{cursor:pointer;right:0}#buttongeolocation:focus{outline:1px dotted var(--color-primary)}.searchquery{max-height:25em;overflow-y:auto}#searchwrapper h3{cursor:pointer;height:auto;padding:0 0 0 23px;font-size:1em;position:relative}#searchwrapper h3:before{content:"expand_less";margin-right:2px;font-family:IITC Material Symbols;font-size:14px;font-weight:400;transition:transform .3s;position:absolute;left:4px}#searchwrapper .searchquery.collapsed h3:before{transform:rotate(180deg)}#searchwrapper ul{max-height:100%;padding-left:16px;overflow:hidden}#searchwrapper li{cursor:pointer}body.smartphone #searchwrapper li{line-height:1.3em}#searchwrapper .searchquery.collapsed ul{max-height:0}#searchwrapper li a{background-position:1px;background-repeat:no-repeat;background-size:12px 12px;margin-left:-14px;padding-left:14px}#searchwrapper li:focus a,#searchwrapper li:hover a{text-decoration:underline}#searchwrapper li em{color:#ccc;font-size:.9em}#scrollwrapper{right:calc(-2 * var(--hidden-scrollbar-width) + 2px + var(--safe-area-inset-right));top:var(--safe-area-inset-top);width:calc(var(--sidebar-width) + 2 * var(--hidden-scrollbar-width));bottom:calc(var(--safe-area-inset-bottom) + 45px);z-index:3001;pointer-events:none;position:fixed;overflow:hidden auto}body.smartphone #scrollwrapper{box-sizing:border-box;width:100%;padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);top:0;bottom:0;left:0;right:0}body.smartphone.show-controls #scrollwrapper{margin-top:var(--top-controls-height)}#sidebar{background-color:var(--color-bg-trans);border-left:1px solid var(--color-bg-border);color:#888;width:calc(var(--sidebar-width) + var(--hidden-scrollbar-width) + 1px);pointer-events:auto;max-height:100%;position:relative;top:0;left:0;overflow:hidden scroll}body.smartphone #sidebar{border:0;width:100%;min-height:100%}body.sidebar-open .leaflet-right{margin-right:calc(var(--sidebar-width) + 1px + var(--safe-area-inset-right))}body.sidebar-open.smartphone .leaflet-right{margin-right:var(--safe-area-inset-right)}.leaflet-right .leaflet-control.iitc-sidebar-toggle{--toggle-reach:10px;box-sizing:border-box;width:calc(36px + var(--toggle-reach));height:28px;margin-right:calc(-1 * var(--toggle-reach));background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);border-right:none;border-radius:5px 0 0 5px;display:flex;box-shadow:0 1px 5px #0006}body:not(.sidebar-open) .leaflet-right .leaflet-control.iitc-sidebar-toggle{--toggle-reach:calc(10px + var(--safe-area-inset-right))}.leaflet-touch .leaflet-right .leaflet-control.iitc-sidebar-toggle{width:calc(48px + var(--toggle-reach));height:38px}.iitc-sidebar-toggle button{padding:0 var(--toggle-reach) 0 0;border-radius:inherit;color:var(--color-primary);background:0 0;border:none;flex:1;justify-content:center;align-items:center;display:flex}.iitc-sidebar-toggle button:hover{background-color:color-mix(in srgb, var(--color-bg-border) 25%, transparent)}@supports not (color:color-mix(in srgb, red, red)){.iitc-sidebar-toggle button:hover{background-color:#20a8b140}}.iitc-sidebar-toggle iitc-icon{font-size:24px}.leaflet-touch .iitc-sidebar-toggle iitc-icon{font-size:28px}#sidebar>*{box-sizing:border-box;width:calc(var(--sidebar-width) + 1px);border-bottom:1px solid #20a8b1}body.smartphone #sidebar>*{width:100%}#playerstat{height:30px}body.smartphone #playerstat{height:initial}h2{color:var(--color-primary);cursor:help;box-sizing:border-box;width:100%;margin:0;padding:0 4px;font-size:21px}h2 #name{vertical-align:top;white-space:nowrap;font-weight:300;display:inline}h2 #name .playername{text-overflow:ellipsis;max-width:70%;display:inline-block;overflow:hidden}h2 #name:hover .playername{max-width:50%}h2 #name:hover #signout{display:inline-block}h2 #stats{float:right;height:100%;overflow:hidden}h2 sup{margin-bottom:-2px;font-size:11px;display:block}h2 sub{margin-bottom:-2px;font-size:11px;display:block}body.smartphone #playerstat h2{flex-wrap:wrap;justify-content:space-between;padding:5px;display:flex}body.smartphone #playerstat h2 #name{align-items:center;display:flex}body.smartphone #playerstat h2 #name .playername,body.smartphone #playerstat h2 #name:hover .playername{max-width:60vw}body.smartphone #playerstat h2 #stats{white-space:nowrap;overflow:initial}#signout{background-color:var(--color-bg-trans-50);vertical-align:text-top;padding:0 4px;font-size:12px;font-weight:400;display:none}body.smartphone #name #signout{position:initial;margin-left:4px;display:inline-block}#gamestat span{cursor:help;box-sizing:border-box;padding:0 3px;font-weight:700;display:inline-block}#gamestat span.res{background:color-mix(in oklab, var(--color-res) 60%, black)}#gamestat span.enl{background:color-mix(in oklab, var(--color-enl) 60%, black)}@supports not (color:color-mix(in srgb, red, red)){#gamestat span.res{background:#006180}#gamestat span.enl{background:#018001}}input:not([type]),.input{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=text]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=password]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=number]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=email]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=search]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}input[type=url]{color:var(--color-primary);box-sizing:border-box;background-color:#0000004d;border:0;height:24px;padding:0 4px;font-family:inherit;font-size:12px}.leaflet-control-layers input{height:auto;padding:0}#portaltitle{white-space:nowrap;margin:2px 0;line-height:24px;display:flex}#portaltitle .value{text-overflow:ellipsis;flex:1;overflow:hidden}#portaltitle iitc-icon{font-size:24px}#portaltitle .close{cursor:pointer;color:var(--color-primary);margin-right:2px;font-weight:400}body.smartphone #portaldetails .close{border:1px outset var(--color-bg-border);font-size:22px}.imgpreview{cursor:help;background:50%/contain no-repeat;height:190px;position:relative;overflow:hidden}.imgpreview img.hide,.imgpreview .portalDetails{display:none}.fullimg{width:100%}#level{text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000,0 0 5px #fff;text-align:right;float:right;margin-right:15px;font-size:40px;display:block}.mods{text-align:center;width:296px;height:67px;margin:3px auto 1px}.mods span{float:left;text-align:center;cursor:help;background-color:#0000004d;border:1px solid #666;width:63px;height:63px;margin:0 2px;padding:2px;display:block;overflow:hidden}.mods span:not([data-popover]){cursor:auto}.res .mods span,.res .meter{border:1px solid #0076b6}.enl .mods span,.enl .meter{border:1px solid #017f01}#randdetails,#resodetails{box-sizing:border-box;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%;padding:0 4px}#randdetails td,#resodetails td{text-overflow:ellipsis;vertical-align:top;white-space:nowrap;width:50%;overflow:hidden}#randdetails th,#resodetails th{text-align:right;width:62px;padding:0 4px;font-weight:400}#randdetails th+th,#resodetails th+th{text-align:left;padding-left:4px;padding-right:4px}#randdetails td:first-child,#resodetails td:first-child{text-align:right;padding-left:2px}#randdetails td:last-child,#resodetails td:last-child{text-align:left;padding-right:2px}#randdetails{margin-top:4px;margin-bottom:5px}#randdetails tt{cursor:help;font-family:inherit}#artifact_target,#artifact_fragments{margin:4px 8px}#resodetails{margin-bottom:0}.meter{cursor:help;box-sizing:border-box;background:#000;width:100%;height:18px;padding:1px;display:inline-block;position:relative;top:0;left:0}.meter.north{overflow:hidden}.meter.north:before{content:"";background-color:red;border:1px solid #000;border-radius:100%;width:6px;height:6px;margin-left:-4px;display:block;position:absolute;top:-3px;left:50%}.meter span{height:14px;display:block}.meter-level{text-shadow:0 0 .3em gray;text-align:center;word-spacing:4px;position:absolute;top:-2px;left:0;right:0}.linkdetails{text-align:center;margin-bottom:0}.linkdetails aside{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}body.smartphone .linkdetails aside{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#toolbox{display:none!important}#toolbox,#toolbox_component{text-align:left}#toolbox>a,#toolbox_component>a{white-space:nowrap;margin-left:5px;margin-right:5px;display:inline-block}body.smartphone #toolbox>a,body.smartphone #toolbox_component>a{border:2px outset var(--color-bg-border);margin-top:3px;margin-bottom:3px;padding:5px}#toolbox_component>a>iitc-icon{margin-top:-2px;margin-right:2px;font-size:1em}#portaldetails{min-height:63px}body.smartphone #portaldetails{min-height:0}#historydetails{text-align:center;color:var(--color-primary)}#historydetails span{color:#ff4a4a}#historydetails span.completed{color:#03fe03}#updatestatus{width:var(--sidebar-width);background-color:var(--color-bg-trans);border-bottom:0;border-top:1px solid var(--color-bg-border);border-left:1px solid var(--color-bg-border);color:var(--color-primary);padding:4px;padding-bottom:var(--safe-area-inset-bottom);bottom:0;right:var(--safe-area-inset-right);z-index:3002;box-sizing:border-box;font-size:13px;position:fixed}#updatestatus .map{margin-left:8px}#updatestatus.ghost{pointer-events:none;background:0 0;border:0}#updatestatus.ghost>*{pointer-events:auto}body.smartphone #updatestatus{color:#d4d5d6;width:100%;padding:0;padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right);right:0}body.smartphone #updatestatus:not(.ghost){background:#262c32;border:0}body.smartphone #updatestatus .map{margin-left:4px}#loadlevel{color:#000;background:#fff;border:0 solid #20a8b1;border-width:0 1px;min-width:1.8em;margin:-4px 0;padding:4px .2em;display:inline-block}body.smartphone #loadlevel{color:#fff;background:0 0;border-width:0}#innerstatus .failed-request{color:#f66}body.smartphone #innerstatus{float:right;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px;overflow:hidden}#mobileinfo{float:left;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;width:50%;padding:4px 0;transition:opacity .2s;position:relative;overflow:hidden}#mobileinfo.loading{opacity:.6}#mobileinfo .portallevel{color:#fff;padding:0 .25em}#mobileinfo .resonator{border-top:3px solid var(--resonator-color,#ccc);box-sizing:border-box;width:12%;height:100%;position:absolute;top:0}#mobileinfo .resonator[data-slot="0"]{left:0%}#mobileinfo .resonator[data-slot="1"]{left:12.5%}#mobileinfo .resonator[data-slot="2"]{left:25%}#mobileinfo .resonator[data-slot="3"]{left:37.5%}#mobileinfo .resonator[data-slot="4"]{left:50%}#mobileinfo .resonator[data-slot="5"]{left:62.5%}#mobileinfo .resonator[data-slot="6"]{left:75%}#mobileinfo .resonator[data-slot="7"]{left:87.5%}#mobileinfo .resonator.empty{border-top-color:#0000}#mobileinfo .resonator.north:before{content:"";background-color:var(--resonator-color,red);z-index:1;border-radius:100%;width:6px;height:6px;margin-left:-3px;display:block;position:absolute;top:-3px;left:50%}#mobileinfo .filllevel{height:3px;position:absolute;bottom:0}#mobileinfo .enl .filllevel{background-color:var(--color-enl)}#mobileinfo .res .filllevel{background-color:var(--color-res)}#mobileinfo .mac .filllevel{background-color:var(--color-mac)}.redeemReward{padding:0;font-family:Inconsolata,Consolas,Menlo,Courier New,monospace;font-size:14px;list-style-type:none}.redeemReward .itemlevel{text-shadow:0 0 1px #000;font-weight:700}table.artifact tr>*{background:var(--color-bg-trans)}table.artifact td.info{min-width:110px}table.artifact .portal{min-width:200px}.ui-dialog-content.region-scoreboard-dialog,.region-scoreboard-dialog.safe-area-insets{flex-direction:column;min-height:0;display:flex;overflow:hidden}.region-scoreboard-dialog.safe-area-insets{box-sizing:border-box}body.smartphone .safe-area-insets{padding-top:var(--safe-area-inset-top);padding-bottom:var(--safe-area-inset-bottom);padding-left:var(--safe-area-inset-left);padding-right:var(--safe-area-inset-right)}.cellscore{box-sizing:border-box;flex-direction:column;flex:auto;gap:10px;min-height:0;padding:8px;display:flex;overflow-y:auto}.cellscore details.scoreboard-section{border:1px solid var(--color-bg-border);border-radius:2px;padding:8px}.cellscore .scoreboard-section>summary{color:var(--color-primary);margin:0;font-weight:700}.cellscore .region-selection>summary{flex-wrap:wrap;gap:4px 8px;display:flex}.cellscore .region-summary-name{margin-left:auto}.cellscore .scoreboard-section[open]>summary{margin-bottom:8px}.cellscore table{white-space:nowrap;width:80%;max-width:100%;margin-left:auto;margin-right:auto}.cellscore .historychart>div{width:100%}.cellscore .history-chart{width:100%;height:auto;margin-top:.5em;margin-bottom:.5em;display:block}.cellscore .logscale{vertical-align:middle;margin-top:0}.cellscore #overview{width:100%}.cellscore #overview td{white-space:nowrap;text-align:right;width:1%}.cellscore #overview th{white-space:nowrap;text-align:left;width:1%;padding-left:4px}.cellscore .region-select-form{flex-wrap:wrap;align-items:end;gap:8px;display:flex}.cellscore .region-select-form label{flex-direction:column;flex:110px;gap:3px;display:flex}.cellscore .region-select-form input{width:100%}.cellscore .checkpoint-cycle-controls{flex-wrap:wrap;justify-content:center;gap:1em;margin-bottom:8px;display:flex}.cellscore .checkpoint-cycle-controls label{align-items:center;gap:6px;display:inline-flex}.cellscore .checkpoint-cycle-controls .checkpoint-date{min-width:0}.cellscore .checkpoint-history{touch-action:pan-y}.cellscore .mac_pause{text-align:center;border:1px solid var(--color-bg-border);border-radius:5px;font-size:larger}.cellscore .daychange{border-bottom:1px dashed var(--color-bg-border)}.cellscore .region-error{color:#ff8080;margin:6px 0 0}g.checkpoint:hover circle{fill-opacity:1;stroke-width:2px}.cellscore th,.cellscore td{text-align:left;padding-left:5px}.checkpoint_table{border-collapse:collapse}.checkpoint_table th{text-align:right}.checkpoint_table td{text-align:right}.checkpointtooltip{min-width:180px}.checkpoint_timers{border:1px solid var(--color-bg-border);background:hsl(from var(--color-bg) h s 20%);border-radius:2px;flex:none;margin-top:4px;padding:4px 8px 8px}.checkpoint-timer-row{white-space:nowrap;justify-content:space-between;gap:8px;display:flex}@media (max-width:600px){.cellscore{padding:6px}.cellscore .region-select-form{flex-direction:column;align-items:stretch}.checkpoint-timer-row{gap:4px;font-size:.75em}}.iitc-export-text,.iitc-import-text{box-sizing:border-box;resize:vertical;width:100%;height:150px}.iitc-prompt-text{box-sizing:border-box;width:100%}body.smartphone .iitc-prompt-text{font-size:16px}.iitc-prompt-error:empty{display:none}.iitc-prompt-error{color:#ff8b7f}.ui-dialog{z-index:9500;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);padding:2px 4px;position:absolute}.ui-dialog,.iitc-options-pane{color:var(--color-secondary);font-size:13px;line-height:15px}.ui-widget-overlay{z-index:10000;opacity:.6;background:#444;width:100%;height:100%;position:fixed;top:0;left:0}.ui-modal{z-index:10001!important}.ui-dialog a{color:var(--color-primary)}.ui-dialog{border-radius:2px;max-width:calc(100vw - 1rem);padding:0}.ui-dialog-modal .ui-dialog-titlebar-close{display:none}.ui-dialog-titlebar{text-align:center;background-color:#083c4ee6;padding:4px;font-size:13px;line-height:15px}.ui-dialog-title,.text-overflow-ellipsis.ui-dialog-title{width:calc(100% - 45px);margin-left:8px;margin-right:45px;font-weight:700}.ui-dialog-title-active{color:var(--color-primary)}.ui-dialog-title-inactive{color:#fff}.ui-dialog-titlebar-button{vertical-align:middle;text-align:center;border:1px solid var(--color-bg-border);background-color:#0000;width:17px;height:17px;padding:0;display:table-cell;position:absolute;top:3px}.ui-dialog-titlebar-button:active{background-color:#20a8b1}.ui-dialog-titlebar-button-close{right:4px}.ui-dialog-titlebar-button-collapse{right:25px}.ui-dialog-titlebar-button-collapse-collapsed{background-color:var(--color-bg-border)}.ui-dialog-titlebar-button-collapse:after,.ui-dialog-titlebar-button-close:after,.ui-dialog-titlebar-button-close:before{content:"";border-top:2px solid var(--color-bg-border);width:11px;height:0;margin-left:-6px;position:absolute;top:3px;left:50%}.ui-dialog-titlebar-button-close:after{transform:translateY(3.5px)rotate(45deg)}.ui-dialog-titlebar-button-close:before{transform:translateY(3.5px)rotate(-45deg)}.ui-dialog-titlebar-button.ui-state-active:after,.ui-dialog-titlebar-button.ui-state-active:before,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:after,.ui-dialog-titlebar-button.ui-dialog-titlebar-button-collapse-collapsed:before,.ui-dialog-titlebar-button:active:after,.ui-dialog-titlebar-button:active:before{border-top-color:#083c4ee6}.ui-dialog-content{padding:12px;position:relative;overflow:auto;max-height:calc(100vh - 83px)!important}.ui-dialog-content-hidden{display:none!important}.ui-dialog-buttonpane{border-top:1px solid #20a8b1;padding:6px}.ui-dialog-buttonset{text-align:right}.ui-dialog-buttonset button,.ui-dialog-content button,.iitc-options-pane button{min-width:40px;color:var(--color-primary);border:1px solid var(--color-primary);background-color:var(--color-bg-trans);padding:2px}.ui-dialog-buttonset button:hover{text-decoration:underline}.iitc-popover{z-index:10002;background-color:var(--color-bg-trans);border:1px solid var(--color-bg-border);max-width:300px;color:var(--color-primary);margin:0;padding:2px 4px;font-size:13px;line-height:15px;animation:.1s ease-out iitc-popover-in;position:fixed;top:auto;bottom:auto;left:auto;right:auto;overflow:visible}@keyframes iitc-popover-in{0%{opacity:0}}@media (prefers-reduced-motion:reduce){.iitc-popover{animation:none}}[data-popover]:not([data-popover=""]){cursor:help}.iitc-options-page{flex-direction:column;gap:2px;display:flex}.iitc-options-row{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;padding:3px 0;display:flex}.iitc-options-row+.iitc-options-row{border-top:1px solid #ffffff0f}.iitc-options-label{flex:12em;min-width:0}.iitc-options-control{flex-wrap:wrap;align-items:center;gap:4px 8px;margin-left:auto;display:flex}.iitc-options-buttons{flex-wrap:wrap;gap:4px;display:inline-flex}body.smartphone .iitc-options .iitc-options-buttons{gap:8px}.iitc-options .iitc-options-page button{padding:3px 5px}body.smartphone .iitc-options .iitc-options-page button{min-height:34px;padding:5px 10px}.iitc-options-icon-button{justify-content:center;align-items:center;display:inline-flex}.iitc-options-icon-button iitc-icon{font-size:16px}body.smartphone .iitc-options .iitc-options-page .iitc-options-icon-button{min-width:34px}body.smartphone .iitc-options .iitc-options-page .iitc-options-icon-button iitc-icon{font-size:20px}.iitc-options-description,.iitc-options-sub{opacity:.75;font-size:11px}.iitc-options-heading{color:var(--color-primary);border-bottom:1px solid var(--color-bg-border);margin:12px 0 4px;padding-bottom:2px;font-size:14px}.iitc-options-heading:first-child{margin-top:0}.iitc-options-text{margin:4px 0}.iitc-options-notice{border-left:2px solid var(--color-bg-border);background:#20a8b11a;margin:4px 0;padding:6px 8px}.iitc-options-notice-warning{border-left-color:var(--color-primary);background:#ffce001a}.iitc-options-notice-error{background:#ff8b7f1a;border-left-color:#ff8b7f}.iitc-options-page button[aria-disabled=true]{opacity:.5;cursor:progress}.iitc-options-error{color:#ff8b7f;flex-basis:100%}.iitc-options-message{flex-basis:100%;align-items:flex-start;gap:4px;font-size:11px;display:flex}.iitc-options-message>iitc-icon{flex:none;font-size:14px}.iitc-options-page input[type=number]{width:6em}body.smartphone .iitc-options input[type=radio]{width:20px;height:20px}.iitc-options-list{margin:0;padding:0;list-style:none}.iitc-options-list li{padding:2px 0}.iitc-options-list .iitc-options-list{margin-left:16px}.iitc-options-list-head{flex:1;justify-content:space-between;gap:8px;display:flex}.iitc-options-list summary{align-items:center;gap:4px;list-style:none;display:flex}.iitc-options-list summary::-webkit-details-marker{display:none}.iitc-options-list summary>iitc-icon{flex:none}.iitc-options-list details[open]>summary>iitc-icon{transform:rotate(90deg)}.iitc-options-badge{opacity:.75;flex:none}.iitc-options-item-muted{opacity:.6}.iitc-options-item-error{color:#ff8b7f;text-decoration:line-through}.iitc-options-repeat{border-collapse:collapse;width:100%}.iitc-options-repeat th{text-align:left;padding:2px 4px;font-weight:400}.iitc-options-repeat td{text-align:left;padding:2px 4px;font-weight:400}.iitc-options-repeat :-webkit-any(th,td):first-child{padding-left:0}.iitc-options-repeat :is(th,td):first-child{padding-left:0}.iitc-options-repeat :-webkit-any(th,td):last-child{padding-right:0}.iitc-options-repeat :is(th,td):last-child{padding-right:0}.iitc-options-repeat thead th{opacity:.75;font-size:11px}.iitc-options-repeat tbody tr+tr{border-top:1px solid #ffffff0f}.iitc-options-repeat .iitc-options-cell-buttons{white-space:nowrap;text-align:right;width:1%}.iitc-options-choice{align-items:center;gap:6px;display:inline-flex}.iitc-options-choice input{margin:0}#dialog-iitc-options{padding:0;overflow:hidden}.iitc-options{grid-template-rows:minmax(0,1fr);grid-template-columns:11rem minmax(0,1fr);height:100%;display:grid;container-type:inline-size}.iitc-options-nav{z-index:0;flex-direction:column;gap:6px;min-width:0;min-height:0;padding:12px 0 12px 12px;display:flex}input[type=search].iitc-options-search{box-sizing:border-box;border-radius:5px;width:calc(100% - 12px);height:24px;min-height:24px;padding:0 9px}.iitc-options-pages{flex-direction:column;gap:2px;min-height:0;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}.iitc-options .iitc-options-page-link{width:100%;color:inherit;font:inherit;text-align:left;background:0 0;border:1px solid #0000;border-right:0;border-radius:5px 0 0 5px;padding:5px 8px;transition:all .2s;display:block}.iitc-options .iitc-options-page-link[aria-current=page]{border-color:var(--color-bg-border);color:var(--color-primary);background:var(--color-bg)}body.smartphone .iitc-options .iitc-options-page-link{padding:8px}.iitc-options-found{-webkit-line-clamp:2;line-clamp:2;opacity:.75;-webkit-box-orient:vertical;font-size:11px;display:-webkit-box;overflow:hidden}.iitc-options-nothing{opacity:.75;padding:4px 6px}.iitc-options-detail{border-left:1px solid var(--color-bg-border);background:var(--color-bg);flex-direction:column;min-width:0;min-height:0;margin-left:-1px;display:flex}.iitc-options-content{flex:1;min-height:0;padding:4px 12px 12px;overflow-y:auto}.iitc-options-detail-head{align-items:center;gap:6px;margin-bottom:6px;padding:12px 12px 0;display:flex}.iitc-options-detail-head h2{width:auto;color:var(--color-primary);cursor:auto;margin:0;padding:0;font-size:16px}.iitc-options .iitc-options-back{color:inherit;background:0 0;border:0;justify-content:center;align-items:center;padding:0;display:none}.iitc-options .iitc-options-back iitc-icon{font-size:20px}body.smartphone .iitc-options .iitc-options-back{min-width:36px;min-height:36px}body.smartphone .iitc-options .iitc-options-back iitc-icon{font-size:24px}@container (width<30rem){.iitc-options-nav,.iitc-options-detail{border-left:0;grid-column:1/-1;margin-left:0}.iitc-options .iitc-options-back{display:inline-flex}input[type=search].iitc-options-search{height:33px;min-height:33px;margin-bottom:6px;font-size:16px}.iitc-options-pages{background:var(--color-bg);gap:0;padding-right:12px}[data-view=page]>.iitc-options-nav,[data-view=list]>.iitc-options-detail{display:none}.iitc-options .iitc-options-page-link{border:1px solid var(--color-bg-border);text-align:center;border-top:0;border-radius:0;padding:8px}.iitc-options .iitc-options-page-link[aria-current=page]{color:inherit}.iitc-options-search:not(:placeholder-shown)~.iitc-options-pages .iitc-options-page-link{text-align:left}.iitc-options-pages li:first-child .iitc-options-page-link{border-top:1px solid var(--color-bg-border);border-radius:5px 5px 0 0}.iitc-options-pages li:last-child .iitc-options-page-link{border-radius:0 0 5px 5px}}.iitc-options-access-keys{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:fixed;top:0;left:0;overflow:hidden}.iitc-options-match{background:color-mix(in srgb, var(--color-primary) 22%, transparent);outline:3px solid color-mix(in srgb, var(--color-primary) 22%, transparent)}@supports not (color:color-mix(in srgb, red, red)){.iitc-options-match{background:#ffce0038;outline:3px solid #ffce0038}}.iitc-options-pane{z-index:3001;box-sizing:border-box;padding:var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);background:var(--color-bg);position:fixed;top:0;bottom:0;left:0;right:0}body.icons-unavailable #searchwrapper h3:before{content:"▲"}body.icons-unavailable #chatcontrols .toggle:before{content:"▲"}body.icons-unavailable #chatcontrols.expand .toggle:before{content:"▼"}body.icons-unavailable .ui-tabs-nav .ui-icon-close:before{content:"×"}body.icons-unavailable .leaflet-control-layers-toggle:before{content:""}:root{--safe-area-inset-top:env(safe-area-inset-top);--safe-area-inset-bottom:env(safe-area-inset-bottom);--safe-area-inset-left:env(safe-area-inset-left);--safe-area-inset-right:env(safe-area-inset-right);--sidebar-width:300px;--hidden-scrollbar-width:20px;--chat-shrinked:60px;--icon-target-size:24px;--top-controls-height:38px;--color-enl:#03fe03;--color-res:#00c5ff;--color-mac:#ff2020;--color-none:#fff;--color-primary:#ffce00;--color-secondary:#eee;--color-bg:#08304e;--color-bg-trans:color-mix(in srgb, var(--color-bg) 90%, transparent);--color-bg-trans-50:color-mix(in srgb, var(--color-bg) 50%, transparent);--color-bg-border:#20a8b1}@supports not (color:color-mix(in srgb, red, red)){:root{--color-bg-trans:#08304ee6;--color-bg-trans-50:#08304e80}}.text-overflow-ellipsis{white-space:nowrap;text-overflow:ellipsis;vertical-align:text-bottom;width:100%;display:inline-block;overflow:hidden}html,body{background:#0e3d4e;width:100%;height:100%;overflow:hidden}#map{width:100%;height:100%;overflow:visible}body.smartphone.show-controls #map{height:calc(100vh - var(--top-controls-height) - 25px);margin-top:var(--top-controls-height)}body{margin:0;font-family:Roboto,Helvetica Neue,Helvetica,sans-serif;font-size:14px}body.smartphone{color:#fff}.icon-button{cursor:pointer;min-width:var(--icon-target-size);min-height:var(--icon-target-size);justify-content:center;align-items:center;display:inline-flex}i.tiny{font-size:1rem}i.small{font-size:2rem}i.medium{font-size:4rem}i.large{font-size:6rem}.enl{color:var(--color-enl)}.res{color:var(--color-res)}.mac{color:var(--color-mac)}.none{color:var(--color-none)}.nickname{cursor:pointer}a{color:var(--color-primary);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}button,select,summary,label{cursor:pointer}input[type=checkbox]{cursor:pointer}input[type=radio]{cursor:pointer}input[type=color]{cursor:pointer}input[type=range]{cursor:pointer}button:disabled,select:disabled,input:disabled{cursor:not-allowed}.help{cursor:help}.toggle{font-family:IITC Material Symbols;line-height:1;display:block}td{vertical-align:top;padding:0}td+td{padding-left:4px}#qrcode>canvas{border:8px solid #fff}.RESISTANCE{color:#00c2ff}.ALIENS,.ENLIGHTENED{color:#28f428}#portal_highlight_select{z-index:2500;color:var(--color-primary);background-color:#0e3c46;font-size:11px;position:absolute;top:5px;left:10px}.portal_details th,.portal_details td{vertical-align:top;text-align:left}.portal_details th{white-space:nowrap;padding-right:1em}.portal_details tr.padding-top th,.portal_details tr.padding-top td{padding-top:.7em}#play_button{display:none}.layer_off_warning{color:var(--color-primary);text-align:center;margin:8px}.cursor_help{cursor:help}.ui-tabs-nav{border-top:1px solid #0000;border-bottom:1px solid #20a8b1;margin:3px 0 0;padding:0;display:block}.ui-tabs-nav:after{content:"";clear:left;width:0;height:0;display:block}.ui-tabs-nav li{float:left;border:1px solid #20a8b1;margin:0 0 -1px;list-style:none;display:block}.ui-tabs-nav li.ui-tabs-active{background:#0f2c3f;border-width:2px 2px 1px;border-bottom-color:#0f2c3f;margin:-1px 1px;font-weight:700}.ui-tabs-nav a{padding:.2em .7em;display:inline-block}.ui-tabs-nav .ui-icon{vertical-align:top;width:16px;height:22px;font-size:0;display:inline-block;position:relative;overflow:hidden}.ui-tabs-nav .ui-icon-close:before{content:"close";text-align:center;vertical-align:baseline;cursor:pointer;width:16px;height:16px;font-family:IITC Material Symbols;font-size:16px;position:absolute;top:2px}.leaflet-marker-icon>svg{height:inherit;width:inherit}.warning{color:#f77;text-shadow:1px 1px #000,-1px -1px #000;text-align:center;font-weight:700}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:first-child{display:none}.ui-dialog-non-standard-intel .ui-dialog-buttonset button:nth-child(2){float:left}::-webkit-input-placeholder{font-style:italic}:-moz-placeholder-shown{font-style:italic}::-moz-placeholder{font-style:italic}' +
   '</style>' +
   '<style>' +
   '\
@@ -2035,48 +2035,6 @@ var log = ulog('boot');
  */
 
 /**
- * Initializes tooltips for a specified element or the entire document if no element is provided.
- * This function sets up jQuery UI tooltips with customized behavior. It ensures that only one tooltip
- * is visible at a time by closing others when a new one opens. The content of the tooltip is derived
- * from the 'title' attribute of the HTML element and is processed by the `convertTextToTableMagic` function.
- *
- * Additionally, this function sets up a one-time event handler (if not already set) on the document
- * to remove tooltips when clicked. This is controlled by the `tooltipClearerHasBeenSetup` flag to prevent
- * multiple bindings of the event handler.
- *
- * @function setupTooltips
- * @param {jQuery|HTMLElement} [element=document] - The jQuery or DOM element to which the tooltips will be attached.
- *                                                  If not provided, the document itself is used.
- */
-window.setupTooltips = function (element) {
-  element = element || $(document);
-  element.tooltip({
-    // disable show/hide animation
-    show: { effect: 'none', duration: 0, delay: 350 },
-    hide: false,
-    open: function (event, ui) {
-      // ensure all other tooltips are closed
-      $('.ui-tooltip').not(ui.tooltip).remove();
-    },
-    close: function () {
-      $('.ui-helper-hidden-accessible > *:not(:last)').remove();
-    },
-    content: function () {
-      var title = $(this).attr('title');
-      return window.convertTextToTableMagic(title);
-    },
-  });
-
-  if (!window.tooltipClearerHasBeenSetup) {
-    window.tooltipClearerHasBeenSetup = true;
-    $(document).on('click', '.ui-tooltip', function () {
-      $(this).remove();
-      $('.ui-helper-hidden-accessible > *:not(:last)').remove();
-    });
-  }
-};
-
-/**
  * Marks the body on browsers that refuse the bundled icon font, so its stylesheet can fall back to the accessible labels
  *
  * @function setupIconFont
@@ -2342,7 +2300,7 @@ function updateControlBarZIndex() {
  * @function boot
  */
 function boot() {
-  log.log('loading done, booting. Built: ' + '2026-11-23-114437');
+  log.log('loading done, booting. Built: ' + '2026-11-24-083955');
   if (window.deviceID) {
     log.log('Your device ID: ' + window.deviceID);
   }
@@ -2363,7 +2321,7 @@ function boot() {
   window.setupOMS();
   window.ornaments.setup();
   window.layerChooser._lastPriority = 1000; // plugins overlays have priority >1000
-  window.setupTooltips();
+  IITC.popover.setup();
   IITC.chat.setup();
   window.updateGameScore();
   window.search.setup();
@@ -19297,7 +19255,7 @@ const chat = IITC.chat;
  * @type {string}
  * @memberof IITC.chat
  */
-chat.channelTabTemplate = '<a data-channel="{id}" accesskey="{index}" title="[{index}]">{name}</a>';
+chat.channelTabTemplate = '<a data-channel="{id}" accesskey="{index}" data-popover="[{index}]">{name}</a>';
 
 /**
  * Template of a channel message container appended to the chat panel.
@@ -20214,7 +20172,7 @@ function _initChannelData(id) {
  * @memberof IITC.comm
  */
 let portalTemplate =
-  '<a onclick="IITC.portal.selectByLatLng({lat}, {lng});return false" title="{title}" href="{url}" class="bidi-isolate help">{portal_name}</a>';
+  '<a onclick="IITC.portal.selectByLatLng({lat}, {lng});return false" data-popover="{title}" href="{url}" class="bidi-isolate help">{portal_name}</a>';
 /**
  * Template for time cell.
  * @type {String}
@@ -22514,7 +22472,7 @@ window.updateGameScore = function (data) {
     // help cursor via “#gamestat span”
     var resMu = 'Resistance:\t' + r + ' MindUnits';
     var enlMu = 'Enlightened:\t' + e + ' MindUnits';
-    gamestatElement.attr('title', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
+    gamestatElement.attr('data-popover', teamId === window.TEAM_RES ? resMu + '\n' + enlMu : enlMu + '\n' + resMu);
   } else if (data && data.error) {
     log.warn('game score failed to load: ' + data.error);
   } else {
@@ -27222,7 +27180,7 @@ class PageView {
       {
         type: 'button',
         className: icon && 'iitc-options-icon-button',
-        title: icon && text,
+        'data-popover': icon && text,
         'aria-label': icon && text,
         dataset: { focusId: id },
         disabled: !enabled || !handler,
@@ -27396,7 +27354,7 @@ class PageView {
         // the tooltip belongs to the entry's own line, not to its nested entries
         const head = el(
           'div',
-          { className: 'iitc-options-list-head', title: entry.tooltip },
+          { className: 'iitc-options-list-head', 'data-popover': entry.tooltip },
           el('span', { className: 'iitc-options-list-title' }, String(entry.title ?? '')),
           entry.badge !== undefined && el('span', { className: 'iitc-options-badge' }, String(entry.badge))
         );
@@ -27979,7 +27937,7 @@ const drawNav = () => {
             type: 'button',
             className: 'iitc-options-page-link',
             dataset: { page: pageId },
-            title: accessKeyHint(pageId),
+            'data-popover': accessKeyHint(pageId),
             'aria-current': pageId === view.pageId && 'page',
             onclick: () => choose(pageId),
           },
@@ -28288,7 +28246,7 @@ const setMapButton = (wanted) => {
               {
                 href: '#',
                 role: 'button',
-                title: accessKeyHint(pageId),
+                'data-popover': accessKeyHint(pageId),
                 onclick: (event) => {
                   event.preventDefault();
                   open(pageId);
@@ -28936,7 +28894,418 @@ window.hideall = function () {
   IITC.statusbar.hide();
   $('#farm_level_select').hide();
   $('#map').css({ visibility: 'hidden', opacity: '0' });
-  $('.ui-tooltip').remove();
+  IITC.popover.close();
+};
+
+
+})();
+
+
+// *** module: popover.js ***
+(function () {
+var log = ulog('popover');
+/* global IITC */
+
+/**
+ * Popovers with the details of interface elements, in place of the tooltips of the browser
+ *
+ * The content comes from, in this order:
+ *
+ * - options given with {@link IITC.popover.bind};
+ * - the `data-popover` attribute: plain text laid out by {@link IITC.utils.textToTable}, where newlines are line breaks
+ *   and tabs make a table;
+ * - the `title` attribute: tabs make a table, and any other title is HTML, as plugins wrote it for jQuery UI tooltip
+ *
+ * While an element is armed, its title and those of the elements around it are taken away, so the browser shows none
+ * of its own
+ *
+ * @memberof IITC
+ * @namespace popover
+ *
+ * @example <caption>Plain text in the markup</caption>
+ * <span data-popover="Deployed by the owner of the portal">8</span>
+ *
+ * @example <caption>A table: tabs split the cells, newlines the rows</caption>
+ * cell.dataset.popover = 'Range:\t2.5 km\nLinks:\t3';
+ * // the same in the markup
+ * <td data-popover="Range:&#9;2.5 km&#10;Links:&#9;3">…</td>
+ *
+ * @example <caption>HTML made when the popover opens</caption>
+ * IITC.popover.bind(button, { html: () => `<b>${count}</b> portals`, className: 'my-plugin-popover' });
+ */
+
+const POPOVER_ID = 'iitc-popover';
+const DELAY = 300;
+// no delay for the next element right after a popover closed
+const CHAIN = 200;
+const GAP = 6;
+const MARGIN = 4;
+
+/**
+ * Options of a popover bound to an element; a function is called each time the popover opens, with the element
+ *
+ * @memberof IITC.popover
+ * @typedef {Object} Options
+ * @property {string|function(Element): string} [text] - Plain text, laid out like `data-popover`
+ * @property {string|function(Element): string} [html] - HTML, inserted as it is; takes the place of `text`
+ * @property {string} [className] - Extra class of the popover while it shows this element
+ * @property {boolean} [disabled] - No popover for the element and for the elements inside it
+ */
+
+// element -> options given to IITC.popover.bind
+const bindings = new WeakMap();
+
+let installed = false;
+let popoverElement = null;
+let closedAt = -Infinity;
+
+// The armed element: `kind` is what keeps it ('hover', 'touch' or 'focus'), `text` and `ancestors` are the titles
+// taken away, `html` is content handed later by a jQuery tooltip content function
+let state = null;
+
+const isDisabled = (element) => {
+  for (let node = element; node; node = node.parentElement) {
+    if (bindings.get(node)?.disabled) return true;
+  }
+  return false;
+};
+
+// Finds the element a popover belongs to, going up from the element under the pointer; the nearest element with
+// a title decides, as in the browser, and an empty title means no popover
+const findTrigger = (target) => {
+  for (let node = target; node; node = node.parentElement) {
+    if (state && node === state.trigger) return node;
+    const options = bindings.get(node);
+    if (!options?.html && !options?.text && !options?.disabled && !node.hasAttribute('data-popover')) {
+      const title = state?.ancestors.get(node) ?? node.getAttribute('title');
+      if (title === null) continue;
+      if (title === '') return null;
+    }
+    return isDisabled(node) ? null : node;
+  }
+  return null;
+};
+
+const read = (value, trigger) => (typeof value === 'function' ? value.call(trigger, trigger) : value);
+
+// Tabs make a table, any other title is HTML, which plugins rely on
+const titleToHtml = (text) => (text.includes('\t') ? IITC.utils.textToTable(text) : text.replace(/\n/g, '<br>'));
+
+const restoreTitle = (element, text) => {
+  if (text !== null && !element.hasAttribute('title')) element.setAttribute('title', text);
+};
+
+// Adds the popover to the elements that describe the trigger, or takes it away, keeping the others
+const setDescribedBy = (trigger, on) => {
+  const ids = (trigger.getAttribute('aria-describedby') ?? '').split(' ').filter((id) => id && id !== POPOVER_ID);
+  if (on) ids.push(POPOVER_ID);
+  if (ids.length) trigger.setAttribute('aria-describedby', ids.join(' '));
+  else trigger.removeAttribute('aria-describedby');
+};
+
+// Takes up a title written while the element is armed, as a plugin does after a request
+const takeTitle = (armed) => {
+  const { trigger } = armed;
+  if (!trigger.hasAttribute('title')) return;
+  armed.text = trigger.getAttribute('title');
+  trigger.removeAttribute('title');
+  if (armed.shown) render(armed);
+};
+
+// Starts the state for an element and takes its title away; returns null when there is nothing to show
+const create = (trigger) => {
+  const options = bindings.get(trigger);
+  const text = trigger.getAttribute('title');
+  // an element bound without content, or one whose title is blank
+  if (!text && !options?.html && !options?.text && !trigger.getAttribute('data-popover')) return null;
+
+  trigger.removeAttribute('title');
+  const next = { trigger, kind: 'hover', shown: false, timer: null, text, html: null, observer: null, ancestors: new Map() };
+  next.observer = new MutationObserver(() => {
+    if (state !== next) return;
+    // an element taken off the page, as a marker cleared from the map, leaves no pointerout behind
+    if (trigger.isConnected) takeTitle(next);
+    else dispose();
+  });
+  next.observer.observe(trigger, { attributes: true, attributeFilter: ['title'] });
+  next.observer.observe(document.body, { childList: true, subtree: true });
+
+  // the browser shows the title of an element around in place of the one it does not find
+  for (let node = trigger.parentElement; node; node = node.parentElement) {
+    if (!node.hasAttribute('title')) continue;
+    next.ancestors.set(node, node.getAttribute('title'));
+    node.removeAttribute('title');
+  }
+
+  state = next;
+  return next;
+};
+
+// Made again when something removed it from the page, as plugins clearing `.ui-tooltip` do
+const getElement = () => {
+  if (popoverElement?.isConnected) return popoverElement;
+
+  popoverElement = document.createElement('div');
+  popoverElement.id = POPOVER_ID;
+  popoverElement.setAttribute('role', 'tooltip');
+  popoverElement.hidden = true;
+  // the top layer keeps it above dialogs; `manual`, as closing is done here
+  if (popoverElement.showPopover) popoverElement.setAttribute('popover', 'manual');
+  document.body.append(popoverElement);
+  return popoverElement;
+};
+
+// Under the element, or above it when there is no room, and inside the window
+const place = (trigger) => {
+  const element = popoverElement;
+  // measured at 0,0 to get its natural width
+  element.style.left = '0px';
+  element.style.top = '0px';
+  const { width, height } = element.getBoundingClientRect();
+  const { clientWidth, clientHeight } = document.documentElement;
+  const rect = trigger.getBoundingClientRect();
+
+  let top = rect.bottom + GAP;
+  if (top + height + MARGIN > clientHeight) top = rect.top - GAP - height;
+  const left = Math.max(MARGIN, Math.min(rect.left + rect.width / 2 - width / 2, clientWidth - width - MARGIN));
+  element.style.left = `${left}px`;
+  element.style.top = `${Math.max(MARGIN, top)}px`;
+};
+
+const render = (armed) => {
+  const { trigger } = armed;
+  const options = bindings.get(trigger);
+
+  let html = armed.html ?? read(options?.html, trigger);
+  if (!html) {
+    const text = read(options?.text, trigger) ?? trigger.getAttribute('data-popover');
+    if (text) html = IITC.utils.textToTable(text, []);
+  }
+  if (!html && armed.text) html = titleToHtml(armed.text);
+  if (!html) {
+    hide();
+    return;
+  }
+
+  const element = getElement();
+  element.className = ['iitc-popover', 'ui-tooltip', options?.className].filter(Boolean).join(' ');
+  element.innerHTML = html;
+  setDescribedBy(trigger, true);
+
+  if (element.hidden) {
+    element.hidden = false;
+    element.showPopover?.();
+  }
+  armed.shown = true;
+  place(trigger);
+};
+
+// Closes the popover; the element stays armed, so the browser shows no title of its own while the pointer is there
+const hide = () => {
+  if (!state) return;
+  clearTimeout(state.timer);
+  state.timer = null;
+  if (!state.shown) return;
+
+  state.shown = false;
+  setDescribedBy(state.trigger, false);
+  closedAt = Date.now();
+  // a removed popover is closed already
+  if (popoverElement.isConnected) popoverElement.hidePopover?.();
+  popoverElement.hidden = true;
+};
+
+// Closes the popover and gives the titles back
+const dispose = () => {
+  if (!state) return;
+  const armed = state;
+  hide();
+  armed.observer?.disconnect();
+  state = null;
+  restoreTitle(armed.trigger, armed.text);
+  armed.ancestors.forEach((text, element) => restoreTitle(element, text));
+};
+
+const schedule = (armed, delay) => {
+  clearTimeout(armed.timer);
+  armed.timer = setTimeout(() => {
+    armed.timer = null;
+    if (state !== armed) return;
+    if (armed.trigger.isConnected) render(armed);
+    else dispose();
+  }, delay);
+};
+
+const hoverDelay = () => (Date.now() - closedAt < CHAIN ? 0 : DELAY);
+
+// Opens the popover of an element after the delay, as the pointer resting on it does
+const showSoon = (element) => {
+  if (state?.trigger === element) {
+    takeTitle(state);
+  } else {
+    dispose();
+    if (!create(element)) return;
+  }
+  if (!state.shown && !state.timer) schedule(state, hoverDelay());
+};
+
+// Shows content that a jQuery tooltip content function hands to its callback
+const answer = (element, html) => {
+  const armed = state;
+  if (armed?.trigger !== element) return;
+  armed.html = html;
+  // after the render that called the function, which may be under way
+  queueMicrotask(() => state === armed && render(armed));
+};
+
+const onPointerOver = (event) => {
+  const trigger = findTrigger(event.target);
+  if (state && state.trigger === trigger) return;
+  // a finger lifts right after the tap, and focus has its own end: neither is a pointer that left the element
+  if (!trigger && (state?.kind === 'touch' || state?.kind === 'focus')) return;
+
+  dispose();
+  if (!trigger) return;
+
+  const armed = create(trigger);
+  if (!armed) return;
+  if (event.pointerType === 'touch') armed.kind = 'touch';
+  schedule(armed, hoverDelay());
+};
+
+const onPointerOut = (event) => {
+  if (state?.kind !== 'hover' || state.trigger.contains(event.relatedTarget)) return;
+  dispose();
+};
+
+const onPointerDown = (event) => {
+  if (!state || popoverElement?.contains(event.target)) return;
+
+  if (state.trigger.contains(event.target)) {
+    // the press of a mouse quiets the popover; the tap of a finger that opens it comes with this press
+    if (state.kind !== 'touch') hide();
+    return;
+  }
+  dispose();
+};
+
+const onKeyDown = (event) => {
+  if (event.key === 'Escape') hide();
+};
+
+const onFocusIn = (event) => {
+  try {
+    if (!event.target.matches(':focus-visible')) return;
+  } catch {
+    // Chrome 85 has no :focus-visible
+  }
+
+  const trigger = findTrigger(event.target);
+  if (!trigger || state?.trigger === trigger) return;
+  dispose();
+  const armed = create(trigger);
+  if (!armed) return;
+  armed.kind = 'focus';
+  schedule(armed, DELAY);
+};
+
+const onFocusOut = (event) => {
+  if (state?.kind === 'focus' && !state.trigger.contains(event.relatedTarget)) dispose();
+};
+
+// Only a scroll of what holds the element closes it, not a chat that scrolls
+const onScroll = (event) => {
+  if (state && event.target.contains?.(state.trigger)) hide();
+};
+
+/**
+ * Starts opening popovers for the whole page; calling it again changes nothing
+ *
+ * @memberof IITC.popover
+ */
+const setup = () => {
+  if (installed) return;
+  installed = true;
+
+  // ahead of the handlers that stop the events
+  const options = { capture: true };
+  document.addEventListener('pointerover', onPointerOver, options);
+  document.addEventListener('pointerout', onPointerOut, options);
+  document.addEventListener('pointerdown', onPointerDown, options);
+  document.addEventListener('keydown', onKeyDown, options);
+  document.addEventListener('focusin', onFocusIn, options);
+  document.addEventListener('focusout', onFocusOut, options);
+  document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+  document.defaultView.addEventListener('resize', hide);
+};
+
+/**
+ * Gives an element a popover whose content comes from the options, in place of the `data-popover` attribute
+ * or the title
+ *
+ * @memberof IITC.popover
+ * @param {Element} element - Element the popover belongs to
+ * @param {IITC.popover.Options} options - Content and the rest; merged into what was bound before
+ */
+const bind = (element, options) => {
+  bindings.set(element, { ...bindings.get(element), ...options });
+};
+
+/**
+ * Forgets what {@link IITC.popover.bind} set for the element
+ *
+ * @memberof IITC.popover
+ * @param {Element} element - Element given to `bind`
+ */
+const unbind = (element) => {
+  close(element);
+  bindings.delete(element);
+};
+
+/**
+ * Closes the popover that is open
+ *
+ * @memberof IITC.popover
+ * @param {Element} [element] - Close only if the popover belongs to this element
+ */
+const close = (element) => {
+  if (!state || (element && state.trigger !== element)) return;
+  hide();
+};
+
+IITC.popover = { setup, bind, unbind, close };
+
+IITC.registerLegacyAliases(IITC.popover, { setupTooltips: 'setup' });
+
+/**
+ * Keeps the `$.fn.tooltip` calls of plugins working. Options other than `content`, `tooltipClass` and `disabled`
+ * are ignored. A `content` function gets the element as `this`, and returns the HTML or hands it to its callback.
+ *
+ * @alias IITC.popover~tooltip
+ * @private
+ * @deprecated use {@link IITC.popover}
+ * @param {Object|string} [arg] - Options, or the name of a method
+ * @returns {jQuery} The same jQuery collection
+ */
+$.fn.tooltip = function (arg) {
+  return this.each((index, element) => {
+    if (typeof arg === 'string') {
+      // after the delay, as plugins call it from their own mouseenter
+      if (arg === 'open') showSoon(element);
+      else if (arg === 'close') close(element);
+      else if (arg === 'destroy') unbind(element);
+      else if (arg === 'enable') bind(element, { disabled: false });
+      else if (arg === 'disable') bind(element, { disabled: true });
+      return;
+    }
+    const { content, tooltipClass, disabled } = arg ?? {};
+    const options = {};
+    if (typeof content === 'function') options.html = (target) => content.call(target, (html) => answer(target, html));
+    else if (content !== undefined) options.html = content;
+    if (tooltipClass !== undefined) options.className = tooltipClass;
+    if (disabled !== undefined) options.disabled = disabled;
+    bind(element, options);
+  });
 };
 
 
@@ -29860,7 +30229,7 @@ var log = ulog('portal_display');
  * @memberof IITC.portal.display
  */
 let moveToPortalIconTemplate =
-  '<iitc-icon filled class="icon-button" title="Click to move to portal" label="Move to portal" fallback="📍">location_on</iitc-icon>';
+  '<iitc-icon filled class="icon-button" data-popover="Click to move to portal" label="Move to portal" fallback="📍">location_on</iitc-icon>';
 
 /**
  * Template wrapping the #randdetails table (owner, range, links, fields, shielding, energy, AP, hacks)
@@ -29909,7 +30278,7 @@ let linkDetailsTemplate = '<div class="linkdetails"></div>';
  * @type {String}
  * @memberof IITC.portal.display
  */
-let ellipsisLabelTemplate = '<span title="{label}" class="text-overflow-ellipsis">{label}</span>';
+let ellipsisLabelTemplate = '<span data-popover="{label}" class="text-overflow-ellipsis">{label}</span>';
 
 /**
  * Resets the scroll position of the sidebar when a new portal is selected.
@@ -29968,13 +30337,13 @@ const renderUrl = function (lat, lng, title, guid) {
   // a permalink for the portal
   const permaLink = document.createElement('a');
   permaLink.setAttribute('href', IITC.portal.display.makePermalink([lat, lng]));
-  permaLink.setAttribute('title', 'Create a URL link to this portal');
+  permaLink.setAttribute('data-popover', 'Create a URL link to this portal');
   permaLink.textContent = 'Portal link';
   appendAside(permaLink);
 
   const scannerLink = document.createElement('a');
   scannerLink.setAttribute('href', IITC.portal.display.makePrimeLink(guid));
-  scannerLink.setAttribute('title', 'Copy link to this portal for Ingress Prime');
+  scannerLink.setAttribute('data-popover', 'Copy link to this portal for Ingress Prime');
   scannerLink.textContent = 'Copy scanner link';
   scannerLink.addEventListener('click', function (event) {
     navigator.clipboard.writeText(event.target.href).then();
@@ -29985,7 +30354,7 @@ const renderUrl = function (lat, lng, title, guid) {
 
   // and a map link popup dialog
   const mapLink = document.createElement('a');
-  mapLink.setAttribute('title', 'Link to alternative maps (Google, etc)');
+  mapLink.setAttribute('data-popover', 'Link to alternative maps (Google, etc)');
   mapLink.textContent = 'Map links';
   mapLink.addEventListener('click', () => IITC.portal.display.tools.showPosLinks(lat, lng, title));
   appendAside(mapLink);
@@ -30090,7 +30459,7 @@ const renderToSidebar = function (portal) {
 
   const closeButton = document.createElement('iitc-icon');
   closeButton.setAttribute('class', 'close icon-button');
-  closeButton.setAttribute('title', 'Close [w]');
+  closeButton.setAttribute('data-popover', 'Close [w]');
   closeButton.setAttribute('accesskey', 'w');
   closeButton.setAttribute('label', 'Close');
   closeButton.setAttribute('fallback', 'X');
@@ -30103,12 +30472,12 @@ const renderToSidebar = function (portal) {
   // help cursor via ".imgpreview img"
   const imgPreview = document.createElement('div');
   imgPreview.setAttribute('class', 'imgpreview');
-  imgPreview.setAttribute('title', imgTitle);
+  imgPreview.setAttribute('data-popover', imgTitle);
   imgPreview.setAttribute('style', 'background-image: url("' + img + '")');
 
   const levelSpan = document.createElement('span');
   levelSpan.setAttribute('id', 'level');
-  levelSpan.setAttribute('title', levelDetails);
+  levelSpan.setAttribute('data-popover', levelDetails);
   levelSpan.textContent = levelInt;
 
   imgPreview.append(levelSpan);
@@ -30456,7 +30825,7 @@ let historyTemplate =
 let rangeLinkTemplate = '<a onclick="IITC.portal.display.rangeLinkClick()"{strike}>{distance}</a>';
 
 /**
- * Template of a single portal mod entry ({titleAttr} is a pre-built ` title="..."` attribute or empty)
+ * Template of a single portal mod entry ({titleAttr} is a pre-built ` data-popover="..."` attribute or empty)
  * @type {String}
  * @memberof IITC.portal.display.tools
  */
@@ -30474,7 +30843,7 @@ let modEmptyTemplate = '<span style="color:#000"></span>';
  * @type {String}
  * @memberof IITC.portal.display.tools
  */
-let resonatorMeterTemplate = '<span class="{className}" title="{inf}">{fill}{lbar}</span>';
+let resonatorMeterTemplate = '<span class="{className}" data-popover="{inf}">{fill}{lbar}</span>';
 
 /**
  * Template of the resonator fill bar
@@ -30634,7 +31003,7 @@ const getModDetails = function (d) {
   let t = '';
   for (let i = 0; i < mods.length; i++) {
     t += L.Util.template(IITC.portal.display.tools.modTemplate, {
-      titleAttr: modsTitle[i].length ? ' title="' + modsTitle[i] + '"' : '',
+      titleAttr: modsTitle[i].length ? ' data-popover="' + modsTitle[i] + '"' : '',
       color: modsColor[i],
       name: mods[i],
     });
@@ -32007,9 +32376,8 @@ window.RegionScoreboardSetup = (function () {
     setupToolTips();
 
     var tooltip = createResultTooltip();
-    $('#overview', mainDialog).tooltip({
-      content: window.convertTextToTableMagic(tooltip),
-    });
+    const overview = mainDialog[0].querySelector('#overview');
+    if (overview) IITC.popover.bind(overview, { html: IITC.utils.textToTable(tooltip) });
 
     $('.region-select-form', mainDialog).on('submit', function (event) {
       event.preventDefault();
@@ -32107,12 +32475,7 @@ window.RegionScoreboardSetup = (function () {
         tooltip = 'CP:\t' + cp + '\t-\t' + formatDayHours(regionScore.getCheckpointTime(cp)) + '\n<hr>' + enl_str + res_str;
       }
 
-      elem.tooltip({
-        content: window.convertTextToTableMagic(tooltip),
-        position: { my: 'center bottom', at: 'center top-10' },
-        tooltipClass: 'checkpointtooltip',
-        show: 100,
-      });
+      IITC.popover.bind(elem[0], { html: IITC.utils.textToTable(tooltip), className: 'checkpointtooltip' });
     });
   }
 
@@ -32220,7 +32583,7 @@ window.RegionScoreboardSetup = (function () {
     var maxAverage = regionScore.getAvgScoreMax();
     var order = window.PLAYER.team === 'RESISTANCE' ? [window.TEAM_RES, window.TEAM_ENL] : [window.TEAM_ENL, window.TEAM_RES];
 
-    var result = '<table id="overview" title="">';
+    var result = '<table id="overview">';
     for (var t = 0; t < 2; t++) {
       var faction = order[t];
       var team = window.TEAM_NAMES[faction];
@@ -32426,8 +32789,7 @@ class HistoryChart {
     for (var cp = 1; cp <= this.regionScore.CP_COUNT; cp++) {
       var scores = this.regionScore.getCPScore(cp);
 
-      markers +=
-        `<g title="dummy" class="checkpoint" data-cp="${cp}">` + `<rect x="${cp * 10 + 35}" y="10" width="10" height="100" fill="black" fill-opacity="0" />`;
+      markers += `<g class="checkpoint" data-cp="${cp}">` + `<rect x="${cp * 10 + 35}" y="10" width="10" height="100" fill="black" fill-opacity="0" />`;
 
       if (scores) {
         markers +=
@@ -32769,7 +33131,7 @@ IITC.search.doSearch = function (term, confirmed) {
 
   if (window.useAppPanes()) window.show('info');
 
-  document.querySelectorAll('.ui-tooltip').forEach((tooltip) => tooltip.remove());
+  IITC.popover.close();
 
   IITC.search.lastSearch = new IITC.search.Query(searchTerm, confirmed);
   IITC.search.lastSearch.show();
@@ -33828,7 +34190,7 @@ window.setupPlayerStat = function () {
     `\n\nNote: your player stats can only be updated by a full reload (F5)`;
 
   $('#playerstat').html(
-    `<h2 title="${t}">
+    `<h2 data-popover="${t}">
       ${level}
       <div id="name">
         <span class="playername ${cls}">${window.PLAYER.nickname}</span>
@@ -33858,7 +34220,7 @@ function setupSidebarToggle() {
       button.id = 'sidebartoggle';
       button.type = 'button';
       button.accessKey = 'i';
-      button.title = 'Toggle sidebar [i]';
+      button.dataset.popover = 'Toggle sidebar [i]';
       button.setAttribute('aria-label', 'Toggle sidebar');
       const icon = L.DomUtil.create('iitc-icon', '', button);
       const showState = (open) => {
@@ -33875,7 +34237,7 @@ function setupSidebarToggle() {
         if (open) IITC.portal.display.resetScroll();
         document.body.classList.toggle('sidebar-open', open);
         showState(open);
-        document.querySelectorAll('.ui-tooltip').forEach((tooltip) => tooltip.remove());
+        IITC.popover.close();
       });
       L.DomEvent.disableClickPropagation(container);
       return container;
@@ -33897,7 +34259,7 @@ function setupLargeImagePreview() {
     if (IITC.utils.isSmartphone()) {
       if (event.currentTarget !== event.target) return; // do not fire on #level
 
-      document.querySelectorAll('.ui-tooltip').forEach((tooltip) => tooltip.remove());
+      IITC.popover.close();
 
       const fullImage = document.querySelector('#sidebar > .fullimg');
       if (!fullImage) return;
@@ -34158,7 +34520,7 @@ IITC.statusbar.mapTemplates = {
   main: '{{ portalLevels }} {{ mapStatus }}{{ requestsStatus }}',
 
   // Portal levels information
-  portalLevels: '<span class="help portallevel" title="Indicates portal levels/link lengths displayed. Zoom in to display more;">{{ content }}</span>',
+  portalLevels: '<span class="help portallevel" data-popover="Indicates portal levels/link lengths displayed. Zoom in to display more;">{{ content }}</span>',
 
   // Map status information
   mapStatus: '<span class="map"><b>map</b>: {{ content }}</span>',
@@ -34167,7 +34529,7 @@ IITC.statusbar.mapTemplates = {
   linksPrefix: '<b>links</b>: ',
 
   // Help container with tooltip
-  helpContainer: '<span class="help" title="{{ tooltip }}">{{ content }}</span>',
+  helpContainer: '<span class="help" data-popover="{{ tooltip }}">{{ content }}</span>',
 
   // Progress indicator
   progressInfo: ' {{ progress }}%',
@@ -34768,7 +35130,7 @@ IITC.toolbox = {
     buttonElement.textContent = buttonData.label;
     buttonElement.onclick = buttonData.action;
 
-    if (typeof buttonData.title === 'string') buttonElement.title = buttonData.title;
+    if (typeof buttonData.title === 'string') buttonElement.dataset.popover = buttonData.title;
     if (typeof buttonData.class === 'string') buttonElement.className = buttonData.class;
     if (typeof buttonData.access_key === 'string') buttonElement.accessKey = buttonData.access_key;
     if (typeof buttonData.accesskey === 'string') buttonElement.accessKey = buttonData.accesskey;
@@ -35277,21 +35639,23 @@ const uniqueArray = function (arr) {
  * Generates a four-column HTML table from an array of data blocks.
  *
  * @memberof IITC.utils
- * @param {Array} blocks - Array of data blocks, where each block is an array with details for one row.
+ * @param {Array} blocks - Array of data blocks, each one `[header, data, details]`.
  * @returns {string} HTML string representing the constructed table.
  */
 const genFourColumnTable = function (blocks) {
   const rows = blocks
     .map((detail, index) => {
       if (!detail) return '';
-      const title = detail[2] ? ` title="${IITC.utils.escapeHtml(detail[2])}"` : '';
+      // the details of a block open in a popover; the header takes the keyboard focus
+      const popover = detail[2] ? ` data-popover="${IITC.utils.escapeHtml(detail[2])}"` : '';
+      const header = popover ? `${popover} tabindex="0"` : '';
 
       if (index % 2 === 0) {
         // If index is even, start a new row and add <td> for data and <th> for header
-        return `<tr><td${title}>${detail[1]}</td><th${title}>${detail[0]}</th>`;
+        return `<tr><td${popover}>${detail[1]}</td><th${header}>${detail[0]}</th>`;
       } else {
         // If index is odd, complete the row with <th> for header and <td> for data, then close </tr>
-        return `<th${title}>${detail[0]}</th><td${title}>${detail[1]}</td></tr>`;
+        return `<th${header}>${detail[0]}</th><td${popover}>${detail[1]}</td></tr>`;
       }
     })
     .join('');
@@ -35301,17 +35665,22 @@ const genFourColumnTable = function (blocks) {
   return isOdd ? rows + '<td></td><td></td></tr>' : rows;
 };
 
+const TEXT_TO_TABLE_TAGS = ['hr', 'br', 'b', 'i', 'strong', 'em', 'span', 'mark'];
+
 /**
- * Converts text with newlines (`\n`) and tabs (`\t`) into an HTML table.
+ * Converts text with newlines (`\n`) and tabs (`\t`) into HTML: line breaks, or a table when the text has tabs.
+ * The text is escaped, except for the allowed tags.
  *
  * @memberof IITC.utils
  * @function textToTable
  * @param {string} text - The text to convert.
- * @returns {string} The resulting HTML table.
+ * @param {string[]} [allowedTags] - tags kept as HTML; by default `hr`, `br`, `b`, `i`, `strong`, `em`, `span` and
+ *   `mark`, and an empty list for plain text
+ * @returns {string} The resulting HTML.
  */
-const textToTable = function (text) {
+const textToTable = function (text, allowedTags = TEXT_TO_TABLE_TAGS) {
   // If no tabs are present, replace newlines with <br> and return
-  if (!text.includes('\t')) return text.replace(/\n/g, '<br>');
+  if (!text.includes('\t')) return IITC.utils.escapeHtml(text, allowedTags).replace(/\n/g, '<br>');
 
   // Split text into rows and columns, tracking the max column count
   const rows = text.split('\n').map((row) => row.split('\t'));
@@ -35322,7 +35691,7 @@ const textToTable = function (text) {
   for (const row of rows) {
     let rowHtml = '<tr>';
     for (let k = 0; k < row.length; k++) {
-      const cell = IITC.utils.escapeHtml(row[k], ['hr', 'br', 'b', 'i', 'strong', 'em', 'span', 'mark']);
+      const cell = IITC.utils.escapeHtml(row[k], allowedTags);
       const colspan = k === 0 && row.length < columnCount ? ` colspan="${columnCount - row.length + 1}"` : '';
       rowHtml += `<td${colspan}>${cell}</td>`;
     }

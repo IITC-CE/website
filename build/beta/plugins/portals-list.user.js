@@ -2,7 +2,7 @@
 // @author         teo96
 // @name           IITC plugin: Portals list
 // @category       Info
-// @version        0.4.6.20261123.114437
+// @version        0.4.6.20261124.083955
 // @description    Display a sortable list of all visible portals with full details about the team, resonators, links, etc.
 // @id             portals-list
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'portals-list';
 //END PLUGIN AUTHORS NOTE
 
@@ -153,7 +153,7 @@ window.plugin.portalslist.fields = [
       $(cell)
         .addClass('alignR')
         .addClass('help')
-        .attr('title', 'In:\t' + value.in.length + '\nOut:\t' + value.out.length)
+        .attr('data-popover', 'In:\t' + value.in.length + '\nOut:\t' + value.out.length)
         .text(value.in.length + value.out.length);
     },
     defaultOrder: -1,
@@ -185,7 +185,7 @@ window.plugin.portalslist.fields = [
       }
       title += `Enemy AP:\t${value.enemyAp}\n- Destroy AP:\t${value.destroyAp}\n- Capture AP:\t${value.captureAp}`;
 
-      $(cell).addClass('alignR').addClass('help').prop('title', title).html(window.digits(value.enemyAp));
+      $(cell).addClass('alignR').addClass('help').attr('data-popover', title).html(window.digits(value.enemyAp));
     },
     defaultOrder: -1,
   },
@@ -371,7 +371,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
     var filterName = 'filter' + abbreviate(label);
     cell.className = 'name ' + filterName;
     cell.textContent = label + ':';
-    cell.title = `Show only ${label} portals`;
+    cell.dataset.popover = `Show only ${label} portals`;
     $(cell).on('click', function () {
       if (this.classList.contains('active')) {
         $('#portalslist')
@@ -394,7 +394,7 @@ window.plugin.portalslist.portalTable = function (sortBy, sortOrder, filter, rev
     if (i === 0) {
       cell.textContent = length;
     } else {
-      cell.title = `Hide ${label} portals `;
+      cell.dataset.popover = `Hide ${label} portals `;
       $(cell).on('click', function () {
         if (this.classList.contains('active')) {
           $('#portalslist')

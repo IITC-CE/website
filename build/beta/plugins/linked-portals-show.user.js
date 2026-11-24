@@ -2,7 +2,7 @@
 // @author         fstopienski
 // @name           IITC plugin: Linked portals
 // @category       Portal Info
-// @version        0.4.5.20261123.114437
+// @version        0.4.5.20261124.083955
 // @description    Try to show the linked portals (image, name and link direction) in portal detail view and jump to linked portal on click.  Some details may not be available if the linked portal is not in the current view.
 // @id             linked-portals-show
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
@@ -21,7 +21,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
 //(leaving them in place might break the 'About IITC' page or break update checks)
 plugin_info.buildName = 'beta';
-plugin_info.dateTimeVersion = '2026-11-23-114437';
+plugin_info.dateTimeVersion = '2026-11-24-083955';
 plugin_info.pluginId = 'linked-portals-show';
 //END PLUGIN AUTHORS NOTE
 
@@ -114,7 +114,7 @@ showLinkedPortal.makePortalLinkInfo = function ($div, info, data) {
     $div.addClass('outOfRange');
   }
   showLinkedPortal.makePortalLinkContent.apply(this, arguments);
-  $div.attr('title', showLinkedPortal.getPortalLinkTooltip.apply(this, arguments));
+  IITC.popover.bind($div[0], { html: showLinkedPortal.getPortalLinkTooltip.apply(this, arguments) });
 };
 
 showLinkedPortal.portalDetail = function (data) {
@@ -214,7 +214,7 @@ showLinkedPortal.requestPortalData = function () {
     // update tooltip
     var tooltipId = $element.attr('aria-describedby');
     if (tooltipId) {
-      $('#' + tooltipId).html($element.attr('title'));
+      $('#' + tooltipId).html(showLinkedPortal.getPortalLinkTooltip($element, info, data));
     }
   });
 };
